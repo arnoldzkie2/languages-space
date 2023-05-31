@@ -9,20 +9,127 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-}
+// client schema area
 
 model Client {
-  id           Int      @id @default(autoincrement())
-  profile      String?
-  name         String
-  phone_number Int
-  gender       String
-  card         Json?
-  type         String?
-  email        String
-  date         DateTime @default(now())
+  id            Int            @id @default(autoincrement())
+  profile       String?
+  name          String
+  phone_number  String
+  email         String?        @unique
+  gender        String
+  card          Json? // this could be postpaidcard or prepaidcard
+  type          String
+  organization  Json?
+  address       String
+  origin        String
+  tags          Json?
+  note          String?
+  date          DateTime       @default(now())
+  postpaid_card PostpaidCard[]
+  prepaid_card  PrepaidCard[]
+}
+
+model PostpaidCard {
+  id                Int     @id @default(autoincrement())
+  price             Int
+  settlement_period String
+  invoice           Boolean
+  client            Client? @relation(fields: [client_id], references: [id])
+  client_id         Int?
+}
+
+model PrepaidCard {
+  id               Int     @id @default(autoincrement())
+  price            Int
+  balance          Int
+  invoice          Boolean
+  validity         String
+  online_purchases Boolean
+  online_renews    Boolean
+  repeat_purchases Boolean
+  client           Client? @relation(fields: [client_id], references: [id])
+  client_id        Int?
+}
+
+// supplier schema area
+
+model Supplier {
+  id                  Int      @id @default(autoincrement())
+  profile             String?
+  name                String
+  type                String
+  organization        Boolean
+  payment_information Json?
+  phone_number        String
+  email               String   @unique
+  address             String
+  gender              String
+  card                Json?
+  origin              String
+  tags                Json
+  note                String
+  date                DateTime @default(now())
+}
+
+model SupplierCard {
+  id   Int                @id @default(autoincrement())
+  name SupplierCardType[]
+  type Json
+}
+
+model SupplierCardType {
+  id             Int           @id @default(autoincrement())
+  SupplierCard   SupplierCard? @relation(fields: [supplierCardId], references: [id])
+  supplierCardId Int?
+  fixed_salary   Json?
+  commission     Json?
+}
+
+// agent schema area
+
+model Agent {
+  id                  Int      @id @default(autoincrement())
+  profile             String?
+  name                String
+  type                String
+  organization        Json?
+  payment_information Json?
+  phone_number        String
+  email               String
+  address             String
+  gender              String
+  card                Json?
+  origin              String
+  note                String
+  date                DateTime @default(now())
+}
+
+model AgentCard {
+  id   Int    @id @default(autoincrement())
+  type Json
+  name String
+  link String
+}
+
+// order schema area 
+
+model Order {
+  id             Int      @id @default(autoincrement())
+  booking_date   DateTime
+  name           String
+  client_name    String
+  card           Json
+  quantity       Int
+  price          Int
+  agent_name     String?
+  agent_card     Json?
+  supplier_name  String?
+  supplier_card  Json?
+  operator       String
+  note           String?
+  status         String
+  invoice_number Int
+  express_number Int
+  date           DateTime @default(now())
 }
