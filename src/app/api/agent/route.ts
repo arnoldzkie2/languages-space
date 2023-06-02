@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import prisma from "../../../../prisma/prisma";
+import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, profile, type, organization, payment_information, phone_number, email, address, gender, card, origin, note } = await req.json()
+    const { name, user_name, password, profile, type, organization, payment_information, phone_number, email, address, gender, card, origin, note } = await req.json()
 
     try {
 
@@ -16,20 +16,7 @@ export const POST = async (req: Request) => {
         if (existingEmail) return NextResponse.json({ success: false, error: false, message: 'Email already exist!' }, { status: 200 })
 
         const newAgent = await prisma.agent.create({
-            data: {
-                profile: profile,
-                name: name,
-                type: type,
-                organization: organization,
-                phone_number: phone_number,
-                payment_information: payment_information,
-                email: email,
-                address: address,
-                gender: gender,
-                card: card,
-                origin: origin,
-                note: note
-            }
+            data: { profile, name, user_name, password, type, organization, phone_number, payment_information, email, address, gender, card, origin, note }
         })
 
         if (!newAgent) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
@@ -83,7 +70,7 @@ export const PATCH = async (req: Request) => {
 
     const id = searchParams.get('id')
 
-    const { name, profile, type, organization, payment_information, phone_number, email, address, gender, card, origin, note } = await req.json()
+    const { name, profile, type, user_name, password, organization, payment_information, phone_number, email, address, gender, card, origin, note } = await req.json()
 
     try {
 
@@ -104,20 +91,8 @@ export const PATCH = async (req: Request) => {
         if (existingEmail) return NextResponse.json({ success: false, error: false, message: 'Email already exist!' }, { status: 200 })
 
         const updatedAgent = await prisma.agent.create({
-            data: {
-                profile: profile,
-                name: name,
-                type: type,
-                organization: organization,
-                phone_number: phone_number,
-                payment_information: payment_information,
-                email: email,
-                address: address,
-                gender: gender,
-                card: card,
-                origin: origin,
-                note: note
-            }
+            data: { profile, name, user_name, password, type, organization, phone_number, payment_information, email, address, gender, card, origin, note }
+
         })
 
         if (!updatedAgent) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })

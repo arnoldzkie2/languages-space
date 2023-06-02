@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import prisma from "../../../../prisma/prisma";
+import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, type, organization, phone_number, email, address, gender, origin, tags } = await req.json()
+    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, tags } = await req.json()
 
     try {
 
@@ -18,6 +18,8 @@ export const POST = async (req: Request) => {
         const newUser = await prisma.client.create({
             data: {
                 name: name,
+                password: password,
+                user_name: user_name,
                 type: type,
                 organization: organization,
                 phone_number: phone_number,
@@ -102,7 +104,7 @@ export const DELETE = async (req: Request) => {
 
 export const PATCH = async (req: Request) => {
 
-    const { name, type, organization, phone_number, email, address, gender, origin, tags, note } = await req.json()
+    const { name, type, password, organization, user_name, phone_number, email, address, gender, origin, tags, note } = await req.json()
 
     const { searchParams } = new URL(req.url);
 
@@ -131,7 +133,9 @@ export const PATCH = async (req: Request) => {
                 id: String(id)
             },
             data: {
+                password: password,
                 name: name,
+                user_name: user_name,
                 type: type,
                 organization: organization,
                 phone_number: phone_number,
@@ -149,7 +153,7 @@ export const PATCH = async (req: Request) => {
         return NextResponse.json({ success: true, data: updatedClient, message: 'Client updated' })
 
     } catch (error) {
-        
+
         console.log(error);
     }
 }
