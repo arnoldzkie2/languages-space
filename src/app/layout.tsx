@@ -1,5 +1,5 @@
 import Providers from '@/lib/redux/Provider'
-import '../styles/globals.css';
+import '../lib/styles/globals.css'
 export const metadata = {
   title: 'Language Spaces',
   description: "Let's talk english here.",
