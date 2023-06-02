@@ -1,47 +1,41 @@
-/*
-  Warnings:
-
-  - You are about to drop the `user` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE `user`;
-
 -- CreateTable
 CREATE TABLE `Client` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `profile` VARCHAR(191) NULL,
     `name` VARCHAR(191) NOT NULL,
+    `user_name` VARCHAR(191) NOT NULL,
     `phone_number` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NOT NULL,
     `card` JSON NULL,
     `type` VARCHAR(191) NOT NULL,
     `organization` JSON NULL,
+    `password` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
     `origin` VARCHAR(191) NOT NULL,
     `tags` JSON NULL,
     `note` VARCHAR(191) NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `Client_user_name_key`(`user_name`),
     UNIQUE INDEX `Client_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `PostpaidCard` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `price` INTEGER NOT NULL,
     `settlement_period` VARCHAR(191) NOT NULL,
     `invoice` BOOLEAN NOT NULL,
-    `client_id` INTEGER NULL,
+    `client_id` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `PrepaidCard` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `price` INTEGER NOT NULL,
     `balance` INTEGER NOT NULL,
     `invoice` BOOLEAN NOT NULL,
@@ -49,20 +43,22 @@ CREATE TABLE `PrepaidCard` (
     `online_purchases` BOOLEAN NOT NULL,
     `online_renews` BOOLEAN NOT NULL,
     `repeat_purchases` BOOLEAN NOT NULL,
-    `client_id` INTEGER NULL,
+    `client_id` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Supplier` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `profile` VARCHAR(191) NULL,
     `name` VARCHAR(191) NOT NULL,
+    `user_name` VARCHAR(191) NOT NULL,
     `type` VARCHAR(191) NOT NULL,
     `organization` JSON NULL,
     `payment_information` JSON NULL,
     `phone_number` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
     `gender` VARCHAR(191) NOT NULL,
@@ -75,13 +71,14 @@ CREATE TABLE `Supplier` (
     `departure` DATETIME(3) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `Supplier_user_name_key`(`user_name`),
     UNIQUE INDEX `Supplier_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `SupplierCard` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `type` JSON NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -89,8 +86,8 @@ CREATE TABLE `SupplierCard` (
 
 -- CreateTable
 CREATE TABLE `SupplierCardType` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `supplierCardId` INTEGER NULL,
+    `id` VARCHAR(191) NOT NULL,
+    `supplierCardId` VARCHAR(191) NULL,
     `fixed_salary` JSON NULL,
     `commission` JSON NULL,
 
@@ -99,9 +96,11 @@ CREATE TABLE `SupplierCardType` (
 
 -- CreateTable
 CREATE TABLE `Agent` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `profile` VARCHAR(191) NULL,
     `name` VARCHAR(191) NOT NULL,
+    `user_name` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
     `type` VARCHAR(191) NOT NULL,
     `organization` JSON NULL,
     `payment_information` JSON NULL,
@@ -114,12 +113,14 @@ CREATE TABLE `Agent` (
     `note` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `Agent_user_name_key`(`user_name`),
+    UNIQUE INDEX `Agent_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `AgentCard` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `type` JSON NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `link` VARCHAR(191) NOT NULL,
@@ -129,7 +130,7 @@ CREATE TABLE `AgentCard` (
 
 -- CreateTable
 CREATE TABLE `Order` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `booking_date` DATETIME(3) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `client_name` VARCHAR(191) NOT NULL,
@@ -141,6 +142,43 @@ CREATE TABLE `Order` (
     `status` VARCHAR(191) NOT NULL,
     `invoice_number` INTEGER NOT NULL,
     `express_number` INTEGER NOT NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Order_id_key`(`id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Admin` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `user_name` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Admin_user_name_key`(`user_name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SuperAdmin` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `user_name` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `SuperAdmin_user_name_key`(`user_name`),
+    UNIQUE INDEX `SuperAdmin_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Department` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)

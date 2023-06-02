@@ -10,7 +10,7 @@ datasource db {
 // client schema area
 
 model Client {
-  id            String         @id @unique @default(uuid()) @db.VarChar(256)
+  id            String         @id @default(uuid())
   profile       String?
   name          String
   user_name     String         @unique
@@ -31,7 +31,7 @@ model Client {
 }
 
 model PostpaidCard {
-  id                String  @id @unique @default(uuid()) @db.VarChar(256)
+  id                String  @id @default(uuid())
   price             Int
   settlement_period String
   invoice           Boolean
@@ -40,7 +40,7 @@ model PostpaidCard {
 }
 
 model PrepaidCard {
-  id               String  @id @unique @default(uuid()) @db.VarChar(256)
+  id               String  @id @default(uuid())
   price            Int
   balance          Int
   invoice          Boolean
@@ -55,7 +55,7 @@ model PrepaidCard {
 // supplier schema area
 
 model Supplier {
-  id                  String   @id @unique @default(uuid()) @db.VarChar(256)
+  id                  String   @id @default(uuid())
   profile             String?
   name                String
   user_name           String   @unique
@@ -78,13 +78,13 @@ model Supplier {
 }
 
 model SupplierCard {
-  id   String             @id @unique @default(uuid()) @db.VarChar(256)
+  id   String             @id @default(uuid())
   name SupplierCardType[]
   type Json
 }
 
 model SupplierCardType {
-  id             String        @id @unique @default(uuid()) @db.VarChar(256)
+  id             String        @id @default(uuid())
   SupplierCard   SupplierCard? @relation(fields: [supplierCardId], references: [id])
   supplierCardId String?
   fixed_salary   Json?
@@ -94,7 +94,7 @@ model SupplierCardType {
 // agent schema area
 
 model Agent {
-  id                  String   @id @unique @default(uuid()) @db.VarChar(256)
+  id                  String   @id @default(uuid())
   profile             String?
   name                String
   user_name           String   @unique
@@ -113,7 +113,7 @@ model Agent {
 }
 
 model AgentCard {
-  id   String @id @unique @default(uuid()) @db.VarChar(256)
+  id   String @id @default(uuid())
   type Json
   name String
   link String
@@ -122,7 +122,7 @@ model AgentCard {
 // order schema area 
 
 model Order {
-  id             String   @id @unique @default(uuid()) @db.VarChar(256)
+  id             String   @id @unique @default(uuid())
   booking_date   DateTime
   name           String
   client_name    String
@@ -140,7 +140,7 @@ model Order {
 // admin schema area
 
 model Admin {
-  id        String   @id @default(uuid()) @db.VarChar(256)
+  id        String   @id @default(uuid())
   name      String
   user_name String   @unique
   email     String
@@ -149,10 +149,10 @@ model Admin {
 }
 
 model SuperAdmin {
-  id        String   @id @default(uuid()) @db.VarChar(256)
+  id        String   @id @default(uuid())
   name      String
   user_name String   @unique
-  email     String
+  email     String   @unique
   password  String
   date      DateTime @default(now())
 }
@@ -160,7 +160,7 @@ model SuperAdmin {
 // department schema area
 
 model Department {
-  id   String   @id @unique @default(uuid()) @db.VarChar(256)
+  id   String   @id @default(uuid())
   name String
   date DateTime @default(now())
 }

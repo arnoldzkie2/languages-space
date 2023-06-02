@@ -1,3 +1,4 @@
+import Header from '@/components/Header';
 import React from 'react';
 
 interface AppProps {
@@ -5,9 +6,9 @@ interface AppProps {
 
 const App: React.FC<AppProps> = ({  }) => {
   return (
-    <>
-      Hello world
-    </>
+   <div className='container'>
+    <Header />
+   </div>
   );
 };
 

@@ -42,23 +42,33 @@ export const GET = async (req: Request) => {
     const id = searchParams.get('id')
 
     try {
-        const checkId = await prisma.order.findFirst({
-            where: {
-                id: String(id)
-            }
-        })
 
-        if (!checkId) return NextResponse.json({ success: false, message: 'No id found' }, { status: 404 })
+        if (id) {
 
-        const singleOrder = await prisma.order.findMany({
-            where: {
-                id: String(id)
-            }
-        })
+            const checkId = await prisma.order.findFirst({
+                where: {
+                    id: String(id)
+                }
+            })
 
-        if (!singleOrder) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!checkId) return NextResponse.json({ success: false, message: 'No id found' }, { status: 404 })
 
-        return NextResponse.json({ success: true, data: singleOrder }, { status: 200 })
+            const singleOrder = await prisma.order.findMany({
+                where: {
+                    id: String(id)
+                }
+            })
+
+            if (!singleOrder) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+
+            return NextResponse.json({ success: true, data: singleOrder }, { status: 200 })
+        }
+
+        const getAllOrder = await prisma.order.findMany()
+
+        if (!getAllOrder) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+
+        return NextResponse.json({ success: true, data: getAllOrder }, { status: 200 })
 
     } catch (error) {
         console.log(error);

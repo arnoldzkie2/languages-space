@@ -48,23 +48,34 @@ export const GET = async (req: Request) => {
 
     try {
 
-        const checkId = await prisma.client.findFirst({
-            where: {
-                id: String(id)
-            }
-        })
+        if (id) {
 
-        if (!checkId) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
+            const checkId = await prisma.client.findFirst({
+                where: {
+                    id: String(id)
+                }
+            })
 
-        const client = await prisma.client.findFirst({
-            where: {
-                id: String(id)
-            }
-        })
+            if (!checkId) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
 
-        if (!client) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
+            const singleClient = await prisma.client.findFirst({
+                where: {
+                    id: String(id)
+                }
+            })
 
-        return NextResponse.json({ success: true, data: client }, { status: 200 })
+            if (!singleClient) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
+
+            return NextResponse.json({ success: true, data: singleClient }, { status: 200 })
+
+        }
+
+        const allClient = await prisma.client.findMany()
+
+        if (!allClient) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+
+        return NextResponse.json({ success: true, data: allClient }, { status: 200 })
+
 
     } catch (error) {
         console.log(error);

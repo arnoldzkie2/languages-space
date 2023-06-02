@@ -7,10 +7,14 @@ export const POST = async (req: Request) => {
 
     try {
 
+        const existUsername = await prisma.agent.findFirst({
+            where: { user_name }
+        })
+
+        if (existUsername) return NextResponse.json({ success: false, error: true, message: 'Username already exist!' }, { status: 200 })
+
         const existingEmail = await prisma.agent.findFirst({
-            where: {
-                email: email
-            }
+            where: { email }
         })
 
         if (existingEmail) return NextResponse.json({ success: false, error: false, message: 'Email already exist!' }, { status: 200 })
@@ -36,26 +40,35 @@ export const GET = async (req: Request) => {
 
     const id = searchParams.get('id')
 
-
     try {
 
-        const checkId = await prisma.agent.findFirst({
-            where: {
-                id: String(id)
-            }
-        })
+        if (id) {
 
-        if (!checkId) return NextResponse.json({ success: false, error: true, message: 'No id found' }, { status: 404 })
+            const checkId = await prisma.agent.findFirst({
+                where: {
+                    id: String(id)
+                }
+            })
 
-        const singleAgent = await prisma.agent.findMany({
-            where: {
-                id: String(id)
-            }
-        })
+            if (!checkId) return NextResponse.json({ success: false, error: true, message: 'No id found' }, { status: 404 })
 
-        if (!singleAgent) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            const singleAgent = await prisma.agent.findMany({
+                where: {
+                    id: String(id)
+                }
+            })
 
-        return NextResponse.json({ success: true, data: singleAgent }, { status: 200 })
+            if (!singleAgent) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+
+            return NextResponse.json({ success: true, data: singleAgent }, { status: 200 })
+
+        }
+
+        const allAgent = await prisma.agent.findMany()
+
+        if (!allAgent) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+
+        return NextResponse.json({ success: true, data: allAgent }, { status: 200 })
 
     } catch (error) {
 
@@ -81,6 +94,12 @@ export const PATCH = async (req: Request) => {
         })
 
         if (!checkId) return NextResponse.json({ success: false, error: true, message: 'No id found' }, { status: 404 })
+
+        const existUsername = await prisma.agent.findFirst({
+            where: { user_name }
+        })
+
+        if (existUsername) return NextResponse.json({ success: false, error: true, message: 'Username already exist!' }, { status: 200 })
 
         const existingEmail = await prisma.agent.findFirst({
             where: {
