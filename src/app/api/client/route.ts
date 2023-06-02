@@ -3,7 +3,7 @@ import prisma from "../../../../prisma/prisma";
 
 export const POST = async (req: Request) => {
 
-    const { name, type, organization, phone_number, email, address, gender, origin, tags, note } = await req.json()
+    const { name, type, organization, phone_number, email, address, gender, origin, tags } = await req.json()
 
     try {
 
@@ -26,7 +26,6 @@ export const POST = async (req: Request) => {
                 gender: gender,
                 origin: origin,
                 tags: tags,
-                note: note
             }
         })
 
@@ -49,7 +48,7 @@ export const GET = async (req: Request) => {
 
         const checkId = await prisma.client.findFirst({
             where: {
-                id: Number(id)
+                id: String(id)
             }
         })
 
@@ -57,7 +56,7 @@ export const GET = async (req: Request) => {
 
         const client = await prisma.client.findFirst({
             where: {
-                id: Number(id)
+                id: String(id)
             }
         })
 
@@ -80,15 +79,15 @@ export const DELETE = async (req: Request) => {
 
         const checkId = await prisma.client.findFirst({
             where: {
-                id: Number(id)
+                id: String(id)
             }
         })
 
-        if (!checkId) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
+        if (!checkId) return NextResponse.json({ success: false, error: true, message: 'no id found' }, { status: 404 })
 
         const deletedClient = await prisma.client.delete({
             where: {
-                id: Number(id)
+                id: String(id)
             }
         })
 
@@ -113,11 +112,11 @@ export const PATCH = async (req: Request) => {
 
         const checkId = await prisma.client.findFirst({
             where: {
-                id: Number(id)
+                id: String(id)
             }
         })
 
-        if (!checkId) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
+        if (!checkId) return NextResponse.json({ success: false, error: true, message: 'no id found' }, { status: 404 })
 
         const existingClient = await prisma.client.findFirst({
             where: {
@@ -129,7 +128,7 @@ export const PATCH = async (req: Request) => {
 
         const updatedClient = await prisma.client.update({
             where: {
-                id: Number(id)
+                id: String(id)
             },
             data: {
                 name: name,
@@ -150,6 +149,7 @@ export const PATCH = async (req: Request) => {
         return NextResponse.json({ success: true, data: updatedClient, message: 'Client updated' })
 
     } catch (error) {
+        
         console.log(error);
     }
 }

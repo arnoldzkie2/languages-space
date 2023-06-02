@@ -1,5 +1,3 @@
-// This is your Prisma schema file,
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,15 +10,17 @@ datasource db {
 // client schema area
 
 model Client {
-  id            Int            @id @default(autoincrement())
+  id            String         @id @unique @default(uuid()) @db.VarChar(256)
   profile       String?
   name          String
+  user_name     String         @unique
   phone_number  String
   email         String?        @unique
   gender        String
   card          Json? // this could be postpaidcard or prepaidcard
   type          String
   organization  Json?
+  password      String
   address       String
   origin        String
   tags          Json?
@@ -31,16 +31,16 @@ model Client {
 }
 
 model PostpaidCard {
-  id                Int     @id @default(autoincrement())
+  id                String  @id @unique @default(uuid()) @db.VarChar(256)
   price             Int
   settlement_period String
   invoice           Boolean
   client            Client? @relation(fields: [client_id], references: [id])
-  client_id         Int?
+  client_id         String?
 }
 
 model PrepaidCard {
-  id               Int     @id @default(autoincrement())
+  id               String  @id @unique @default(uuid()) @db.VarChar(256)
   price            Int
   balance          Int
   invoice          Boolean
@@ -49,39 +49,44 @@ model PrepaidCard {
   online_renews    Boolean
   repeat_purchases Boolean
   client           Client? @relation(fields: [client_id], references: [id])
-  client_id        Int?
+  client_id        String?
 }
 
 // supplier schema area
 
 model Supplier {
-  id                  Int      @id @default(autoincrement())
+  id                  String   @id @unique @default(uuid()) @db.VarChar(256)
   profile             String?
   name                String
+  user_name           String   @unique
   type                String
-  organization        Boolean
+  organization        Json?
   payment_information Json?
   phone_number        String
+  password            String
   email               String   @unique
   address             String
   gender              String
   card                Json?
-  origin              String
+  origin              String?
   tags                Json
   note                String
+  status              String
+  entry               DateTime
+  departure           DateTime
   date                DateTime @default(now())
 }
 
 model SupplierCard {
-  id   Int                @id @default(autoincrement())
+  id   String             @id @unique @default(uuid()) @db.VarChar(256)
   name SupplierCardType[]
   type Json
 }
 
 model SupplierCardType {
-  id             Int           @id @default(autoincrement())
+  id             String        @id @unique @default(uuid()) @db.VarChar(256)
   SupplierCard   SupplierCard? @relation(fields: [supplierCardId], references: [id])
-  supplierCardId Int?
+  supplierCardId String?
   fixed_salary   Json?
   commission     Json?
 }
@@ -89,14 +94,16 @@ model SupplierCardType {
 // agent schema area
 
 model Agent {
-  id                  Int      @id @default(autoincrement())
+  id                  String   @id @unique @default(uuid()) @db.VarChar(256)
   profile             String?
   name                String
+  user_name           String   @unique
+  password            String
   type                String
   organization        Json?
   payment_information Json?
   phone_number        String
-  email               String
+  email               String   @unique
   address             String
   gender              String
   card                Json?
@@ -106,7 +113,7 @@ model Agent {
 }
 
 model AgentCard {
-  id   Int    @id @default(autoincrement())
+  id   String @id @unique @default(uuid()) @db.VarChar(256)
   type Json
   name String
   link String
@@ -115,21 +122,45 @@ model AgentCard {
 // order schema area 
 
 model Order {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @unique @default(uuid()) @db.VarChar(256)
   booking_date   DateTime
   name           String
   client_name    String
   card           Json
   quantity       Int
-  price          Int
-  agent_name     String?
-  agent_card     Json?
-  supplier_name  String?
-  supplier_card  Json?
+  price          Float
   operator       String
   note           String?
   status         String
   invoice_number Int
   express_number Int
   date           DateTime @default(now())
+}
+
+// admin schema area
+
+model Admin {
+  id        String   @id @default(uuid()) @db.VarChar(256)
+  name      String
+  user_name String   @unique
+  email     String
+  password  String
+  date      DateTime @default(now())
+}
+
+model SuperAdmin {
+  id        String   @id @default(uuid()) @db.VarChar(256)
+  name      String
+  user_name String   @unique
+  email     String
+  password  String
+  date      DateTime @default(now())
+}
+
+// department schema area
+
+model Department {
+  id   String   @id @unique @default(uuid()) @db.VarChar(256)
+  name String
+  date DateTime @default(now())
 }
