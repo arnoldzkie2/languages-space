@@ -71,7 +71,7 @@ model Supplier {
   origin              String?
   tags                Json
   note                String
-  status              String
+  employment_status              String
   entry               DateTime
   departure           DateTime
   date                DateTime @default(now())

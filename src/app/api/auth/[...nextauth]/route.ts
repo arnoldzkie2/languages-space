@@ -23,7 +23,7 @@ const handler = NextAuth({
                 if (data) {
 
                     return data
-
+                            
                 } else {
 
                     return null
