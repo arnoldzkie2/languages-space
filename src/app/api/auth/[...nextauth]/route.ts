@@ -16,9 +16,9 @@ const handler = NextAuth({
 
             },
 
-            async authorize(credentials, req) {
+            async authorize(credentials) {
 
-                const { data } = await axios.post(`${process.env.NEXTAUTH_URL}/api/login`,credentials)
+                const { data } = await axios.post(`${process.env.NEXTAUTH_URL}/api/login`, credentials)
 
                 if (data) {
 
