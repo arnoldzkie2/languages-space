@@ -18,13 +18,8 @@ const handler = NextAuth({
 
             async authorize(credentials, req) {
 
-                const { data } = await axios.post(`${process.env.NEXTAUTH_URL}/api/login`, {
-                    user_name: credentials?.user_name,
-                    password: credentials?.password
-                })
+                const { data } = await axios.post(`${process.env.NEXTAUTH_URL}/api/login`,credentials)
 
-                console.log(data);
-                
                 if (data) {
 
                     return data
