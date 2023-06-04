@@ -9,9 +9,7 @@ interface SessionProviderProps {
 }
 
 const SessionProviders: React.FC<SessionProviderProps> = ({ children }) => {
-
     return <SessionProvider>{children}</SessionProvider>
-
 };
 
 export default SessionProviders;
