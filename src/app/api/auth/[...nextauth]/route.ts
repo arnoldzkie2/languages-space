@@ -23,6 +23,8 @@ const handler = NextAuth({
                     password: credentials?.password
                 })
 
+                console.log(data);
+                
                 if (data) {
 
                     return data

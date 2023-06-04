@@ -1,7 +1,7 @@
 'use client'
 import { FC } from 'react';
-import {signIn, signOut, useSession } from 'next-auth/react';
-import type { RootState } from '@/redux/store';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { RootState } from '@/redux/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { handleUsername, handlePassword, handleEye } from '@/redux/features/login/loginSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,7 +13,6 @@ const App: FC = () => {
     const session = useSession()
 
     console.log(session);
-    
 
     const { user_name, password, isText } = useSelector((state: RootState) => state.login)
 

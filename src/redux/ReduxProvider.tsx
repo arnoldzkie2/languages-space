@@ -2,7 +2,7 @@
 import { Provider } from 'react-redux';
 import { store } from './store';
 
-export const Providers = ({children}:any) => {
+export const ReduxProvider = ({children}:any) => {
     return (
         <Provider store={store}>
             {children}
@@ -10,4 +10,4 @@ export const Providers = ({children}:any) => {
     )
 }
 
-export default Providers
+export default ReduxProvider
