@@ -1,6 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
 'use client'
-import LoginForm from '@/components/web/LoginForm';
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
@@ -26,14 +24,16 @@ const Page = () => {
                 redirect('/admin')
             } else if (session.status === 'authenticated' && session.data.user.user === 'super-admin') {
                 redirect('/super-admin')
+            } else {
+                redirect('/auth/login')
             }
         }
     }, [session])
 
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
-            <h1 className='pb-10 text-4xl font-bold'>Language Space</h1>
-            <LoginForm />
+            <h1 className='pb-10 text-4xl font-bold'>Languages Space</h1>
+            <p className="text-lg text-white bg-black px-3">{session.status === 'loading' ? 'Redirecting...' : 'You are not loged in!'}</p>
         </div>
     );
 };

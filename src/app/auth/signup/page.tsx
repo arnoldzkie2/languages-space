@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import LoginForm from '@/components/web/LoginForm';
+import SignupForm from '@/components/web/SIgnupForm';
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
@@ -33,7 +33,7 @@ const Page = () => {
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
             <h1 className='pb-10 text-4xl font-bold'>Language Space</h1>
-            <LoginForm />
+            <SignupForm />
         </div>
     );
 };

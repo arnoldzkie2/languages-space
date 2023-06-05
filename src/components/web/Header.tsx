@@ -1,8 +1,8 @@
-'use client'
 import React from 'react';
 import Link from 'next/link';
 
 interface HeaderProps {
+    
 }
 
 const Header: React.FC<HeaderProps> = ({ }) => {

@@ -3,20 +3,28 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, tags } = await req.json()
+    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, tags, department } = await req.json()
 
     try {
 
-        const existingClient = await prisma.client.findFirst({
-            where: {
-                email: email
-            }
+        const existingUsername = await prisma.client.findFirst({
+            where: { user_name }
         })
 
-        if (existingClient) return NextResponse.json({ success: true, data: { email: email }, message: 'Email already exist!' }, { status: 200 })
+        if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 200 })
+
+        if (email) {
+
+            const existingEmail = await prisma.client.findFirst({
+                where: { email }
+            })
+
+            if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 200 })
+        }
 
         const newUser = await prisma.client.create({
             data: {
+                department: department,
                 name: name,
                 password: password,
                 user_name: user_name,
