@@ -2,7 +2,7 @@ import ReduxProvider from '@/redux/ReduxProvider'
 import '../lib/styles/globals.css'
 import SessionProviders from '@/components/SessionProvider'
 export const metadata = {
-  title: 'Language Spaces',
+  title: 'Languages Spaces',
   description: "Let's talk english here.",
 }
 

@@ -52,7 +52,7 @@ export const POST = async (req: Request) => {
 
         if (isSupplier) return NextResponse.json({ success: true, data: isSupplier, user: 'supplier' }, { status: 200 })
 
-        return NextResponse.json({ success: false, error: true, message: 'Invalid credentials' }, { status: 20 })
+        return NextResponse.json({ success: false, error: true, message: 'Invalid credentials' }, { status: 200 })
 
     } catch (error) {
 
