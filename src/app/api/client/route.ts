@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, tags, department } = await req.json()
+    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, tags, departments } = await req.json()
 
     try {
 
@@ -24,7 +24,7 @@ export const POST = async (req: Request) => {
 
         const newUser = await prisma.client.create({
             data: {
-                department: department,
+                departments: departments,
                 name: name,
                 password: password,
                 user_name: user_name,
