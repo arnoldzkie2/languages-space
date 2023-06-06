@@ -7,39 +7,31 @@ export const POST = async (req: Request) => {
 
     try {
 
-        const existingUsername = await prisma.client.findFirst({
-            where: { user_name }
-        })
+        const existingUsername =
+            await prisma.client.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
 
-        if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 200 })
+        if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
 
-        if (email) {
+        const existingEmail =
+            await prisma.client.findUnique({ where: { email: String(email) } }) ||
+            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
 
-            const existingEmail = await prisma.client.findFirst({
-                where: { email }
-            })
-
-            if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 200 })
-        }
+        if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 409 })
 
         const newUser = await prisma.client.create({
             data: {
-                departments: departments,
-                name: name,
-                password: password,
-                user_name: user_name,
-                type: type,
-                organization: organization,
-                phone_number: phone_number,
-                email: email,
-                address: address,
-                gender: gender,
-                origin: origin,
-                tags: tags,
+                departments, name, password, user_name, type, organization, phone_number, email, address, gender, origin, tags,
             }
         })
 
-        if (!newUser) return NextResponse.json({ success: false, message: 'Server Error' }, { status: 500 })
+        if (!newUser) return NextResponse.json({ success: false, message: 'Bad request' }, { status: 400 })
 
         return NextResponse.json({ success: true, data: newUser }, { status: 200 })
 
@@ -52,31 +44,33 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
 
-    const id = searchParams.get('id');
+    const id = searchParams.get('id')
+
+    const department = searchParams.get('department')
 
     try {
 
-        if (id) {
+        if (department) {
 
-            const checkId = await prisma.client.findFirst({
+            const clientsDepartment = await prisma.client.findMany({
                 where: {
-                    id: String(id)
+                    departments: {
+                        array_contains: String(department)
+                    }
                 }
             })
 
-            if (!checkId) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
-
-            const singleClient = await prisma.client.findFirst({
-                where: {
-                    id: String(id)
-                }
-            })
-
-            if (!singleClient) return NextResponse.json({ success: false, message: 'no id found' }, { status: 404 })
-
-            return NextResponse.json({ success: true, data: singleClient }, { status: 200 })
+            if (clientsDepartment.length === 0) return NextResponse.json({ success: false, error: true, message: 'No department found' }, { status: 404 })
+            
+            if (clientsDepartment) return NextResponse.json({ success: true, data: clientsDepartment }, { status: 200 })
 
         }
+
+        const client = await prisma.client.findUnique({ where: { id: String(id) } })
+
+        if (client) return NextResponse.json({ success: true, data: client }, { status: 200 })
+
+        if (id && !client) return NextResponse.json({ success: false, error: true, message: 'No client found' }, { status: 404 })
 
         const allClient = await prisma.client.findMany()
 
@@ -84,9 +78,14 @@ export const GET = async (req: Request) => {
 
         return NextResponse.json({ success: true, data: allClient }, { status: 200 })
 
-
     } catch (error) {
+
         console.log(error);
+
+    } finally {
+
+        prisma.$disconnect()
+
     }
 }
 
@@ -98,32 +97,30 @@ export const DELETE = async (req: Request) => {
 
     try {
 
-        const checkId = await prisma.client.findFirst({
-            where: {
-                id: String(id)
-            }
-        })
+        const client = await prisma.client.findUnique({ where: { id: String(id) } });
 
-        if (!checkId) return NextResponse.json({ success: false, error: true, message: 'no id found' }, { status: 404 })
+        if (!client) { return NextResponse.json({ success: false, error: true, message: 'No client found' }, { status: 404 }); }
 
-        const deletedClient = await prisma.client.delete({
-            where: {
-                id: String(id)
-            }
-        })
+        const deletedClient = await prisma.client.delete({ where: { id: String(id) } });
 
-        if (!deletedClient) return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 })
+        if (!deletedClient) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })
 
-        return NextResponse.json({ success: true, data: deletedClient, message: 'Client deleted' }, { status: 200 })
+        return NextResponse.json({ success: true, data: deletedClient, message: 'Client deleted successfully' }, { status: 200 })
 
     } catch (error) {
+
         console.log(error);
+
+    } finally {
+
+        prisma.$disconnect()
+
     }
 }
 
 export const PATCH = async (req: Request) => {
 
-    const { name, type, password, organization, user_name, phone_number, email, address, gender, origin, tags, note } = await req.json()
+    const { name, type, password, organization, user_name, phone_number, email, address, gender, origin, tags, note, departments } = await req.json()
 
     const { searchParams } = new URL(req.url);
 
@@ -131,39 +128,34 @@ export const PATCH = async (req: Request) => {
 
     try {
 
-        const checkId = await prisma.client.findFirst({
-            where: {
-                id: String(id)
-            }
-        })
+        const client = await prisma.client.findUnique({ where: { id: String(id) } })
 
-        if (!checkId) return NextResponse.json({ success: false, error: true, message: 'no id found' }, { status: 404 })
+        if (!client) return NextResponse.json({ success: false, error: true, message: 'No client found' }, { status: 404 })
 
-        const existingClient = await prisma.client.findFirst({
-            where: {
-                email: email
-            }
-        })
+        const existingUsername =
+            await prisma.client.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
 
-        if (existingClient) return NextResponse.json({ success: true, message: 'Email already exist!' }, { status: 200 })
+        if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
+
+        const existingEmail =
+            await prisma.client.findUnique({ where: { email: String(email) } }) ||
+            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
+            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+
+        if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 409 })
 
         const updatedClient = await prisma.client.update({
             where: {
                 id: String(id)
             },
             data: {
-                password: password,
-                name: name,
-                user_name: user_name,
-                type: type,
-                organization: organization,
-                phone_number: phone_number,
-                email: email,
-                address: address,
-                gender: gender,
-                origin: origin,
-                tags: tags,
-                note: note
+                name, user_name, password, organization, origin, tags, phone_number, email, address, gender, note, type, departments
             }
         })
 
@@ -174,5 +166,10 @@ export const PATCH = async (req: Request) => {
     } catch (error) {
 
         console.log(error);
+
+    } finally {
+
+        prisma.$disconnect()
+
     }
 }

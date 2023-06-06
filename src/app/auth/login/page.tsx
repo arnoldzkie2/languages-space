@@ -6,25 +6,25 @@ import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
 interface SessionProps {
-    status: string,
+    status: string
     data: any
-
 }
+
 const Page = () => {
 
     const session: SessionProps = useSession()
 
     useEffect(() => {
-        if (session.status !== 'loading') {
-            if (session.status === 'authenticated' && session.data.user.user === 'client') {
+        if (session.status !== 'loading' && session.status === 'authenticated') {
+            if (session.data.user.user === 'client') {
                 redirect('/client')
-            } else if (session.status === 'authenticated' && session.data.user.user === 'agent') {
+            } else if (session.data.user.user === 'agent') {
                 redirect('/agent')
-            } else if (session.status === 'authenticated' && session.data.use.user === 'supplier') {
+            } else if (session.data.user.user === 'supplier') {
                 redirect('/supplier')
-            } else if (session.status === 'authenticated' && session.data.user.user === 'admin') {
+            } else if (session.data.user.user === 'admin') {
                 redirect('/admin')
-            } else if (session.status === 'authenticated' && session.data.user.user === 'super-admin') {
+            } else if (session.data.user.user === 'super-admin') {
                 redirect('/super-admin')
             }
         }

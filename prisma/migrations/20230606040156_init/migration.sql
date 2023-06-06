@@ -4,21 +4,29 @@ CREATE TABLE `Client` (
     `profile` VARCHAR(191) NULL,
     `name` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
-    `phone_number` VARCHAR(191) NOT NULL,
+    `phone_number` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
-    `gender` VARCHAR(191) NOT NULL,
-    `card` JSON NULL,
-    `type` VARCHAR(191) NOT NULL,
+    `gender` VARCHAR(191) NULL,
+    `type` VARCHAR(191) NULL,
     `organization` JSON NULL,
     `password` VARCHAR(191) NOT NULL,
-    `address` VARCHAR(191) NOT NULL,
-    `origin` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NULL,
+    `origin` VARCHAR(191) NULL,
     `tags` JSON NULL,
     `note` VARCHAR(191) NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `departments` JSON NULL,
 
     UNIQUE INDEX `Client_user_name_key`(`user_name`),
     UNIQUE INDEX `Client_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ClientCard` (
+    `id` VARCHAR(191) NOT NULL,
+    `client_id` VARCHAR(191) NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -28,7 +36,7 @@ CREATE TABLE `PostpaidCard` (
     `price` INTEGER NOT NULL,
     `settlement_period` VARCHAR(191) NOT NULL,
     `invoice` BOOLEAN NOT NULL,
-    `client_id` VARCHAR(191) NULL,
+    `client_card_id` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -43,7 +51,7 @@ CREATE TABLE `PrepaidCard` (
     `online_purchases` BOOLEAN NOT NULL,
     `online_renews` BOOLEAN NOT NULL,
     `repeat_purchases` BOOLEAN NOT NULL,
-    `client_id` VARCHAR(191) NULL,
+    `clien_card_id` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -66,10 +74,11 @@ CREATE TABLE `Supplier` (
     `origin` VARCHAR(191) NULL,
     `tags` JSON NOT NULL,
     `note` VARCHAR(191) NOT NULL,
-    `status` VARCHAR(191) NOT NULL,
+    `employment_status` VARCHAR(191) NOT NULL,
     `entry` DATETIME(3) NOT NULL,
     `departure` DATETIME(3) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `departments` JSON NULL,
 
     UNIQUE INDEX `Supplier_user_name_key`(`user_name`),
     UNIQUE INDEX `Supplier_email_key`(`email`),
@@ -112,6 +121,7 @@ CREATE TABLE `Agent` (
     `origin` VARCHAR(191) NOT NULL,
     `note` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `departments` JSON NULL,
 
     UNIQUE INDEX `Agent_user_name_key`(`user_name`),
     UNIQUE INDEX `Agent_email_key`(`email`),
@@ -143,6 +153,7 @@ CREATE TABLE `Order` (
     `invoice_number` INTEGER NOT NULL,
     `express_number` INTEGER NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `departments` JSON NOT NULL,
 
     UNIQUE INDEX `Order_id_key`(`id`),
     PRIMARY KEY (`id`)
@@ -156,6 +167,7 @@ CREATE TABLE `Admin` (
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `departments` JSON NULL,
 
     UNIQUE INDEX `Admin_user_name_key`(`user_name`),
     PRIMARY KEY (`id`)
@@ -185,10 +197,13 @@ CREATE TABLE `Department` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `PostpaidCard` ADD CONSTRAINT `PostpaidCard_client_id_fkey` FOREIGN KEY (`client_id`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `ClientCard` ADD CONSTRAINT `ClientCard_client_id_fkey` FOREIGN KEY (`client_id`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PrepaidCard` ADD CONSTRAINT `PrepaidCard_client_id_fkey` FOREIGN KEY (`client_id`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `PostpaidCard` ADD CONSTRAINT `PostpaidCard_client_card_id_fkey` FOREIGN KEY (`client_card_id`) REFERENCES `ClientCard`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PrepaidCard` ADD CONSTRAINT `PrepaidCard_clien_card_id_fkey` FOREIGN KEY (`clien_card_id`) REFERENCES `ClientCard`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `SupplierCardType` ADD CONSTRAINT `SupplierCardType_supplierCardId_fkey` FOREIGN KEY (`supplierCardId`) REFERENCES `SupplierCard`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
