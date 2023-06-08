@@ -20,7 +20,7 @@ const Page = () => {
                 redirect('/client')
             } else if (session.status === 'authenticated' && session.data.user.user === 'agent') {
                 redirect('/agent')
-            } else if (session.status === 'authenticated' && session.data.use.user === 'supplier') {
+            } else if (session.status === 'authenticated' && session.data.user.user === 'supplier') {
                 redirect('/supplier')
             } else if (session.status === 'authenticated' && session.data.user.user === 'admin') {
                 redirect('/admin')

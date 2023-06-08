@@ -10,7 +10,7 @@ interface SupplierProps {
 const Supplier: React.FC<SupplierProps> = ({ }) => {
     return (
         <>
-            <Link href={'/manage/supplier'} className='flex justify-between items-center text-lg'>Supplier <FontAwesomeIcon icon={faUsers} /></Link>
+            <Link href={'/manage/supplier'} className='flex justify-between items-center hover:text-blue-600'>Supplier <FontAwesomeIcon icon={faUsers} /></Link>
 
         </>
     );

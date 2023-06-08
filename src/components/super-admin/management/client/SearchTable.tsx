@@ -1,9 +1,9 @@
 import React from 'react';
 
-interface SearchTableProps {
+interface Props {
 }
 
-const SearchTable: React.FC<SearchTableProps> = ({  }) => {
+const SearchTable: React.FC<Props> = ({  }) => {
     
     return (
         <>

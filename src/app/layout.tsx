@@ -1,4 +1,3 @@
-import ReduxProvider from '@/redux/ReduxProvider'
 import '../lib/styles/globals.css'
 import SessionProviders from '@/components/SessionProvider'
 export const metadata = {
@@ -15,9 +14,7 @@ const RootLayout = ({ children }: RootInterface) => {
     <html lang="en">
       <body>
         <SessionProviders>
-          <ReduxProvider>
-            {children}
-          </ReduxProvider>
+          {children}
         </SessionProviders>
       </body>
     </html>

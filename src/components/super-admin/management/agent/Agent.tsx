@@ -10,7 +10,7 @@ interface AgentProps {
 const Agent: React.FC<AgentProps> = ({ }) => {
     return (
         <>
-            <Link href={'/manage/agent'} className='flex justify-between items-center text-lg'>Agent <FontAwesomeIcon icon={faUserSecret} /></Link>
+            <Link href={'/manage/agent'} className='flex justify-between items-center hover:text-blue-600'>Agent <FontAwesomeIcon icon={faUserSecret} /></Link>
 
         </>
     );

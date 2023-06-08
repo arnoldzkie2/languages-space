@@ -9,6 +9,7 @@ import Order from './management/order/Order';
 import Statistics from './management/statistics/Statistics';
 import Settings from './management/settings/Settings';
 import Web from './management/web/Web';
+import Logout from './Logout';
 
 interface SideNavProps {
 }
@@ -18,7 +19,7 @@ const SideNav: React.FC<SideNavProps> = ({ }) => {
     return (
         <nav className='border h-screen w-44 p-6 flex flex-col'>
             <h1 className='font-black text-2xl tracking-tight text-center pb-5 border-b-2 border-slate-600'>Languages Space</h1>
-            <ul className='flex flex-col gap-6 h-full justify-center'>
+            <ul className='flex flex-col gap-6 h-full py-7'>
                 <Dashboard />
                 <Client />
                 <Schedule />
@@ -29,6 +30,7 @@ const SideNav: React.FC<SideNavProps> = ({ }) => {
                 <Statistics />
                 <Web />
                 <Settings />
+                <Logout />
             </ul>
         </nav>
     );

@@ -60,10 +60,12 @@ export const GET = async (req: Request) => {
                 }
             })
 
-            if (clientsDepartment.length === 0) return NextResponse.json({ success: false, error: true, message: 'No department found' }, { status: 404 })
-            
+            if (!clientsDepartment) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+
             if (clientsDepartment) return NextResponse.json({ success: true, data: clientsDepartment }, { status: 200 })
 
+
+            return NextResponse.json({ success: true, data: clientsDepartment }, { status: 200 })
         }
 
         const client = await prisma.client.findUnique({ where: { id: String(id) } })

@@ -10,7 +10,7 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({ }) => {
     return (
         <>
-            <Link href={'/manage/settings'} className='flex justify-between items-center text-lg'>Settings <FontAwesomeIcon icon={faGear} /></Link>
+            <Link href={'/manage/settings'} className='flex justify-between items-center hover:text-blue-600'>Settings <FontAwesomeIcon icon={faGear} /></Link>
         </>
     );
 };

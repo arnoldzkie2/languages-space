@@ -10,7 +10,7 @@ interface AdminProps {
 const Admin: React.FC<AdminProps> = ({  }) => {
     return (
         <>
-                <Link href={'/manage/admin'} className='flex justify-between items-center text-lg'>Admin <FontAwesomeIcon icon={faUserShield} /></Link>
+                <Link href={'/manage/admin'} className='flex justify-between items-center hover:text-blue-600'>Admin <FontAwesomeIcon icon={faUserShield} /></Link>
             
         </>
     );

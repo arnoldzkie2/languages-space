@@ -10,7 +10,7 @@ interface OrderProps {
 const Order: React.FC<OrderProps> = ({ }) => {
     return (
         <>
-            <Link href={'/manage/order'} className='flex justify-between items-center text-lg'>Order <FontAwesomeIcon icon={faNewspaper} /></Link>
+            <Link href={'/manage/order'} className='flex justify-between items-center hover:text-blue-600'>Order <FontAwesomeIcon icon={faNewspaper} /></Link>
         </>
     );
 };

@@ -9,7 +9,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ }) => {
     return (
         <>
-            <Link href={'/super-admin'} className='flex justify-between items-center text-lg'>Dashboard <FontAwesomeIcon icon={faHouse} /></Link>
+            <Link href={'/super-admin'} className='flex justify-between items-center hover:text-blue-600'>Dashboard <FontAwesomeIcon icon={faHouse} /></Link>
         </>
     );
 };

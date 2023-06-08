@@ -10,7 +10,7 @@ interface StatisticsProps {
 const Statistics: React.FC<StatisticsProps> = ({ }) => {
     return (
         <>
-            <Link href={'/manage/statistics'} className='flex justify-between items-center text-lg'>Statistics <FontAwesomeIcon icon={faChartLine} /></Link>
+            <Link href={'/manage/statistics'} className='flex justify-between items-center hover:text-blue-600'>Statistics <FontAwesomeIcon icon={faChartLine} /></Link>
         </>
     );
 };
