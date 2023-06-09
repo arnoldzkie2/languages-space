@@ -15,8 +15,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
+
     isOpen: boolean
+
     setIsOpen: Dispatch<SetStateAction<boolean>>
+
 }
 
 const SideNav: React.FC<Props> = ({ isOpen, setIsOpen }) => {

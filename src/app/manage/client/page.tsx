@@ -247,6 +247,7 @@ const Client: FC = () => {
 
     return (
         <div className='flex bg-slate-50'>
+            
             <SideNav isOpen={isOpen} setIsOpen={setIsOpen} />
 
             <div className='flex flex-col w-full'>
@@ -279,7 +280,7 @@ const Client: FC = () => {
                     goToNextPage={goToNextPage} />
             </div>
             {deleteModal && <DeleteWarningModal clientData={clientData} deleteClient={deleteClient} closeModal={closeModal} />}
-            {viewClientModal && <ClientModal clientData={clientData}/>}
+            {viewClientModal && <ClientModal clientData={clientData} />}
         </div>
     );
 };
