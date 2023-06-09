@@ -3,13 +3,12 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { date, name, client_name, card, quantity, price, operator, note, status, invoice_number, express_number, booking_date } = await req.json()
+    const { name, client_name, card, quantity, price, operator, note, status, invoice_number, express_number, departments } = await req.json()
 
     try {
 
         const newOrder = await prisma.order.create({
             data: {
-                booking_date: booking_date,
                 card: card,
                 name: name,
                 client_name: client_name,
@@ -18,9 +17,9 @@ export const POST = async (req: Request) => {
                 operator: operator,
                 note: note,
                 status: status,
-                date: date,
                 invoice_number: invoice_number,
-                express_number: express_number
+                express_number: express_number,
+                departments: departments
             }
         })
 
@@ -45,7 +44,7 @@ export const GET = async (req: Request) => {
 
         if (id) {
 
-            const checkId = await prisma.order.findFirst({
+            const checkId = await prisma.order.findUnique({
                 where: {
                     id: String(id)
                 }

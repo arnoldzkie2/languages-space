@@ -27,6 +27,8 @@ model Client {
   note         String?
   date         DateTime     @default(now())
   departments  Json?
+  agent        Agent?       @relation(fields: [agent_id], references: [id])
+  agent_id      String?
 }
 
 model ClientCard {
@@ -116,9 +118,10 @@ model Agent {
   gender              String
   card                Json?
   origin              String
-  note                String
+  note                String?
   date                DateTime @default(now())
   departments         Json?
+  clients             Client[]
 }
 
 model AgentCard {
@@ -132,7 +135,7 @@ model AgentCard {
 
 model Order {
   id             String   @id @unique @default(uuid())
-  booking_date   DateTime
+  booking_date   DateTime @default(now())
   name           String
   client_name    String
   card           Json
