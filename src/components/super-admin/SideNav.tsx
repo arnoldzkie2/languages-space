@@ -1,4 +1,5 @@
-import React from 'react';
+'use client'
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import Dashboard from './management/dashboard/Dashboard';
 import Client from './management/client/Client';
 import Schedule from './management/schedule/Schedule';
@@ -10,28 +11,43 @@ import Statistics from './management/statistics/Statistics';
 import Settings from './management/settings/Settings';
 import Web from './management/web/Web';
 import Logout from './Logout';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
 
-interface SideNavProps {
+interface Props {
+    isOpen: boolean
+    setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-const SideNav: React.FC<SideNavProps> = ({ }) => {
+const SideNav: React.FC<Props> = ({ isOpen, setIsOpen }) => {
 
     return (
-        <nav className='border h-screen w-44 p-6 flex flex-col'>
-            <h1 className='font-black text-2xl tracking-tight text-center pb-5 border-b-2 border-slate-600'>Languages Space</h1>
-            <ul className='flex flex-col gap-6 h-full py-7'>
-                <Dashboard />
-                <Client />
-                <Schedule />
-                <Supplier />
-                <Agent />
-                <Admin />
-                <Order />
-                <Statistics />
-                <Web />
-                <Settings />
-                <Logout />
+        <nav className={`border h-screen ${isOpen ? 'w-44 p-6' : 'w-16 px-3 py-6'}  flex flex-col shadow-md bg-white`}>
+            {
+                isOpen ?
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className='text-lg flex justify-between items-center pb-4 border-b border-gray-600 hover:text-blue-600'>
+                        Menu <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                    :
+                    <FontAwesomeIcon icon={faBars}
+                        className='pb-4 border-b text-xl text-black border-gray-600 cursor-pointer hover:text-blue-600'
+                        onClick={() => setIsOpen(true)} />
+            }
+            <ul className='flex flex-col gap-7 h-full py-7 justify-center'>
+                <Dashboard isOpen={isOpen} />
+                <Client isOpen={isOpen} />
+                <Schedule isOpen={isOpen} />
+                <Supplier isOpen={isOpen} />
+                <Agent isOpen={isOpen} />
+                <Admin isOpen={isOpen} />
+                <Order isOpen={isOpen} />
+                <Statistics isOpen={isOpen} />
+                <Web isOpen={isOpen} />
+                <Settings isOpen={isOpen} />
             </ul>
+            <Logout isOpen={isOpen} />
         </nav>
     );
 };

@@ -5,16 +5,17 @@ import { signOut } from 'next-auth/react';
 import React from 'react';
 
 interface Props {
+    isOpen: boolean
 }
 
-const Logout: React.FC<Props> = ({ }) => {
+const Logout: React.FC<Props> = ({ isOpen }) => {
     return (
-        <>
-            <li className='flex items-center justify-between text-slate-800 hover:text-blue-600 cursor-pointer mt-auto'
-                onClick={() => signOut({ redirect: true, callbackUrl: '/auth/login' })}>
-                Logout <FontAwesomeIcon icon={faArrowRightToBracket} /></li>
-        </>
+        <div className='flex items-center justify-between text-black hover:text-blue-600 cursor-pointer mt-auto'
+            onClick={() => signOut({ redirect: true, callbackUrl: '/auth/login' })}>
+            {isOpen && <span>Logout</span>}
+            <FontAwesomeIcon icon={faArrowRightToBracket} className={`flex justify-center ${!isOpen && 'w-full text-xl'}`} />
+        </div>
     );
-};
+}
 
 export default Logout;

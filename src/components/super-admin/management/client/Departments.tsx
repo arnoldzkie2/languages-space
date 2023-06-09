@@ -23,9 +23,10 @@ const Departments: React.FC<Props> = ({ departments, setDepartmentID }) => {
     };
 
     return (
-        <>
-            <select onChange={handleDepartmentChange} className="bg-slate-50 border rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 outline-none">
-                <option value=''>All Department</option>
+        <div className="flex flex-col">
+            <div className="p-2 font-bold">Select Department</div>
+            <select onChange={handleDepartmentChange} className="border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 outline-none cursor-pointer">
+                <option value=''>All Clients</option>
                 {departments &&
                     departments.length > 0 &&
                     departments.map((department) => (
@@ -34,7 +35,7 @@ const Departments: React.FC<Props> = ({ departments, setDepartmentID }) => {
                         </option>
                     ))}
             </select>
-        </>
+        </div>
     );
 };
 
