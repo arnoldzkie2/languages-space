@@ -11,24 +11,22 @@ datasource db {
 
 model Client {
   id           String       @id @default(uuid())
-  profile      String?
+  profile      String?      @db.Text
   name         String
   user_name    String       @unique
   phone_number String?
-  email        String?      @unique
+  email        String?
   gender       String?
   card         ClientCard[]
-  type         String?
   organization Json?
   password     String
   address      String?
-  origin       String?
-  tags         Json?
+  origin       Json?
   note         String?
   date         DateTime     @default(now())
   departments  Json?
   agent        Agent?       @relation(fields: [agent_id], references: [id])
-  agent_id      String?
+  agent_id     String?
 }
 
 model ClientCard {
@@ -64,27 +62,33 @@ model PrepaidCard {
 // supplier schema area
 
 model Supplier {
-  id                  String   @id @default(uuid())
+  id                  String         @id @default(uuid())
   profile             String?
   name                String
-  user_name           String   @unique
+  user_name           String         @unique
   type                String
   organization        Json?
   payment_information Json?
   phone_number        String
   password            String
-  email               String   @unique
+  email               String         @unique
   address             String
   gender              String
   card                Json?
   origin              String?
-  tags                Json
-  note                String
+  tags                Json?
+  note                String?
   employment_status   String
   entry               DateTime
   departure           DateTime
-  date                DateTime @default(now())
+  date                DateTime       @default(now())
   departments         Json?
+}
+
+model SupplierTags {
+  id         String    @id @default(uuid())
+  name       String
+  date       DateTime  @default(now())
 }
 
 model SupplierCard {

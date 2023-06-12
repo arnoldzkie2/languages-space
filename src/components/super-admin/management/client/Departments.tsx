@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useContext } from "react";
 import { DepartmentsProps } from "./Types";
 
 interface Props {
@@ -15,16 +15,18 @@ interface Props {
 
 const Departments: React.FC<Props> = ({ departments, setDepartmentID }) => {
 
+
     const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 
         const selectedId = event.target.value;
 
         setDepartmentID(selectedId)
+        
     };
 
     return (
         <div className="flex flex-col">
-            <div className="p-2 font-bold">Select Department</div>
+            <div className="p-2 font-medium">Select Department</div>
             <select onChange={handleDepartmentChange} className="border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 outline-none cursor-pointer">
                 <option value=''>All Clients</option>
                 {departments &&

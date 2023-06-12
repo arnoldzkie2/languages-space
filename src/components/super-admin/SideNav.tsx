@@ -1,5 +1,4 @@
-'use client'
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import Dashboard from './management/dashboard/Dashboard';
 import Client from './management/client/Client';
 import Schedule from './management/schedule/Schedule';

@@ -16,11 +16,15 @@ interface Props {
 
     goToPage: (pageNumber: number) => void
 
-    isOpen: boolean
+    totalClients: {
+        total: string;
+        searched: string;
+        selected: string;
+    }
 
 }
 
-const Pagination: React.FC<Props> = ({ isOpen, goToPreviousPage, currentPage, goToNextPage, getTotalPages, setCurrentPage, goToPage }) => {
+const Pagination: React.FC<Props> = ({ goToPreviousPage, currentPage, goToNextPage, getTotalPages, setCurrentPage, goToPage, totalClients }) => {
 
     const renderPageNumbers = () => {
         const totalPages = getTotalPages();
@@ -67,15 +71,15 @@ const Pagination: React.FC<Props> = ({ isOpen, goToPreviousPage, currentPage, go
     };
 
     return (
-        <div className={`flex p-5 items-center ${isOpen ? 'mx-5 mb-5' :'mx-10 mb-10'} justify-between border shadow-md bg-white`}>
+        <div className={`flex py-5 px-10 items-center justify-between border shadow-md bg-white h-24`}>
 
-            <div className='flex items-center gap-3'>
-                <div className='font-bold px-5'>
+            <div className='flex items-center gap-3 w-1/6'>
+                <div className='font-medium'>
                     Page {currentPage} of {getTotalPages()}
                 </div>
                 <input
                     type='text'
-                    className='outline-none border px-3 py-2 w-2/5'
+                    className='outline-none border px-3 py-2 w-1/2'
                     placeholder='Go to page #'
                     value={currentPage === 1 ? '' : currentPage}
                     onChange={(e) => {
@@ -83,6 +87,11 @@ const Pagination: React.FC<Props> = ({ isOpen, goToPreviousPage, currentPage, go
                         setCurrentPage(isNaN(value) ? 1 : value);
                     }}
                 />
+            </div>
+
+            <div className='flex items-center gap-10'>
+                <div className='font-medium'>Selected: <span className='font-black text-gray-600'>{totalClients.selected}</span></div>
+                <div className='font-medium'>Search Result: <span className='font-black text-gray-600'>{totalClients.searched}</span></div>
             </div>
 
             <div className='flex gap-4 items-center'>{renderPageNumbers()}</div>

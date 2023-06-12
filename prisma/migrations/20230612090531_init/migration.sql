@@ -1,24 +1,22 @@
 -- CreateTable
 CREATE TABLE `Client` (
     `id` VARCHAR(191) NOT NULL,
-    `profile` VARCHAR(191) NULL,
+    `profile` TEXT NULL,
     `name` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
     `phone_number` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NULL,
-    `type` VARCHAR(191) NULL,
     `organization` JSON NULL,
     `password` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NULL,
-    `origin` VARCHAR(191) NULL,
-    `tags` JSON NULL,
+    `origin` JSON NULL,
     `note` VARCHAR(191) NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `departments` JSON NULL,
+    `agent_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `Client_user_name_key`(`user_name`),
-    UNIQUE INDEX `Client_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -72,8 +70,8 @@ CREATE TABLE `Supplier` (
     `gender` VARCHAR(191) NOT NULL,
     `card` JSON NULL,
     `origin` VARCHAR(191) NULL,
-    `tags` JSON NOT NULL,
-    `note` VARCHAR(191) NOT NULL,
+    `tags` JSON NULL,
+    `note` VARCHAR(191) NULL,
     `employment_status` VARCHAR(191) NOT NULL,
     `entry` DATETIME(3) NOT NULL,
     `departure` DATETIME(3) NOT NULL,
@@ -82,6 +80,15 @@ CREATE TABLE `Supplier` (
 
     UNIQUE INDEX `Supplier_user_name_key`(`user_name`),
     UNIQUE INDEX `Supplier_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SupplierTags` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -119,7 +126,7 @@ CREATE TABLE `Agent` (
     `gender` VARCHAR(191) NOT NULL,
     `card` JSON NULL,
     `origin` VARCHAR(191) NOT NULL,
-    `note` VARCHAR(191) NOT NULL,
+    `note` VARCHAR(191) NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `departments` JSON NULL,
 
@@ -141,7 +148,7 @@ CREATE TABLE `AgentCard` (
 -- CreateTable
 CREATE TABLE `Order` (
     `id` VARCHAR(191) NOT NULL,
-    `booking_date` DATETIME(3) NOT NULL,
+    `booking_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `name` VARCHAR(191) NOT NULL,
     `client_name` VARCHAR(191) NOT NULL,
     `card` JSON NOT NULL,
@@ -178,7 +185,7 @@ CREATE TABLE `SuperAdmin` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NULL,
     `password` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -195,6 +202,9 @@ CREATE TABLE `Department` (
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Client` ADD CONSTRAINT `Client_agent_id_fkey` FOREIGN KEY (`agent_id`) REFERENCES `Agent`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ClientCard` ADD CONSTRAINT `ClientCard_client_id_fkey` FOREIGN KEY (`client_id`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

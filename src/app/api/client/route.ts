@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, tags, departments } = await req.json()
+    const { profile, name, organization, user_name, password, phone_number, email, address, gender, origin, note, departments } = await req.json()
 
     try {
 
@@ -16,18 +16,10 @@ export const POST = async (req: Request) => {
 
         if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
 
-        const existingEmail =
-            await prisma.client.findUnique({ where: { email: String(email) } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
-
-        if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 409 })
 
         const newUser = await prisma.client.create({
             data: {
-                departments, name, password, user_name, type, organization, phone_number, email, address, gender, origin, tags,
+                profile, departments, name, password, user_name, organization, phone_number, email, address, gender, origin, note
             }
         })
 
@@ -122,7 +114,7 @@ export const DELETE = async (req: Request) => {
 
 export const PATCH = async (req: Request) => {
 
-    const { name, type, password, organization, user_name, phone_number, email, address, gender, origin, tags, note, departments } = await req.json()
+    const { profile, name, password, organization, user_name, phone_number, email, address, gender, origin, tags, note, departments } = await req.json()
 
     const { searchParams } = new URL(req.url);
 
@@ -143,21 +135,13 @@ export const PATCH = async (req: Request) => {
 
         if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
 
-        const existingEmail =
-            await prisma.client.findUnique({ where: { email: String(email) } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
-
-        if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 409 })
 
         const updatedClient = await prisma.client.update({
             where: {
                 id: String(id)
             },
             data: {
-                name, user_name, password, organization, origin, tags, phone_number, email, address, gender, note, type, departments
+                profile, name, user_name, password, organization, origin, phone_number, email, address, gender, note, departments
             }
         })
 
