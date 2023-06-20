@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, user_name, password, type, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure } = await req.json()
+    const { name, user_name, password, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure } = await req.json()
 
     try {
 
@@ -20,7 +20,7 @@ export const POST = async (req: Request) => {
         if (checkEmail) return NextResponse.json({ success: false, error: true, message: 'Email already exist!' }, { status: 200 })
 
         const newSupplier = await prisma.supplier.create({
-            data: { name, user_name, type, password, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure }
+            data: { name, user_name, password, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure }
         })
 
         if (!newSupplier) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })
@@ -76,7 +76,7 @@ export const GET = async (req: Request) => {
 
 export const PATCH = async (req: Request) => {
 
-    const { name, profile, user_name, password, type, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure } = await req.json()
+    const { name, profile, user_name, password, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure } = await req.json()
 
     const { searchParams } = new URL(req.url)
 
@@ -91,7 +91,7 @@ export const PATCH = async (req: Request) => {
         if (!checkId) return NextResponse.json({ success: false, error: true, message: 'No id found' }, { status: 404 })
 
         const updatedSupplier = await prisma.supplier.update({
-            where: { id: String(id) }, data: { name, profile, user_name, password, type, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure }
+            where: { id: String(id) }, data: { name, profile, user_name, password, organization, payment_information, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure }
         })
 
         if (!updatedSupplier) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
