@@ -1,19 +1,18 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { ClientsProps, DepartmentsProps } from './Types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
+import { RootState } from '@/lib/redux/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeViewModal } from '@/lib/redux/ManageClient/ManageClientSlice';
 
-interface Props {
+const ClientModal: React.FC = () => {
 
-    clientData: ClientsProps | undefined
+    const { clientData } = useSelector((state: RootState) => state.manageClient)
 
-    closeViewModal: () => void
+    const {departments} = useSelector((state: RootState) => state.globalState)
 
-    departments: DepartmentsProps[]
-}
-
-const ClientModal: React.FC<Props> = ({ clientData, closeViewModal, departments }) => {
+    const dispatch = useDispatch()
 
     const availableDepartments = departments.filter((department) =>
         clientData?.departments?.includes(department.id.toString())
@@ -30,7 +29,7 @@ const ClientModal: React.FC<Props> = ({ clientData, closeViewModal, departments 
     const formattedDate = date ? date.toLocaleString() : '';
 
     const copy = (value: any) => {
-    
+
         navigator.clipboard.writeText(value)
 
         alert(`Copied ${value}`)
@@ -40,9 +39,9 @@ const ClientModal: React.FC<Props> = ({ clientData, closeViewModal, departments 
 
         <div className='fixed top-0 left-0 w-screen h-screen bg-gray-500 bg-opacity-60 grid place-items-center py-24 px-72'>
             <form className='w-full h-full bg-white border shadow-lg rounded-2xl p-10 relative flex items-center'>
-                <FontAwesomeIcon icon={faXmark} className='absolute right-5 top-5 text-2xl cursor-pointer' onClick={closeViewModal} />
+                <FontAwesomeIcon icon={faXmark} className='absolute right-5 top-5 text-2xl cursor-pointer' onClick={() => dispatch(closeViewModal())} />
                 <div className='flex flex-col border p-10'>
-                    <Image src={clientData?.profile ? clientData.profile : clientData?.gender === 'male' ? '/gender/male.png' : '/gender/female.png'} width={200} height={200} className='rounded-full' alt='Profile'  />
+                    <Image src={clientData?.profile ? clientData.profile : clientData?.gender === 'male' ? '/gender/male.png' : '/gender/female.png'} width={200} height={200} className='rounded-full' alt='Profile' />
                     <div className='font-bold my-3 py-2 border-b text-center'>{clientData?.name}</div>
                     <div>{clientData?.email || 'noemail@default.com'}</div>
                     <select className='border py-2 px-2 mt-5 outline-none' read-only="true">

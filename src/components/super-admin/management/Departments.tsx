@@ -1,34 +1,27 @@
 'use client'
 
-import React, { Dispatch, SetStateAction, useContext } from "react";
-import { DepartmentsProps } from "./Types";
+import { setDepartmentID } from "@/lib/redux/GlobalState/GlobalSlice";
+import { RootState } from "@/lib/redux/Store";
+import { useDispatch, useSelector } from "react-redux";
 
-interface Props {
+const Departments = () => {
 
-    departments: DepartmentsProps[]
+    const { departments } = useSelector((state: RootState) => state.globalState)
 
-    departmentID: string
-
-    setDepartmentID: Dispatch<SetStateAction<string>>
-    
-}
-
-const Departments: React.FC<Props> = ({ departments, setDepartmentID }) => {
-
+    const dispatch = useDispatch()
 
     const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 
         const selectedId = event.target.value;
-
-        setDepartmentID(selectedId)
         
+        dispatch(setDepartmentID(selectedId))
     };
 
     return (
         <div className="flex flex-col">
             <div className="p-2 font-medium">Select Department</div>
             <select onChange={handleDepartmentChange} className="border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 outline-none cursor-pointer">
-                <option value=''>All Clients</option>
+                <option value=''>All Departments</option>
                 {departments &&
                     departments.length > 0 &&
                     departments.map((department) => (

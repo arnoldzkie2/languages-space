@@ -10,53 +10,38 @@ datasource db {
 // client schema area
 
 model Client {
-  id           String       @id @default(uuid())
-  profile      String?      @db.Text
+  id           String   @id @default(uuid())
+  profile      String?  @db.Text
   name         String
-  user_name    String       @unique
+  user_name    String   @unique
   phone_number String?
   email        String?
   gender       String?
-  card         ClientCard[]
-  organization Json?
+  card         Json?
+  organization String?
   password     String
   address      String?
   origin       Json?
   note         String?
-  date         DateTime     @default(now())
+  date         DateTime @default(now())
   departments  Json?
-  agent        Agent?       @relation(fields: [agent_id], references: [id])
+  agent        Agent?   @relation(fields: [agent_id], references: [id])
   agent_id     String?
 }
 
 model ClientCard {
-  id            String         @id @default(uuid())
-  client        Client?        @relation(fields: [client_id], references: [id])
-  client_id     String?
-  postpaid_card PostpaidCard[]
-  prepaid_card  PrepaidCard[]
-}
-
-model PostpaidCard {
-  id                String      @id @default(uuid())
-  price             Int
-  settlement_period String
+  id                String   @id @default(uuid())
+  departments       Json
+  name              String
+  price             String
+  balance           String
+  validity          String
   invoice           Boolean
-  client_card       ClientCard? @relation(fields: [client_card_id], references: [id])
-  client_card_id    String?
-}
-
-model PrepaidCard {
-  id               String      @id @default(uuid())
-  price            Int
-  balance          Int
-  invoice          Boolean
-  validity         String
-  online_purchases Boolean
-  online_renews    Boolean
-  repeat_purchases Boolean
-  client_Card      ClientCard? @relation(fields: [clien_card_id], references: [id])
-  clien_card_id    String?
+  repeat_purchases  Boolean
+  online_purchases  Boolean
+  online_renews     Boolean
+  settlement_period Int
+  date              DateTime @default(now())
 }
 
 // supplier schema area
@@ -66,19 +51,18 @@ model Supplier {
   profile             String?
   name                String
   user_name           String         @unique
-  type                String
   organization        Json?
   payment_information Json?
-  phone_number        String
-  password            String
-  email               String         @unique
-  address             String
-  gender              String
+  phone_number        String?
+  password            String?
+  email               String?
+  address             String?
+  gender              String?
   card                Json?
+  tags                SupplierTags[]
   origin              String?
-  tags                Json?
   note                String?
-  employment_status   String
+  employment_status   String?
   entry               DateTime
   departure           DateTime
   date                DateTime       @default(now())
@@ -89,6 +73,8 @@ model SupplierTags {
   id         String    @id @default(uuid())
   name       String
   date       DateTime  @default(now())
+  supplier   Supplier? @relation(fields: [suplier_id], references: [id])
+  suplier_id String?
 }
 
 model SupplierCard {
@@ -113,13 +99,12 @@ model Agent {
   name                String
   user_name           String   @unique
   password            String
-  type                String
   organization        Json?
   payment_information Json?
-  phone_number        String
-  email               String   @unique
-  address             String
-  gender              String
+  phone_number        String?
+  email               String?
+  address             String?
+  gender              String?
   card                Json?
   origin              String
   note                String?
@@ -179,4 +164,13 @@ model Department {
   id   String   @id @default(uuid())
   name String
   date DateTime @default(now())
+}
+
+model News {
+  id       String   @id @default(uuid())
+  title    String
+  author   String
+  keywords Json?
+  content  String   @db.Text
+  date     DateTime @default(now())
 }

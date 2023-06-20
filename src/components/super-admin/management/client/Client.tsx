@@ -1,17 +1,17 @@
+import { RootState } from '@/lib/redux/Store';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-interface Props {
-    isOpen: boolean
-}
+const Client: React.FC = () => {
 
-const Client: React.FC<Props> = ({ isOpen }) => {
+    const { isSideNavOpen } = useSelector((state: RootState) => state.globalState)
     return (
         <Link href={'/manage/client'} className={`flex items-center hover:text-blue-600 w-full`}>
-            {isOpen && <span className='mr-auto'>Client</span>}
-            <FontAwesomeIcon icon={faUser} className={`${!isOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
+            {isSideNavOpen && <span className='mr-auto'>Client</span>}
+            <FontAwesomeIcon icon={faUser} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
         </Link >
     );
 };

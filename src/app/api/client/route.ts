@@ -16,7 +16,9 @@ export const POST = async (req: Request) => {
 
         if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
 
+        if (origin) {
 
+        }
         const newUser = await prisma.client.create({
             data: {
                 profile, departments, name, password, user_name, organization, phone_number, email, address, gender, origin, note
@@ -126,15 +128,18 @@ export const PATCH = async (req: Request) => {
 
         if (!client) return NextResponse.json({ success: false, error: true, message: 'No client found' }, { status: 404 })
 
-        const existingUsername =
-            await prisma.client.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+        if (client.user_name !== user_name) {
 
-        if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
-
+            const existingUsername =
+                await prisma.client.findUnique({ where: { user_name: String(user_name) } }) ||
+                await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
+                await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
+                await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
+                await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+    
+            if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
+            
+        }
 
         const updatedClient = await prisma.client.update({
             where: {

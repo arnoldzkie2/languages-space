@@ -1,5 +1,6 @@
-import '../lib/styles/globals.css'
+import '@/lib/styles/globals.css'
 import SessionProviders from '@/components/SessionProvider'
+import { ReduxProvider } from '@/lib/redux/ReduxProvider'
 export const metadata = {
   title: 'Languages Spaces',
   description: "Let's talk english here.",
@@ -13,13 +14,14 @@ const RootLayout = ({ children }: RootInterface) => {
   return (
     <html lang="en">
       <body>
-        <SessionProviders>
-          {children}
-        </SessionProviders>
+        <ReduxProvider>
+          <SessionProviders>
+            {children}
+          </SessionProviders>
+        </ReduxProvider>
       </body>
     </html>
   )
-
 }
 
 export default RootLayout

@@ -7,7 +7,8 @@ CREATE TABLE `Client` (
     `phone_number` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NULL,
-    `organization` JSON NULL,
+    `card` JSON NULL,
+    `organization` VARCHAR(191) NULL,
     `password` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NULL,
     `origin` JSON NULL,
@@ -23,33 +24,17 @@ CREATE TABLE `Client` (
 -- CreateTable
 CREATE TABLE `ClientCard` (
     `id` VARCHAR(191) NOT NULL,
-    `client_id` VARCHAR(191) NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `PostpaidCard` (
-    `id` VARCHAR(191) NOT NULL,
-    `price` INTEGER NOT NULL,
-    `settlement_period` VARCHAR(191) NOT NULL,
-    `invoice` BOOLEAN NOT NULL,
-    `client_card_id` VARCHAR(191) NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `PrepaidCard` (
-    `id` VARCHAR(191) NOT NULL,
-    `price` INTEGER NOT NULL,
-    `balance` INTEGER NOT NULL,
-    `invoice` BOOLEAN NOT NULL,
+    `departments` JSON NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `price` VARCHAR(191) NOT NULL,
+    `balance` VARCHAR(191) NOT NULL,
     `validity` VARCHAR(191) NOT NULL,
+    `invoice` BOOLEAN NOT NULL,
+    `repeat_purchases` BOOLEAN NOT NULL,
     `online_purchases` BOOLEAN NOT NULL,
     `online_renews` BOOLEAN NOT NULL,
-    `repeat_purchases` BOOLEAN NOT NULL,
-    `clien_card_id` VARCHAR(191) NULL,
+    `settlement_period` INTEGER NOT NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -60,26 +45,23 @@ CREATE TABLE `Supplier` (
     `profile` VARCHAR(191) NULL,
     `name` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL,
     `organization` JSON NULL,
     `payment_information` JSON NULL,
-    `phone_number` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NOT NULL,
-    `address` VARCHAR(191) NOT NULL,
-    `gender` VARCHAR(191) NOT NULL,
+    `phone_number` VARCHAR(191) NULL,
+    `password` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NULL,
+    `address` VARCHAR(191) NULL,
+    `gender` VARCHAR(191) NULL,
     `card` JSON NULL,
     `origin` VARCHAR(191) NULL,
-    `tags` JSON NULL,
     `note` VARCHAR(191) NULL,
-    `employment_status` VARCHAR(191) NOT NULL,
+    `employment_status` VARCHAR(191) NULL,
     `entry` DATETIME(3) NOT NULL,
     `departure` DATETIME(3) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `departments` JSON NULL,
 
     UNIQUE INDEX `Supplier_user_name_key`(`user_name`),
-    UNIQUE INDEX `Supplier_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -88,6 +70,7 @@ CREATE TABLE `SupplierTags` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `suplier_id` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -117,13 +100,12 @@ CREATE TABLE `Agent` (
     `name` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL,
     `organization` JSON NULL,
     `payment_information` JSON NULL,
-    `phone_number` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NOT NULL,
-    `address` VARCHAR(191) NOT NULL,
-    `gender` VARCHAR(191) NOT NULL,
+    `phone_number` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NULL,
+    `address` VARCHAR(191) NULL,
+    `gender` VARCHAR(191) NULL,
     `card` JSON NULL,
     `origin` VARCHAR(191) NOT NULL,
     `note` VARCHAR(191) NULL,
@@ -131,7 +113,6 @@ CREATE TABLE `Agent` (
     `departments` JSON NULL,
 
     UNIQUE INDEX `Agent_user_name_key`(`user_name`),
-    UNIQUE INDEX `Agent_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -203,17 +184,23 @@ CREATE TABLE `Department` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `News` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `author` VARCHAR(191) NOT NULL,
+    `keywords` JSON NULL,
+    `content` TEXT NOT NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `Client` ADD CONSTRAINT `Client_agent_id_fkey` FOREIGN KEY (`agent_id`) REFERENCES `Agent`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ClientCard` ADD CONSTRAINT `ClientCard_client_id_fkey` FOREIGN KEY (`client_id`) REFERENCES `Client`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `PostpaidCard` ADD CONSTRAINT `PostpaidCard_client_card_id_fkey` FOREIGN KEY (`client_card_id`) REFERENCES `ClientCard`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `PrepaidCard` ADD CONSTRAINT `PrepaidCard_clien_card_id_fkey` FOREIGN KEY (`clien_card_id`) REFERENCES `ClientCard`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `SupplierTags` ADD CONSTRAINT `SupplierTags_suplier_id_fkey` FOREIGN KEY (`suplier_id`) REFERENCES `Supplier`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `SupplierCardType` ADD CONSTRAINT `SupplierCardType_supplierCardId_fkey` FOREIGN KEY (`supplierCardId`) REFERENCES `SupplierCard`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

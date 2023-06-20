@@ -1,32 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { DepartmentsProps, NewClientForm } from './Types';
+import React, { useEffect, useState } from 'react';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { useSession } from 'next-auth/react';
+import { closeNewClientModal, setNewClientForm, setEye } from '@/lib/redux/ManageClient/ManageClientSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/lib/redux/Store';
+import { NewClientForm } from '@/lib/redux/ManageClient/Types';
 
 interface Props {
 
-    newClientForm: NewClientForm
-
-    setNewClientForm: Dispatch<SetStateAction<NewClientForm>>
-
-    addNewClient: (event: any) => Promise<void>
-
-    departments: DepartmentsProps[]
-
-    closeModal: () => void
+    addOrUpdateClient: (event: any) => Promise<void>
 
 }
 
-const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewClient, departments, closeModal }) => {
+const NewClient: React.FC<Props> = ({ addOrUpdateClient }) => {
 
     const { data }: any = useSession()
 
+    const { departments } = useSelector((state: RootState) => state.globalState)
+
+    const { method, newClientForm, eye } = useSelector((state: RootState) => state.manageClient)
+
+    const [defaultNewClientForm, setDefaultNewClientForm] = useState<NewClientForm>(newClientForm)
 
     const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
 
-    const [eye, setEye] = useState<boolean>(true)
+    const dispatch = useDispatch()
 
     const handleChange = (e: any) => {
 
@@ -55,14 +56,14 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
             const reader: any = new FileReader();
             reader.readAsDataURL(profile)
             reader.onload = () => {
-                setNewClientForm(prevData => ({
+                setDefaultNewClientForm(prevData => ({
                     ...prevData, profile: reader.result
                 }))
             }
 
         } else {
 
-            setNewClientForm((prevForm) => ({
+            setDefaultNewClientForm((prevForm) => ({
                 ...prevForm,
                 [name]: value,
             }));
@@ -72,32 +73,50 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
 
     useEffect(() => {
 
-        setNewClientForm(prevForm => ({
+        setDefaultNewClientForm(prevForm => ({
             ...prevForm,
             departments: selectedDepartments,
         }));
 
-        if (data.user.user) {
+        if (data.user.user === 'super-admin') {
 
-            setNewClientForm(prevForm => ({
+            setDefaultNewClientForm(prevForm => ({
 
                 ...prevForm, origin: 'admin'
 
             }))
         }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        dispatch(setNewClientForm(defaultNewClientForm))
+
     }, [selectedDepartments])
 
-    console.log(newClientForm);
+    useEffect(() => {
+
+        dispatch(setNewClientForm(defaultNewClientForm))
+
+    }, [defaultNewClientForm])
+
+    useEffect(() => {
+        if (newClientForm.departments && newClientForm.departments.length > 0) {
+
+            const updatedSelectedDepartments = newClientForm.departments.filter((deptId) =>
+                departments.some((dept) => dept.id === deptId)
+            );
+
+            setSelectedDepartments(updatedSelectedDepartments);
+
+        }
+    }, [])
 
     return (
         <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-gray-500 bg-opacity-60 py-10 px-96 z-20'>
             <div className='p-8 h-full w-full bg-white relative rounded-xl shadow-md    '>
 
-                <FontAwesomeIcon icon={faXmark} className='absolute right-5 top-5 cursor-pointer text-2xl' onClick={() => closeModal()} />
+                <FontAwesomeIcon icon={faXmark} className='absolute right-5 top-5 cursor-pointer text-2xl' onClick={() => dispatch(closeNewClientModal())} />
 
-                <form onSubmit={addNewClient} className='flex flex-col p-5 h-full w-full'>
+                <form onSubmit={addOrUpdateClient} className='flex flex-col p-5 h-full w-full'>
+
                     <div className='flex gap-10 w-full'>
 
                         <div className='flex w-1/2 flex-col p-7 border gap-3'>
@@ -111,7 +130,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     id='name'
                                     name='name'
                                     required
-                                    value={newClientForm.name}
+                                    value={newClientForm.name || ''}
                                     onChange={handleChange}
                                     placeholder='Enter full name'
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
@@ -128,7 +147,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     name='user_name'
                                     required
                                     placeholder='Create username'
-                                    value={newClientForm.user_name}
+                                    value={newClientForm.user_name || ''}
                                     onChange={handleChange}
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
                                 />
@@ -143,7 +162,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     id='email'
                                     name='email'
                                     placeholder='Enter email'
-                                    value={newClientForm.email}
+                                    value={newClientForm.email || ''}
                                     onChange={handleChange}
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
                                 />
@@ -159,11 +178,11 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     name='password'
                                     required
                                     placeholder='Create password'
-                                    value={newClientForm.password}
+                                    value={newClientForm.password || ''}
                                     onChange={handleChange}
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
                                 />
-                                {newClientForm.password && <FontAwesomeIcon icon={eye ? faEye : faEyeSlash} className='absolute bottom-3 right-4 text-gray-600 cursor-pointer' onClick={() => setEye(prevEye => !prevEye)} />}
+                                {newClientForm.password && <FontAwesomeIcon icon={eye ? faEye : faEyeSlash} className='absolute bottom-3 right-4 text-gray-600 cursor-pointer' onClick={() => dispatch(setEye())} />}
                             </div>
 
                             <div className=''>
@@ -175,7 +194,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     id='phone_number'
                                     name='phone_number'
                                     placeholder='Enter phone number'
-                                    value={newClientForm.phone_number}
+                                    value={newClientForm.phone_number || ''}
                                     onChange={handleChange}
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
                                 />
@@ -190,7 +209,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     id='organization'
                                     name='organization'
                                     placeholder='Enter organizaion'
-                                    value={newClientForm.organization}
+                                    value={newClientForm.organization || ''}
                                     onChange={handleChange}
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
                                 />
@@ -207,7 +226,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     id='address'
                                     name='address'
                                     placeholder='Enter address'
-                                    value={newClientForm.address}
+                                    value={newClientForm.address || ''}
                                     onChange={handleChange}
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
                                 />
@@ -220,7 +239,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                                     id='note'
                                     name='note'
                                     placeholder='Enter note(optional)'
-                                    value={newClientForm.note}
+                                    value={newClientForm.note || ''}
                                     onChange={handleChange}
                                     className='w-full border border-gray-300 outline-none px-3 py-2 rounded'
                                 />
@@ -228,25 +247,25 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
 
                             <div className=''>
                                 <label className='block font-medium'>Departments</label>
-                                {departments.map((dept) => (
-                                    <div key={dept.id} className='flex items-center'>
+                                {departments && departments.map((dept) => (
+                                    <div key={dept.id} className="flex items-center">
                                         <input
-                                            type='checkbox'
+                                            type="checkbox"
                                             id={`department_${dept.id}`}
                                             name={`department_${dept.id}`}
                                             value={dept.id}
                                             checked={selectedDepartments.includes(dept.id)}
                                             onChange={handleChange}
-                                            className='mr-2'
+                                            className="mr-2"
                                         />
-                                        <label htmlFor={`department_${dept.id}`} className='mr-4'>{dept.name}</label>
+                                        <label htmlFor={`department_${dept.id}`} className="mr-4">{dept.name}</label>
                                     </div>
                                 ))}
                             </div>
 
                             <div className='flex flex-col'>
                                 <label htmlFor="gender" className='block font-medium'>Gender</label>
-                                <select name="gender" id='gender' className='border py-2 px-1 outline-none' onChange={handleChange}>
+                                <select name="gender" id='gender' className='border py-2 px-1 outline-none' onChange={handleChange} value={newClientForm.gender || ''}>
                                     <option value='others'>Select Gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
@@ -268,7 +287,7 @@ const NewClient: React.FC<Props> = ({ newClientForm, setNewClientForm, addNewCli
                         </div>
                     </div>
 
-                    <button className='border mt-5 w-1/5 py-2 bg-gray-900 rounded-md text-white'>Add Client</button>
+                    <button className='border mt-5 w-1/5 py-2 bg-gray-900 rounded-md text-white'>{method === 'new' ? 'Add Client' : 'Update Client'}</button>
 
                 </form>
             </div>

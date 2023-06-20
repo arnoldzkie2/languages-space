@@ -1,4 +1,6 @@
+import { RootState } from '@/lib/redux/Store';
 import React, { ChangeEvent } from 'react';
+import { useSelector } from 'react-redux';
 
 interface Props {
 
@@ -9,19 +11,16 @@ interface Props {
         phone_number: string;
         organization: string;
         origin: string;
-    }
-
-    totalClients: {
-        total: string;
-        searched: string;
-        selected: string;
+        note: string;
     }
 
 }
 
-const Search: React.FC<Props> = ({ handleSearch, searchQuery, totalClients }) => {
+const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
+
+    const { totalClients } = useSelector((state: RootState) => state.manageClient)
     return (
-        <div className='pt-5 mt-5 border-t border-gray-300'>
+        <div className='pt-4 mt-4 border-t border-gray-300'>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
                 Search Client
             </div>
@@ -31,7 +30,7 @@ const Search: React.FC<Props> = ({ handleSearch, searchQuery, totalClients }) =>
                     <input type="text"
                         placeholder='Name'
                         name='name'
-                        className='w-full border px-3 outline-none py-2'
+                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.name}
                     />
@@ -39,7 +38,7 @@ const Search: React.FC<Props> = ({ handleSearch, searchQuery, totalClients }) =>
                     <input type="text"
                         placeholder='Phone #'
                         name='phone_number'
-                        className='w-full border px-3 outline-none py-2'
+                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.phone_number}
                     />
@@ -47,7 +46,7 @@ const Search: React.FC<Props> = ({ handleSearch, searchQuery, totalClients }) =>
                     <input type="text"
                         placeholder='Organization'
                         name='organization'
-                        className='w-full border px-3 outline-none py-2'
+                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.organization}
                     />
@@ -55,14 +54,21 @@ const Search: React.FC<Props> = ({ handleSearch, searchQuery, totalClients }) =>
                     <input type="text"
                         placeholder='Origin'
                         name='origin'
-                        className='w-full border px-3 outline-none py-2'
+                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.origin}
                     />
 
-                    <div className='flex flex-col p-3 border'>
-                        <div className='font-medium mb-1'>Total Clients</div>
-                        <div className='text-sm font-black text-gray-600'>{totalClients.total}</div>
+                    <input type="text"
+                        placeholder='Note'
+                        name='note'
+                        className='w-full border text-sm px-3 outline-none py-2'
+                        onChange={handleSearch}
+                        value={searchQuery.note}
+                    />
+
+                    <div className='flex flex-col px-3 pt-3 pb-2 mt-2 border-t'>
+                        <div className='font-medium mb-1'>Result: <span className='text-sm font-black text-gray-600'>{totalClients.searched}</span></div>
                     </div>
                 </div>
             </div>
@@ -70,4 +76,4 @@ const Search: React.FC<Props> = ({ handleSearch, searchQuery, totalClients }) =>
     );
 };
 
-export default Search;
+export default SearchClient;

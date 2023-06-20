@@ -1,32 +1,58 @@
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/lib/redux/Store';
+import { setCurrentPage } from '@/lib/redux/GlobalState/GlobalSlice';
+import { totalNewsState } from '@/lib/redux/ManageWeb/Types';
 
 interface Props {
 
-    goToPreviousPage: () => void
-
-    currentPage: number
-
-    goToNextPage: () => void
-
     getTotalPages: () => number
 
-    setCurrentPage: Dispatch<SetStateAction<number>>
-
-    goToPage: (pageNumber: number) => void
-
-    totalClients: {
-        total: string;
-        searched: string;
-        selected: string;
-    }
+    total: totalNewsState
 
 }
 
-const Pagination: React.FC<Props> = ({ goToPreviousPage, currentPage, goToNextPage, getTotalPages, setCurrentPage, goToPage, totalClients }) => {
+const Pagination: React.FC<Props> = ({ total, getTotalPages }) => {
+
+    const dispatch = useDispatch()
+
+    const { currentPage } = useSelector((state: RootState) => state.globalState)
+
+    const goToPreviousPage = () => {
+
+        if (currentPage > 1) {
+
+            dispatch(setCurrentPage(currentPage - 1));
+        }
+
+    }
+
+    const goToNextPage = () => {
+
+        const totalPages = getTotalPages();
+
+        if (currentPage < totalPages) {
+
+            dispatch(setCurrentPage(currentPage + 1));
+
+        }
+    }
+
+    const goToPage = (pageNumber: number) => {
+
+        const totalPages = getTotalPages();
+
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+
+            dispatch(setCurrentPage(pageNumber));
+
+        }
+    }
 
     const renderPageNumbers = () => {
+
         const totalPages = getTotalPages();
         const range = 2;
 
@@ -71,27 +97,24 @@ const Pagination: React.FC<Props> = ({ goToPreviousPage, currentPage, goToNextPa
     };
 
     return (
-        <div className={`flex py-5 px-10 items-center justify-between border shadow-md bg-white h-24`}>
-
-            <div className='flex items-center gap-3 w-1/6'>
+        <footer className={`flex py-5 px-10 items-center justify-between border shadow-md bg-white`}>
+            <div className='flex items-center gap-3'>
                 <div className='font-medium'>
                     Page {currentPage} of {getTotalPages()}
                 </div>
                 <input
                     type='text'
-                    className='outline-none border px-3 py-2 w-1/2'
+                    className='outline-none border px-3 py-2 w-1/3'
                     placeholder='Go to page #'
-                    value={currentPage === 1 ? '' : currentPage}
                     onChange={(e) => {
                         const value = parseInt(e.target.value);
-                        setCurrentPage(isNaN(value) ? 1 : value);
+                        dispatch(setCurrentPage(isNaN(value) ? 1 : value));
                     }}
                 />
             </div>
 
-            <div className='flex items-center gap-10'>
-                <div className='font-medium'>Selected: <span className='font-black text-gray-600'>{totalClients.selected}</span></div>
-                <div className='font-medium'>Search Result: <span className='font-black text-gray-600'>{totalClients.searched}</span></div>
+            <div className='flex items-center gap-8'>
+                {total.selected && <div className='font-medium'>Selected: <span className='font-black text-gray-600'>{total.selected}</span></div>}                <div className='font-medium'>Total: <span className='font-black text-gray-600'>{total.total}</span></div>
             </div>
 
             <div className='flex gap-4 items-center'>{renderPageNumbers()}</div>
@@ -109,7 +132,7 @@ const Pagination: React.FC<Props> = ({ goToPreviousPage, currentPage, goToNextPa
                 </button>
             </div>
 
-        </div>
+        </footer>
     );
 };
 

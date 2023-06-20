@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction } from 'react';
+'use client'
+import React from 'react';
 import Dashboard from './management/dashboard/Dashboard';
 import Client from './management/client/Client';
 import Schedule from './management/schedule/Schedule';
@@ -12,44 +13,43 @@ import Web from './management/web/Web';
 import Logout from './Logout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/lib/redux/Store';
+import { setIsSideNavOpen } from '@/lib/redux/GlobalState/GlobalSlice';
 
-interface Props {
+const SideNav: React.FC = () => {
 
-    isOpen: boolean
-
-    setIsOpen: Dispatch<SetStateAction<boolean>>
-
-}
-
-const SideNav: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+    const { isSideNavOpen } = useSelector((state: RootState) => state.globalState)
+    
+    const dispatch = useDispatch()
 
     return (
-        <nav className={`border h-screen ${isOpen ? 'w-44 p-6' : 'w-16 px-3 py-6'}  flex flex-col shadow-md bg-white`}>
+        <nav className={`border h-screen ${isSideNavOpen ? 'w-44 p-6' : 'w-16 px-3 py-6'}  flex flex-col shadow-md bg-white`}>
             {
-                isOpen ?
+                isSideNavOpen ?
                     <button
-                        onClick={() => setIsOpen(false)}
+                        onClick={() => dispatch(setIsSideNavOpen())}
                         className='text-lg flex justify-between items-center pb-4 border-b border-gray-600 hover:text-blue-600'>
                         Menu <FontAwesomeIcon icon={faArrowLeft} />
                     </button>
                     :
                     <FontAwesomeIcon icon={faBars}
                         className='pb-4 border-b text-xl text-black border-gray-600 cursor-pointer hover:text-blue-600'
-                        onClick={() => setIsOpen(true)} />
+                        onClick={() => dispatch(setIsSideNavOpen())} />
             }
             <ul className='flex flex-col gap-7 h-full py-7 justify-center'>
-                <Dashboard isOpen={isOpen} />
-                <Client isOpen={isOpen} />
-                <Schedule isOpen={isOpen} />
-                <Supplier isOpen={isOpen} />
-                <Agent isOpen={isOpen} />
-                <Admin isOpen={isOpen} />
-                <Order isOpen={isOpen} />
-                <Statistics isOpen={isOpen} />
-                <Web isOpen={isOpen} />
-                <Settings isOpen={isOpen} />
+                <Dashboard  />
+                <Client  />
+                <Schedule  />
+                <Supplier  />
+                <Agent  />
+                <Admin  />
+                <Order  />
+                <Statistics  />
+                <Web  />
+                <Settings  />
             </ul>
-            <Logout isOpen={isOpen} />
+            <Logout  />
         </nav>
     );
 };

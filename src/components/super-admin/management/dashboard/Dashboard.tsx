@@ -1,17 +1,18 @@
+import { RootState } from '@/lib/redux/Store';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-interface DashboardProps {
-    isOpen: boolean
-}
+const Dashboard: React.FC = () => {
 
-const Dashboard: React.FC<DashboardProps> = ({ isOpen }) => {
+    const { isSideNavOpen } = useSelector((state: RootState) => state.globalState)
+
     return (
         <Link href={'/super-admin'} className={`flex items-center hover:text-blue-600 w-full`}>
-            {isOpen && <span className='mr-auto'>Dashboard</span>}
-            <FontAwesomeIcon icon={faHouse} className={`${!isOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
+            {isSideNavOpen && <span className='mr-auto'>Dashboard</span>}
+            <FontAwesomeIcon icon={faHouse} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
         </Link >
     );
 };
