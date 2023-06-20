@@ -16,18 +16,9 @@ export const POST = async (req: Request) => {
 
         if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
 
-        const existingEmail =
-            await prisma.agent.findUnique({ where: { email: String(email) } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.client.findUnique({ where: { user_name: String(user_name) } })
-
-        if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 409 })
-
         const newAgent = await prisma.agent.create({
             data: {
-                departments, name, password, user_name, type, organization, phone_number, email, address, gender, origin,note
+                departments, name, password, user_name, organization, phone_number, email, address, gender, origin,note
             }
         })
 
