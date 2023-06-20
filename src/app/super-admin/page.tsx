@@ -9,11 +9,9 @@ interface PageProps {
 const Page: React.FC<PageProps> = ({ }) => {
 
 
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-
     return (
         <>
-            <SideNav isOpen={isOpen} setIsOpen={setIsOpen} />
+            <SideNav  />
         </>
     );
 };
