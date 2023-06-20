@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = await req.json()
+    const { name, departments, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = await req.json()
 
     if (!name || !price || !balance || !validity || !invoice || !repeat_purchases || !online_purchases || !online_renews || !settlement_period) {
 
@@ -19,8 +19,8 @@ export const POST = async (req: Request) => {
 
         const newCard = await prisma.clientCard.create({
 
-            data: { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period }
-        
+            data: { departments,name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period }
+
         })
 
         if (!newCard) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
