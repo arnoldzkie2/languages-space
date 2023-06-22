@@ -13,11 +13,10 @@ const Main: React.FC<MainProps> = ({ }) => {
                 <h2 className='text-slate-50 leading-8'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati impedit fugit
                     voluptate laborum molestiae consequatur voluptatem consectetur sapiente, porro
                     similique? Reiciendis iusto soluta facilis atque laborum. Nulla voluptatem quos sed.</h2>
-
-                <button className='bg-gradient-to-b from-blue-700 via-blue-500 to-cyan-400 text-white w-1/3 py-2 rounded-3xl'>START LEARN NOW</button>
+                <button className='bg-white text-blue-600 hover:bg-transparent border border-white hover:text-white w-1/3 py-2 rounded-3xl shadow-md'>START LEARN NOW</button>
             </div>
             <div className='flex justify-center items-center gap-5 w-1/2'>
-                <img src="/web/hero.png" alt="Teacher" className='w-2/3' />
+                <img src="/web/hero.png" alt="Teacher" className='w-2/3 bg-white shadow-xl rounded-full' />
             </div>
         </div>
     );

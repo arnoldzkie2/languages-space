@@ -8,10 +8,12 @@ interface AppProps {
 
 const App: React.FC<AppProps> = ({ }) => {
   return (
-    <section className="bg-[url(/web/bg-large.svg)] bg-center bg-no-repeat bg-cover w-screen h-screen flex items-center">
-      <Header />
-      <Main />
-    </section>
+    <>
+      <section className="bg-[url(/web/bg-large.svg)] bg-center bg-no-repeat bg-cover w-screen h-screen flex items-center">
+        <Header />
+        <Main />
+      </section>
+    </>
   );
 };
 
