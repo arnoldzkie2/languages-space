@@ -26,8 +26,12 @@ const LoginForm = () => {
                 password: password.current,
                 redirect: false,
             })
+            
+            console.log(result);
 
             if (result?.error) return alert('Invalid credentials')
+
+            
 
         } catch (error) {
             console.log(error);

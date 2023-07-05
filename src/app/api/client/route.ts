@@ -14,11 +14,12 @@ export const POST = async (req: Request) => {
             await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
             await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
 
-        if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
+        if (existingUsername) return NextResponse.json({ success: false, data: { user_name: user_name }, message: 'Username already exist!' }, { status: 409 })
 
         if (origin) {
 
         }
+        
         const newUser = await prisma.client.create({
             data: {
                 profile, departments, name, password, user_name, organization, phone_number, email, address, gender, origin, note

@@ -1,12 +1,16 @@
 "use client"
 import SideNav from '@/components/super-admin/SideNav';
 import axios from 'axios';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useQuill } from 'react-quilljs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/lib/redux/Store';
+import Departments from '@/components/super-admin/management/Departments';
+import { setDepartmentID } from '@/lib/redux/GlobalState/GlobalSlice';
 
 interface FormData {
     title: string
@@ -15,6 +19,10 @@ interface FormData {
 }
 
 const CreateNews = () => {
+
+    const router = useRouter()
+    
+    const dispatch = useDispatch()
 
     const { quill, quillRef } = useQuill()
 
@@ -25,6 +33,8 @@ const CreateNews = () => {
     })
 
     const [keywords, setKeyWords] = useState<string[]>([]);
+
+    const { departmentID } = useSelector((state: RootState) => state.globalState)
 
     const createNews = async (e: any) => {
 
@@ -38,17 +48,20 @@ const CreateNews = () => {
 
         if (!author) return alert('Author is required')
 
+        if(!departmentID) return alert('Select a department to create this news')
+
         try {
             const { data } = await axios.post('/api/news', {
                 title: formData.title,
                 content: formData.content,
                 author: formData.author,
-                keywords: keywords
+                keywords: keywords,
+                departments: [departmentID]
             })
 
             if (data.success) {
 
-                return window.location.href = '/manage/web'
+                return router.push('/manage/web')
             }
 
             alert('Something went wrong')
@@ -57,6 +70,12 @@ const CreateNews = () => {
             console.log(error);
         }
     }
+
+    useEffect(() => {
+
+        dispatch(setDepartmentID(''))
+
+    }, [])
 
     useEffect(() => {
         if (quill) {
@@ -107,6 +126,7 @@ const CreateNews = () => {
                 <div className='flex items-center justify-between px-10 py-3 border shadow'>
                     <div className='text-2xl text-gray-700 font-bold'>Create news</div>
                     <div className='flex items-center w-1/2 gap-5'>
+                        <Departments />
 
                         <input className='w-full py-1 h-9 outline-none px-3 text-lg shadow-sm border' type="text" placeholder='Title' value={formData.title} onChange={(e: any) => setFormData(prevData => ({
                             ...prevData,

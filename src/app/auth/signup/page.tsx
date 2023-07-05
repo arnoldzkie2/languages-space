@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import SignupForm from '@/components/web/SIgnupForm';
+import SignupForm from '@/components/web/SignupForm';
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";

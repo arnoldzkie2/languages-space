@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import { setDepartmentID } from "@/lib/redux/GlobalState/GlobalSlice";
+import { setDepartmentID, setDepartments } from "@/lib/redux/GlobalState/GlobalSlice";
 import { RootState } from "@/lib/redux/Store";
+import axios from "axios";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const Departments = () => {
@@ -15,11 +18,36 @@ const Departments = () => {
         const selectedId = event.target.value;
         
         dispatch(setDepartmentID(selectedId))
+
     };
 
+    const getAllDepartment = async () => {
+
+        try {
+
+            const { data } = await axios.get('/api/department')
+
+            if (data.success) {
+
+                return dispatch(setDepartments(data.data))
+
+            }
+
+            alert('Something went wrong')
+
+        } catch (error) {
+
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+
+        getAllDepartment()
+
+    }, [])
+
     return (
-        <div className="flex flex-col">
-            <div className="p-2 font-medium">Select Department</div>
             <select onChange={handleDepartmentChange} className="border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 outline-none cursor-pointer">
                 <option value=''>All Departments</option>
                 {departments &&
@@ -30,7 +58,6 @@ const Departments = () => {
                         </option>
                     ))}
             </select>
-        </div>
     );
 };
 

@@ -61,26 +61,6 @@ const ManageClient: FC = () => {
 
     const getTotalPages = () => Math.ceil(filteredClients.length / itemsPerPage)
 
-    const getAllDepartment = async () => {
-
-        try {
-
-            const { data } = await axios.get('/api/department')
-
-            if (data.success) {
-
-                return dispatch(setDepartments(data.data))
-
-            }
-
-            alert('Something went wrong')
-
-        } catch (error) {
-
-            console.log(error);
-        }
-    }
-
     const getClientsByDepartments = async () => {
 
         try {
@@ -112,11 +92,15 @@ const ManageClient: FC = () => {
 
         const { user_name, password, name } = newClientForm
 
-        if (user_name.length < 3) return alert('Username is to short')
+        if (user_name.length < 1) return alert('Username is to short')
+
+        if (name.length < 1) return alert('Name is to short')
+
+        if (user_name.length > 20) return alert('Username is to long')
+
+        if (name.length > 20) return alert('Name is to long')
 
         if (password.length < 3) return alert('Password is to short')
-
-        if (name.length < 5) return alert('Name is to short')
 
         try {
             if (method === 'new') {
@@ -153,8 +137,6 @@ const ManageClient: FC = () => {
 
         } else {
 
-            getAllDepartment()
-
             getClientsByDepartments()
 
             dispatch(setCurrentPage(1))
@@ -188,9 +170,12 @@ const ManageClient: FC = () => {
 
                 <ClientHeader />
 
-                <div className={`flex w-full h-full ${isSideNavOpen ? 'gap-5' : 'gap-10'} my-8`}>
+                <div className={`flex w-full h-full ${isSideNavOpen ? 'gap-5' : 'gap-10'} items-center`}>
                     <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6'>
-                        <Departments />
+                        <div className='flex flex-col gap-2'>
+                            <div className='font-medium pl-2'>Select Department</div>
+                            <Departments />
+                        </div>
                         <SearchClient handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
                     <ClientTable filteredTable={currentClients} />

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
 
-    const { content, title, author, keywords } = await req.json()
+    const { content, title, author, keywords, departments } = await req.json()
 
     try {
 
@@ -14,7 +14,7 @@ export const POST = async (req: Request) => {
         if (existingTitle) return NextResponse.json({ success: false, error: true, message: 'News title already exist' }, { status: 409 })
 
         const createNews = await prisma.news.create({
-            data: { content, title, author, keywords }
+            data: { content, title, author, keywords, departments }
         })
 
         if (!createNews) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
@@ -37,7 +37,45 @@ export const GET = async (req: Request) => {
 
     const id = searchParams.get('id')
 
+    const keyword = searchParams.get('keyword')
+
+    const department = searchParams.get('department')
+
     try {
+
+        if (keyword && department) {
+
+            const keywordNews = await prisma.news.findMany({
+                where: {
+                    departments: {
+                        array_contains: String(department)
+                    },
+                    keywords: {
+                        array_contains: String(keyword)
+                    }
+                }
+            })
+
+            if (!keywordNews) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+
+            if (keywordNews) return NextResponse.json({ success: true, data: keywordNews }, { status: 200 })
+
+        }
+
+        if (department) {
+
+            const newsDepartment = await prisma.news.findMany({
+                where: {
+                    departments: {
+                        array_contains: String(department)
+                    }
+                }
+            })
+
+            if (!newsDepartment) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+
+            if (newsDepartment) return NextResponse.json({ success: true, data: newsDepartment }, { status: 200 })
+        }
 
         if (id) {
 
@@ -87,6 +125,7 @@ export const PATCH = async (req: Request) => {
 
             const checkId = await prisma.news.findUnique({
                 where: { id }
+
             })
 
             if (!checkId) return NextResponse.json({ success: false, error: true, message: 'No news found' }, { status: 404 })
@@ -108,7 +147,7 @@ export const PATCH = async (req: Request) => {
     } finally {
 
         prisma.$disconnect()
-        
+
     }
 
 }
@@ -147,4 +186,4 @@ export const DELETE = async (req: Request) => {
 
         prisma.$disconnect();
     }
-};
+}

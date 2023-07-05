@@ -3,7 +3,7 @@ import Header from '@/components/web/Header';
 import Main from '@/components/web/Main';
 import React from 'react';
 
-interface AppProps {
+interface AppProps {  
 }
 
 const App: React.FC<AppProps> = ({ }) => {
@@ -18,5 +18,4 @@ const App: React.FC<AppProps> = ({ }) => {
 };
 
 export default App;
-
 

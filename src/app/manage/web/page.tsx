@@ -20,7 +20,7 @@ const Web: React.FC = () => {
 
     const dispatch = useDispatch()
 
-    const { currentPage, isSideNavOpen } = useSelector((state: RootState) => state.globalState)
+    const { currentPage, isSideNavOpen, departmentID, departments } = useSelector((state: RootState) => state.globalState)
 
     const { totalNews, news, selectedNews, deleteWarning } = useSelector((state: RootState) => state.manageWeb)
 
@@ -76,6 +76,21 @@ const Web: React.FC = () => {
         }
     }
 
+    const getNewsByDepartment = async () => {
+
+        try {
+
+            const { data } = await axios.get(`/api/news${departmentID && `?department=${departmentID}`}`)
+
+            dispatch(setNews(data.data))
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+    }
+
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         const { name, value } = event.target
@@ -88,13 +103,23 @@ const Web: React.FC = () => {
 
     useEffect(() => {
 
-        getAllNews()
+        if (departments.length > 0) {
 
-        setSearchQuery(ManageWebSearchQueryValue)
+            getNewsByDepartment()
 
-        dispatch(setCurrentPage(1))
+        } else {
 
-    }, [])
+            getAllNews()
+
+            getNewsByDepartment()
+
+            dispatch(setCurrentPage(1))
+
+            setSearchQuery(ManageWebSearchQueryValue)
+
+        }
+
+    }, [departmentID])
 
     useEffect(() => {
 
@@ -107,14 +132,18 @@ const Web: React.FC = () => {
     }, [news.length, filteredNews.length, selectedNews.length])
 
     return (
-        <div className='flex bg-slate-50'>
+        <div className='flex bg-slate-50 h-screen'>
             <SideNav />
             <div className={`flex flex-col w-full h-full ${isSideNavOpen ? 'p-5' : 'px-10 py-5'}`}>
 
                 <WebHeader />
 
-                <div className={`flex w-full h-full ${isSideNavOpen ? 'gap-5' : 'gap-10'} my-8`}>
-                    <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6'>
+                <div className={`flex w-full h-full ${isSideNavOpen ? 'gap-5' : 'gap-10'} items-center`}>
+                    <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6 gap-4'>
+                        <div className='flex flex-col gap-2'>
+                            <div className='font-medium pl-2'>Select Department</div>
+                            <Departments />
+                        </div>
                         <SearchNews handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
 
@@ -123,10 +152,9 @@ const Web: React.FC = () => {
                 </div>
 
                 <Pagination total={totalNews} getTotalPages={getTotalPages} />
-
             </div>
 
-            {deleteWarning && <NewsDeleteWarningModal getAllNews={getAllNews}/>}
+            {deleteWarning && <NewsDeleteWarningModal getAllNews={getAllNews} />}
         </div>
     );
 };

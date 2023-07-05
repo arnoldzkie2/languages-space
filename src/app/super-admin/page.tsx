@@ -10,9 +10,10 @@ const Page: React.FC<PageProps> = ({ }) => {
 
 
     return (
-        <>
+        <div className='flex h-screen'>
             <SideNav  />
-        </>
+            <div className='w-full h-full flex items-center justify-center'>Hello World</div>
+        </div>
     );
 };
 

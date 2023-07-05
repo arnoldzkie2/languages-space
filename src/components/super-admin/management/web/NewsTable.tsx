@@ -115,12 +115,12 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                     checked={selectedNews.some(selectedNews => selectedNews.id === news.id)}
                                 />                            </td>
                             <td className="px-1 py-2">
-                                <label htmlFor={news.id} className='cursor-pointer'>
+                                <label htmlFor={news.id} className='cursor-pointer w-96 flex'>
                                     {news.title}
                                 </label>
                             </td>
                             <td className='px-1 py-2'>{news.author}</td>
-                            <td className="px-1 py-2 flex gap-2">
+                            <td className="px-1 py-2">
                                 <select className='outline-none p-1'>
                                     {news.keywords.length > 0 ? news.keywords.map((item, i) => {
                                         return (

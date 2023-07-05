@@ -1,9 +1,10 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -25,8 +26,6 @@ model Client {
   note         String?
   date         DateTime @default(now())
   departments  Json?
-  agent        Agent?   @relation(fields: [agent_id], references: [id])
-  agent_id     String?
 }
 
 model ClientCard {
@@ -110,7 +109,6 @@ model Agent {
   note                String?
   date                DateTime @default(now())
   departments         Json?
-  clients             Client[]
 }
 
 model AgentCard {
@@ -167,10 +165,11 @@ model Department {
 }
 
 model News {
-  id       String   @id @default(uuid())
-  title    String
-  author   String
-  keywords Json?
-  content  String   @db.Text
-  date     DateTime @default(now())
+  id          String   @id @default(uuid())
+  departments Json?
+  title       String
+  author      String
+  keywords    Json?
+  content     String   @db.Text
+  date        DateTime @default(now())
 }
