@@ -29,7 +29,9 @@ const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
             if (selectedNews.length > 0) {
 
                 const newsIds = selectedNews.map((newsItem) => newsItem.id);
+
                 const queryString = newsIds.map((id) => `id=${encodeURIComponent(id)}`).join('&');
+
                 var { data } = await axios.delete(`/api/news?${queryString}`);
 
             } else {
@@ -37,8 +39,6 @@ const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
                 var { data } = await axios.delete(`/api/news?id=${targetNews.id}`)
 
             }
-
-            console.log(data);
 
             if (!data.success) alert('Something went wrong')
 

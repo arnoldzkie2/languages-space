@@ -1,4 +1,5 @@
 import { RootState } from '@/lib/redux/Store';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -18,16 +19,20 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
 
     const { totalNews } = useSelector((state: RootState) => state.manageWeb)
 
+    const result = useTranslations('global')
+
+    const t = useTranslations('news')    
+
     return (
         <div className=''>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
-                Search News
+                {t('search')}
             </div>
             <div>
                 <div className='flex flex-col text-gray-700 gap-3'>
 
                     <input type="text"
-                        placeholder='Title'
+                        placeholder={t('title')}
                         name='title'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -35,7 +40,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                     />
 
                     <input type="text"
-                        placeholder='Author'
+                        placeholder={t('author')}
                         name='author'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -43,7 +48,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                     />
 
                     <input type="text"
-                        placeholder='Keywords'
+                        placeholder={t('keywords')}
                         name='keywords'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -51,7 +56,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                     />
 
                     <input type="text"
-                        placeholder='Date'
+                        placeholder={t('date')}
                         name='date'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -59,7 +64,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                     />
 
                     <div className='flex flex-col px-3 pt-3 mt-2 border-t'>
-                        <div className='font-medium mb-1'>Result: <span className='text-sm font-black text-gray-600'>{totalNews.searched}</span></div>
+                        <div className='font-medium mb-1'>{result('result')} <span className='text-sm font-black text-gray-600'>{totalNews.searched}</span></div>
                     </div>
                 </div>
             </div>

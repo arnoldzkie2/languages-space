@@ -4,6 +4,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFloppyDisk } from "@fortawesome/free-regular-svg-icons";
+import { useTranslations } from "next-intl";
 
 interface Props {
     tables: any
@@ -28,9 +29,11 @@ const DownloadTable: React.FC<Props> = ({ tables, selectedTable }) => {
 
     };
 
+    const t = useTranslations('global')
+
     return (
         <li className="flex items-center gap-1 hover:text-blue-600 cursor-pointer text-gray-600" onClick={downloadTable}>
-            <div>Download</div>
+            <div>{t('download')}</div>
             <FontAwesomeIcon icon={faFloppyDisk} />
         </li>
     );

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/redux/Store';
 import { openOperation, closeOperation, viewClient, newOrUpdateClient, deleteWarning, setSelectedClients } from '@/lib/redux/ManageClient/ManageClientSlice';
 import { ClientsProps } from '@/lib/redux/ManageClient/Types';
+import { useTranslations } from 'next-intl';
 
 interface Props {
 
@@ -88,6 +89,10 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
 
     }, [departmentID])
 
+    const t = useTranslations('client')
+
+    const globalT = useTranslations('global')
+
     return (
         <table className="text-sm text-left text-gray-800 shadow-md w-5/6">
             <thead className="text-xs uppercase bg-slate-50 border">
@@ -100,12 +105,12 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                             onChange={selectAllRows}
                         />
                     </th>
-                    <th scope="col" className="px-1 py-3">Name</th>
-                    <th scope="col" className="px-1 py-3">Phone Number</th>
-                    <th scope="col" className="px-1 py-3">Organization</th>
-                    <th scope="col" className="px-1 py-3">Origin</th>
-                    <th scope="col" className="px-1 py-3">Note</th>
-                    <th scope="col" className="px-1 py-3">Operation</th>
+                    <th scope="col" className="px-1 py-3">{t('name')}</th>
+                    <th scope="col" className="px-1 py-3">{t('phone')}</th>
+                    <th scope="col" className="px-1 py-3">{t('organization')}</th>
+                    <th scope="col" className="px-1 py-3">{t('origin')}</th>
+                    <th scope="col" className="px-1 py-3">{t('note')}</th>
+                    <th scope="col" className="px-1 py-3">{globalT('operation')}</th>
                 </tr>
             </thead>
             <tbody>

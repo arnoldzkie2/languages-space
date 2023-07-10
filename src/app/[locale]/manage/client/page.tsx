@@ -8,7 +8,7 @@ import DeleteWarningModal from '@/components/super-admin/management/client/Delet
 import ClientModal from '@/components/super-admin/management/client/ClientModal';
 import NewClient from '@/components/super-admin/management/client/NewClient';
 import Pagination from '@/components/super-admin/management/Pagination';
-import { useEffect, useState, FC } from 'react';
+import { useEffect, useState, FC, Suspense } from 'react';
 import axios from 'axios';
 import { setClients, setTotalClients, successNewClient } from '@/lib/redux/ManageClient/ManageClientSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -178,7 +178,9 @@ const ManageClient: FC = () => {
                         </div>
                         <SearchClient handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
+
                     <ClientTable filteredTable={currentClients} />
+
                 </div>
 
                 <Pagination total={totalClients} getTotalPages={getTotalPages} />

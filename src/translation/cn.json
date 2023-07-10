@@ -1,0 +1,42 @@
+{
+    "news": {
+        "h1": "新闻管理",
+        "title": "标题",
+        "author": "作者",
+        "keywords": "关键词",
+        "date": "日期",
+        "operation": "操作",
+        "create": "创建新闻",
+        "search": "搜索新闻"
+    },
+    "global": {
+        "department": {
+            "select": "选择部门",
+            "all": "所有部门"
+        },
+        "download": "下载",
+        "result": "结果：",
+        "selected": "已选：",
+        "total": "总计："
+    },
+    "pagination": {
+        "prev": "上一页",
+        "next": "下一页",
+        "goto": "跳转至页面",
+        "page": "页"
+    },
+    "side-nav": {
+        "menu": "菜单",
+        "dashboard": "仪表板",
+        "client": "客户",
+        "schedule": "日程",
+        "agent": "代理商",
+        "supplier": "供应商",
+        "admin": "管理员",
+        "orders": "订单",
+        "news": "网站新闻",
+        "settings": "设置",
+        "statistics": "统计",
+        "logout": "登出"
+    }
+}

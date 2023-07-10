@@ -3,10 +3,10 @@
 import SideNav from '@/components/super-admin/SideNav';
 import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
-import NewsDeleteWarningModal from '@/components/super-admin/management/web/NewsDeleteWarningModal';
-import NewsTable from '@/components/super-admin/management/web/NewsTable';
-import SearchNews from '@/components/super-admin/management/web/SearchNews';
-import WebHeader from '@/components/super-admin/management/web/WebHeader';
+import NewsDeleteWarningModal from '@/components/super-admin/management/web-news/NewsDeleteWarningModal';
+import NewsTable from '@/components/super-admin/management/web-news/NewsTable';
+import SearchNews from '@/components/super-admin/management/web-news/SearchNews';
+import WebHeader from '@/components/super-admin/management/web-news/WebHeader';
 import { setCurrentPage } from '@/lib/redux/GlobalState/GlobalSlice';
 import { ManageWebSearchQueryValue } from '@/lib/redux/ManageWeb/DefaultValue';
 import { setNews, setSelectedNews, setTotalNews } from '@/lib/redux/ManageWeb/ManageWebSlice';
@@ -139,6 +139,7 @@ const Web: React.FC = () => {
                 <WebHeader />
 
                 <div className={`flex w-full h-full ${isSideNavOpen ? 'gap-5' : 'gap-10'} items-center`}>
+                    
                     <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6 gap-4'>
                         <div className='flex flex-col gap-2'>
                             <div className='font-medium pl-2'>Select Department</div>

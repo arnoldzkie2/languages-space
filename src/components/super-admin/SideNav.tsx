@@ -9,7 +9,7 @@ import Admin from './management/admin/Admin';
 import Order from './management/order/Order';
 import Statistics from './management/statistics/Statistics';
 import Settings from './management/settings/Settings';
-import Web from './management/web/Web';
+import Web from './management/web-news/Web';
 import Logout from './Logout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';

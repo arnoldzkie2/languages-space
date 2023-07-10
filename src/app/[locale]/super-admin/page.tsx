@@ -1,6 +1,7 @@
 'use client'
 import SideNav from '@/components/super-admin/SideNav';
-import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import React from 'react';
 
 interface PageProps {
 
@@ -8,11 +9,13 @@ interface PageProps {
 
 const Page: React.FC<PageProps> = ({ }) => {
 
+    const t = useTranslations('hello')
+
 
     return (
         <div className='flex h-screen'>
             <SideNav  />
-            <div className='w-full h-full flex items-center justify-center'>Hello World</div>
+            <div className='w-full h-full flex items-center justify-center'>{t('test')}</div>
         </div>
     );
 };

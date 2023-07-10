@@ -4,6 +4,7 @@
 import { setDepartmentID, setDepartments } from "@/lib/redux/GlobalState/GlobalSlice";
 import { RootState } from "@/lib/redux/Store";
 import axios from "axios";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -47,9 +48,11 @@ const Departments = () => {
 
     }, [])
 
+    const t = useTranslations('global')
+
     return (
             <select onChange={handleDepartmentChange} className="border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 outline-none cursor-pointer">
-                <option value=''>All Departments</option>
+                <option value=''>{t('department.all')}</option>
                 {departments &&
                     departments.length > 0 &&
                     departments.map((department) => (

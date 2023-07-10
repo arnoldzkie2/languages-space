@@ -1,0 +1,55 @@
+{
+    "news": {
+        "h1": "Manage News",
+        "title": "Title",
+        "author": "Author",
+        "keywords": "Keywords",
+        "date": "Date",
+        "create": "Create News",
+        "search": "Search News"
+    },
+    "client": {
+        "h1": "Manage Client",
+        "create": "Create Client",
+        "name": "Name",
+        "phone": "Phone Number",
+        "organization": "Organization",
+        "origin": "Origin",
+        "note": "Note",
+        "card": {
+            "client": "Client Card",
+            "bind": "Bind Card"
+        }
+    },
+    "global": {
+        "department": {
+            "select": "Select Department",
+            "all": "All Department"
+        },
+        "operation": "Operation",
+        "download": "Download",
+        "result": "Result:",
+        "selected": "Selected:",
+        "total": "Total:"
+    },
+    "pagination": {
+        "prev": "Prev Page",
+        "next": "Next Page",
+        "goto": "Go to page",
+        "page": "Page"
+    },
+    "side-nav": {
+        "menu": "Menu",
+        "dashboard": "Dashboard",
+        "client": "Client",
+        "schedule": "Schedule",
+        "agent": "Agent",
+        "supplier": "Supplier",
+        "admin": "Admin",
+        "orders": "Orders",
+        "news": "Web News",
+        "settings": "Settings",
+        "statistics": "Statistics",
+        "logout": "Logout"
+    }
+}
