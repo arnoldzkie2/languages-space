@@ -2,6 +2,7 @@ import '@/lib/styles/globals.css'
 import SessionProviders from '@/components/SessionProvider'
 import { ReduxProvider } from '@/lib/redux/ReduxProvider'
 import { notFound } from 'next/navigation'
+import 'react-quill/dist/quill.snow.css';
 import { NextIntlClientProvider } from 'next-intl'
 export const metadata = {
   title: 'Languages Spaces',
