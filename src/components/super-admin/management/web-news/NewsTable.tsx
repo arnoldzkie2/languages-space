@@ -140,7 +140,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                     <FontAwesomeIcon icon={faEllipsis} className='cursor-pointer text-2xl text-black' onClick={() => dispatch(openOperation(news.id))} />
                                     <ul className={`${operation && newsSelectedID === news.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                         <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' >View <FontAwesomeIcon icon={faEye} /></li>
-                                        <Link href={`/manage/web/update-news?newsID=${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>Update <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                        <Link href={`/manage/web/update-news/${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>Update <FontAwesomeIcon icon={faPenToSquare} /></Link>
                                         <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => dispatch(openNewsDeleteWarning(news))}>Delete <FontAwesomeIcon icon={faTrashCan} /></li>
                                         <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => dispatch(closeOperation())}>Close <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>

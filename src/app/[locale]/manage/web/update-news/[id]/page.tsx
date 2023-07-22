@@ -6,7 +6,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useQuill } from 'react-quilljs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 
 interface FormData {
@@ -16,15 +16,16 @@ interface FormData {
 }
 
 interface Props {
-    searchParams: {
-        newsID: string
+    params: {
+        id: string
     }
 }
-const UpdateNews: React.FC<Props> = ({ searchParams }) => {
+
+const UpdateNews: React.FC<Props> = ({ params }) => {
 
     const router = useRouter();
 
-    const { newsID } = searchParams
+    const { id } = params
 
     const { quill, quillRef } = useQuill()
 
@@ -36,7 +37,7 @@ const UpdateNews: React.FC<Props> = ({ searchParams }) => {
 
     const [keywords, setKeyWords] = useState<string[]>([]);
 
-    const udateNews = async (e: any) => {
+    const updateNews = async (e: any) => {
 
         e.preventDefault()
 
@@ -49,7 +50,7 @@ const UpdateNews: React.FC<Props> = ({ searchParams }) => {
         if (!author) return alert('Author is required')
 
         try {
-            const { data } = await axios.patch(`/api/news?id=${newsID}`, {
+            const { data } = await axios.patch(`/api/news?id=${id}`, {
                 title: formData.title,
                 content: formData.content,
                 author: formData.author,
@@ -92,7 +93,7 @@ const UpdateNews: React.FC<Props> = ({ searchParams }) => {
 
         try {
 
-            const { data } = await axios.get(`/api/news?id=${newsID}`)
+            const { data } = await axios.get(`/api/news?id=${id}`)
 
             const { keywords, title, content, author } = data.data;
 
@@ -176,7 +177,7 @@ const UpdateNews: React.FC<Props> = ({ searchParams }) => {
                     </div>
                     <div className='flex items-center gap-9 min-w-fit'>
                         <Link href='/manage/web' className='rounded-sm bg-white border-blue-600 border text-blue-600 py-2 px-4'>Go Back</Link>
-                        <button onClick={udateNews} className='rounded-sm bg-blue-600 text-white px-4 hover:bg-opacity-80 py-2'>Update News</button>
+                        <button onClick={updateNews} className='rounded-sm bg-blue-600 text-white px-4 hover:bg-opacity-80 py-2'>Update News</button>
                     </div>
                 </div>
             </div>
