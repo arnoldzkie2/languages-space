@@ -25,7 +25,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
 
     return (
         <div className=''>
-            <div className='flex justify-between items-center mb-2 font-medium px-2'>
+            <div className='flex justify-between items-center mb-2 font-medium'>
                 {t('search')}
             </div>
             <div>
@@ -63,7 +63,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                         value={searchQuery.date}
                     />
 
-                    <div className='flex flex-col px-3 pt-3 mt-2 border-t'>
+                    <div className='flex flex-col pt-3 mt-2 border-t'>
                         <div className='font-medium mb-1'>{result('result')} <span className='text-sm font-black text-gray-600'>{totalNews.searched}</span></div>
                     </div>
                 </div>

@@ -10,13 +10,12 @@ export const GET = async (req: Request) => {
         const uniqueKeywords = allKeywords
             .flatMap((item) => item.keywords)
             .filter((keyword, index, keywordsArray) => {
-                // Return true if the keyword is the first occurrence in the array
                 return keywordsArray.indexOf(keyword) === index;
             });
 
         if (!allKeywords) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
 
-        return NextResponse.json({ success: true, data: uniqueKeywords }, { status: 200 })
+        return NextResponse.json({ data: uniqueKeywords }, { status: 200 })
 
     } catch (error) {
 

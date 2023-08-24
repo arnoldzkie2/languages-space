@@ -17,8 +17,8 @@ const Header: React.FC<HeaderProps> = ({ }) => {
                 <li className='px-4 py-2 rounded-2xl cursor-pointer hover:bg-gradient-to-b from-blue-700 via-blue-500 to-cyan-400 hover:text-white'>SERVICES</li>
                 <li className='px-4 py-2 rounded-2xl cursor-pointer hover:bg-gradient-to-b from-blue-700 via-blue-500 to-cyan-400 hover:text-white'>NEWS</li>
                 <li className='flex gap-5 items-center'>
-                    <Link href='/auth/signup' className=' px-3 py-2 cursor-pointer w-24 flex items-center justify-center bg-transparent rounded-3xl border'>SIGN UP</Link>
-                    <Link href='/auth/login' className=' px-3 py-2 cursor-pointer w-24 flex items-center justify-center font-medium text-blue-600 bg-white rounded-3xl'>LOGIN</Link>
+                    <Link href='/signup' className=' px-3 py-2 cursor-pointer w-24 flex items-center justify-center bg-transparent rounded-3xl border'>SIGN UP</Link>
+                    <Link href='/login' className=' px-3 py-2 cursor-pointer w-24 flex items-center justify-center font-medium text-blue-600 bg-white rounded-3xl'>LOGIN</Link>
                 </li>
             </ul>
         </header>

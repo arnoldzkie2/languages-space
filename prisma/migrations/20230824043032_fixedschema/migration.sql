@@ -7,15 +7,12 @@ CREATE TABLE `Client` (
     `phone_number` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NULL,
-    `card` JSON NULL,
     `organization` VARCHAR(191) NULL,
     `password` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NULL,
     `origin` JSON NULL,
     `note` VARCHAR(191) NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `departments` JSON NULL,
-    `agent_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `Client_user_name_key`(`user_name`),
     PRIMARY KEY (`id`)
@@ -24,16 +21,15 @@ CREATE TABLE `Client` (
 -- CreateTable
 CREATE TABLE `ClientCard` (
     `id` VARCHAR(191) NOT NULL,
-    `departments` JSON NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `price` VARCHAR(191) NOT NULL,
-    `balance` VARCHAR(191) NOT NULL,
+    `price` INTEGER NOT NULL,
+    `balance` INTEGER NOT NULL,
     `validity` VARCHAR(191) NOT NULL,
     `invoice` BOOLEAN NOT NULL,
     `repeat_purchases` BOOLEAN NOT NULL,
     `online_purchases` BOOLEAN NOT NULL,
     `online_renews` BOOLEAN NOT NULL,
-    `settlement_period` INTEGER NOT NULL,
+    `settlement_period` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
@@ -48,18 +44,18 @@ CREATE TABLE `Supplier` (
     `organization` JSON NULL,
     `payment_information` JSON NULL,
     `phone_number` VARCHAR(191) NULL,
-    `password` VARCHAR(191) NULL,
+    `password` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NULL,
     `address` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NULL,
     `card` JSON NULL,
+    `meeting_info` JSON NULL,
     `origin` VARCHAR(191) NULL,
     `note` VARCHAR(191) NULL,
     `employment_status` VARCHAR(191) NULL,
-    `entry` DATETIME(3) NOT NULL,
-    `departure` DATETIME(3) NOT NULL,
+    `entry` DATETIME(3) NULL,
+    `departure` DATETIME(3) NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `departments` JSON NULL,
 
     UNIQUE INDEX `Supplier_user_name_key`(`user_name`),
     PRIMARY KEY (`id`)
@@ -69,27 +65,27 @@ CREATE TABLE `Supplier` (
 CREATE TABLE `SupplierTags` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `suplier_id` VARCHAR(191) NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    INDEX `SupplierTags_suplier_id_idx`(`suplier_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `SupplierCard` (
+CREATE TABLE `SupplierSchedule` (
     `id` VARCHAR(191) NOT NULL,
-    `type` JSON NOT NULL,
+    `supplier_id` VARCHAR(191) NULL,
+    `date` VARCHAR(191) NOT NULL,
+    `time` VARCHAR(191) NOT NULL,
+    `reserved` BOOLEAN NOT NULL DEFAULT false,
+    `client_id` VARCHAR(191) NULL,
+    `client_name` VARCHAR(191) NULL,
+    `meeting_id` VARCHAR(191) NULL,
+    `meeting_info` JSON NULL,
+    `note` VARCHAR(191) NULL,
 
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `SupplierCardType` (
-    `id` VARCHAR(191) NOT NULL,
-    `supplierCardId` VARCHAR(191) NULL,
-    `fixed_salary` JSON NULL,
-    `commission` JSON NULL,
-
+    INDEX `SupplierSchedule_supplier_id_idx`(`supplier_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -106,13 +102,13 @@ CREATE TABLE `Agent` (
     `email` VARCHAR(191) NULL,
     `address` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NULL,
-    `card` JSON NULL,
     `origin` VARCHAR(191) NOT NULL,
     `note` VARCHAR(191) NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `departments` JSON NULL,
+    `agent_card_id` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `Agent_user_name_key`(`user_name`),
+    INDEX `Agent_agent_card_id_idx`(`agent_card_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -129,7 +125,6 @@ CREATE TABLE `AgentCard` (
 -- CreateTable
 CREATE TABLE `Order` (
     `id` VARCHAR(191) NOT NULL,
-    `booking_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `name` VARCHAR(191) NOT NULL,
     `client_name` VARCHAR(191) NOT NULL,
     `card` JSON NOT NULL,
@@ -141,7 +136,6 @@ CREATE TABLE `Order` (
     `invoice_number` INTEGER NOT NULL,
     `express_number` INTEGER NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `departments` JSON NOT NULL,
 
     UNIQUE INDEX `Order_id_key`(`id`),
     PRIMARY KEY (`id`)
@@ -155,7 +149,6 @@ CREATE TABLE `Admin` (
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `departments` JSON NULL,
 
     UNIQUE INDEX `Admin_user_name_key`(`user_name`),
     PRIMARY KEY (`id`)
@@ -164,14 +157,11 @@ CREATE TABLE `Admin` (
 -- CreateTable
 CREATE TABLE `SuperAdmin` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NULL,
     `password` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `SuperAdmin_user_name_key`(`user_name`),
-    UNIQUE INDEX `SuperAdmin_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -187,7 +177,7 @@ CREATE TABLE `Department` (
 -- CreateTable
 CREATE TABLE `News` (
     `id` VARCHAR(191) NOT NULL,
-    `title` VARCHAR(191) NOT NULL,
+    `title` TEXT NOT NULL,
     `author` VARCHAR(191) NOT NULL,
     `keywords` JSON NULL,
     `content` TEXT NOT NULL,
@@ -196,11 +186,65 @@ CREATE TABLE `News` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- AddForeignKey
-ALTER TABLE `Client` ADD CONSTRAINT `Client_agent_id_fkey` FOREIGN KEY (`agent_id`) REFERENCES `Agent`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+-- CreateTable
+CREATE TABLE `_ClientToClientCard` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
 
--- AddForeignKey
-ALTER TABLE `SupplierTags` ADD CONSTRAINT `SupplierTags_suplier_id_fkey` FOREIGN KEY (`suplier_id`) REFERENCES `Supplier`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+    UNIQUE INDEX `_ClientToClientCard_AB_unique`(`A`, `B`),
+    INDEX `_ClientToClientCard_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- AddForeignKey
-ALTER TABLE `SupplierCardType` ADD CONSTRAINT `SupplierCardType_supplierCardId_fkey` FOREIGN KEY (`supplierCardId`) REFERENCES `SupplierCard`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+-- CreateTable
+CREATE TABLE `_ClientToDepartment` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_ClientToDepartment_AB_unique`(`A`, `B`),
+    INDEX `_ClientToDepartment_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_AgentToDepartment` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_AgentToDepartment_AB_unique`(`A`, `B`),
+    INDEX `_AgentToDepartment_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_AdminToDepartment` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_AdminToDepartment_AB_unique`(`A`, `B`),
+    INDEX `_AdminToDepartment_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_DepartmentToNews` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_DepartmentToNews_AB_unique`(`A`, `B`),
+    INDEX `_DepartmentToNews_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_DepartmentToSupplier` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_DepartmentToSupplier_AB_unique`(`A`, `B`),
+    INDEX `_DepartmentToSupplier_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_DepartmentToOrder` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_DepartmentToOrder_AB_unique`(`A`, `B`),
+    INDEX `_DepartmentToOrder_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

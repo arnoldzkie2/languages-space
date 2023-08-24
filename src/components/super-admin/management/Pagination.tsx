@@ -14,7 +14,7 @@ interface Props {
     total: totalNewsState
 
 }
-
+    
 const Pagination: React.FC<Props> = ({ total, getTotalPages }) => {
 
     const dispatch = useDispatch()

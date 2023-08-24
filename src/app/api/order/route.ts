@@ -19,7 +19,7 @@ export const POST = async (req: Request) => {
                 status: status,
                 invoice_number: invoice_number,
                 express_number: express_number,
-                departments: departments
+                departments: { connect: departments.map((id: string) => { id }) }
             }
         })
 

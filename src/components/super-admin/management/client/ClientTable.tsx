@@ -92,6 +92,8 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
     const t = useTranslations('client')
 
     const globalT = useTranslations('global')
+    
+    const operationT = useTranslations('operation')
 
     return (
         <table className="text-sm text-left text-gray-800 shadow-md w-5/6">
@@ -134,10 +136,10 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='py-2 relative pl-7'>
                                 <FontAwesomeIcon icon={faEllipsis} className='cursor-pointer text-2xl text-black' onClick={() => dispatch(openOperation(client.id))} />
                                 <ul className={`${operation && clientSelectedID === client.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => dispatch(viewClient(client))}>View <FontAwesomeIcon icon={faEye} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600' onClick={() => dispatch(newOrUpdateClient({ type: 'update', client }))}>Update <FontAwesomeIcon icon={faPenToSquare} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => dispatch(deleteWarning(client))}>Delete <FontAwesomeIcon icon={faTrashCan} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => dispatch(closeOperation())}>Close <FontAwesomeIcon icon={faXmark} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => dispatch(viewClient(client))}>{operationT('view')} <FontAwesomeIcon icon={faEye} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600' onClick={() => dispatch(newOrUpdateClient({ type: 'update', client }))}>{operationT('update')} <FontAwesomeIcon icon={faPenToSquare} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => dispatch(deleteWarning(client))}>{operationT('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => dispatch(closeOperation())}>{operationT('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>

@@ -11,92 +11,98 @@ datasource db {
 // client schema area
 
 model Client {
-  id           String   @id @default(uuid())
-  profile      String?  @db.Text
+  id           String       @id @default(uuid())
+  profile      String?      @db.Text
   name         String
-  user_name    String   @unique
+  user_name    String       @unique
   phone_number String?
   email        String?
   gender       String?
-  card         Json?
+  card         ClientCard[]
   organization String?
   password     String
   address      String?
   origin       Json?
   note         String?
-  date         DateTime @default(now())
-  departments  Json?
+  date         DateTime     @default(now())
+  departments  Department[]
 }
 
 model ClientCard {
   id                String   @id @default(uuid())
-  departments       Json
   name              String
-  price             String
-  balance           String
+  price             Int
+  balance           Int
   validity          String
   invoice           Boolean
   repeat_purchases  Boolean
+  client            Client[]
   online_purchases  Boolean
   online_renews     Boolean
-  settlement_period Int
+  settlement_period String
   date              DateTime @default(now())
 }
 
 // supplier schema area
 
 model Supplier {
-  id                  String         @id @default(uuid())
+  id                  String             @id @default(uuid())
   profile             String?
   name                String
-  user_name           String         @unique
+  user_name           String             @unique
   organization        Json?
   payment_information Json?
   phone_number        String?
-  password            String?
+  password            String
   email               String?
   address             String?
   gender              String?
   card                Json?
+  meeting_info        Json?
   tags                SupplierTags[]
+  schedule            SupplierSchedule[]
   origin              String?
   note                String?
   employment_status   String?
-  entry               DateTime
-  departure           DateTime
-  date                DateTime       @default(now())
-  departments         Json?
+  entry               DateTime?
+  departure           DateTime?
+  date                DateTime           @default(now())
+  departments         Department[]
 }
 
 model SupplierTags {
   id         String    @id @default(uuid())
   name       String
-  date       DateTime  @default(now())
   supplier   Supplier? @relation(fields: [suplier_id], references: [id])
   suplier_id String?
+  date       DateTime  @default(now())
+
+  @@index([suplier_id])
 }
 
-model SupplierCard {
-  id   String             @id @default(uuid())
-  name SupplierCardType[]
-  type Json
-}
+model SupplierSchedule {
+  id           String    @id @default(uuid())
+  supplier     Supplier? @relation(fields: [supplier_id], references: [id])
+  supplier_id  String?
+  date         String
+  time         String
+  reserved     Boolean   @default(false)
+  client_id    String?
+  client_name  String?
+  meeting_id   String?
+  meeting_info Json?
+  note         String?
 
-model SupplierCardType {
-  id             String        @id @default(uuid())
-  SupplierCard   SupplierCard? @relation(fields: [supplierCardId], references: [id])
-  supplierCardId String?
-  fixed_salary   Json?
-  commission     Json?
+  @@index([supplier_id])
 }
 
 // agent schema area
 
 model Agent {
-  id                  String   @id @default(uuid())
+  id                  String       @id @default(uuid())
   profile             String?
   name                String
-  user_name           String   @unique
+  user_name           String       @unique
   password            String
   organization        Json?
   payment_information Json?
@@ -104,25 +110,28 @@ model Agent {
   email               String?
   address             String?
   gender              String?
-  card                Json?
+  card                AgentCard?   @relation(fields: [agent_card_id], references: [id])
   origin              String
   note                String?
-  date                DateTime @default(now())
-  departments         Json?
+  date                DateTime     @default(now())
+  departments         Department[]
+  agent_card_id         String?
+
+  @@index([agent_card_id])
 }
 
 model AgentCard {
-  id   String @id @default(uuid())
-  type Json
-  name String
-  link String
+  id    String  @id @default(uuid())
+  type  Json
+  name  String
+  link  String
+  agent Agent[]
 }
 
 // order schema area 
 
 model Order {
-  id             String   @id @unique @default(uuid())
-  booking_date   DateTime @default(now())
+  id             String       @id @unique @default(uuid())
   name           String
   client_name    String
   card           Json
@@ -133,43 +142,47 @@ model Order {
   status         String
   invoice_number Int
   express_number Int
-  date           DateTime @default(now())
-  departments    Json
+  date           DateTime     @default(now())
+  departments    Department[]
 }
 
 // admin schema area
 
 model Admin {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
-  user_name   String   @unique
+  user_name   String       @unique
   email       String
   password    String
-  date        DateTime @default(now())
-  departments Json?
+  date        DateTime     @default(now())
+  departments Department[]
 }
 
 model SuperAdmin {
   id        String   @id @default(uuid())
-  name      String
   user_name String   @unique
-  email     String?  @unique
   password  String
   date      DateTime @default(now())
 }
 
 model Department {
-  id   String   @id @default(uuid())
-  name String
-  date DateTime @default(now())
+  id        String     @id @default(uuid())
+  name      String
+  date      DateTime   @default(now())
+  clients   Client[]
+  news      News[]
+  agents    Agent[]
+  suppliers Supplier[]
+  admin     Admin[]
+  orders    Order[]
 }
 
 model News {
-  id          String   @id @default(uuid())
-  departments Json?
-  title       String
+  id          String       @id @default(uuid())
+  title       String       @db.Text
   author      String
   keywords    Json?
-  content     String   @db.Text
-  date        DateTime @default(now())
+  content     String       @db.Text
+  date        DateTime     @default(now())
+  departments Department[]
 }

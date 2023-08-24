@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import SideNav from '@/components/super-admin/SideNav';
 import axios from 'axios';
@@ -21,7 +22,7 @@ interface FormData {
 const CreateNews = () => {
 
     const router = useRouter()
-    
+
     const dispatch = useDispatch()
 
     const { quill, quillRef } = useQuill()
@@ -48,13 +49,18 @@ const CreateNews = () => {
 
         if (!author) return alert('Author is required')
 
-        if(!departmentID) return alert('Select a department to create this news')
+        if (keywords.length < 1) return alert('Add some keywords')
+
+        if (!departmentID) return alert('Select a department to create this news')
 
         try {
+
+            const { title, content, author } = formData
+
             const { data } = await axios.post('/api/news', {
-                title: formData.title,
-                content: formData.content,
-                author: formData.author,
+                title,
+                content,
+                author,
                 keywords: keywords,
                 departments: [departmentID]
             })
@@ -92,6 +98,7 @@ const CreateNews = () => {
                 quill.off('text-change', handleQuillChange);
             };
         }
+
     }, [quill]);
 
 
@@ -126,19 +133,21 @@ const CreateNews = () => {
                 <div className='flex items-center justify-between px-10 py-3 border shadow'>
                     <div className='text-2xl text-gray-700 font-bold'>Create news</div>
                     <div className='flex items-center w-1/2 gap-5'>
-                        <Departments />
+                        <div className='w-full pb-6'>
+                            <Departments />
+                        </div>
 
-                        <input className='w-full py-1 h-9 outline-none px-3 text-lg shadow-sm border' type="text" placeholder='Title' value={formData.title} onChange={(e: any) => setFormData(prevData => ({
+                        <input className='w-full py-1 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Title' value={formData.title} onChange={(e: any) => setFormData(prevData => ({
                             ...prevData,
                             title: e.target.value
                         }))} />
 
-                        <input className='w-full py-1 h-9 outline-none px-3 text-lg shadow-sm border' type="text" placeholder='Author' value={formData.author} onChange={(e: any) => setFormData(prevData => ({
+                        <input className='w-full py-1 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Author' value={formData.author} onChange={(e: any) => setFormData(prevData => ({
                             ...prevData,
                             author: e.target.value
                         }))} />
 
-                        <input className='w-full py-1 h-9 outline-none px-3 text-lg shadow-sm border' type="text" placeholder='Add Keyword' onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
+                        <input className='w-full py-1 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Add Keyword' onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
 
                     </div>
                 </div>

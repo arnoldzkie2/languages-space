@@ -80,7 +80,7 @@ const Web: React.FC = () => {
 
         try {
 
-            const { data } = await axios.get(`/api/news${departmentID && `?department=${departmentID}`}`)
+            const { data } = await axios.get(`/api/news${departmentID && `?departmentID=${departmentID}`}`)
 
             dispatch(setNews(data.data))
 
@@ -139,12 +139,9 @@ const Web: React.FC = () => {
                 <WebHeader />
 
                 <div className={`flex w-full h-full ${isSideNavOpen ? 'gap-5' : 'gap-10'} items-center`}>
-                    
+
                     <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6 gap-4'>
-                        <div className='flex flex-col gap-2'>
-                            <div className='font-medium pl-2'>Select Department</div>
-                            <Departments />
-                        </div>
+                        <Departments />
                         <SearchNews handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
 

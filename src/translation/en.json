@@ -23,7 +23,7 @@
     },
     "global": {
         "department": {
-            "select": "Select Department",
+            "select": "Department",
             "all": "All Department"
         },
         "operation": "Operation",
@@ -51,5 +51,11 @@
         "settings": "Settings",
         "statistics": "Statistics",
         "logout": "Logout"
+    },
+    "operation": {
+        "view": "View",
+        "update": "Update",
+        "delete": "Delete",
+        "close": "Close"
     }
 }

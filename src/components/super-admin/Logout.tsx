@@ -11,7 +11,7 @@ const Logout: React.FC = () => {
     const { isSideNavOpen } = useSelector((state: RootState) => state.globalState)
     return (
         <div className='flex items-center justify-between text-black hover:text-blue-600 cursor-pointer mt-auto'
-            onClick={() => signOut({ redirect: true, callbackUrl: '/auth/login' })}>
+            onClick={() => signOut({ redirect: true, callbackUrl: '/login' })}>
             {isSideNavOpen && <span>Logout</span>}
             <FontAwesomeIcon icon={faArrowRightToBracket} className={`flex justify-center ${!isSideNavOpen && 'w-full text-xl'}`} />
         </div>

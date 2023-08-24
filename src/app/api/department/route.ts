@@ -19,7 +19,7 @@ export const POST = async (req: Request) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
     }
 }
@@ -46,7 +46,7 @@ export const GET = async (req: Request) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
     }
 
@@ -78,7 +78,7 @@ export const PATCH = async (req: Request) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
     }
 }
@@ -103,7 +103,7 @@ export const DELETE = async (req: Request) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
     }
 

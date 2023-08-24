@@ -14,7 +14,7 @@ export const POST = async (req: Request) => {
         if (existingTitle) return NextResponse.json({ success: false, error: true, message: 'News title already exist' }, { status: 409 })
 
         const createNews = await prisma.news.create({
-            data: { content, title, author, keywords, departments }
+            data: { content, title, author, keywords, departments: { connect: departments.map((id: string) => ({ id })) } }
         })
 
         if (!createNews) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
@@ -39,42 +39,40 @@ export const GET = async (req: Request) => {
 
     const keyword = searchParams.get('keyword')
 
-    const department = searchParams.get('department')
+    const departmentID = searchParams.get('departmentID')
 
     try {
 
-        if (keyword && department) {
+        if (keyword && departmentID) {
 
-            const keywordNews = await prisma.news.findMany({
+            const AllNews = await prisma.department.findUnique({
                 where: {
-                    departments: {
-                        array_contains: String(department)
-                    },
-                    keywords: {
-                        array_contains: String(keyword)
-                    }
+                    id: departmentID
+                },
+                include: {
+                    news: true
                 }
             })
 
-            if (!keywordNews) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!AllNews) return NextResponse.json({ message: 'Server error' }, { status: 500 })
 
-            if (keywordNews) return NextResponse.json({ success: true, data: keywordNews }, { status: 200 })
+            const keywordNews = AllNews.news.filter(item => item.keywords === keyword)
 
+            if (!keywordNews) return NextResponse.json({ message: 'Server error' }, { status: 500 })
+
+            return NextResponse.json({ data: keywordNews }, { status: 200 })
         }
 
-        if (department) {
+        if (departmentID) {
 
-            const newsDepartment = await prisma.news.findMany({
-                where: {
-                    departments: {
-                        array_contains: String(department)
-                    }
-                }
+            const newsDepartment = await prisma.department.findUnique({
+                where: { id: departmentID }, include: { news: true }
             })
 
-            if (!newsDepartment) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!newsDepartment) return NextResponse.json({ message: 'Server error' }, { status: 500 })
 
-            if (newsDepartment) return NextResponse.json({ success: true, data: newsDepartment }, { status: 200 })
+            return NextResponse.json({ data: newsDepartment.news })
+
         }
 
         if (id) {

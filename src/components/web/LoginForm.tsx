@@ -1,11 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client"
-import { signIn, signOut } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useRef, useState } from 'react';
+import axios from 'axios';
 
 const LoginForm = () => {
 
@@ -26,12 +27,8 @@ const LoginForm = () => {
                 password: password.current,
                 redirect: false,
             })
-            
-            console.log(result);
 
             if (result?.error) return alert('Invalid credentials')
-
-            
 
         } catch (error) {
             console.log(error);
@@ -53,7 +50,7 @@ const LoginForm = () => {
                 />
                 {password.current && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}</div>
             <button className='border-2 h-11 text-lg bg-black text-white mt-4'>Login</button>
-            <div className='mt-3 text-slate-500 text-center'>Don't have account yet? <Link href='/auth/signup' className='text-black font-bold'>Signup</Link></div>
+            <div className='mt-3 text-slate-500 text-center'>Don't have account yet? <Link href='/signup' className='text-black font-bold'>Signup</Link></div>
         </form>
     );
 };

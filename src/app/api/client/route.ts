@@ -8,21 +8,19 @@ export const POST = async (req: Request) => {
     try {
 
         const existingUsername =
-            await prisma.client.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+            await prisma.client.findUnique({ where: { user_name } }) ||
+            await prisma.superAdmin.findUnique({ where: { user_name } }) ||
+            await prisma.admin.findUnique({ where: { user_name } }) ||
+            await prisma.supplier.findUnique({ where: { user_name } }) ||
+            await prisma.agent.findUnique({ where: { user_name } })
 
-        if (existingUsername) return NextResponse.json({ success: false, data: { user_name: user_name }, message: 'Username already exist!' }, { status: 409 })
+        if (existingUsername) return NextResponse.json({ message: 'Username already exist!' }, { status: 409 })
 
-        if (origin) {
-
-        }
-        
         const newUser = await prisma.client.create({
             data: {
-                profile, departments, name, password, user_name, organization, phone_number, email, address, gender, origin, note
+                profile, name, password, user_name, organization, phone_number, email, address, gender, origin, note, departments: {
+                    connect: departments.map((id: string) => ({ id }))
+                }
             }
         })
 
@@ -37,43 +35,54 @@ export const POST = async (req: Request) => {
 
 export const GET = async (req: Request) => {
 
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')
+    const clientID = searchParams.get('clientID')
 
-    const department = searchParams.get('department')
+    const departmentID = searchParams.get('departmentID')
 
     try {
 
-        if (department) {
+        if (clientID) {
 
-            const clientsDepartment = await prisma.client.findMany({
+            const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } });
+
+            if (!client) return NextResponse.json({ message: 'Client Not Found' }, { status: 404 })
+
+            return NextResponse.json({ data: client })
+
+        }
+
+        if (departmentID) {
+
+            const checkDepartment = await prisma.department.findUnique({ where: { id: departmentID } })
+
+            if (!checkDepartment) return NextResponse.json({ message: 'No Department Found' }, { status: 404 })
+
+            const clientsDepartment = await prisma.department.findUnique({
                 where: {
-                    departments: {
-                        array_contains: String(department)
+                    id: departmentID
+                },
+                include: {
+                    clients: {
+                        include: {
+                            departments: true
+                        }
                     }
                 }
             })
 
-            if (!clientsDepartment) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!clientsDepartment) return NextResponse.json({ message: 'Server Error' }, { status: 500 })
 
-            if (clientsDepartment) return NextResponse.json({ success: true, data: clientsDepartment }, { status: 200 })
+            return NextResponse.json({ data: clientsDepartment.clients }, { status: 200 })
 
-
-            return NextResponse.json({ success: true, data: clientsDepartment }, { status: 200 })
         }
 
-        const client = await prisma.client.findUnique({ where: { id: String(id) } })
+        const allClient = await prisma.client.findMany({ include: { departments: true } })
 
-        if (client) return NextResponse.json({ success: true, data: client }, { status: 200 })
+        if (!allClient) return NextResponse.json({ message: 'Server error' }, { status: 500 })
 
-        if (id && !client) return NextResponse.json({ success: false, error: true, message: 'No client found' }, { status: 404 })
-
-        const allClient = await prisma.client.findMany()
-
-        if (!allClient) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
-
-        return NextResponse.json({ success: true, data: allClient }, { status: 200 })
+        return NextResponse.json({ data: allClient })
 
     } catch (error) {
 
@@ -137,9 +146,39 @@ export const PATCH = async (req: Request) => {
                 await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
                 await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
                 await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
-    
+
             if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
-            
+
+        }
+
+        if (departments && Array.isArray(departments)) {
+            const nonExistentDepartments = await Promise.all(
+                departments.map(async (departmentId) => {
+                    const checkDepartment = await prisma.department.findUnique({
+                        where: {
+                            id: departmentId,
+                        },
+                    });
+                    return { id: departmentId, exists: Boolean(checkDepartment) };
+                })
+            );
+
+            const nonExistentDepartmentsList = nonExistentDepartments.filter(
+                (department) => !department.exists
+            );
+
+            if (nonExistentDepartmentsList.length > 0) {
+                const nonExistentDepartmentIds = nonExistentDepartmentsList.map(
+                    (department) => department.id
+                );
+                return NextResponse.json({
+                    success: false,
+                    error: true,
+                    message: `Departments with IDs [${nonExistentDepartmentIds.join(
+                        ', '
+                    )}] do not exist`,
+                }, { status: 404 });
+            }
         }
 
         const updatedClient = await prisma.client.update({

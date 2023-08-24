@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
 
-    const { user_name, name, email, password } = await req.json()
+    const { user_name, password } = await req.json()
 
     try {
 
@@ -12,11 +12,7 @@ export const POST = async (req: Request) => {
 
         if (checkUsername) return NextResponse.json({ success: false, error: true, message: 'Username already exist!' }, { status: 409 })
 
-        const checkEmail = await prisma.superAdmin.findUnique({ where: { email: String(email) } })
-
-        if (checkEmail) return NextResponse.json({ success: false, error: true, message: 'Email already exist!' }, { status: 409 })
-
-        const newSuperAdmin = await prisma.superAdmin.create({ data: { name, user_name, email, password } })
+        const newSuperAdmin = await prisma.superAdmin.create({ data: { user_name, password } })
 
         if (!newSuperAdmin) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })
 
@@ -71,7 +67,7 @@ export const PATCH = async (req: Request) => {
 
     const id = searchParams.get('id')
 
-    const { user_name, name, email, password } = await req.json()
+    const { user_name, password } = await req.json()
 
     try {
 
@@ -83,13 +79,9 @@ export const PATCH = async (req: Request) => {
 
         if (checkUsername) return NextResponse.json({ succes: false, error: true, message: 'Username already exist!' }, { status: 409 })
 
-        const checkEmail = await prisma.superAdmin.findUnique({ where: { email: String(email) } })
-
-        if (checkEmail) return NextResponse.json({ success: false, error: true, message: 'Email already exist!' }, { status: 409 })
-
         const updatedSuperAdmin = await prisma.superAdmin.update({
             where: { id: String(id) },
-            data: { user_name, name, email, password }
+            data: { user_name, password }
         })
 
         if (!updatedSuperAdmin) return NextResponse.json({ success: false, error: true, message: 'Bad request' }, { status: 400 })

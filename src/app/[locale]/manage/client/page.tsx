@@ -65,7 +65,7 @@ const ManageClient: FC = () => {
 
         try {
 
-            const { data } = await axios.get(`/api/client${departmentID && `?department=${departmentID}`}`)
+            const { data } = await axios.get(`/api/client${departmentID && `?departmentID=${departmentID}`}`)
 
             dispatch(setClients(data.data))
 
@@ -172,10 +172,7 @@ const ManageClient: FC = () => {
 
                 <div className={`flex w-full h-full ${isSideNavOpen ? 'gap-5' : 'gap-10'} items-center`}>
                     <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6'>
-                        <div className='flex flex-col gap-2'>
-                            <div className='font-medium pl-2'>Select Department</div>
-                            <Departments />
-                        </div>
+                        <Departments />
                         <SearchClient handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
 

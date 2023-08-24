@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin,note, departments } = await req.json()
+    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, note, departments } = await req.json()
 
     try {
 
@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
 
         const newAgent = await prisma.agent.create({
             data: {
-                departments, name, password, user_name, organization, phone_number, email, address, gender, origin,note
+                departments: { connect: departments.map((id: string) => { id }) }, name, password, user_name, organization, phone_number, email, address, gender, origin, note
             }
         })
 
@@ -37,26 +37,21 @@ export const GET = async (req: Request) => {
 
     const id = searchParams.get('id')
 
-    const department = searchParams.get('department')
+    const departmentID = searchParams.get('departmentID')
 
     try {
 
-        if (department) {
+        if (departmentID) {
 
-            const agentsDepartment = await prisma.agent.findMany({
+            const agentsDepartment = await prisma.department.findUnique({
                 where: {
-                    departments: {
-                        array_contains: String(department)
-                    }
-                }
+                    id: departmentID
+                }, include: { agents: true }
             })
 
-            if (!agentsDepartment) return NextResponse.json({ succes: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!agentsDepartment) return NextResponse.json({ message: 'Server error' }, { status: 500 })
 
-            if (agentsDepartment) return NextResponse.json({ success: true, data: agentsDepartment }, { status: 200 })
-
-
-            return NextResponse.json({ success: true, data: agentsDepartment }, { status: 200 })
+            return NextResponse.json({ data: agentsDepartment.agents }, { status: 200 })
         }
 
         const agent = await prisma.agent.findUnique({ where: { id: String(id) } })

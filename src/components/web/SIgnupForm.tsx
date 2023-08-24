@@ -42,7 +42,7 @@ const SignupForm = () => {
 
             if(data.success) setError('')
 
-            if (data.success) window.location.href = '/auth/login'
+            if (data.success) window.location.href = '/login'
 
         } catch (error) {
             console.log(error);
@@ -91,7 +91,7 @@ const SignupForm = () => {
                 {signup.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}
             </div>
             <button className='border-2 text-lg h-11 bg-black text-white mt-4'>Signup</button>
-            <div className='mt-3 text-slate-500 text-center'>Already signed up? <Link href='/auth/login' className='text-black font-bold'>Login</Link></div>
+            <div className='mt-3 text-slate-500 text-center'>Already signed up? <Link href='/login' className='text-black font-bold'>Login</Link></div>
         </form >
     );
 };

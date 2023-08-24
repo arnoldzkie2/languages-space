@@ -13,10 +13,9 @@ const Web: React.FC = () => {
 
     const t = useTranslations('side-nav')
     return (
-        <Link href={'/manage/web'} className={`flex items-center hover:text-blue-600 w-full`}>
-            {isSideNavOpen && <span className='mr-auto'>{t('news')}</span>}
-            <FontAwesomeIcon icon={faDisplay} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
-        </Link >
+      <div>
+        
+      </div>  
     );
 };
 
