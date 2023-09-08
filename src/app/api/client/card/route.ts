@@ -1,131 +1,46 @@
-import { NextResponse } from "next/server";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 import prisma from "@/lib/db";
-
-export const POST = async (req: Request) => {
-
-    const { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = await req.json()
-
-    try {
-
-        const existingCard = await prisma.clientCard.findFirst({ where: { name } })
-
-        if (existingCard) return NextResponse.json({ success: false, error: true, message: 'Card name already exist!' }, { status: 409 })
-
-        const newCard = await prisma.clientCard.create({
-
-            data: { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period }
-
-        })
-
-        if (!newCard) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
-
-        return NextResponse.json({ success: true, error: 0, data: newCard }, { status: 201 })
-
-    } catch (error) {
-
-        console.error(error);
-
-        return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
-
-    } finally {
-        prisma.$disconnect()
-    }
-
-}
 
 export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')
+    const clientID = searchParams.get('clientID')
 
     try {
 
-        if (id) {
+        if (clientID) {
 
-            const checkCard = await prisma.clientCard.findUnique({ where: { id }, include: { client: true } })
+            const clientCard = await prisma.client.findUnique({ where: { id: clientID }, include: { cards: true } })
 
-            if (!checkCard) return NextResponse.json({ success: false, error: true, message: 'No Card found' }, { status: 404 })
+            if (!clientCard) return notFoundRes('Client Card')
 
-            return NextResponse.json({ success: true, errror: 0, data: checkCard }, { status: 200 })
+            return okayRes(clientCard)
 
         }
 
-        const allCard = await prisma.clientCard.findMany({ include: { client: true } })
+        const clientsWithCards = await prisma.client.findMany({
+            where: {
+              cards: {
+                some: {},
+              },
+            },
+            include: { cards: true },
+          })
 
-        if (!allCard) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+        if(!clientsWithCards) return badRequestRes()
 
-        return NextResponse.json({ success: true, error: 0, data: allCard }, { status: 200 })
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-export const PATCH = async (req: Request) => {
-
-    const { searchParams } = new URL(req.url)
-
-    const id = searchParams.get('id')
-
-    const { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = await req.json()
-
-    try {
-
-        if (!id) return NextResponse.json({ success: false, error: true, message: 'No ID provided' }, { status: 404 })
-
-        const checkCard = await prisma.clientCard.findUnique({ where: { id } })
-
-        if (!checkCard) return NextResponse.json({ success: false, error: true, message: 'No Card found' }, { status: 404 })
-
-        const checkCardName = await prisma.clientCard.findFirst({ where: { name } })
-
-        if (checkCardName) return NextResponse.json({ success: false, error: true, message: 'Card Name Already exist' }, { status: 409 })
-
-        const updateCard = await prisma.clientCard.update({
-            where: { id }, data: {
-                name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period
-            }
-        })
-
-        if (!updateCard) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
-
-        return NextResponse.json({ success: true, error: 0, data: updateCard }, { status: 200 })
+        return okayRes(clientsWithCards)
 
     } catch (error) {
 
-        console.error(error);
+        console.log(error);
 
-    }
+        return serverErrorRes()
 
-}
+    } finally {
 
-export const DELETE = async (req: Request) => {
-
-    const { searchParams } = new URL(req.url)
-
-    const id = searchParams.get('id')
-
-    try {
-
-        if (!id) return NextResponse.json({ success: false, error: true, message: 'No ID provided' }, { status: 404 })
-
-        const checkCard = await prisma.clientCard.findUnique({ where: { id } })
-
-        if (!checkCard) return NextResponse.json({ success: false, error: true, message: 'No Card found' }, { status: 404 })
-
-        const deleteCard = await prisma.clientCard.delete({ where: { id } })
-
-        if (!deleteCard) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
-
-        return NextResponse.json({ success: true, error: 0, data: deleteCard }, { status: 200 })
-
-    } catch (error) {
-
-        console.error(error);
+        prisma.$disconnect()
 
     }
 

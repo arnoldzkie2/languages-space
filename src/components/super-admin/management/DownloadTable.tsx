@@ -1,9 +1,5 @@
-import { RootState } from "@/lib/redux/Store";
-import { useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFloppyDisk } from "@fortawesome/free-regular-svg-icons";
 import { useTranslations } from "next-intl";
 
 interface Props {
@@ -29,12 +25,11 @@ const DownloadTable: React.FC<Props> = ({ tables, selectedTable }) => {
 
     };
 
-    const t = useTranslations('global')
+    const t = useTranslations('super-admin')
 
     return (
-        <li className="flex items-center gap-1 hover:text-blue-600 cursor-pointer text-gray-600" onClick={downloadTable}>
-            <div>{t('download')}</div>
-            <FontAwesomeIcon icon={faFloppyDisk} />
+        <li className="flex items-center hover:text-blue-600 cursor-pointer justify-center w-28 text-gray-600" onClick={downloadTable}>
+            <div>{t('global.download')}</div>
         </li>
     );
 };

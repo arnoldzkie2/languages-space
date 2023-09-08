@@ -1,26 +1,24 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import { closeNewsDeleteWarning, setSelectedNews } from '@/lib/redux/ManageWeb/ManageWebSlice';
-import { RootState } from '@/lib/redux/Store';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useAdminNewsStore from '@/lib/state/super-admin/newsStore';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 
 interface Props {
 
-    getAllNews: () => Promise<{
-        payload: any;
-        type: "manage_web/setNews";
-    } | undefined>
+    getAllNews: () => Promise<void>
 
 }
 
 const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
 
-    const { selectedNews, targetNews } = useSelector((state: RootState) => state.manageWeb)
+    const { selectedNews, newsData, closeNewsDeleteWarning, setSelectedNews } = useAdminNewsStore()
 
-    const dispatch = useDispatch()
+    const { isLoading, setIsLoading } = useAdminGlobalStore()
 
     const deleteNews = async () => {
 
@@ -32,23 +30,34 @@ const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
 
                 const queryString = newsIds.map((id) => `id=${encodeURIComponent(id)}`).join('&');
 
+                setIsLoading(true)
+
                 var { data } = await axios.delete(`/api/news?${queryString}`);
 
             } else {
 
-                var { data } = await axios.delete(`/api/news?id=${targetNews.id}`)
+                setIsLoading(true)
+
+                var { data } = await axios.delete(`/api/news?id=${newsData.id}`)
 
             }
 
-            if (!data.success) alert('Something went wrong')
+            if (data.ok) {
 
-            dispatch(closeNewsDeleteWarning())
+                setIsLoading(false)
 
-            getAllNews()
+                closeNewsDeleteWarning()
 
-            dispatch(setSelectedNews([]))
+                getAllNews()
+
+                setSelectedNews([])
+
+            }
 
         } catch (error) {
+
+            setIsLoading(false)
+            alert('Something went wrong')
 
             console.log(error);
 
@@ -71,13 +80,13 @@ const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
                     })
                     :
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border'>
-                        <div>NEWS ID: <span className='font-normal text-gray-700'>{targetNews.id}</span></div>
-                        <div>TITLE: <span className='font-normal text-gray-700'>{targetNews.title}</span></div>
+                        <div>NEWS ID: <span className='font-normal text-gray-700'>{newsData.id}</span></div>
+                        <div>TITLE: <span className='font-normal text-gray-700'>{newsData.title}</span></div>
                     </div>
                 }
                 <div className='flex items-center w-full justify-center mt-5 gap-5'>
-                    <button className='text-sm border py-2 px-3 rounded-lg hover:bg-gray-100' onClick={() => dispatch(closeNewsDeleteWarning())}>No Cancel</button>
-                    <button className='text-sm text-white bg-red-600 rounded-lg px-3 py-2 hover:bg-red-700' onClick={deleteNews}>Yes I'm sure</button>
+                    <button className='text-sm border py-2 px-3 rounded-lg hover:bg-gray-100' onClick={() => closeNewsDeleteWarning()}>No Cancel</button>
+                    <button disabled={isLoading && true} className={`text-sm text-white rounded-lg px-3 py-2 ${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'}`} onClick={deleteNews}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : "Yes I'm sure"}</button>
                 </div>
             </div>
         </div >

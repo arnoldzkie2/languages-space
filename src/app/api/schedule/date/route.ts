@@ -1,43 +1,43 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/db"
+import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 
-export const POST = async (req: Request) => {
+export const GET = async (req: Request) => {
 
-    const { supplier_id, fromDate, toDate } = await req.json()
-0
+    const { searchParams } = new URL(req.url)
+
+    const supplierID = searchParams.get('supplierID')
+    const fromDate = searchParams.get('fromDate')
+    const toDate = searchParams.get('toDate')
+
     try {
 
-        const schedules = await prisma.supplierSchedule.findMany({
-            where: {
-                supplier_id,
-                date: {
-                    gte: String(fromDate),
-                    lte: String(toDate),
+        if (fromDate && toDate && supplierID) {
+
+
+            const schedules = await prisma.supplierSchedule.findMany({
+                where: {
+                    supplier_id: supplierID,
+                    date: {
+                        gte: fromDate,
+                        lte: toDate
+                    },
                 },
-            },
-        });
+            });
 
-        const groupedSchedules = schedules.reduce((acc: any, schedule) => {
-            const { date } = schedule;
-            if (!acc[date]) {
-                acc[date] = [];
-            }
-            acc[date].push(schedule);
-            return acc;
-        }, {});
+            if (!schedules) return badRequestRes()
 
-        const arrangedSchedules = Object.keys(groupedSchedules).map((date) => ({
-            date,
-            times: groupedSchedules[date],
-        }));
+            return okayRes(schedules)
 
-        arrangedSchedules.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+        }
 
-        return NextResponse.json({ success: true, error: false, data: arrangedSchedules })
+        return notFoundRes('supplierID')
 
     } catch (error) {
 
         console.error('Error fetching schedules:', error);
+
+        return serverErrorRes()
 
     }
 

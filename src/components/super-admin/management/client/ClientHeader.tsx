@@ -1,42 +1,44 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { newOrUpdateClient } from '@/lib/redux/ManageClient/ManageClientSlice';
 import { faAddressCard, faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Link from 'next/link';
+import Link from 'next-intl/link';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/lib/redux/Store';
 import DownloadTable from '../DownloadTable';
 import { useTranslations } from 'next-intl';
+import { useSession } from 'next-auth/react';
+import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 
 const ClientHeader: React.FC = ({ }) => {
 
-    const dispatch = useDispatch()
+    const session = useSession()
 
-    const { clients, selectedClients } = useSelector((state: RootState) => state.manageClient)
+    const { clients, selectedClients } = useAdminClientStore()
 
-    const t = useTranslations('client')
+    const t = useTranslations('super-admin')
+
+    const clientHeaderSkeleton = (
+        <li className='bg-slate-200 animate-pulse w-28 h-5 rounded-3xl'></li>
+    )
 
     return (
-        <nav className={`border shadow flex items-center py-5 px-10 justify-between bg-white`}>
-            <h1 className='font-bold text-gray-600 text-xl uppercase'>{t('h1')}</h1>
-            <ul className='flex items-center h-full ml-auto gap-10'>
-                <li className='flex items-center text-gray-700 hover:text-blue-600 cursor-pointer gap-1' onClick={() => dispatch(newOrUpdateClient({ type: 'new' }))}>
-                    <div>{t('create')}</div>
-                    <FontAwesomeIcon icon={faPlus} />
-                </li>
+        <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between bg-white`}>
+            <h1 className='font-black text-gray-600 text-xl uppercase'>{t('client.h1')}</h1>
+            <ul className='flex items-center h-full ml-auto gap-5'>
+                {session.status !== 'loading' ?
+                    <Link href={'/manage/client/new'} className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
+                        <div>{t('client.create')}</div>
+                    </Link> : clientHeaderSkeleton}
 
-                <DownloadTable tables={clients} selectedTable={selectedClients} />
+                {session.status !== 'loading' ? <DownloadTable tables={clients} selectedTable={selectedClients} /> : clientHeaderSkeleton}
 
-                <Link href='/manage/client/card' className='flex items-center gap-1 text-gray-700 hover:text-blue-600 cursor-pointer'>
-                    <div>{t('card.client')}</div>
-                    <FontAwesomeIcon icon={faAddressCard} />
-                </Link>
-                <li className='flex items-center gap-1 text-gray-700 hover:text-blue-600 cursor-pointer'>
-                    <div>{t('card.bind')}</div>
-                    <FontAwesomeIcon icon={faSquarePlus} />
-                </li>
+                {session.status !== 'loading' ? <Link href='/manage/client/card' className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
+                    <div>{t('client.card.client')}</div>
+                </Link> : clientHeaderSkeleton}
+                {session.status !== 'loading' ? <li className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
+                    <Link href={'/manage/client/card/bind'}>{t('client.card.bind')}</Link>
+                </li> : clientHeaderSkeleton}
             </ul>
         </nav>
     );

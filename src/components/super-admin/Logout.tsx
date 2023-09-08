@@ -1,20 +1,19 @@
 'use client'
-import { RootState } from '@/lib/redux/Store';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { signOut } from 'next-auth/react';
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 const Logout: React.FC = () => {
 
-    const { isSideNavOpen } = useSelector((state: RootState) => state.globalState)
+    const { isSideNavOpen } = useAdminGlobalStore()
     return (
-        <div className='flex items-center justify-between text-black hover:text-blue-600 cursor-pointer mt-auto'
+        <li className='flex items-center justify-between text-black hover:text-blue-600 cursor-pointer mt-auto'
             onClick={() => signOut({ redirect: true, callbackUrl: '/login' })}>
             {isSideNavOpen && <span>Logout</span>}
-            <FontAwesomeIcon icon={faArrowRightToBracket} className={`flex justify-center ${!isSideNavOpen && 'w-full text-xl'}`} />
-        </div>
+            <FontAwesomeIcon width={20} height={20}  icon={faArrowRightToBracket} className={`flex justify-center ${!isSideNavOpen && 'w-full text-xl'}`} />
+        </li>
     );
 }
 

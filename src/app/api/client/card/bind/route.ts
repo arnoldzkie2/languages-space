@@ -1,55 +1,92 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { notFoundRes, existRes, badRequestRes, createdRes, serverErrorRes, okayRes } from "@/lib/api/response";
 
 export const POST = async (req: Request) => {
 
-    const { client_id, card_id } = await req.json()
+    const { clientID, clientCardID } = await req.json()
 
     try {
 
-        const checkClient = await prisma.client.findUnique({ where: { id: client_id } })
+        const client = await prisma.client.findUnique({ where: { id: clientID } })
 
-        if (!checkClient) return NextResponse.json({ success: false, error: true, message: 'No Student found' }, { status: 404 })
+        if (!client) return notFoundRes('Client')
 
-        const checkCard = await prisma.clientCard.findUnique({ where: { id: card_id } })
+        const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
 
-        if (!checkCard) return NextResponse.json({ success: false, error: true, message: 'No Card found' }, { status: 404 })
+        if (!card) return notFoundRes('Client Card')
 
-        const bindCardToClient = await prisma.client.update({ where: { id: client_id }, include: { card: true }, data: { card: { connect: { id: card_id } } } })
+        const { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = card
 
-        if (!bindCardToClient) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+        const existingCard = await prisma.clientCard.findFirst({ where: { client_id: clientID, name } })
 
-        return NextResponse.json({ success: true, error: 0, data: bindCardToClient })
+        if (existingCard) return existRes('client_card')
+
+        const bindCard = await prisma.clientCard.create({
+            data: {
+                name, price, balance, validity, card_id: clientCardID, invoice, repeat_purchases, online_purchases, online_renews, settlement_period, client: { connect: { id: clientID } }
+            },
+            include: { client: true }
+        })
+
+        if (!bindCard) return badRequestRes()
+
+        return createdRes()
 
     } catch (error) {
 
-        console.error(error);
+        console.log(error);
 
+        return serverErrorRes()
+
+    } finally {
+
+        prisma.$disconnect()
     }
-
 }
 
-export const PATCH = async (req: Request) => {
+export const DELETE = async (req: Request) => {
 
-    const { client_id, card_id } = await req.json()
+    const { searchParams } = new URL(req.url)
+
+    const clientID = searchParams.get('clientID')
+
+    const clientCardID = searchParams.get('clientCardID')
 
     try {
 
-        const checkClient = await prisma.client.findUnique({ where: { id: client_id }, include: { card: true } })
+        if (clientCardID && clientID) {
 
-        if (!checkClient) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            const checkClient = await prisma.client.findUnique({ where: { id: clientID } })
 
-        const updatedCard = checkClient.card.filter((c) => c.id !== card_id);
+            if (!checkClient) return notFoundRes('Client')
 
-        const updateClient = await prisma.client.update({ where: { id: client_id }, data: { card: { set: updatedCard } }, include: { card: true } })
+            const checkCard = await prisma.clientCard.findUnique({ where: { id: clientCardID, client_id: clientID } })
 
-        if (!updateClient) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!checkCard) return notFoundRes('Card in Client')
 
-        return NextResponse.json({ success: true, error: 0, data: updateClient }, { status: 200 })
+            const removeCard = await prisma.clientCard.delete({ where: { id: clientCardID, client_id: clientID } })
+
+            if (!removeCard) return badRequestRes()
+
+            return okayRes()
+
+        }
+
+        if (!clientID) return notFoundRes('clientID')
+
+        if (!clientCardID) return notFoundRes('clientCardID')
 
     } catch (error) {
 
-        console.error(error);
+        console.log(error);
+
+        return serverErrorRes()
+
+    } finally {
+
+        prisma.$disconnect()
 
     }
+
 }

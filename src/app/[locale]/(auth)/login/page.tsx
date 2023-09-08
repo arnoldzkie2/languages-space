@@ -8,6 +8,7 @@ import { useEffect } from "react";
 interface SessionProps {
     status: string
     data: any
+    update: any;
 }
 
 const Page = () => {
@@ -16,18 +17,19 @@ const Page = () => {
 
     useEffect(() => {
         if (session.status !== 'loading' && session.status === 'authenticated') {
-            if (session.data.user.user === 'client') {
+            if (session.data.user.type === 'client') {
                 redirect('/client')
-            } else if (session.data.user.user === 'agent') {
+            } else if (session.data.user.type === 'agent') {
                 redirect('/agent')
-            } else if (session.data.user.user === 'supplier') {
+            } else if (session.data.user.type === 'supplier') {
                 redirect('/supplier')
-            } else if (session.data.user.user === 'admin') {
+            } else if (session.data.user.type === 'admin') {
                 redirect('/admin')
-            } else if (session.data.user.user === 'super-admin') {
+            } else if (session.data.user.type === 'super-admin') {
                 redirect('/super-admin')
             }
         }
+
     }, [session])
 
     return (

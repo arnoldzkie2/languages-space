@@ -1,72 +1,67 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 
 export const POST = async (req: Request) => {
 
-    const { name, user_name, password, organization, payment_information, phone_number, email, address, gender, card, origin,
+    const { name, user_name, password, organization, payment_info, phone_number, email, address, gender, card, origin,
         tags, note, employment_status, entry, departure, departments, meeting_info } = await req.json()
 
     try {
 
+        if (!user_name || !password || !name) return badRequestRes()
+
         const existingUsername =
-            await prisma.client.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+            await prisma.client.findUnique({ where: { user_name } }) ||
+            await prisma.superAdmin.findUnique({ where: { user_name } }) ||
+            await prisma.admin.findUnique({ where: { user_name } }) ||
+            await prisma.supplier.findUnique({ where: { user_name } }) ||
+            await prisma.agent.findUnique({ where: { user_name } })
 
-        if (existingUsername) return NextResponse.json({ success: false, data: { user_name: user_name }, message: 'Username already exist!' }, { status: 409 })
+        if (existingUsername) return existRes('user_name')
 
-        const checkEmail = await prisma.supplier.findFirst({
-            where: { email }
-        })
+        const supplierData = {
+            name, user_name, password, organization, payment_info, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure,
+        }
 
-        if (checkEmail) return NextResponse.json({ success: false, error: true, message: 'Email already exist!' }, { status: 200 })
+        if (departments && departments.length > 0) {
 
-        if (departments && Array.isArray(departments)) {
-            const nonExistentDepartments = await Promise.all(
-                departments.map(async (departmentId) => {
-                    const checkDepartment = await prisma.department.findUnique({
-                        where: {
-                            id: departmentId,
-                        },
-                    });
-                    return { id: departmentId, exists: Boolean(checkDepartment) };
-                })
-            );
+            const checkDepartments = await prisma.department.findMany({
+                where: {
+                    id: {
+                        in: departments
+                    }
+                }
+            })
 
-            const nonExistentDepartmentsList = nonExistentDepartments.filter(
-                (department) => !department.exists
-            );
+            const existingDepartmentIds = checkDepartments.map(department => department.id);
+            const nonExistingDepartmentIds = departments.filter((id: string) => !existingDepartmentIds.includes(id));
 
-            if (nonExistentDepartmentsList.length > 0) {
-                const nonExistentDepartmentIds = nonExistentDepartmentsList.map(
-                    (department) => department.id
-                );
-                return NextResponse.json({
-                    success: false,
-                    error: true,
-                    message: `Departments with IDs [${nonExistentDepartmentIds.join(
-                        ', '
-                    )}] do not exist`,
-                }, { status: 404 });
-            }
+            if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 400 });
+
+            const newSupplier = await prisma.supplier.create({
+                data: supplierData,
+            });
+
+            if (!newSupplier) return badRequestRes()
+
+            return createdRes()
+
         }
 
         const newSupplier = await prisma.supplier.create({
-            data: {
-                name, user_name, password, organization, payment_information, phone_number, email, address, gender, card,
-                origin, tags, note, employment_status, entry, departure, departments, meeting_info
-            }
+            data: supplierData,
         })
 
-        if (!newSupplier) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })
+        if (!newSupplier) return badRequestRes()
 
-        return NextResponse.json({ success: true, data: newSupplier }, { status: 200 })
+        return createdRes()
 
     } catch (error) {
 
         console.log(error);
+
+        return serverErrorRes()
 
     }
 
@@ -76,123 +71,149 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')
+    const supplierID = searchParams.get('supplierID')
+
+    const departmentID = searchParams.get('departmentID')
 
     try {
 
-        if (id) {
+        if (supplierID) {
 
             const singleSupplier = await prisma.supplier.findUnique({
-                where: { id }
+                where: { id: supplierID },
+                include: { departments: true, meeting_info: true }
             })
 
-            if (!singleSupplier) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!singleSupplier) notFoundRes('Supplier')
 
-            return NextResponse.json({ success: true, data: singleSupplier }, { status: 200 })
+            return NextResponse.json({ ok: true, data: singleSupplier }, { status: 200 })
 
         }
 
-        const allSupplier = await prisma.supplier.findMany()
+        if (departmentID) {
 
-        if (!allSupplier) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 200 })
+            const suppliers = await prisma.supplier.findMany({
+                where: {
+                    departments: {
+                        some: {
+                            id: departmentID
+                        }
+                    }
+                }, include: { departments: true }
+            })
 
-        return NextResponse.json({ success: true, data: allSupplier }, { status: 200 })
+            if (!suppliers) return badRequestRes()
+
+            return okayRes(suppliers)
+
+        }
+
+        const allSupplier = await prisma.supplier.findMany({ include: { departments: true } })
+
+        if (!allSupplier) badRequestRes()
+
+        return okayRes(allSupplier)
 
     } catch (error) {
 
         console.log(error);
+
+        return serverErrorRes()
 
     }
 }
 
 export const PATCH = async (req: Request) => {
 
-    const { name, profile, user_name, password, organization, payment_information, phone_number, email, address, gender,
+    const { name, profile, user_name, password, organization, payment_info, phone_number, email, address, gender,
         card, origin, tags, note, employment_status, entry, departure, departments, meeting_info } = await req.json()
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')
+    const supplierID = searchParams.get('supplierID')
 
     try {
 
-        const checkId = await prisma.supplier.findFirst({
-            where: { id: String(id) }
-        })
+        if (supplierID) {
 
-        if (!checkId) return NextResponse.json({ success: false, error: true, message: 'No id found' }, { status: 404 })
+            const checkSupplier = await prisma.supplier.findUnique({
+                where: { id: supplierID },
+                include: { departments: true }
+            })
 
-        if (departments && Array.isArray(departments)) {
-            const nonExistentDepartments = await Promise.all(
-                departments.map(async (departmentId) => {
-                    const checkDepartment = await prisma.department.findUnique({
-                        where: {
-                            id: departmentId,
-                        },
-                    });
-                    return { id: departmentId, exists: Boolean(checkDepartment) };
-                })
+            if (!checkSupplier) return notFoundRes('Supplier')
+
+            const departmentsToConnect = departments.map((departmentId: string) => ({ id: departmentId }));
+
+            const departmentsToRemove = checkSupplier.departments.filter((department) =>
+                !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
             );
 
-            const nonExistentDepartmentsList = nonExistentDepartments.filter(
-                (department) => !department.exists
-            );
+            const updatedSupplier = await prisma.supplier.update({
+                where: { id: supplierID }, data: {
+                    name, profile, user_name, password, organization, payment_info, phone_number, email, address, gender,
+                    card, origin, tags, note, employment_status, entry, departure, meeting_info,
+                    departments: { connect: departmentsToConnect, disconnect: departmentsToRemove }
+                },
+                include: { departments: true }
+            })
 
-            if (nonExistentDepartmentsList.length > 0) {
-                const nonExistentDepartmentIds = nonExistentDepartmentsList.map(
-                    (department) => department.id
-                );
-                return NextResponse.json({
-                    success: false,
-                    error: true,
-                    message: `Departments with IDs [${nonExistentDepartmentIds.join(
-                        ', '
-                    )}] do not exist`,
-                }, { status: 404 });
-            }
+            if (!updatedSupplier) return badRequestRes()
+
+            return NextResponse.json({ ok: true, data: updatedSupplier }, { status: 200 })
+
         }
 
-        const updatedSupplier = await prisma.supplier.update({
-            where: { id: String(id) }, data: {
-                name, profile, user_name, password, organization, payment_information, phone_number, email, address, gender,
-                card, origin, tags, note, employment_status, entry, departure, meeting_info, departments
-            }
-        })
-
-        if (!updatedSupplier) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
-
-        return NextResponse.json({ success: true, data: updatedSupplier }, { status: 200 })
+        return notFoundRes('supplierID')
 
     } catch (error) {
 
         console.log(error);
 
+        return serverErrorRes()
+
+    } finally {
+
+        prisma.$disconnect()
     }
 }
 
 export const DELETE = async (req: Request) => {
 
-    const { searchParams } = new URL(req.url)
+    const { searchParams } = new URL(req.url);
 
-    const id = searchParams.get('id')
+    const ids = searchParams.getAll('id');
 
     try {
 
-        const deletedSupplier = await prisma.supplier.delete({
-            where: { id: String(id) }
-        })
+        if (ids.length > 0) {
 
-        if (!deletedSupplier) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            const deleteSupplier = await prisma.supplier.deleteMany({
 
-        return NextResponse.json({ success: true, data: deletedSupplier, message: 'Deleted this supplier' }, { status: 200 })
+                where: { id: { in: ids } },
 
+            })
+
+            if (deleteSupplier.count === 0) return notFoundRes('Supplier')
+
+            return NextResponse.json({ ok: true, count: deleteSupplier.count }, { status: 200 });
+
+        }
+
+        return notFoundRes('Supplier')
 
     } catch (error) {
 
         console.log(error);
 
+        return serverErrorRes();
+
+    } finally {
+
+        prisma.$disconnect();
     }
 }
+
 
 
 

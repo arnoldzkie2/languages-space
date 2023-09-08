@@ -1,61 +1,93 @@
 {
-    "news": {
-        "h1": "Manage News",
-        "title": "Title",
-        "author": "Author",
-        "keywords": "Keywords",
-        "date": "Date",
-        "create": "Create News",
-        "search": "Search News"
-    },
-    "client": {
-        "h1": "Manage Client",
-        "create": "Create Client",
-        "name": "Name",
-        "phone": "Phone Number",
-        "organization": "Organization",
-        "origin": "Origin",
-        "note": "Note",
-        "card": {
-            "client": "Client Card",
-            "bind": "Bind Card"
-        }
-    },
-    "global": {
-        "department": {
-            "select": "Department",
-            "all": "All Department"
+    "super-admin": {
+        "supplier": {
+            "create": "Create Supplier",
+            "h1": "Manage Supplier",
+            "name": "Name",
+            "phone": "Phone Number",
+            "organization": "Organization",
+            "origin": "Origin",
+            "note": "Note",
+            "search": "Search Supplier"
         },
-        "operation": "Operation",
-        "download": "Download",
-        "result": "Result:",
-        "selected": "Selected:",
-        "total": "Total:"
-    },
-    "pagination": {
-        "prev": "Prev Page",
-        "next": "Next Page",
-        "goto": "Go to page",
-        "page": "Page"
-    },
-    "side-nav": {
-        "menu": "Menu",
-        "dashboard": "Dashboard",
-        "client": "Client",
-        "schedule": "Schedule",
-        "agent": "Agent",
-        "supplier": "Supplier",
-        "admin": "Admin",
-        "orders": "Orders",
-        "news": "Web News",
-        "settings": "Settings",
-        "statistics": "Statistics",
-        "logout": "Logout"
-    },
-    "operation": {
-        "view": "View",
-        "update": "Update",
-        "delete": "Delete",
-        "close": "Close"
+        "news": {
+            "h1": "Manage News",
+            "title": "Title",
+            "author": "Author",
+            "keywords": "Keywords",
+            "date": "Date",
+            "create": "Create News",
+            "search": "Search News"
+        },
+        "client": {
+            "client": "Client",
+            "h1": "Manage Client",
+            "create": "Create Client",
+            "name": "Name",
+            "phone": "Phone Number",
+            "organization": "Organization",
+            "origin": "Origin",
+            "note": "Note",
+            "card": {
+                "client": "Client Card",
+                "bind": "Bind Card"
+            },
+            "search": "Search Client",
+            "select": "Select Client"
+        },
+        "client-card": {
+            "h1": "Manage Card",
+            "create": "Create Card",
+            "name": "Name",
+            "price": "Price",
+            "balance": "Balance",
+            "validity": "Validity",
+            "date": "Date",
+            "select": "Select Card",
+            "search": "Search Card",
+            "card": "Card"
+        },
+        "global": {
+            "cancel": "Cancel",
+            "department": {
+                "select": "Department",
+                "all": "All Department"
+            },
+            "operation": "Operation",
+            "download": "Download",
+            "result": "Result:",
+            "selected": "Selected:",
+            "total": "Total:"
+        },
+        "pagination": {
+            "prev": "Prev Page",
+            "next": "Next Page",
+            "goto": "Go to page",
+            "page": "Page"
+        },
+        "side-nav": {
+            "menu": "Menu",
+            "dashboard": "Dashboard",
+            "client": "Client",
+            "schedule": "Schedule",
+            "agent": "Agent",
+            "supplier": "Supplier",
+            "admin": "Admin",
+            "orders": "Orders",
+            "news": "Web News",
+            "settings": "Settings",
+            "statistics": "Statistics",
+            "logout": "Logout"
+        },
+        "operation": {
+            "view": "View",
+            "update": "Update",
+            "delete": "Delete",
+            "close": "Close"
+        },
+        "schedule": {
+            "h1": "Manage Schedule",
+            "create": "Create Schedule"
+        }
     }
 }

@@ -1,73 +1,90 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import SideNav from '@/components/super-admin/SideNav';
 import Pagination from '@/components/super-admin/management/Pagination';
-import { ClientCardSearchQueryValue } from '@/lib/redux/ClientCard/DefaultValues';
-import { setDepartments } from '@/lib/redux/GlobalState/GlobalSlice';
-import { RootState } from '@/lib/redux/Store';
+import ClientCardHeader from '@/components/super-admin/management/client-card/ClientCardHeader';
+import ClientCardModal from '@/components/super-admin/management/client-card/ClientCardModal';
+import ClientCardTable from '@/components/super-admin/management/client-card/ClientCardTable';
+import DeleteCardWarningModal from '@/components/super-admin/management/client-card/DeleteCardWarningModal';
+import SearchClientCard from '@/components/super-admin/management/client-card/SearchCard';
+import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import axios from 'axios';
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 
 const ClientCard: React.FC = ({ }) => {
 
-    const dispatch = useDispatch()
+    const { currentPage, isSideNavOpen } = useAdminGlobalStore()
 
-    const { currentPage, isSideNavOpen } = useSelector((state: RootState) => state.globalState)
+    const { cards, getCards, viewCard, deleteCardModal } = useAdminClientCardStore()
 
-    const [searchQuery, setSearchQuery] = useState(ClientCardSearchQueryValue)
-
-    const getAllDepartment = async () => {
-
-        try {
-
-            const { data } = await axios.get('/api/department')
-
-            if (data.success) {
-
-                return dispatch(setDepartments(data.data))
-
-            }
-
-            alert('Something went wrong')
-
-        } catch (error) {
-
-            console.log(error);
-        }
-    }
-
-    const filteredCard: any = []
+    const [searchQuery, setSearchQuery] = useState({
+        name: '',
+        validity: '',
+        price: '',
+    })
 
     const itemsPerPage = 10
+
+    const filteredCard = cards.filter((card) => {
+
+        const searchName = searchQuery.name.toUpperCase();
+        const searchPrice = searchQuery.price.toUpperCase();
+        const searchValidity = searchQuery.validity.toUpperCase();
+
+        return (
+
+            (searchName === '' || card.name.toUpperCase().includes(searchName)) &&
+            (searchPrice === '' || card.price.toString().toUpperCase().includes(searchPrice)) &&
+            (searchValidity === '' || card.validity.toUpperCase().includes(searchValidity))
+        );
+    })
 
     const indexOfLastItem = currentPage * itemsPerPage
 
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
 
-    const currentClients = filteredCard.slice(indexOfFirstItem, indexOfLastItem)
+    const currentCards = filteredCard.slice(indexOfFirstItem, indexOfLastItem)
 
     const getTotalPages = () => Math.ceil(filteredCard.length / itemsPerPage)
 
+    const handleSearch = (e: any) => {
+
+        const { name, value } = e.target
+
+        setSearchQuery(prevData => ({ ...prevData, [name]: value }))
+    }
+    useEffect(() => {
+
+        getCards()
+
+    }, [])
+
     return (
-        <div className='flex bg-slate-50'>
+        <>
             <SideNav />
 
-            <div className={`flex flex-col w-full ${isSideNavOpen ? 'p-5 gap-5' : 'px-10 py-5'}`}>
+            <div className={`flex flex-col h-full w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-                <nav className={`border shadow flex items-center py-5 px-10 h-24 justify-between`}>
-                    <h1 className='font-bold text-gray-600 text-xl'>MANAGE CARD</h1>
-                    <ul className='flex items-center gap-10 h-full ml-auto'>
-                    </ul>
-                </nav>
+                <ClientCardHeader />
 
-                <Pagination total={filteredCard} getTotalPages={getTotalPages} />
+                <div className='flex w-full items-start gap-8 px-8'>
+
+                    <div className='border py-4 px-6 flex flex-col shadow bg-white w-1/6'>
+                        <SearchClientCard handleSearch={handleSearch} searchQuery={searchQuery} />
+                    </div>
+
+                    <ClientCardTable filteredTable={currentCards} />
+
+                </div>
+
+                {viewCard && <ClientCardModal />}
+                {deleteCardModal && <DeleteCardWarningModal />}
             </div>
-        </div>
+        </>
     )
 };
 
 export default ClientCard;
-function dispatch(arg0: any) {
-    throw new Error('Function not implemented.');
-}
+
 

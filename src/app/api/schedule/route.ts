@@ -1,27 +1,42 @@
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
-    const supplier_id = searchParams.get('supplier_id')
+    const supplierID = searchParams.get('supplierID')
     const date = searchParams.get('date')
 
     try {
 
-        const supplierSchedule = await prisma.supplierSchedule.findMany({
-            where: {
-                supplier_id, date: String(date)
-            },
-        });
+        if (supplierID && date) {
 
-        if (!supplierSchedule) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            const checkSupplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
 
-        return NextResponse.json({ success: true, error: false, data: supplierSchedule })
+            if (!checkSupplier) return notFoundRes('Supplier')
+
+            const supplierSchedule = await prisma.supplierSchedule.findMany({
+                where: {
+                    supplier_id: supplierID, date
+                },
+            });
+
+            if (!supplierSchedule) return badRequestRes()
+
+            return okayRes(supplierSchedule)
+
+        }
+
+        if (!supplierID) return notFoundRes('supplierID')
+
+        return notFoundRes('Date')
 
     } catch (error) {
 
-        console.error('Error fetching schedules:', error);
+        console.log(error);
+
+        return serverErrorRes()
 
     }
 
@@ -29,50 +44,60 @@ export const GET = async (req: Request) => {
 
 export const POST = async (req: Request) => {
 
-    const { date, times, supplier_id } = await req.json()
+    const { dates, times, supplierID } = await req.json()
 
     try {
 
-        const checkSupplier = await prisma.supplier.findUnique({ where: { id: supplier_id } })
+        const checkSupplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
 
-        if (!checkSupplier) return NextResponse.json({ success: false, error: true, message: 'No Supplier found' }, { status: 404 })
+        if (!checkSupplier) return notFoundRes('Supplier')
 
         const existingSchedules = await prisma.supplierSchedule.findMany({
             where: {
-                date,
+                id: supplierID,
+                date: { in: dates }, // Use 'in' to check against an array of dates
                 time: { in: times },
             },
             select: {
+                date: true, // Select the date as well for comparison
                 time: true,
             },
         });
 
-        const existingTimes = new Set(existingSchedules.map((schedule) => schedule.time));
+        const existingDateTimeSet = new Set(
+            existingSchedules.map((schedule) => `${schedule.date}_${schedule.time}`)
+        );
 
-        // Prepare the new schedules to be created
-        const newSchedules = times
-            .filter((time: string) => !existingTimes.has(time))
-            .map((time: string) => ({
-                date, time, supplier_id
-            }));
-
+        const newSchedules: any = []
         // Create new schedules in bulk
+        for (const date of dates) {
+            for (const time of times) {
+                const dateTimeKey = `${date}_${time}`;
+                if (!existingDateTimeSet.has(dateTimeKey)) {
+                    newSchedules.push({
+                        date,
+                        time,
+                        supplier_id: supplierID,
+                    });
+                }
+            }
+        }
+
         const createSchedules = await prisma.supplierSchedule.createMany({
             data: newSchedules,
             skipDuplicates: true,
         });
 
-        // Check if the createMany operation was successful
-        if (!createSchedules) {
-            return NextResponse.json({ success: false, error: true, message: 'Server error' })
-        }
+        if (!createSchedules) return badRequestRes();
 
-        // Filter out any null values and return the successful creations
-
-        return NextResponse.json({ success: true, error: false, data: createSchedules })
+        return createdRes(createSchedules);
 
     } catch (error) {
-        console.error('Error creating schedules:', error);
+
+        console.log(error);
+
+        return serverErrorRes()
+
     }
 }
 
@@ -80,27 +105,33 @@ export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')
+    const scheduleID = searchParams.get('scheduleID')
 
     try {
 
-        if (!id) return NextResponse.json({ success: false, error: true, message: 'No Schedule ID found' }, { status: 404 })
+        if (scheduleID) {
 
-        const checkSchedule = await prisma.supplierSchedule.findUnique({ where: { id } })
+            const checkSchedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
 
-        if (!checkSchedule) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!checkSchedule) return badRequestRes()
 
-        if (checkSchedule?.reserved) return NextResponse.json({ success: false, error: true, message: "This schedule is already reserved this can't be deleted." }, { status: 400 })
+            if (checkSchedule?.reserved) return NextResponse.json({ msg: "This schedule is already reserved this can't be deleted." }, { status: 400 })
 
-        const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id } })
+            const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
 
-        if (!deleteSchedule) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+            if (!deleteSchedule) return badRequestRes()
 
-        return NextResponse.json({ success: true, error: false, deleted: deleteSchedule }, { status: 200 })
+            return okayRes()
+
+        }
+
+        return notFoundRes('scheduleID')
 
     } catch (error) {
 
         console.error(error);
+
+        return serverErrorRes()
 
     }
 

@@ -1,60 +1,93 @@
 'use client'
-import React from 'react';
-import Dashboard from './management/dashboard/Dashboard';
-import Client from './management/client/Client';
-import Schedule from './management/schedule/Schedule';
-import Supplier from './management/supplier/Supplier';
-import Agent from './management/agent/Agent';
-import Admin from './management/admin/Admin';
-import Order from './management/order/Order';
-import Statistics from './management/statistics/Statistics';
-import Settings from './management/settings/Settings';
-import Web from './management/web-news/Web';
+import React, { useState } from 'react';
 import Logout from './Logout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faDisplay } from '@fortawesome/free-solid-svg-icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/lib/redux/Store';
-import { setIsSideNavOpen } from '@/lib/redux/GlobalState/GlobalSlice';
+import { faArrowLeft, faArrowRight, faCalendarDays, faChartLine, faDisplay, faGear, faHouse, faNewspaper, faUser, faUserSecret, faUserShield, faUsers } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next-intl/link';
 import { useTranslations } from 'next-intl';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 
 const SideNav: React.FC = () => {
 
-    const { isSideNavOpen } = useSelector((state: RootState) => state.globalState)
+    const { toggleSideNav, isSideNavOpen } = useAdminGlobalStore()
 
-    const dispatch = useDispatch()
+    const t = useTranslations('super-admin')
 
-    const t = useTranslations('side-nav')
+    const [navArray, setNavArray] = useState([
+        {
+            translate: 'side-nav.dashboard',
+            icon: faHouse,
+            link: '/super-admin'
+        },
+        {
+            translate: 'side-nav.client',
+            icon: faUser,
+            link: '/manage/client'
+        },
+        {
+            translate: 'side-nav.supplier',
+            icon: faUsers,
+            link: '/manage/supplier'
+        },
+        {
+            translate: 'side-nav.schedule',
+            icon: faCalendarDays,
+            link: '/manage/schedule'
+        },
+        {
+            translate: 'side-nav.news',
+            icon: faDisplay,
+            link: '/manage/news'
+        },
+        {
+            translate: 'side-nav.agent',
+            icon: faUserSecret,
+            link: '/manage/agent'
+        },
+        {
+            translate: 'side-nav.admin',
+            icon: faUserShield,
+            link: '/manage/admin'
+        },
+        {
+            translate: 'side-nav.statistics',
+            icon: faChartLine,
+            link: '/manage/statistics'
+        },
+        {
+            translate: 'side-nav.orders',
+            icon: faNewspaper,
+            link: '/manage/orders'
+        },
+        {
+            translate: 'side-nav.settings',
+            icon: faGear,
+            link: '/super-admin/settings'
+        },
+
+    ])
 
     return (
-        <nav className={`border h-screen ${isSideNavOpen ? 'w-44 p-6' : 'w-16 px-3 py-6'}  flex flex-col shadow-md bg-white`}>
+        <nav className={`border-r ${isSideNavOpen ? 'w-44 p-6' : 'w-16 px-3 py-6'} fixed h-screen flex flex-col bg-white`}>
             {
                 isSideNavOpen ?
                     <button
-                        onClick={() => dispatch(setIsSideNavOpen())}
+                        onClick={() => toggleSideNav()}
                         className='text-lg flex justify-between items-center pb-4 border-b border-gray-600 hover:text-blue-600'>
-                        Menu <FontAwesomeIcon icon={faArrowLeft} />
+                        Menu <FontAwesomeIcon icon={faArrowLeft} width={20} height={20} />
                     </button>
                     :
-                    <FontAwesomeIcon icon={faArrowRight}
-                        className='pb-4 border-b text-xl text-black border-gray-600 cursor-pointer hover:text-blue-600'
-                        onClick={() => dispatch(setIsSideNavOpen())} title='expand' />
+                    <FontAwesomeIcon icon={faArrowRight} width={20} height={20}
+                        className='pb-4 border-b text-xl text-black w-full border-gray-600 cursor-pointer hover:text-blue-600'
+                        onClick={() => toggleSideNav()} />
             }
             <ul className='flex flex-col gap-7 h-full py-7 justify-center'>
-                <Dashboard />
-                <Client />
-                <Schedule />
-                <Supplier />
-                <Agent />
-                <Admin />
-                <Order />
-                <Statistics />
-                <Link href={'/manage/web'} className={`flex items-center hover:text-blue-600 w-full`}>
-                    {isSideNavOpen && <span className='mr-auto'>{t('news')}</span>}
-                    <FontAwesomeIcon icon={faDisplay} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
-                </Link >
-                <Settings />
+                {navArray.map(nav => (
+                    <Link href={nav.link} className={`flex items-center hover:text-blue-600 w-full`} key={nav.link}>
+                        {isSideNavOpen && <span className='mr-auto'>{t(nav.translate)}</span>}
+                        <FontAwesomeIcon width={20} height={20} icon={nav.icon} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
+                    </Link >
+                ))}
             </ul>
             <Logout />
         </nav>

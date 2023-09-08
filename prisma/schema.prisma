@@ -18,7 +18,7 @@ model Client {
   phone_number String?
   email        String?
   gender       String?
-  card         ClientCard[]
+  cards        ClientCard[]
   organization String?
   password     String
   address      String?
@@ -34,9 +34,27 @@ model ClientCard {
   price             Int
   balance           Int
   validity          String
+  client            Client   @relation(fields: [client_id], references: [id])
+  client_id         String
   invoice           Boolean
   repeat_purchases  Boolean
-  client            Client[]
+  online_purchases  Boolean
+  online_renews     Boolean
+  settlement_period String
+  card_id           String
+  date              DateTime @default(now())
+
+  @@index([client_id])
+}
+
+model ClientCardList {
+  id                String   @id @default(uuid())
+  name              String
+  price             Int
+  balance           Int
+  validity          String
+  invoice           Boolean
+  repeat_purchases  Boolean
   online_purchases  Boolean
   online_renews     Boolean
   settlement_period String
@@ -46,52 +64,53 @@ model ClientCard {
 // supplier schema area
 
 model Supplier {
-  id                  String             @id @default(uuid())
-  profile             String?
-  name                String
-  user_name           String             @unique
-  organization        Json?
-  payment_information Json?
-  phone_number        String?
-  password            String
-  email               String?
-  address             String?
-  gender              String?
-  card                Json?
-  meeting_info        Json?
-  tags                SupplierTags[]
-  schedule            SupplierSchedule[]
-  origin              String?
-  note                String?
-  employment_status   String?
-  entry               DateTime?
-  departure           DateTime?
-  date                DateTime           @default(now())
-  departments         Department[]
+  id                String                @id @default(uuid())
+  profile           String?
+  name              String
+  user_name         String                @unique
+  organization      String?
+  payment_info      String?
+  phone_number      String?
+  password          String
+  email             String?
+  address           String?
+  gender            String?
+  card              Json?
+  tags              Json?
+  meeting_info      SupplierMeetingInfo[]
+  schedule          SupplierSchedule[]
+  origin            String?
+  note              String?
+  employment_status String?
+  entry             DateTime?
+  departure         DateTime?
+  date              DateTime              @default(now())
+  departments       Department[]
 }
 
-model SupplierTags {
-  id         String    @id @default(uuid())
-  name       String
-  supplier   Supplier? @relation(fields: [suplier_id], references: [id])
-  suplier_id String?
-  date       DateTime  @default(now())
+model SupplierMeetingInfo {
+  id           String   @id @default(uuid())
+  service      String
+  meeting_code String
+  supplier     Supplier @relation(fields: [supplier_id], references: [id])
+  supplier_id  String
 
-  @@index([suplier_id])
+  @@index([supplier_id])
 }
 
 model SupplierSchedule {
-  id           String    @id @default(uuid())
-  supplier     Supplier? @relation(fields: [supplier_id], references: [id])
-  supplier_id  String?
-  date         String
-  time         String
-  reserved     Boolean   @default(false)
-  client_id    String?
-  client_name  String?
-  meeting_id   String?
-  meeting_info Json?
-  note         String?
+  id             String    @id @default(uuid())
+  supplier       Supplier? @relation(fields: [supplier_id], references: [id])
+  supplier_id    String?
+  client_id      String?
+  client_name    String?
+  client_card_id String?
+  date           String
+  time           String
+  reserved       Boolean   @default(false)
+  meeting_info   Json?
+  note           String?
+  completed      Boolean   @default(false)
 
   @@index([supplier_id])
 }
@@ -115,7 +134,7 @@ model Agent {
   note                String?
   date                DateTime     @default(now())
   departments         Department[]
-  agent_card_id         String?
+  agent_card_id       String?
 
   @@index([agent_card_id])
 }
@@ -178,11 +197,14 @@ model Department {
 }
 
 model News {
-  id          String       @id @default(uuid())
-  title       String       @db.Text
-  author      String
-  keywords    Json?
-  content     String       @db.Text
-  date        DateTime     @default(now())
-  departments Department[]
+  id            String      @id @default(uuid())
+  title         String      @db.Text
+  author        String
+  keywords      Json?
+  content       String      @db.Text
+  date          DateTime    @default(now())
+  department    Department? @relation(fields: [department_id], references: [id])
+  department_id String?
+
+  @@index([department_id])
 }

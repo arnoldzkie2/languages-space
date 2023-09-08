@@ -1,31 +1,30 @@
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/lib/redux/Store';
-import { setCurrentPage } from '@/lib/redux/GlobalState/GlobalSlice';
-import { totalNewsState } from '@/lib/redux/ManageWeb/Types';
 import { useTranslations } from 'next-intl';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 
 interface Props {
 
     getTotalPages: () => number
 
-    total: totalNewsState
+    totals: {
+        total: string
+        selected: string
+        searched: string
+    }
 
 }
-    
-const Pagination: React.FC<Props> = ({ total, getTotalPages }) => {
 
-    const dispatch = useDispatch()
+const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
 
-    const { currentPage } = useSelector((state: RootState) => state.globalState)
+    const { currentPage, setCurrentPage } = useAdminGlobalStore()
 
     const goToPreviousPage = () => {
 
         if (currentPage > 1) {
 
-            dispatch(setCurrentPage(currentPage - 1));
+            setCurrentPage(currentPage - 1);
         }
 
     }
@@ -36,7 +35,7 @@ const Pagination: React.FC<Props> = ({ total, getTotalPages }) => {
 
         if (currentPage < totalPages) {
 
-            dispatch(setCurrentPage(currentPage + 1));
+            setCurrentPage(currentPage + 1);
 
         }
     }
@@ -47,7 +46,7 @@ const Pagination: React.FC<Props> = ({ total, getTotalPages }) => {
 
         if (pageNumber >= 1 && pageNumber <= totalPages) {
 
-            dispatch(setCurrentPage(pageNumber));
+            setCurrentPage(pageNumber);
 
         }
     }
@@ -97,30 +96,29 @@ const Pagination: React.FC<Props> = ({ total, getTotalPages }) => {
 
     };
 
-    const t = useTranslations('pagination')
-
-    const globalT = useTranslations('global')
+    const t = useTranslations('super-admin')
 
     return (
-        <footer className={`flex py-5 px-10 items-center justify-between border shadow-md bg-white`}>
+        <footer className={`flex px-8 mt-auto min-h-[80px] items-center justify-between border-t bg-white`}>
             <div className='flex items-center gap-3'>
                 <div className='font-medium'>
-                    {t('page')} {currentPage} of {getTotalPages()}
+                    {t('pagination.page')} {currentPage} of {getTotalPages()}
                 </div>
                 <input
                     type='text'
                     className='outline-none border px-3 py-2 w-1/3'
-                    placeholder={t('goto')}
+                    placeholder={t('pagination.goto')}
                     onChange={(e) => {
                         const value = parseInt(e.target.value);
-                        dispatch(setCurrentPage(isNaN(value) ? 1 : value));
+                        setCurrentPage(isNaN(value) ? 1 : value);
                     }}
                 />
             </div>
 
-            <div className='flex items-center gap-8'>
-                {total.selected && <div className='font-medium'>{globalT('selected')} <span className='font-black text-gray-600'>{total.selected}</span></div>}
-                <div className='font-medium'>{globalT('total')} <span className='font-black text-gray-600'>{total.total}</span></div>
+            <div className='flex items-center gap-10'>
+                <div className='font-medium'>{t('global.result')} <span className='font-black text-gray-600'>{totals.searched === totals.total ? '' : totals.searched}</span></div>
+                <div className='font-medium'>{t('global.selected')} <span className='font-black text-gray-600'>{totals.selected === '0' ? '' : totals.selected}</span></div>
+                <div className='font-medium'>{t('global.total')} <span className='font-black text-gray-600'>{totals.total}</span></div>
             </div>
 
             <div className='flex gap-4 items-center'>{renderPageNumbers()}</div>
@@ -129,12 +127,12 @@ const Pagination: React.FC<Props> = ({ total, getTotalPages }) => {
                 <button onClick={goToPreviousPage}
                     className={`w-32 border h-10 rounded-md ${currentPage !== 1 && 'hover:bg-blue-600 hover:text-white'}`}
                     disabled={currentPage === 1}>
-                    {t('prev')}
+                    {t('pagination.prev')}
                 </button>
                 <button onClick={goToNextPage}
                     className={`w-32 border h-10 rounded-md ${currentPage !== getTotalPages() && 'hover:bg-blue-600 hover:text-white'}`}
                     disabled={currentPage === getTotalPages()}>
-                    {t('next')}
+                    {t('pagination.next')}
                 </button>
             </div>
 

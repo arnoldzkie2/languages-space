@@ -1,3 +1,4 @@
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -9,17 +10,23 @@ export const POST = async (req: Request) => {
 
         const existingDepartment = await prisma.department.findFirst({ where: { name } })
 
-        if (existingDepartment) return NextResponse.json({ success: false, error: true, message: 'Department already exist!' }, { status: 200 })
+        if (existingDepartment) return existRes('department')
 
         const newDepartment = await prisma.department.create({ data: { name } })
 
-        if (!newDepartment) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+        if (!newDepartment) return badRequestRes()
 
-        return NextResponse.json({ success: true, data: newDepartment, message: 'Created a new department' }, { status: 200 })
+        return createdRes()
 
     } catch (error) {
 
         console.error(error);
+
+        return serverErrorRes()
+
+    } finally {
+
+        prisma.$disconnect()
 
     }
 }
@@ -28,25 +35,31 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')?.toString()
+    const departmentID = searchParams.get('departmentID')
 
     try {
 
-        const singleDepartment = await prisma.department.findUnique({ where: { id: String(id) } })
+        const singleDepartment = await prisma.department.findUnique({ where: { id: String(departmentID) } })
 
-        if (singleDepartment) return NextResponse.json({ success: true, data: singleDepartment }, { status: 200 })
+        if (singleDepartment) okayRes(singleDepartment)
 
-        if (id && !singleDepartment) return NextResponse.json({ success: false, error: true, message: 'No department found' }, { status: 404 })
+        if (departmentID && !singleDepartment) return notFoundRes('Department')
 
         const allDepartment = await prisma.department.findMany()
 
-        if (!allDepartment) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+        if (!allDepartment) return badRequestRes()
 
-        return NextResponse.json({ success: true, data: allDepartment }, { status: 200 })
+        return okayRes(allDepartment)
 
     } catch (error) {
 
         console.error(error);
+
+        return serverErrorRes()
+
+    } finally {
+
+        prisma.$disconnect()
 
     }
 
@@ -56,29 +69,37 @@ export const PATCH = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')?.toString()
+    const departmentID = searchParams.get('departmentID')
 
     const { name } = await req.json()
 
     try {
 
-        const checkDepartment = await prisma.department.findFirst({ where: { name } })
+        if (departmentID) {
 
-        if (checkDepartment) return NextResponse.json({ success: false, error: true, message: 'Department already exist' }, { status: 409 })
+            const singleDepartment = await prisma.department.findUnique({ where: { id: departmentID } })
 
-        const singleDepartment = await prisma.department.findUnique({ where: { id } })
+            if (!singleDepartment) notFoundRes('Department')
 
-        if (!singleDepartment) return NextResponse.json({ success: false, error: true, message: 'No department found' }, { status: 404 })
+            const updatedDepartment = await prisma.department.update({ where: { id: departmentID }, data: { name } })
 
-        const updatedDepartment = await prisma.department.update({ where: { id }, data: { name } })
+            if (!updatedDepartment) badRequestRes()
 
-        if (!updatedDepartment) return NextResponse.json({ success: false, error: true, message: 'Bad request' }, { status: 400 })
+            return okayRes()
 
-        return NextResponse.json({ success: true, data: updatedDepartment, message: 'Department udpated successfully' }, { status: 200 })
+        }
+
+        return notFoundRes('departmentID')
 
     } catch (error) {
 
         console.error(error);
+
+        return serverErrorRes()
+
+    } finally {
+
+        prisma.$disconnect()
 
     }
 }
@@ -87,23 +108,32 @@ export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')?.toString()
+    const departmentID = searchParams.get('departmentID')
 
     try {
 
-        const checkDepartment = await prisma.department.findFirst({ where: { id } })
+        if (departmentID) {
 
-        if (!checkDepartment) return NextResponse.json({ success: false, error: true, message: 'No department found' }, { status: 404 })
+            const checkDepartment = await prisma.department.findUnique({ where: { id: departmentID } })
 
-        const deletedDepartment = await prisma.department.delete({ where: { id } })
+            if (!checkDepartment) return notFoundRes('Department')
 
-        if (!deletedDepartment) return NextResponse.json({ success: false, error: true, message: 'Bad request' }, { status: 400 })
+            const deletedDepartment = await prisma.department.delete({ where: { id: departmentID } })
 
-        return NextResponse.json({ success: true, data: deletedDepartment }, { status: 200 })
+            if (!deletedDepartment) badRequestRes()
+
+            return okayRes()
+        }
 
     } catch (error) {
 
         console.error(error);
+
+        return serverErrorRes()
+
+    } finally {
+
+        prisma.$disconnect()
 
     }
 

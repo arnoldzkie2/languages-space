@@ -1,6 +1,6 @@
 import '@/lib/styles/globals.css'
+import "@uploadthing/react/styles.css"
 import SessionProviders from '@/components/SessionProvider'
-import { ReduxProvider } from '@/lib/redux/ReduxProvider'
 import { notFound } from 'next/navigation'
 import 'react-quill/dist/quill.snow.css';
 import { NextIntlClientProvider } from 'next-intl'
@@ -17,7 +17,7 @@ interface Props {
 }
 export function generateStaticParams() {
 
-  const allTranslation = ['en', 'cn', 'jp', 'kr', 'vn']
+  const allTranslation = ['en', 'zh', 'ja', 'ko', 'vi']
 
   return allTranslation.map((lang) => ({
     locale: lang
@@ -41,13 +41,11 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
 
   return (
     <html lang={locale}>
-      <body>
+      <body className='bg-slate-50'>
         <NextIntlClientProvider locale={locale} messages={translation}>
-          <ReduxProvider>
             <SessionProviders>
               {children}
             </SessionProviders>
-          </ReduxProvider>
         </NextIntlClientProvider>
       </body>
     </html>

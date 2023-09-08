@@ -4,25 +4,31 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next-intl/link';
 import React from 'react';
 import DownloadTable from '../DownloadTable';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/redux/Store';
 import { useTranslations } from 'next-intl';
+import { useSession } from 'next-auth/react';
+import useAdminNewsStore from '@/lib/state/super-admin/newsStore';
 
 const WebHeader: React.FC = ({ }) => {
 
-    const { news, selectedNews } = useSelector((state: RootState) => state.manageWeb)
+    const { status } = useSession()
 
-    const t = useTranslations('news')
+    const { news, selectedNews } = useAdminNewsStore()
+
+    const t = useTranslations('super-admin')
+
+    const newsHeaderSkeleton = (
+        <li className='bg-slate-200 animate-pulse w-32 h-5 rounded-3xl'></li>
+    )
 
     return (
-        <nav className={`border shadow flex items-center py-5 bg-white px-10 justify-between`}>
-            <h1 className='font-bold text-gray-600 text-xl uppercase'>{t('h1')}</h1>
-            <ul className='flex items-center h-full ml-auto gap-10'>
-                <Link href='/manage/web/create-news' className='flex items-center text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
-                    <div>{t('create')}</div>
+        <nav className={`border-b h-20 flex items-center bg-white px-8 justify-between`}>
+            <h1 className='font-bold text-gray-600 text-xl uppercase'>{t('news.h1')}</h1>
+            <ul className='flex items-center h-full ml-auto gap-5'>
+                {status !== 'loading' ? <Link href='/manage/news/create-news' className='flex items-center w-32 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
+                    <div>{t('news.create')}</div>
                     <FontAwesomeIcon icon={faPlus} />
-                </Link>
-                <DownloadTable tables={news} selectedTable={selectedNews} />
+                </Link> : newsHeaderSkeleton}
+                {status !== 'loading' ? < DownloadTable tables={news} selectedTable={selectedNews} /> : newsHeaderSkeleton}
             </ul>
         </nav>
     )
