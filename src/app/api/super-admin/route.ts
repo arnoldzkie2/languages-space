@@ -1,6 +1,5 @@
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 import prisma from "@/lib/db";
-import { NextResponse } from "next/server";
-
 
 export const POST = async (req: Request) => {
 
@@ -10,17 +9,19 @@ export const POST = async (req: Request) => {
 
         const checkUsername = await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } })
 
-        if (checkUsername) return NextResponse.json({ success: false, error: true, message: 'Username already exist!' }, { status: 409 })
+        if (checkUsername) existRes('user_name')
 
         const newSuperAdmin = await prisma.superAdmin.create({ data: { user_name, password } })
 
-        if (!newSuperAdmin) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })
+        if (!newSuperAdmin) badRequestRes()
 
-        return NextResponse.json({ success: true, data: newSuperAdmin }, { status: 200 })
+        return createdRes()
 
     } catch (error) {
 
         console.log(error);
+
+        return serverErrorRes()
 
     } finally {
 
@@ -34,93 +35,68 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')
+    const superAdminID = searchParams.get('superAdminID')
 
     try {
 
-        const singleSuperAdmin = await prisma.superAdmin.findUnique({ where: { id: String(id) } })
+        if (superAdminID) {
 
-        if (singleSuperAdmin) return NextResponse.json({ success: true, data: singleSuperAdmin }, { status: 200 })
+            const superAdmin = await prisma.superAdmin.findUnique({ where: { id: superAdminID } })
 
-        if (id && !singleSuperAdmin) return NextResponse.json({ success: false, error: true, message: 'No super admin found' }, { status: 404 })
+            if (!superAdmin) return notFoundRes('Super admin')
 
-        const allSuperAdmin = await prisma.superAdmin.findMany()
+            return okayRes(superAdmin)
 
-        if (!allSuperAdmin) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })
+        }
 
-        return NextResponse.json({ success: true, data: allSuperAdmin }, { status: 200 })
+        const allSuperAmin = await prisma.superAdmin.findMany()
+
+        if (!allSuperAmin) return badRequestRes()
+
+        return okayRes(allSuperAmin)
 
     } catch (error) {
 
         console.log(error);
+
+        return serverErrorRes()
 
     } finally {
 
         prisma.$disconnect()
 
     }
-}
-
-export const PATCH = async (req: Request) => {
-
-    const { searchParams } = new URL(req.url)
-
-    const id = searchParams.get('id')
-
-    const { user_name, password } = await req.json()
-
-    try {
-
-        const superAdmin = await prisma.superAdmin.findUnique({ where: { id: String(id) } })
-
-        if (!superAdmin) return NextResponse.json({ success: false, error: true, message: 'No Super admin found' }, { status: 404 })
-
-        const checkUsername = await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } })
-
-        if (checkUsername) return NextResponse.json({ succes: false, error: true, message: 'Username already exist!' }, { status: 409 })
-
-        const updatedSuperAdmin = await prisma.superAdmin.update({
-            where: { id: String(id) },
-            data: { user_name, password }
-        })
-
-        if (!updatedSuperAdmin) return NextResponse.json({ success: false, error: true, message: 'Bad request' }, { status: 400 })
-
-        return NextResponse.json({ success: true, data: updatedSuperAdmin, message: 'Updated superadmin' }, { status: 200 })
-
-    } catch (error) {
-
-        console.log(error);
-
-    } finally {
-
-        prisma.$disconnect()
-
-    }
-
 }
 
 export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const id = searchParams.get('id')
+    const superAdminID = searchParams.get('superAdminID')
 
     try {
 
-        const superAdmin = await prisma.superAdmin.findUnique({ where: { id: String(id) } })
+        if (superAdminID) {
 
-        if (!superAdmin) return NextResponse.json({ succes: false, error: true, message: 'No super admin found' }, { status: 404 })
+            const superAdmin = await prisma.superAdmin.findUnique({ where: { id: superAdminID } })
 
-        const deletedSuperAdmin = await prisma.superAdmin.delete({ where: { id: String(id) } })
+            if (!superAdmin) return notFoundRes("Super admin")
 
-        if (!deletedSuperAdmin) return NextResponse.json({ success: false, error: true, message: 'Bad request' }, { status: 400 })
+            const deletedSuperAdmin = await prisma.superAdmin.delete({ where: { id: superAdminID } })
 
-        return NextResponse.json({ success: true, data: deletedSuperAdmin, message: 'Deleted super admin' }, { status: 200 })
+            if (!deletedSuperAdmin) return badRequestRes()
+
+            return okayRes()
+
+        }
+
+        return notFoundRes('superAdminID')
 
     } catch (error) {
 
         console.log(error);
+
+        return serverErrorRes()
 
     } finally {
 

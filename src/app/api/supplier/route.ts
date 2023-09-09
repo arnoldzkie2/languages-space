@@ -5,7 +5,7 @@ import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorR
 export const POST = async (req: Request) => {
 
     const { name, user_name, password, organization, payment_info, phone_number, email, address, gender, card, origin,
-        tags, note, employment_status, entry, departure, departments, meeting_info } = await req.json()
+        tags, note, employment_status, entry, departure, departments } = await req.json()
 
     try {
 
@@ -19,10 +19,6 @@ export const POST = async (req: Request) => {
             await prisma.agent.findUnique({ where: { user_name } })
 
         if (existingUsername) return existRes('user_name')
-
-        const supplierData = {
-            name, user_name, password, organization, payment_info, phone_number, email, address, gender, card, origin, tags, note, employment_status, entry, departure,
-        }
 
         if (departments && departments.length > 0) {
 
@@ -40,17 +36,25 @@ export const POST = async (req: Request) => {
             if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 400 });
 
             const newSupplier = await prisma.supplier.create({
-                data: supplierData,
-            });
+                data: {
+                    name, user_name, password, organization, payment_info, phone_number, email, address, gender, card,
+                    origin, tags, note, employment_status, entry, departure, departments: {
+                        connect: departments.map((id: string) => ({ id }))
+                    }
+                },
+            })
 
             if (!newSupplier) return badRequestRes()
 
-            return createdRes()
+            return createdRes(newSupplier)
 
         }
 
         const newSupplier = await prisma.supplier.create({
-            data: supplierData,
+            data: {
+                name, user_name, password, organization, payment_info, phone_number, email, address, gender, card,
+                origin, tags, note, employment_status, entry, departure
+            },
         })
 
         if (!newSupplier) return badRequestRes()
@@ -86,7 +90,7 @@ export const GET = async (req: Request) => {
 
             if (!singleSupplier) notFoundRes('Supplier')
 
-            return NextResponse.json({ ok: true, data: singleSupplier }, { status: 200 })
+            return okayRes(singleSupplier)
 
         }
 
@@ -160,7 +164,7 @@ export const PATCH = async (req: Request) => {
 
             if (!updatedSupplier) return badRequestRes()
 
-            return NextResponse.json({ ok: true, data: updatedSupplier }, { status: 200 })
+            return okayRes()
 
         }
 
@@ -196,8 +200,7 @@ export const DELETE = async (req: Request) => {
 
             if (deleteSupplier.count === 0) return notFoundRes('Supplier')
 
-            return NextResponse.json({ ok: true, count: deleteSupplier.count }, { status: 200 });
-
+            return okayRes(deleteSupplier)
         }
 
         return notFoundRes('Supplier')
