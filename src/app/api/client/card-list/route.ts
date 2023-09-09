@@ -46,11 +46,13 @@ export const GET = async (req: Request) => {
 
         if (clientCardID) {
 
-            const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
+            const checkCard = await prisma.clientCard.findUnique({
+                where: { id: clientCardID }
+            })
 
-            if (!card) notFoundRes('Card')
+            if (!checkCard) return notFoundRes('Card')
 
-            return okayRes(card)
+            return okayRes(checkCard)
 
         }
 

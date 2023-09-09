@@ -1,4 +1,4 @@
-import { Supplier, TotalSupplier } from '@/lib/types/super-admin/supplierTypes'
+import { Supplier, SupplierMeetingInfo, TotalSupplier } from '@/lib/types/super-admin/supplierTypes'
 import axios from 'axios'
 import { create } from 'zustand'
 import useAdminGlobalStore from './globalStore'
@@ -44,6 +44,7 @@ interface SupplierProps {
     viewSupplierModal: boolean
     totalSupplier: TotalSupplier
     supplierSelectedID: string
+    supplierMeetingInfo: SupplierMeetingInfo[],
     setSupplierData: (supplier: Supplier) => void
     setTotalSupplier: (total: TotalSupplier) => void
     closeViewSupplierModal: () => void
@@ -53,6 +54,7 @@ interface SupplierProps {
     setSelectedSupplier: (suppliers: Supplier[]) => void
     getSupplier: () => Promise<void>
     setSupplierSelectedID: (supplierID: string) => void
+    setSupplierMeetingInfo: (meetingInfo: SupplierMeetingInfo[]) => void
 }
 
 const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
@@ -63,6 +65,8 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     viewSupplierModal: false,
     totalSupplier: totalSupplierValue,
     selectedSupplier: [],
+    supplierMeetingInfo: [],
+    setSupplierMeetingInfo: (meetingInfo: SupplierMeetingInfo[]) => set({ supplierMeetingInfo: meetingInfo }),
     setSupplierSelectedID: (supplierID: string) => set({ supplierSelectedID: supplierID }),
     setSupplierData: (supplier: Supplier) => set({ supplierData: supplier }),
     setTotalSupplier: (total: TotalSupplier) => set({ totalSupplier: total }),
@@ -92,7 +96,7 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
             alert('Something went wrong')
 
         }
-    }
+    },
 }))
 
 export default useAdminSupplierStore

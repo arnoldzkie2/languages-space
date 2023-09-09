@@ -13,6 +13,8 @@ import listPlugin from '@fullcalendar/list';
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore';
 import ScheduleComponent from '@/components/super-admin/management/schedule/ScheduleComponent';
 import NewScheduleModal from '@/components/super-admin/management/schedule/NewScheduleModal';
+import BindSchedlueModal from '@/components/super-admin/management/schedule/BindSchedlueModal';
+import ViewScheduleModal from '@/components/super-admin/management/schedule/VIewScheduleModal';
 
 const Page = ({ }) => {
 
@@ -24,7 +26,7 @@ const Page = ({ }) => {
 
     const { getSupplier, supplier, supplierSelectedID, setSupplierSelectedID } = useAdminSupplierStore()
 
-    const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule } = useAdminScheduleStore()
+    const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewSchedule, viewSchedule } = useAdminScheduleStore()
 
     const filterSupplier = supplier.filter(item => item.name.toUpperCase().includes(searchQuery.toUpperCase()))
 
@@ -36,6 +38,7 @@ const Page = ({ }) => {
     }
 
     const handleCalendarDateChange = (arg: any) => {
+
         const startStr = arg.startStr;
         const endStr = arg.endStr;
 
@@ -55,9 +58,8 @@ const Page = ({ }) => {
         start: `${item.date}T${item.time}:00`,
         end: `${item.date}T${item.time}:01`,
         extendedProps: {
-            client: item.client_name,
-            time: item.time,
-            reserved: item.reserved,
+            data: item,
+            viewSchedule: item.reserved ? openViewSchedule : openBindSchedule
         },
     }))
 
@@ -106,6 +108,7 @@ const Page = ({ }) => {
                             plugins={[dayGridPlugin, listPlugin]}
                             eventContent={ScheduleComponent}
                             events={events}
+                            initialView='dayGridWeek'
                             headerToolbar={{
                                 start: 'prev,next today',
                                 center: 'title',
@@ -120,6 +123,8 @@ const Page = ({ }) => {
             </div>
 
             {newSchedule && <NewScheduleModal />}
+            {bindSchedule && <BindSchedlueModal />}
+            {viewSchedule && <ViewScheduleModal />}
         </>
     );
 };

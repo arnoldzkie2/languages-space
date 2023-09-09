@@ -2,6 +2,37 @@ import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorR
 import prisma from "@/lib/db";
 
 
+export const GET = async (req: Request) => {
+
+    const { searchParams } = new URL(req.url)
+
+    const supplierID = searchParams.get('supplierID')
+
+    try {
+
+        if (supplierID) {
+
+            const supplierSchedule = await prisma.supplier.findUnique({
+                where: { id: supplierID },
+                select: { meeting_info: true }
+            })
+
+            if (!supplierSchedule) return notFoundRes('Supplier')
+
+            return okayRes(supplierSchedule.meeting_info)
+        }
+
+        return notFoundRes('supplierID')
+
+    } catch (error) {
+
+        console.log(error);
+
+        return serverErrorRes()
+
+    }
+}
+
 export const POST = async (req: Request) => {
 
 
@@ -86,7 +117,7 @@ export const DELETE = async (req: Request) => {
 
             const deleteMeeting = await prisma.supplierMeetingInfo.delete({ where: { id: meetingID } })
 
-            if(!deleteMeeting) return badRequestRes()
+            if (!deleteMeeting) return badRequestRes()
 
             return okayRes()
 

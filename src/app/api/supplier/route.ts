@@ -186,7 +186,7 @@ export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
 
-    const ids = searchParams.getAll('id');
+    const ids = searchParams.getAll('supplierID');
 
     try {
 

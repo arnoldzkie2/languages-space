@@ -57,7 +57,9 @@
             "download": "Download",
             "result": "Result:",
             "selected": "Selected:",
-            "total": "Total:"
+            "total": "Total:",
+            "delete-confirm": "Yes I'm Sure",
+            "confirm-cancel": "No Cancel"
         },
         "pagination": {
             "prev": "Prev Page",

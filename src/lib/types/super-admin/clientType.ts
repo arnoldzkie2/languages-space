@@ -1,3 +1,5 @@
+import { ClientCard } from "./clientCardType"
+
 interface Client {
     length: number
     id: string
@@ -14,6 +16,7 @@ interface Client {
     note: string | null
     date: string
     departments: { id: string, name: string, date: string }[] | null
+    cards: ClientCard[]
 }
 
 interface ClientFormData {

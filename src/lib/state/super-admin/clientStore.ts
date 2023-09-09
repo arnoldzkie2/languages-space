@@ -43,6 +43,7 @@ interface ClientProps {
     totalClients: TotalProps
     viewClientModal: boolean
     selectedClients: Client[]
+    clientSelectedID: string
     setClients: (allClients: Client[]) => void
     setMethod: (name: string) => void
     setClientData: (data: Client) => void
@@ -53,6 +54,8 @@ interface ClientProps {
     deleteWarning: (client: Client) => void
     setSelectedClients: (clients: Client[]) => void
     getClients: () => Promise<void>
+    setClientSelectedID: (clientID: string) => void
+    getClientsWithCards: () => Promise<void>
 }
 
 const useAdminClientStore = create<ClientProps>((set) => ({
@@ -63,6 +66,8 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     totalClients: totalClientsValue,
     viewClientModal: false,
     selectedClients: [],
+    clientSelectedID: '',
+    setClientSelectedID: (clientID: string) => set({ clientSelectedID: clientID }),
     setClients: (allClients: Client[]) => set({ clients: allClients }),
     setMethod: (name: string) => set(state => ({ method: name })),
     setClientData: (data: Client) => set(state => ({ clientData: data })),
@@ -89,7 +94,26 @@ const useAdminClientStore = create<ClientProps>((set) => ({
             alert('Something went wrong')
 
         }
-    }
+    },
+    getClientsWithCards: async () => {
+
+        try {
+
+            const { departmentID } = useAdminGlobalStore.getState()
+
+            const { data } = await axios.get(`/api/client/card${departmentID && `?departmentID=${departmentID}`}`)
+
+            if (data.ok) set({ clients: data.data })
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert('Something went wrong')
+
+        }
+    },
+
 }))
 
 export default useAdminClientStore

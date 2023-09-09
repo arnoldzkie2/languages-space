@@ -34,7 +34,7 @@ model ClientCard {
   price             Int
   balance           Int
   validity          String
-  client            Client   @relation(fields: [client_id], references: [id])
+  client            Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
   client_id         String
   invoice           Boolean
   repeat_purchases  Boolean
@@ -92,7 +92,7 @@ model SupplierMeetingInfo {
   id           String   @id @default(uuid())
   service      String
   meeting_code String
-  supplier     Supplier @relation(fields: [supplier_id], references: [id])
+  supplier     Supplier @relation(fields: [supplier_id], references: [id], onDelete: Cascade)
   supplier_id  String
 
   @@index([supplier_id])
@@ -100,7 +100,7 @@ model SupplierMeetingInfo {
 
 model SupplierSchedule {
   id             String    @id @default(uuid())
-  supplier       Supplier? @relation(fields: [supplier_id], references: [id])
+  supplier       Supplier? @relation(fields: [supplier_id], references: [id], onDelete: Cascade)
   supplier_id    String?
   client_id      String?
   client_name    String?
@@ -129,7 +129,7 @@ model Agent {
   email               String?
   address             String?
   gender              String?
-  card                AgentCard?   @relation(fields: [agent_card_id], references: [id])
+  card                AgentCard?   @relation(fields: [agent_card_id], references: [id], onDelete: Cascade)
   origin              String
   note                String?
   date                DateTime     @default(now())
@@ -203,7 +203,7 @@ model News {
   keywords      Json?
   content       String      @db.Text
   date          DateTime    @default(now())
-  department    Department? @relation(fields: [department_id], references: [id])
+  department    Department? @relation(fields: [department_id], references: [id], onDelete: Cascade)
   department_id String?
 
   @@index([department_id])

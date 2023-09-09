@@ -1,6 +1,6 @@
 interface SupplierSchedule {
     id: string
-    suplier_id: string
+    supplier_id: string
     client_id: string | null
     client_name: string | null
     client_card_id: string | null
@@ -8,9 +8,10 @@ interface SupplierSchedule {
     time: string
     reserved: boolean
     meeting_info: {
+        id: string
         service: string
         meeting_code: string
-    } | {}
+    } | null
     note: string | null
     completed: boolean
 }

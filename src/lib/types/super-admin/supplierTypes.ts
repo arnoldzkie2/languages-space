@@ -49,6 +49,12 @@ interface SupplierFormDataProps {
     employment_status: string
 }
 
+interface SupplierMeetingInfo {
+    id: string
+    service: string
+    meeting_code: string
+}
 
-export type { SupplierFormDataProps, Supplier, TotalSupplier }
+
+export type { SupplierFormDataProps, Supplier, TotalSupplier, SupplierMeetingInfo }
 
