@@ -151,19 +151,15 @@ const BindSchedlueModal = () => {
     useEffect(() => {
 
         setCardSelectedID('')
+        getClientsWithCards()
 
-        if (supplierMeetingInfo.length > 0) {
+    }, [departmentID])
 
-            getClientsWithCards()
+    useEffect(() => {
 
-        } else {
+        getSupplierMeetingInfo()
 
-            getSupplierMeetingInfo()
-            getClientsWithCards()
-
-        }
-
-    }, [departmentID, clientSelectedID])
+    }, [supplierSelectedID])
 
     const t = useTranslations('super-admin')
     return (
@@ -200,7 +196,7 @@ const BindSchedlueModal = () => {
 
                     <input className='py-1.5 px-2 border rounded-md outline-none' type="text" placeholder='Note (optional)' value={formData.note} onChange={(e: any) => setFormData(prevData => ({ ...prevData, note: e.target.value }))} />
                     <div className='flex items-center w-full gap-10'>
-                    <button onClick={(e: any) => deleteSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : 'Delete Schedule'}</button>
+                        <button onClick={(e: any) => deleteSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : 'Delete Schedule'}</button>
                         <button onClick={(e: any) => bookSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : 'Confirm Booking'}</button>
                     </div>
                 </div>

@@ -8,6 +8,8 @@ export const GET = async (req: Request) => {
 
     const supplierID = searchParams.get('supplierID')
 
+    const departmentID = searchParams.get('departmentID')
+
     try {
 
         if (supplierID) {
@@ -22,7 +24,24 @@ export const GET = async (req: Request) => {
             return okayRes(supplierSchedule.meeting_info)
         }
 
-        return notFoundRes('supplierID')
+        if (departmentID) {
+
+            const allSupplier = await prisma.supplier.findMany({
+                where: { departments: { some: { id: departmentID } }, meeting_info: { some: {} } }
+            })
+
+            if (!allSupplier) return badRequestRes()
+
+            return okayRes(allSupplier)
+        }
+
+        const allSupplier = await prisma.supplier.findMany({
+            where: { meeting_info: { some: {} } }
+        })
+
+        if (!allSupplier) return badRequestRes()
+
+        return okayRes(allSupplier)
 
     } catch (error) {
 

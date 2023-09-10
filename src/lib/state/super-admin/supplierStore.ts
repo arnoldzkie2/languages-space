@@ -57,6 +57,7 @@ interface SupplierProps {
     closeDeleteSupplierModal: () => void
     setSelectedSupplier: (suppliers: Supplier[]) => void
     getSupplier: () => Promise<void>
+    getSupplierWithMeeting: () => Promise<void>
     setSupplierSelectedID: (supplierID: string) => void
     setSupplierMeetingInfo: (meetingInfo: SupplierMeetingInfo[]) => void
 }
@@ -86,6 +87,28 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
             const { departmentID } = useAdminGlobalStore.getState()
 
             const { data } = await axios.get(`/api/supplier${departmentID && `?departmentID=${departmentID}`}`)
+
+            if (data.ok) {
+
+                set({ supplier: data.data })
+
+            }
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert('Something went wrong')
+
+        }
+    },
+    getSupplierWithMeeting: async () => {
+
+        try {
+
+            const { departmentID } = useAdminGlobalStore.getState()
+
+            const { data } = await axios.get(`/api/supplier/meeting${departmentID && `?departmentID=${departmentID}`}`)
 
             if (data.ok) {
 

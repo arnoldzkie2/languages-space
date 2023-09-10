@@ -24,7 +24,7 @@ const Page = ({ }) => {
 
     const { isSideNavOpen, departmentID } = useAdminGlobalStore()
 
-    const { getSupplier, supplier, supplierSelectedID, setSupplierSelectedID } = useAdminSupplierStore()
+    const { getSupplierWithMeeting, supplier, supplierSelectedID, setSupplierSelectedID } = useAdminSupplierStore()
 
     const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewSchedule, viewSchedule } = useAdminScheduleStore()
 
@@ -65,7 +65,7 @@ const Page = ({ }) => {
 
     useEffect(() => {
 
-        getSupplier()
+        getSupplierWithMeeting()
 
     }, [departmentID])
 

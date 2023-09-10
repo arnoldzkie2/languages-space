@@ -83,7 +83,7 @@ const ViewScheduleModal = () => {
     return (
         <div className='fixed top-0 left-0 w-screen z-20 h-screen grid place-items-end bg-opacity-50 bg-gray-600'>
             <div className='bg-white p-10 shadow-lg flex items-start gap-10 overflow-y-auto w-1/2 h-full relative'>
-                <FontAwesomeIcon onClick={() => closeViewSchedule()} icon={faXmark} width={16} height={16} className='absolute text-xl top-6 right-6 cursor-pointer' />
+                <FontAwesomeIcon onClick={closeViewSchedule} icon={faXmark} width={16} height={16} className='absolute text-xl top-6 right-6 cursor-pointer' />
                 <div className='flex w-1/2 flex-col gap-3.5 p-5 border'>
                     <div className='flex items-center gap-2'><span className='font-medium'>Date:</span>{scheduleData.date} ({scheduleData.time})</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>Client:</span>{scheduleData.client_name}</div>
@@ -104,7 +104,7 @@ const ViewScheduleModal = () => {
                     <div className='flex items-center gap-2'><span className='font-medium'>Note:</span>{scheduleData?.note ? scheduleData.note : 'No Data'}</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>Completed:</span> <span className={`h-6 w-6 rounded-full ${scheduleData.completed ? 'bg-green-500' : 'bg-red-500'}`}></span></div>
                     <div className='flex items-center w-full gap-5'>
-                        <button className='py-2 rounded-md border w-full'>Close</button>
+                        <button onClick={closeViewSchedule} className='py-2 rounded-md border w-full'>Close</button>
                         <button onClick={(e: any) => deleteSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : 'Cancel Booking'}</button>
                     </div>
                 </div>
