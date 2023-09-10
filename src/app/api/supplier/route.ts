@@ -5,7 +5,7 @@ import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorR
 export const POST = async (req: Request) => {
 
     const { name, user_name, password, organization, payment_info, phone_number, email, address, gender, card, origin,
-        tags, note, employment_status, entry, departure, departments } = await req.json()
+        tags, note, employment_status, meeting_info, entry, departure, departments } = await req.json()
 
     try {
 
@@ -46,6 +46,30 @@ export const POST = async (req: Request) => {
 
             if (!newSupplier) return badRequestRes()
 
+            if (meeting_info.length > 0) {
+
+                const meetingInfoData = meeting_info
+                    .filter((item: any) => item.service !== '' && item.meeting_code !== '')
+                    .map((item: any) => ({
+                        service: item.service,
+                        meeting_code: item.meeting_code,
+                        supplier_id: newSupplier.id
+                    }))
+
+                if (meetingInfoData.length > 0) {
+                    const createMeetingInfo = await prisma.supplierMeetingInfo.createMany({
+                        data: meetingInfoData
+                    });
+
+                    if (!createMeetingInfo) return badRequestRes();
+
+                    const data = { newSupplier, createMeetingInfo };
+
+                    return createdRes(data);
+                }
+
+            }
+
             return createdRes(newSupplier)
 
         }
@@ -59,7 +83,31 @@ export const POST = async (req: Request) => {
 
         if (!newSupplier) return badRequestRes()
 
-        return createdRes()
+        if (meeting_info.length > 0) {
+
+            const meetingInfoData = meeting_info
+                .filter((item: any) => item.service !== '' && item.meeting_code !== '')
+                .map((item: any) => ({
+                    service: item.service,
+                    meeting_code: item.meeting_code,
+                    supplier_id: newSupplier.id
+                }))
+
+            if (meetingInfoData.length > 0) {
+                const createMeetingInfo = await prisma.supplierMeetingInfo.createMany({
+                    data: meetingInfoData
+                });
+
+                if (!createMeetingInfo) return badRequestRes();
+
+                const data = { newSupplier, createMeetingInfo };
+
+                return createdRes(data);
+            }
+
+        }
+
+        return createdRes(newSupplier)
 
     } catch (error) {
 
@@ -142,7 +190,7 @@ export const PATCH = async (req: Request) => {
 
             const checkSupplier = await prisma.supplier.findUnique({
                 where: { id: supplierID },
-                include: { departments: true }
+                include: { departments: true, meeting_info: true }
             })
 
             if (!checkSupplier) return notFoundRes('Supplier')
@@ -151,20 +199,46 @@ export const PATCH = async (req: Request) => {
 
             const departmentsToRemove = checkSupplier.departments.filter((department) =>
                 !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
-            );
+            )
+
+            const meetingInfoToDeleteIDs = checkSupplier.meeting_info
+                .filter(existingInfo =>
+                    !meeting_info.some((newInfo: any) =>
+                        newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
+                    )
+                )
+                .map(existingInfo => existingInfo.id)
+
+            const meetingInfoToCreate = meeting_info
+                .filter((newInfo: any) =>
+                    !checkSupplier.meeting_info.some(existingInfo =>
+                        newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
+                    )
+                );
+
+            await prisma.supplierMeetingInfo.deleteMany({ where: { id: { in: meetingInfoToDeleteIDs } } });
+
+            await prisma.supplierMeetingInfo.createMany({
+                data: meetingInfoToCreate.map((newInfo: any) => ({
+                    supplier_id: checkSupplier.id,
+                    service: newInfo.service,
+                    meeting_code: newInfo.meeting_code,
+                }))
+            });
 
             const updatedSupplier = await prisma.supplier.update({
-                where: { id: supplierID }, data: {
+                where: { id: supplierID },
+                data: {
                     name, profile, user_name, password, organization, payment_info, phone_number, email, address, gender,
-                    card, origin, tags, note, employment_status, entry, departure, meeting_info,
-                    departments: { connect: departmentsToConnect, disconnect: departmentsToRemove }
+                    card, origin, tags, note, employment_status, entry, departure,
+                    departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
                 },
-                include: { departments: true }
-            })
+                include: { departments: true, meeting_info: true }
+            });
 
             if (!updatedSupplier) return badRequestRes()
 
-            return okayRes()
+            return okayRes(updatedSupplier)
 
         }
 

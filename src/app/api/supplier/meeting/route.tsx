@@ -35,7 +35,6 @@ export const GET = async (req: Request) => {
 
 export const POST = async (req: Request) => {
 
-
     const { service, meeting_code, supplierID } = await req.json()
 
     try {

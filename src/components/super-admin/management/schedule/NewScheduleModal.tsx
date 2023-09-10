@@ -34,7 +34,6 @@ const NewScheduleModal = () => {
 
     const filterSupplier = supplier.filter(item => item.name.toUpperCase().includes(searchQuery.toUpperCase()))
 
-
     const addSchedule = async (e: any) => {
 
         e.preventDefault()

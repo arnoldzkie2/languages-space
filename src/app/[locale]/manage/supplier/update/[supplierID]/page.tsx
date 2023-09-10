@@ -36,7 +36,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
         e.preventDefault()
 
-        const { name, user_name, password } = formData
+        const { name, user_name, password, meeting_info } = formData
 
         if (!name || !password || !user_name) return setErr('Fill up some inputs')
 
@@ -44,11 +44,17 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
         if (password.length < 3) return setErr('Password minimum length 3')
 
+        const filteredMeetingInfo = meeting_info.filter(info =>
+            info.service.trim() !== '' && info.meeting_code.trim() !== ''
+        );
+
+        const updatedFormData = { ...formData, meeting_info: filteredMeetingInfo };
+
         try {
 
             setIsLoading(true)
 
-            const { data } = await axios.patch(`/api/supplier?supplierID=${supplierID}`, formData)
+            const { data } = await axios.patch(`/api/supplier?supplierID=${supplierID}`, updatedFormData)
 
             if (data.ok) {
 
@@ -72,6 +78,26 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
         }
 
     }
+
+    const addMoreMeetingInfo = () => {
+        const updatedMeetingInfo = [...formData.meeting_info, { service: '', meeting_code: '' }];
+        setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+    }
+
+    const handleMeetinInfoChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        index: number) => {
+        const updatedMeetingInfo = [...formData.meeting_info];
+        const propertyName = event.target.name as keyof typeof updatedMeetingInfo[0];
+        updatedMeetingInfo[index][propertyName] = event.target.value;
+        setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+    }
+
+    const removeMeetingInfo = (index: number) => {
+        const updatedMeetingInfo = [...formData.meeting_info];
+        updatedMeetingInfo.splice(index, 1);
+        setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+    };
 
     const handleChange = (e: any) => {
 
@@ -184,7 +210,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="email" className='font-medium'>Email Address (optional)</label>
-                                    <input value={formData.email} onChange={handleChange} name='email' type="text" className='w-full border outline-none py-1 px-3' id='email' />
+                                    <input value={formData.email || ''} onChange={handleChange} name='email' type="text" className='w-full border outline-none py-1 px-3' id='email' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
@@ -194,12 +220,12 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="phone" className='font-medium'>Phone Number (optional)</label>
-                                    <input value={formData.phone_number} onChange={handleChange} name='phone_number' type="text" className='w-full border outline-none py-1 px-3' id='phone' />
+                                    <input value={formData.phone_number || ''} onChange={handleChange} name='phone_number' type="text" className='w-full border outline-none py-1 px-3' id='phone' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="organization" className='font-medium'>Organization (optional)</label>
-                                    <input value={formData.organization} onChange={handleChange} name='organization' type="text" className='w-full border outline-none py-1 px-3' id='organization' />
+                                    <input value={formData.organization || ''} onChange={handleChange} name='organization' type="text" className='w-full border outline-none py-1 px-3' id='organization' />
                                 </div>
 
                                 <div className='flex flex-col gap-3 items-start'>
@@ -235,7 +261,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="gender" className='font-medium'>Gender (optional)</label>
-                                    <select name="gender" id="gender" onChange={handleChange} value={formData.gender} className='py-1 outline-none px-3 border'>
+                                    <select name="gender" id="gender" onChange={handleChange} value={formData.gender || ''} className='py-1 outline-none px-3 border'>
                                         <option value="" disabled>Select</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
@@ -244,7 +270,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                 </div>
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="employment_status" className='font-medium'>Employment Status (optional)</label>
-                                    <select name="employment_status" id="employment_status" onChange={handleChange} value={formData.employment_status} className='py-1 outline-none px-3 border'>
+                                    <select name="employment_status" id="employment_status" onChange={handleChange} value={formData.employment_status || ''} className='py-1 outline-none px-3 border'>
                                         <option value="" disabled>Select</option>
                                         <option value="full-time">Full-time</option>
                                         <option value="part-time">Part-time</option>
@@ -253,22 +279,22 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="address" className='font-medium'>Address (optional)</label>
-                                    <input value={formData.address} onChange={handleChange} name='address' type="text" className='w-full border outline-none py-1 px-3' id='address' />
+                                    <input value={formData.address || ''} onChange={handleChange} name='address' type="text" className='w-full border outline-none py-1 px-3' id='address' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="origin" className='font-medium'>Origin (optional)</label>
-                                    <input value={formData.origin} onChange={handleChange} name='origin' type="text" className='w-full border outline-none py-1 px-3' id='origin' />
+                                    <input value={formData.origin || ''} onChange={handleChange} name='origin' type="text" className='w-full border outline-none py-1 px-3' id='origin' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="payment_info" className='font-medium'>Payment Info (optional)</label>
-                                    <input value={formData.payment_info} onChange={handleChange} name='payment_info' type="text" className='w-full border outline-none py-1 px-3' id='payment_info' />
+                                    <input value={formData.payment_info || ''} onChange={handleChange} name='payment_info' type="text" className='w-full border outline-none py-1 px-3' id='payment_info' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="note" className='font-medium'>Note (optional)</label>
-                                    <input value={formData.note} onChange={handleChange} name='note' type="text" className='w-full border outline-none py-1 px-3' id='note' />
+                                    <input value={formData.note || ''} onChange={handleChange} name='note' type="text" className='w-full border outline-none py-1 px-3' id='note' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
@@ -289,6 +315,33 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                 </div>
 
                             </div>
+
+                            <div className='flex flex-col gap-3 w-full'>
+                                <h1>Meeting Info</h1>
+                                {formData.meeting_info.map((info, index) => (
+                                    <div key={index} className='flex flex-col gap-3 w-full p-4 border'>
+                                        <input
+                                            type="text"
+                                            name="service"
+                                            placeholder="Service"
+                                            value={info.service}
+                                            className='py-1.5 px-2 outline-none border rounded-md'
+                                            onChange={(e) => handleMeetinInfoChange(e, index)}
+                                        />
+                                        <input
+                                            type="text"
+                                            name="meeting_code"
+                                            placeholder="Meeting Code"
+                                            value={info.meeting_code}
+                                            className='py-1.5 px-2 outline-none border rounded-md'
+                                            onChange={(e) => handleMeetinInfoChange(e, index)}
+                                        />
+                                        <button type='button' onClick={() => removeMeetingInfo(index)} className='bg-red-500 hover:bg-red-600 w-1/2 self-end text-white py-1.5 rounded-md outline-none'>Remove</button>
+                                    </div>
+                                ))}
+                                <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-full text-white'>Add More</button>
+                            </div>
+
                         </div>
                         <div className='flex flex-col gap-3'>
                             <span className='font-medium'>Supplier Tags</span>

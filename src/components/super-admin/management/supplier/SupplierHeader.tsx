@@ -10,7 +10,7 @@ const SupplierHeader: React.FC = ({ }) => {
 
     const { status } = useSession()
 
-    const { supplier, selectedSupplier } = useAdminSupplierStore()
+    const { supplier, selectedSupplier} = useAdminSupplierStore()
 
     const t = useTranslations('super-admin')
 
@@ -24,9 +24,6 @@ const SupplierHeader: React.FC = ({ }) => {
             <ul className='flex items-center h-full ml-auto gap-5'>
                 {status !== 'loading' ? <Link href='/manage/supplier/new' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
                     <div>{t('supplier.create')}</div>
-                </Link> : skeleton}
-                {status !== 'loading' ? <Link href='/manage/supplier/new' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
-                    <div>Bind Meeting Info</div>
                 </Link> : skeleton}
                 {status !== 'loading' ? < DownloadTable tables={supplier} selectedTable={selectedSupplier} /> : skeleton}
             </ul>

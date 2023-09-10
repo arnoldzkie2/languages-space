@@ -54,7 +54,7 @@ export const POST = async (req: Request) => {
 
         const existingSchedules = await prisma.supplierSchedule.findMany({
             where: {
-                id: supplierID,
+                supplier_id: supplierID,
                 date: { in: dates }, // Use 'in' to check against an array of dates
                 time: { in: times },
             },
@@ -83,10 +83,12 @@ export const POST = async (req: Request) => {
             }
         }
 
+        if (newSchedules.length === 0) return okayRes()
+
         const createSchedules = await prisma.supplierSchedule.createMany({
             data: newSchedules,
             skipDuplicates: true,
-        });
+        })
 
         if (!createSchedules) return badRequestRes();
 

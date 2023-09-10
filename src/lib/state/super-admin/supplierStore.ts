@@ -20,6 +20,10 @@ const supplierFormDataValue = {
     gender: '',
     note: '',
     organization: '',
+    meeting_info: [{
+        service: '',
+        meeting_code: ''
+    }],
     origin: '',
     phone_number: '',
     profile: '',

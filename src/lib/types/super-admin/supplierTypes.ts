@@ -41,6 +41,10 @@ interface SupplierFormDataProps {
     payment_info: string
     user_name: string
     departments: string[]
+    meeting_info: {
+        service: string
+        meeting_code: string
+    }[]
     organization: string
     note: string
     gender: string

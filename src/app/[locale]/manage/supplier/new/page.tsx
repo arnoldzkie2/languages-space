@@ -28,9 +28,17 @@ const Page = () => {
 
   const registerSupplier = async (e: any) => {
 
+    const { meeting_info } = formData;
+
+    const filteredMeetingInfo = meeting_info.filter(info =>
+      info.service.trim() !== '' && info.meeting_code.trim() !== ''
+    );
+
+    const updatedFormData = { ...formData, meeting_info: filteredMeetingInfo };
+
     e.preventDefault()
 
-    const { name, user_name, password } = formData
+    const { name, user_name, password } = updatedFormData
 
     if (!name || !password || !user_name) return setErr('Fill up some inputs')
 
@@ -42,7 +50,7 @@ const Page = () => {
 
       setIsLoading(true)
 
-      const { data } = await axios.post('/api/supplier', formData)
+      const { data } = await axios.post('/api/supplier', updatedFormData)
 
       if (data.ok) {
 
@@ -66,6 +74,26 @@ const Page = () => {
     }
 
   }
+
+  const addMoreMeetingInfo = () => {
+    const updatedMeetingInfo = [...formData.meeting_info, { service: '', meeting_code: '' }];
+    setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+  }
+
+  const handleMeetinInfoChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number) => {
+    const updatedMeetingInfo = [...formData.meeting_info];
+    const propertyName = event.target.name as keyof typeof updatedMeetingInfo[0];
+    updatedMeetingInfo[index][propertyName] = event.target.value;
+    setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+  }
+
+  const removeMeetingInfo = (index: number) => {
+    const updatedMeetingInfo = [...formData.meeting_info];
+    updatedMeetingInfo.splice(index, 1);
+    setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+  };
 
   const handleChange = (e: any) => {
 
@@ -131,7 +159,7 @@ const Page = () => {
 
         <div className='w-full px-8'>
 
-          <form className='w-1/2 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={registerSupplier}>
+          <form className='w-2/3 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={registerSupplier}>
             {err && <small className='w-full text-red-400'>{err}</small>}
             <div className='w-full flex gap-20'>
 
@@ -254,6 +282,33 @@ const Page = () => {
                 </div>
 
               </div>
+
+              <div className='flex flex-col gap-3 w-full'>
+                <h1>Meeting Info</h1>
+                {formData.meeting_info.map((info, index) => (
+                  <div key={index} className='flex flex-col gap-3 w-full p-4 border'>
+                    <input
+                      type="text"
+                      name="service"
+                      placeholder="Service"
+                      value={info.service}
+                      className='py-1.5 px-2 outline-none border rounded-md'
+                      onChange={(e) => handleMeetinInfoChange(e, index)}
+                    />
+                    <input
+                      type="text"
+                      name="meeting_code"
+                      placeholder="Meeting Code"
+                      value={info.meeting_code}
+                      className='py-1.5 px-2 outline-none border rounded-md'
+                      onChange={(e) => handleMeetinInfoChange(e, index)}
+                    />
+                    <button type='button' onClick={() => removeMeetingInfo(index)} className='bg-red-500 hover:bg-red-600 w-1/2 self-end text-white py-1.5 rounded-md outline-none'>Remove</button>
+                  </div>
+                ))}
+                <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-full text-white'>Add More</button>
+              </div>
+
             </div>
             <div className='flex flex-col gap-3'>
               <span className='font-medium'>Supplier Tags</span>
