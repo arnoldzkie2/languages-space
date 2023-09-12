@@ -1,21 +1,31 @@
-import { badRequestRes, okayRes, serverErrorRes } from "@/lib/api/response";
+import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 import prisma from "@/lib/db";
 
 export const GET = async (req: Request) => {
 
+    const { searchParams } = new URL(req.url)
+
+    const departmentID = searchParams.get('departmentID')
+
     try {
 
-        const allKeywords = await prisma.news.findMany({ select: { keywords: true } })
+        if (departmentID) {
 
-        const uniqueKeywords = allKeywords
-            .flatMap((item) => item.keywords)
-            .filter((keyword, index, keywordsArray) => {
-                return keywordsArray.indexOf(keyword) === index;
-            });
+            const allKeywords = await prisma.news.findMany({ where: { department: { id: departmentID } }, select: { keywords: true } })
+            
+            const uniqueKeywords = allKeywords
+                .flatMap((item) => item.keywords)
+                .filter((keyword, index, keywordsArray) => {
+                    return keywordsArray.indexOf(keyword) === index;
+                });
 
-        if (!allKeywords) return badRequestRes()
+            if (!allKeywords) return badRequestRes()
 
-        return okayRes(uniqueKeywords)
+            return okayRes(uniqueKeywords)
+
+        }
+
+        return notFoundRes('departmentID')
 
     } catch (error) {
 
