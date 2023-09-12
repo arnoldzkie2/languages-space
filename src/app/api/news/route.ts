@@ -37,8 +37,6 @@ export const GET = async (req: Request) => {
 
     const newsID = searchParams.get('newsID')
 
-    const keyword = searchParams.get('keyword')
-
     const departmentID = searchParams.get('departmentID')
 
     try {
@@ -54,10 +52,10 @@ export const GET = async (req: Request) => {
             return okayRes(newsDepartment.news)
         }
 
-        if (newsID) {
+        if (newsID && departmentID) {
 
             const singleNews = await prisma.news.findUnique({
-                where: { id: newsID },
+                where: { id: newsID, department: { id: departmentID } },
                 include: { department: true }
             })
 
