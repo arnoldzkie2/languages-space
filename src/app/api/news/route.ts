@@ -1,4 +1,4 @@
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -15,7 +15,7 @@ export const POST = async (req: Request) => {
 
         if (!createNews) return badRequestRes()
 
-        return okayRes(createNews)
+        return createdRes(createNews)
 
     } catch (error) {
 

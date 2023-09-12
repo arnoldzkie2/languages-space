@@ -1,5 +1,5 @@
+import { badRequestRes, okayRes, serverErrorRes } from "@/lib/api/response";
 import prisma from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
 
@@ -13,13 +13,15 @@ export const GET = async (req: Request) => {
                 return keywordsArray.indexOf(keyword) === index;
             });
 
-        if (!allKeywords) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+        if (!allKeywords) return badRequestRes()
 
-        return NextResponse.json({ data: uniqueKeywords }, { status: 200 })
+        return okayRes(uniqueKeywords)
 
     } catch (error) {
 
         console.log(error);
+
+        return serverErrorRes()
 
     }
 
