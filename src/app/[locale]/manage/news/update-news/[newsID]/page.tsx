@@ -107,7 +107,7 @@ const UpdateNews: React.FC<Props> = ({ params }) => {
 
             const { keywords, title, content, author, department } = data.data;
 
-            setFormData({ title, content, author, department: department.id});
+            setFormData({ title, content, author, department: department.id });
 
             setDepartmentID(department.id)
 
@@ -153,53 +153,58 @@ const UpdateNews: React.FC<Props> = ({ params }) => {
     }, [departmentID])
 
     return (
-        <div className='h-screen'>
+        <div className='h-screen overflow-y-hidden'>
 
             <SideNav />
 
-            <div className={`flex flex-col w-full h-full py-5 ${isSideNavOpen ? 'pl-40' : 'pl-16'}`}>
+            <div className={`flex flex-col h-full w-full ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-                <div className='flex items-center justify-between px-10 border-b h-20'>
-                    <div className='text-2xl text-gray-700 font-bold'>Update News</div>
-                    <div className='flex items-center w-1/2 gap-5'>
-                        <div className='w-full'>
+                <div className='flex px-8 border-b h-20 w-full items-center bg-white'>
+
+                    <div className='text-2xl text-gray-700 font-bold w-52'>Update News</div>
+                    <div className='w-full flex gap-6 items-center'>
+                        <div className='w-1/4'>
                             <Departments />
                         </div>
-                        <input className='w-full py-1 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Title' value={formData.title} onChange={(e: any) => setFormData(prevData => ({
+                        <input className='w-full py-2 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Title' value={formData.title} onChange={(e: any) => setFormData(prevData => ({
                             ...prevData,
                             title: e.target.value
                         }))} />
 
-                        <input className='w-full py-1 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Author' value={formData.author} onChange={(e: any) => setFormData(prevData => ({
+                        <input className='w-1/4 py-2 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Author' value={formData.author} onChange={(e: any) => setFormData(prevData => ({
                             ...prevData,
                             author: e.target.value
                         }))} />
 
-                        <input className='w-full py-1 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Add Keyword' onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
-
+                        <input className='w-1/4 py-2 h-9 outline-none px-3 shadow-sm border' type="text" placeholder='Add Keyword' onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
                     </div>
+
                 </div>
 
-                <div className='overflow-x-auto p-10 h-full w-full'>
-                    <div ref={quillRef} className='p-0' />
+                <div className='overflow-y-hidden p-8 pb-20 h-full w-full'>
+                    <div ref={quillRef} className='w-full bg-white border h-full flex flex-col justify-between' />
                 </div>
-                <div className='flex items-center justify-between gap-10'>
-                    <div className='flex items-center'>
+
+                <div className='bottom-0 w-full px-8 flex items-center h-20 bg-white py-3 justify-between gap-10 border-t'>
+
+                    <div className='flex items-center w-full'>
                         {keywords.length > 0 && <div className='font-medium p-2'>KEYWORDS:</div>}
-                        <div className='flex items-center gap-5 overflow-x-auto flex-wrap px-2  max-h-16'>
+                        <div className='flex items-center gap-5 overflow-x-auto flex-wrap px-2 py-1  max-h-16'>
                             {keywords.length > 0 && keywords.map((item, i) => {
                                 return (
-                                    <div key={i} className='bg-slate-100 shadow border px-2 py-1 uppercase flex items-center gap-1'>
+                                    <div key={i} onClick={() => removeKeyword(i)} className='bg-slate-100 cursor-pointer border px-2 py-1 uppercase flex items-center gap-1'>
                                         {item}
-                                        <FontAwesomeIcon icon={faXmark} onClick={() => removeKeyword(i)} className='cursor-pointer' />
+                                        <FontAwesomeIcon icon={faXmark} width={16} height={16} />
                                     </div>
                                 )
                             })}
                         </div>
+
                     </div>
-                    <div className='flex items-center gap-9 min-w-fit px-10'>
+
+                    <div className='flex items-center gap-9 w-1/4 justify-end'>
                         <Link href='/manage/news' className='rounded-sm bg-white border-blue-600 border text-blue-600 py-2 px-4'>Go Back</Link>
-                        <button disabled={isLoading && true} onClick={updateNews} className={`rounded-sm text-white px-4 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : 'Update News'}</button>
+                        <button disabled={isLoading && true} onClick={updateNews} className={`rounded-sm text-white py-2 px-4 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : 'Update News'}</button>
                     </div>
                 </div>
             </div>

@@ -117,14 +117,14 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                     onChange={() => handleSelection(news)}
                                     checked={selectedNews.some(selectedNews => selectedNews.id === news.id)}
                                 />                            </td>
-                            <td className=" py-3 px-6 h-5 w-96">
-                                <label htmlFor={news.id} className='cursor-pointer w-full flex'>
+                            <td className=" py-3 px-6 h-5 max-w-[24rem] overflow-x-auto">
+                                <label htmlFor={news.id} className='cursor-pointer w-full h-full whitespace-nowrap'>
                                     {news.title}
                                 </label>
                             </td>
                             <td className="py-3 px-6 h-5 w-32">{news.author}</td>
                             <td className=" py-3 px-6 h-5 w-32">
-                                <select className='outline-none p-1'>
+                                <select className='outline-none py-1.5 px-2 border'>
                                     {news.keywords.length > 0 ? news.keywords.map((item, i) => {
                                         return (
                                             <option key={i}>

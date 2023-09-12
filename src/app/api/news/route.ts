@@ -43,26 +43,6 @@ export const GET = async (req: Request) => {
 
     try {
 
-        if (keyword && departmentID) {
-
-            const AllNews = await prisma.department.findUnique({
-                where: {
-                    id: departmentID
-                },
-                include: {
-                    news: true
-                }
-            })
-
-            if (!AllNews) return badRequestRes()
-
-            const keywordNews = AllNews.news.filter(item => item.keywords === keyword)
-
-            if (!keywordNews) return badRequestRes()
-
-            return okayRes(keywordNews)
-        }
-
         if (departmentID) {
 
             const newsDepartment = await prisma.department.findUnique({
