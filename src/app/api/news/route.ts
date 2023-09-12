@@ -41,6 +41,19 @@ export const GET = async (req: Request) => {
 
     try {
 
+        if (newsID) {
+
+            const singleNews = await prisma.news.findUnique({
+                where: { id: newsID },
+                include: { department: true }
+            })
+
+            if (!singleNews) return notFoundRes('News')
+
+            return okayRes(singleNews)
+
+        }
+
         if (departmentID) {
 
             const newsDepartment = await prisma.department.findUnique({
@@ -50,19 +63,6 @@ export const GET = async (req: Request) => {
             if (!newsDepartment) return badRequestRes()
 
             return okayRes(newsDepartment.news)
-        }
-
-        if (newsID && departmentID) {
-
-            const singleNews = await prisma.news.findUnique({
-                where: { id: newsID, department: { id: departmentID } },
-                include: { department: true }
-            })
-
-            if (!singleNews) return notFoundRes('News')
-
-            return okayRes(singleNews)
-
         }
 
         const allNews = await prisma.news.findMany()
