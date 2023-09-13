@@ -57,12 +57,14 @@ export const GET = async (req: Request) => {
         if (departmentID) {
 
             const newsDepartment = await prisma.department.findUnique({
-                where: { id: departmentID }, include: { news: true }
+                where: { id: departmentID },
+                select: { news: true }
             })
 
             if (!newsDepartment) return badRequestRes()
 
             return okayRes(newsDepartment.news)
+            
         }
 
         const allNews = await prisma.news.findMany()

@@ -65,15 +65,17 @@ const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
     }
 
     return (
-        <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-opacity-50 bg-gray-600 py-16'>
-            <div className='bg-white p-10 rounded-lg shadow-lg flex flex-col overflow-y-auto h-full gap-3'>
+        <div className='fixed top-0 left-0 w-screen h-screen grid place-items-center bg-opacity-50 bg-gray-600 py-16 z-20'>
+            <div className='bg-white p-10 rounded-lg shadow-lg flex flex-col items-center overflow-y-auto h-full w-1/2 gap-3'>
                 <h1 className='text-xl pb-4'>Are you sure you want to delete this news?</h1>
                 {selectedNews.length > 0
                     ?
                     selectedNews.map(news => {
                         return (
                             <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={news.id}>
+
                                 <div>NEWS ID: <span className='font-normal text-gray-700'>{news.id}</span></div>
+                                <div>AUTHOR: <span className='font-normal text-gray-700'>{news.author}</span></div>
                                 <div>TITLE: <span className='font-normal text-gray-700'>{news.title}</span></div>
                             </div>
                         )
@@ -81,6 +83,7 @@ const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
                     :
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border'>
                         <div>NEWS ID: <span className='font-normal text-gray-700'>{newsData.id}</span></div>
+                        <div>AUTHOR: <span className='font-normal text-gray-700'>{newsData.author}</span></div>
                         <div>TITLE: <span className='font-normal text-gray-700'>{newsData.title}</span></div>
                     </div>
                 }

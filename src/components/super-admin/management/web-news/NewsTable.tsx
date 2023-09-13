@@ -19,7 +19,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
 
     const { selectedNews, setSelectedNews, openNewsDeleteWarning } = useAdminNewsStore()
 
-    const {operation, openOperation, closeOperation, selectedID} = useAdminGlobalStore() 
+    const { operation, openOperation, closeOperation, selectedID } = useAdminGlobalStore()
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
@@ -101,8 +101,8 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                             onChange={selectAllRows}
                         />                    </th>
                     <th scope="col" className="py-3 px-6">{t('news.title')}</th>
-                    <th scope="col" className="py-3 px-6">{t('news.author')}</th>
                     <th scope="col" className="py-3 px-6">{t('news.keywords')}</th>
+                    <th scope="col" className="py-3 px-6">{t('news.author')}</th>
                     <th scope="col" className="py-3 px-6">{t('news.date')}</th>
                     <th scope="col" className="py-3 px-6">{t('global.operation')}</th>
                 </tr>
@@ -117,14 +117,13 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                     onChange={() => handleSelection(news)}
                                     checked={selectedNews.some(selectedNews => selectedNews.id === news.id)}
                                 />                            </td>
-                            <td className=" py-3 px-6 h-5 max-w-[24rem] overflow-x-auto">
+                            <td className="py-3 h-5 max-w-[32rem] w-[32rem] overflow-x-auto">
                                 <label htmlFor={news.id} className='cursor-pointer w-full h-full whitespace-nowrap'>
                                     {news.title}
                                 </label>
                             </td>
-                            <td className="py-3 px-6 h-5 w-32">{news.author}</td>
-                            <td className=" py-3 px-6 h-5 w-32">
-                                <select className='outline-none py-1.5 px-2 border'>
+                            <td className=" py-3 px-6 h-5 w-44 overflow-x-auto">
+                                <select className='outline-none py-1.5 px-2 border w-full'>
                                     {news.keywords.length > 0 ? news.keywords.map((item, i) => {
                                         return (
                                             <option key={i}>
@@ -134,7 +133,8 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                     }) : <option>No Data</option>}
                                 </select>
                             </td>
-                            <td className="py-3 px-6 h-5 w-36">{new Date(news.date).toLocaleString()}</td>
+                            <td className="py-3 px-6 h-5 w-36 max-w-[9rem] overflow-x-auto">{news.author}</td>
+                            <td className="py-3 px-6 h-5 w-52">{new Date(news.date).toLocaleString()}</td>
                             <td className="py-3 px-6 h-5 w-14 relative">
                                 <FontAwesomeIcon icon={faEllipsis} className='cursor-pointer text-2xl text-black' onClick={() => openOperation(news.id)} />
                                 <ul className={`${operation && selectedID === news.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
@@ -151,17 +151,17 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                             <td className='py-3 px-6'>
                                 <div className='h-5 bg-slate-200 animate-pulse rounded-md w-5'></div>
                             </td>
-                            <td className='py-3 px-6'>
-                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-96'></div>
+                            <td className='py-3'>
+                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-[32rem]'></div>
                             </td>
                             <td className='py-3 px-6'>
-                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-32'></div>
+                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-44'></div>
                             </td>
                             <td className='py-3 px-6'>
-                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-32'></div>
+                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-36'></div>
                             </td>
                             <td className='py-3 px-6'>
-                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-32'></div>
+                                <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-52'></div>
                             </td>
                             <td className='py-3 px-6'>
                                 <div className='h-5 bg-slate-200 animate-pulse rounded-3xl w-10'></div>
