@@ -6,31 +6,36 @@ const clientCardValue = {
     name: '',
     price: 0,
     balance: 0,
-    validity: '',
+    validity: 0,
     invoice: false,
     repeat_purchases: false,
     online_purchases: false,
     online_renews: false,
-    settlement_period: ''
+    settlement_period: '',
 }
 
 export { clientCardValue }
 
 interface ClientCardProps {
-
     cards: ClientCard[]
     getCards: () => Promise<void>
     viewCard: boolean
-    cardData: ClientCard | undefined
-    openViewCard: (card: ClientCard) => void
-    closeViewCard: () => void
+    cardData: ClientCard | null
     deleteCardModal: boolean
+    clientCardData: ClientCard | null
+    viewClientCard: boolean
+    deleteClientCardModal: boolean
+    closeViewCard: () => void
+    openViewCard: (card: ClientCard) => void
     openDeleteCardModal: (card: ClientCard) => void
+    openDeleteClientCardModal: (card: ClientCard) => void
+    openViewClientCard: (card: ClientCard) => void
     closeDeleteCardModal: () => void
+    closeClientCardModal: () => void
+    closeDeleteClientCardModal: () => void
 }
 
 const useAdminClientCardStore = create<ClientCardProps>((set) => ({
-
     cards: [],
     getCards: async () => {
 
@@ -49,8 +54,15 @@ const useAdminClientCardStore = create<ClientCardProps>((set) => ({
         }
     },
     viewCard: false,
-    cardData: undefined,
+    viewClientCard: false,
+    cardData: null,
     deleteCardModal: false,
+    deleteClientCardModal: false,
+    clientCardData: null,
+    closeDeleteClientCardModal: () => set({ deleteClientCardModal: false, clientCardData: null }),
+    openDeleteClientCardModal: (card: ClientCard) => set({ clientCardData: card, deleteClientCardModal: true }),
+    closeClientCardModal: () => set({ clientCardData: null, viewClientCard: false }),
+    openViewClientCard: (card: ClientCard) => set({ clientCardData: card, viewClientCard: true }),
     openViewCard: (card: ClientCard) => set({ viewCard: true, cardData: card }),
     closeViewCard: () => set({ viewCard: false, cardData: undefined }),
     openDeleteCardModal: (card: ClientCard) => set({ cardData: card, deleteCardModal: true }),

@@ -6,6 +6,7 @@ import axios from 'axios'
 
 const newClientFormValue = {
     name: '',
+    card: null,
     user_name: '',
     password: '',
     email: '',
@@ -78,42 +79,26 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     deleteWarning: (client: Client) => set(state => ({ deleteModal: true, clientData: client, clientSelectedID: '' })),
     setSelectedClients: (clients: Client[]) => set(state => ({ selectedClients: clients })),
     getClients: async () => {
-
         try {
-
             const { departmentID } = useAdminGlobalStore.getState()
-
             const { data } = await axios.get(`/api/client${departmentID && `?departmentID=${departmentID}`}`)
-
             if (data.ok) set({ clients: data.data })
-
         } catch (error) {
-
             console.log(error);
-
             alert('Something went wrong')
-
         }
     },
     getClientsWithCards: async () => {
-
         try {
-
             const { departmentID } = useAdminGlobalStore.getState()
-
             const { data } = await axios.get(`/api/client/card${departmentID && `?departmentID=${departmentID}`}`)
-
             if (data.ok) set({ clients: data.data })
 
         } catch (error) {
-
             console.log(error);
-
             alert('Something went wrong')
-
         }
     },
-
 }))
 
 export default useAdminClientStore

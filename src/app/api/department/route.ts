@@ -1,4 +1,4 @@
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -22,7 +22,7 @@ export const POST = async (req: Request) => {
 
         console.error(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 
@@ -55,7 +55,7 @@ export const GET = async (req: Request) => {
 
         console.error(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 
@@ -95,7 +95,7 @@ export const PATCH = async (req: Request) => {
 
         console.error(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 
@@ -129,7 +129,7 @@ export const DELETE = async (req: Request) => {
 
         console.error(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 

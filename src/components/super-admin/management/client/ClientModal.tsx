@@ -8,9 +8,7 @@ import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 const ClientModal: React.FC = () => {
 
     const { clientData, closeViewModal } = useAdminClientStore()
-
     const { departments } = useAdminGlobalStore()
-
     const availableDepartments = departments.filter((department) =>
         clientData?.departments?.some(dept => dept.id === department.id)
     );
@@ -22,21 +20,20 @@ const ClientModal: React.FC = () => {
     ));
 
     const date = clientData?.date ? new Date(clientData.date) : null;
-
     const formattedDate = date ? date.toLocaleString() : '';
 
     const copy = (value: any) => {
-
         navigator.clipboard.writeText(value)
-
         alert(`Copied ${value}`)
-
     }
 
     return (
 
-        <div className='fixed top-0 left-0 w-screen h-screen z-20 bg-gray-500 bg-opacity-60 grid place-items-center py-24 px-72'>
-            <form className='w-full h-full bg-white border shadow-lg rounded-2xl p-10 pt-20 relative flex items-start'>
+        <div className='fixed top-0 left-0 w-screen h-screen z-50 flex bg-gray-500 bg-opacity-60'>
+            <div className='w-full h-full bg-black bg-opacity-40' title='Close' onClick={closeViewModal}>
+
+            </div>
+            <form className='w-full h-full bg-white border shadow-lg p-10 pt-20 relative flex items-start'>
                 <FontAwesomeIcon icon={faXmark} className='absolute right-5 top-5 text-2xl cursor-pointer' onClick={() => closeViewModal()} />
                 <div className='flex flex-col border p-10 items-center'>
                     <div className='min-w-[220px] min-h-[220px] rounded-full border overflow-hidden'>

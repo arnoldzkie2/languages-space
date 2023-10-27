@@ -162,9 +162,14 @@ const BindSchedlueModal = () => {
     }, [supplierSelectedID])
 
     const t = useTranslations('super-admin')
+
     return (
-        <div className='fixed top-0 left-0 w-screen z-20 h-screen grid place-items-end bg-opacity-50 bg-gray-600'>
-            <div className='bg-white p-10 shadow-lg flex gap-10 overflow-y-auto w-1/2 h-full relative'>
+        <div className='fixed top-0 left-0 w-screen z-50 flex h-screen'>
+
+            <div className='w-full h-full bg-black bg-opacity-40' title={t('operation.close')} onClick={closeBindSchedule}>
+
+            </div>
+            <div className='bg-white p-10 shadow-lg flex gap-10 overflow-y-auto w-full h-full relative'>
                 <FontAwesomeIcon onClick={() => closeBindSchedule()} icon={faXmark} width={16} height={16} className='absolute text-xl top-6 right-6 cursor-pointer' />
                 <div className='flex flex-col gap-4 w-1/2'>
                     <Departments />

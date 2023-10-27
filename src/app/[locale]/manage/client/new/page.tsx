@@ -37,10 +37,6 @@ const Page = () => {
 
         const { name, user_name, password } = formData
 
-        if (!name || !password || !user_name) return setErr('Fill up some inputs')
-
-        if (user_name.length < 3) return setErr('Username minimum length 3')
-
         if (password.length < 3) return setErr('Password minimum length 3')
 
         try {

@@ -1,20 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { faAddressCard, faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next-intl/link';
 import React from 'react';
-import DownloadTable from '../DownloadTable';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 
 const ClientHeader: React.FC = ({ }) => {
 
     const session = useSession()
-
-    const { clients, selectedClients } = useAdminClientStore()
 
     const t = useTranslations('super-admin')
 
@@ -24,18 +19,21 @@ const ClientHeader: React.FC = ({ }) => {
 
     return (
         <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between bg-white`}>
-            <h1 className='font-black text-gray-600 text-xl uppercase'>{t('client.h1')}</h1>
+            <h1 className='font-black text-gray-600 text-xl uppercase'>{t('client-card.manage')}</h1>
             <ul className='flex items-center h-full ml-auto gap-5'>
                 {session.status !== 'loading' ?
                     <Link href={'/manage/client/new'} className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
                         <div>{t('client.create')}</div>
                     </Link> : clientHeaderSkeleton}
-
-                {session.status !== 'loading' ? <DownloadTable tables={clients} selectedTable={selectedClients} /> : clientHeaderSkeleton}
+                {session.status !== 'loading' ?
+                    <Link href={'/manage/client/card/new'} className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
+                        <div>{t('client-card.create')}</div>
+                    </Link> : clientHeaderSkeleton}
 
                 {session.status !== 'loading' ? <Link href='/manage/client/card' className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
-                    <div>{t('client.card.client')}</div>
+                    <div>{t('client-card.h1')}</div>
                 </Link> : clientHeaderSkeleton}
+
                 {session.status !== 'loading' ? <li className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
                     <Link href={'/manage/client/card/bind'}>{t('client.card.bind')}</Link>
                 </li> : clientHeaderSkeleton}

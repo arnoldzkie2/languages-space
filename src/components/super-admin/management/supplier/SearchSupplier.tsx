@@ -1,3 +1,5 @@
+'use client'
+import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
 
 interface Props {
@@ -16,16 +18,18 @@ interface Props {
 
 const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
+    const t = useTranslations('super-admin')
+
     return (
         <div className='pt-4 mt-4 border-t border-gray-300'>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
-                Search Supplier
+                {t('supplier.search')}
             </div>
             <div>
                 <div className='flex flex-col text-gray-700 gap-3'>
 
                     <input type="text"
-                        placeholder='Name'
+                        placeholder={t('supplier.name')}
                         name='name'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -33,7 +37,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder='Phone #'
+                        placeholder={t('supplier.phone')}
                         name='phone_number'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -41,7 +45,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder='Organization'
+                        placeholder={t('supplier.organization')}
                         name='organization'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -49,7 +53,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder='Origin'
+                        placeholder={t('supplier.origin')}
                         name='origin'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -57,7 +61,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder='Note'
+                        placeholder={t('supplier.note')}
                         name='note'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}

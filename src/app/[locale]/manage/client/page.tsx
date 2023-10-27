@@ -8,7 +8,6 @@ import DeleteWarningModal from '@/components/super-admin/management/client/Delet
 import ClientModal from '@/components/super-admin/management/client/ClientModal';
 import Pagination from '@/components/super-admin/management/Pagination';
 import { useEffect, useState, FC, Suspense } from 'react';
-import axios from 'axios';
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader';
 import SearchClient from '@/components/super-admin/management/client/SearchClient';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';

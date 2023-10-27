@@ -27,28 +27,22 @@ const Page = () => {
 
     const { clients, getClients } = useAdminClientStore()
 
-    const { isSideNavOpen, departments, getDepartments, departmentID, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { isSideNavOpen, departmentID, isLoading, setIsLoading } = useAdminGlobalStore()
 
     const { cards, getCards } = useAdminClientCardStore()
 
-    const filteredClient = clients.filter(client => client.user_name.toUpperCase().includes(clientSearchQuery.toUpperCase())).splice(0, 40)
+    const filteredClient = clients.filter(client => client.name.toUpperCase().includes(clientSearchQuery.toUpperCase())).splice(0, 40)
 
     const filteredCard = cards.filter(card => card.name.toUpperCase().includes(cardSearchQuery.toUpperCase())).splice(0, 40)
 
     useEffect(() => {
 
         if (cards.length > 0) {
-
             getClients()
-
         } else {
-
             getClients()
-
             getCards()
-
         }
-
 
     }, [departmentID])
 
@@ -69,32 +63,20 @@ const Page = () => {
             })
 
             if (data.ok) {
-
                 setIsLoading(false)
-
                 alert('Success')
                 setSelectedCard(undefined)
                 setSelectedClient(undefined)
-
             }
 
         } catch (error: any) {
-
-            console.log(error);
-
-            if (error.response.data.msg === 'client_card_exist') {
-
-                setIsLoading(false)
-                return alert('Client already have this card')
-
-            }
-
-            alert('Something went wrong')
-
             setIsLoading(false)
-
+            console.log(error);
+            if (error.response.data.msg === 'client_card_exist') {
+                return alert('Client already have this card')
+            }
+            alert('Something went wrong')
         }
-
     }
 
     const t = useTranslations('super-admin')
@@ -121,8 +103,8 @@ const Page = () => {
                                         <li key={client.id} onClick={() => {
                                             setSelectedClient(client)
                                             setClientSearchQuery('')
-                                        }} className='cursor-pointer text-gray-500 hover:text-black'>{client.user_name} ({client.name})</li>
-                                    )) : <li>Client Not Found</li>}
+                                        }} className='cursor-pointer text-gray-500 hover:text-black'>{client.name} ({client.user_name})</li>
+                                    )) : <li>{t('client.404')}</li>}
                                 </ul>}
                         </div>
 
@@ -135,13 +117,13 @@ const Page = () => {
                                             setSelectedCard(card)
                                             setCardSearchQuery('')
                                         }} className='cursor-pointer text-gray-500 hover:text-black'>{card.name} ({card.price})</li>
-                                    )) : <li>Card Not Found</li>}
+                                    )) : <li>{t('client-card.404')}</li>}
                                 </ul>}
                         </div>
 
                         <div className='py-5 w-full flex flex-col gap-4'>
-                            <div>{t('client.client')}:{selectedClient?.name && `${selectedClient?.user_name} (${selectedClient?.name})`}</div>
-                            <div>{t('client-card.card')}:{selectedCard?.name && `${selectedCard?.name} (${selectedCard?.price})`}</div>
+                            <div>{t('client.client')}: {selectedClient?.name && `${selectedClient?.user_name} (${selectedClient?.name})`}</div>
+                            <div>{t('client-card.card')}: {selectedCard?.name && `${selectedCard?.name} (${selectedCard?.price})`}</div>
                         </div>
 
                         <button disabled={isLoading && true} onClick={bindCardToUser} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} outline-none py-2 w-1/2 self-end text-white rounded-md`}>

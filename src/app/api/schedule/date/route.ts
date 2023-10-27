@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/db"
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
+import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
 
 export const GET = async (req: Request) => {
 
@@ -14,31 +14,31 @@ export const GET = async (req: Request) => {
 
         if (fromDate && toDate && supplierID) {
 
-
-            const schedules = await prisma.supplierSchedule.findMany({
-                where: {
-                    supplier_id: supplierID,
-                    date: {
-                        gte: fromDate,
-                        lte: toDate
-                    },
-                },
+            const supplier = await prisma.supplier.findUnique({
+                where: { id: supplierID },
+                select: {
+                    schedule: {
+                        where: {
+                            date: {
+                                gte: fromDate,
+                                lte: toDate
+                            },
+                        },
+                    }
+                }
             });
 
-            if (!schedules) return badRequestRes()
+            if (!supplier) return badRequestRes()
 
-            return okayRes(schedules)
+            return okayRes(supplier.schedule)
 
         }
 
         return notFoundRes('supplierID')
 
     } catch (error) {
-
         console.error('Error fetching schedules:', error);
-
-        return serverErrorRes()
-
+        return serverErrorRes(error)
     }
 
 }

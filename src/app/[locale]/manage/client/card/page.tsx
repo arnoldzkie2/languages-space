@@ -9,12 +9,17 @@ import DeleteCardWarningModal from '@/components/super-admin/management/client-c
 import SearchClientCard from '@/components/super-admin/management/client-card/SearchCard';
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-const ClientCard: React.FC = ({ }) => {
+interface Props {
+    params: {
+        clientID: string
+    }
+}
 
-    const { currentPage, isSideNavOpen } = useAdminGlobalStore()
+const ClientCard: React.FC<Props> = ({ params }) => {
+
+    const { currentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
 
     const { cards, getCards, viewCard, deleteCardModal } = useAdminClientCardStore()
 
@@ -22,9 +27,9 @@ const ClientCard: React.FC = ({ }) => {
         name: '',
         validity: '',
         price: '',
+        balance: ''
     })
 
-    const itemsPerPage = 10
 
     const filteredCard = cards.filter((card) => {
 
@@ -74,7 +79,7 @@ const ClientCard: React.FC = ({ }) => {
                         <SearchClientCard handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
 
-                    <ClientCardTable filteredTable={currentCards} />
+                    <ClientCardTable filteredTable={currentCards} clientID={params.clientID} />
 
                 </div>
 

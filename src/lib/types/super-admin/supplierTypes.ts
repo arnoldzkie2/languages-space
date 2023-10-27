@@ -1,3 +1,4 @@
+import { ClientCard } from "./clientCardType"
 import { Department } from "./globalType"
 
 interface TotalSupplier {
@@ -27,8 +28,9 @@ interface Supplier {
     employment_status?: string
     entry: string
     departure: string
-    date: string
     departments: Department[]
+    created_at: string
+    updated_at: string
 }
 
 interface SupplierFormDataProps {
@@ -57,8 +59,23 @@ interface SupplierMeetingInfo {
     id: string
     service: string
     meeting_code: string
+    created_at: string
+    updated_at: string
 }
 
+interface Courses {
+    id: string
+    name: string
+    supported_cards: ClientCard[]
+    created_at: string
+    updated_at: string
+}
 
-export type { SupplierFormDataProps, Supplier, TotalSupplier, SupplierMeetingInfo }
+interface TotalCourse {
+    total: string
+    selected: string
+    searched: string
+}
+
+export type { SupplierFormDataProps, Courses, Supplier, TotalSupplier, SupplierMeetingInfo, TotalCourse }
 

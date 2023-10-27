@@ -17,6 +17,7 @@ interface AdminGlobalStoreProps {
     isCreatingDepartment: boolean
     departments: Department[]
     eye: boolean
+    itemsPerPage: number
     toggleSideNav: () => void
     setDepartments: (depts: Department[]) => void
     setDepartmentID: (id: string) => void
@@ -53,6 +54,7 @@ const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
 
     },
     currentPage: 1,
+    itemsPerPage: 10,
     setCurrentPage: (num: number) => set({ currentPage: num }),
     departmentID: '',
     setDepartmentID: (id: string) => set({ departmentID: id }),

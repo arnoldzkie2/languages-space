@@ -22,6 +22,7 @@ interface Client {
 interface ClientFormData {
     id?: string
     phone_number: string
+    card: ClientCard | null
     profile: string;
     email: string
     gender: string;

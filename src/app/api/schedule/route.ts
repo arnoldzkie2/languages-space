@@ -1,4 +1,4 @@
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -12,15 +12,14 @@ export const GET = async (req: Request) => {
 
         if (supplierID && date) {
 
-            const checkSupplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
-
-            if (!checkSupplier) return notFoundRes('Supplier')
+            const supplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
+            if (!supplier) return notFoundRes('Supplier')
 
             const supplierSchedule = await prisma.supplierSchedule.findMany({
                 where: {
-                    supplier_id: supplierID, date
+                    supplierID, date
                 },
-            });
+            })
 
             if (!supplierSchedule) return badRequestRes()
 
@@ -33,11 +32,8 @@ export const GET = async (req: Request) => {
         return notFoundRes('Date')
 
     } catch (error) {
-
         console.log(error);
-
-        return serverErrorRes()
-
+        return serverErrorRes(error)
     }
 
 }
@@ -54,7 +50,7 @@ export const POST = async (req: Request) => {
 
         const existingSchedules = await prisma.supplierSchedule.findMany({
             where: {
-                supplier_id: supplierID,
+                supplierID,
                 date: { in: dates }, // Use 'in' to check against an array of dates
                 time: { in: times },
             },
@@ -98,7 +94,7 @@ export const POST = async (req: Request) => {
 
         console.log(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     }
 }
@@ -133,7 +129,7 @@ export const DELETE = async (req: Request) => {
 
         console.error(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { serverErrorRes } from "@/lib/utils/apiResponse";
 
 export const POST = async (req: Request) => {
 
@@ -13,7 +14,6 @@ export const POST = async (req: Request) => {
                 password
             }
         })
-
         if (isSuperAdmin) return NextResponse.json({ ...isSuperAdmin, type: 'super-admin' }, { status: 200 })
 
         const isAdmin = await prisma.admin.findUnique({
@@ -22,7 +22,6 @@ export const POST = async (req: Request) => {
                 password
             }
         })
-
         if (isAdmin) return NextResponse.json({ ...isAdmin, type: 'admin' }, { status: 200 })
 
         const isAgent = await prisma.agent.findUnique({
@@ -31,7 +30,6 @@ export const POST = async (req: Request) => {
                 password
             }
         })
-
         if (isAgent) return NextResponse.json({ ...isAgent, type: 'agent' }, { status: 200 })
 
         const isClient = await prisma.client.findUnique({
@@ -40,7 +38,6 @@ export const POST = async (req: Request) => {
                 password
             }
         })
-
         if (isClient) return NextResponse.json({ ...isClient, type: 'client' }, { status: 200 })
 
         const isSupplier = await prisma.supplier.findUnique({
@@ -49,7 +46,6 @@ export const POST = async (req: Request) => {
                 password
             }
         })
-
         if (isSupplier) return NextResponse.json({ ...isSupplier, type: 'supplier' }, { status: 200 })
 
         return NextResponse.json(null, { status: 404 })
@@ -57,7 +53,9 @@ export const POST = async (req: Request) => {
     } catch (error) {
 
         console.log(error);
-
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
     }
 
 }

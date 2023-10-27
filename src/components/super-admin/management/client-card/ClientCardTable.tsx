@@ -10,28 +10,32 @@ import { Client } from '@/lib/types/super-admin/clientType';
 import Link from 'next-intl/link'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType';
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
+import axios from 'axios';
 
 interface Props {
 
     filteredTable: ClientCard[]
+    clientID: string
 
 }
 
-const ClientCardTable: React.FC<Props> = ({ filteredTable }) => {
+const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID }) => {
 
     const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
-    const { operation, selectedID, openOperation, closeOperation } = useAdminGlobalStore()
+    const { operation, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
 
-    const { openViewCard, openDeleteCardModal } = useAdminClientCardStore()
+    const { openViewClientCard, openDeleteClientCardModal } = useAdminClientCardStore()
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
     return (
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
             <thead className="text-xs uppercase bg-slate-100 border">
                 <tr>
                     <th scope="col" className="px-6 py-3">{t('client-card.name')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.price')}</th>
+                    <th scope="col" className="px-6 py-3">{t('client-card.balance')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.validity')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.date')}</th>
                     <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
@@ -52,22 +56,27 @@ const ClientCardTable: React.FC<Props> = ({ filteredTable }) => {
                                 </div>
                             </td>
                             <td className="px-6 py-3">
+                                <div className='h-5 w-28'>
+                                    {card.balance}
+                                </div>
+                            </td>
+                            <td className="px-6 py-3">
                                 <div className='h-5 w-32'>
                                     {card.validity}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
-                                <div className='h-5 w-40'>
-                                    {new Date(card.date).toLocaleString()}
+                                <div className='h-5 w-44'>
+                                    {new Date(card.created_at).toLocaleString()}
                                 </div>
                             </td>
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(card.id)} />
                                 <ul className={`${operation && selectedID === card.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <li onClick={() => openViewCard(card)} className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>{t('operation.view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/client/card/update/${card.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteCardModal(card)}>{t('operation.delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                    <li onClick={() => openViewClientCard(card)} className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
+                                    <Link href={`/manage/client/card/${clientID}/${card.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteClientCardModal(card)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>
@@ -81,10 +90,13 @@ const ClientCardTable: React.FC<Props> = ({ filteredTable }) => {
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
                             <td className='py-3.5 px-6'>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                            </td>
+                            <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-40 h-5'></div>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
                             </td>
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>

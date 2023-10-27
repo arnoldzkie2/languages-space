@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
 
 export const POST = async (req: Request) => {
 
@@ -41,7 +41,7 @@ export const POST = async (req: Request) => {
                     origin, tags, note, employment_status, entry, departure, departments: {
                         connect: departments.map((id: string) => ({ id }))
                     }
-                },
+                }, include: { meeting_info: true }
             })
 
             if (!newSupplier) return badRequestRes()
@@ -53,21 +53,17 @@ export const POST = async (req: Request) => {
                     .map((item: any) => ({
                         service: item.service,
                         meeting_code: item.meeting_code,
-                        supplier_id: newSupplier.id
+                        supplierID: newSupplier.id
                     }))
 
                 if (meetingInfoData.length > 0) {
                     const createMeetingInfo = await prisma.supplierMeetingInfo.createMany({
                         data: meetingInfoData
                     });
-
                     if (!createMeetingInfo) return badRequestRes();
 
-                    const data = { newSupplier, createMeetingInfo };
-
-                    return createdRes(data);
+                    return createdRes(newSupplier);
                 }
-
             }
 
             return createdRes(newSupplier)
@@ -78,9 +74,8 @@ export const POST = async (req: Request) => {
             data: {
                 name, user_name, password, organization, payment_info, phone_number, email, address, gender, card,
                 origin, tags, note, employment_status, entry, departure
-            },
+            }, include: { meeting_info: true }
         })
-
         if (!newSupplier) return badRequestRes()
 
         if (meeting_info.length > 0) {
@@ -90,41 +85,33 @@ export const POST = async (req: Request) => {
                 .map((item: any) => ({
                     service: item.service,
                     meeting_code: item.meeting_code,
-                    supplier_id: newSupplier.id
+                    supplierID: newSupplier.id
                 }))
 
             if (meetingInfoData.length > 0) {
                 const createMeetingInfo = await prisma.supplierMeetingInfo.createMany({
                     data: meetingInfoData
                 });
-
                 if (!createMeetingInfo) return badRequestRes();
 
-                const data = { newSupplier, createMeetingInfo };
-
-                return createdRes(data);
+                return createdRes(newSupplier)
             }
-
         }
 
         return createdRes(newSupplier)
 
     } catch (error) {
-
         console.log(error);
-
-        return serverErrorRes()
-
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
     }
-
 }
 
 export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
-
     const supplierID = searchParams.get('supplierID')
-
     const departmentID = searchParams.get('departmentID')
 
     try {
@@ -135,7 +122,6 @@ export const GET = async (req: Request) => {
                 where: { id: supplierID },
                 include: { departments: true, meeting_info: true }
             })
-
             if (!singleSupplier) notFoundRes('Supplier')
 
             return okayRes(singleSupplier)
@@ -153,7 +139,6 @@ export const GET = async (req: Request) => {
                     }
                 }, include: { departments: true }
             })
-
             if (!suppliers) return badRequestRes()
 
             return okayRes(suppliers)
@@ -161,17 +146,15 @@ export const GET = async (req: Request) => {
         }
 
         const allSupplier = await prisma.supplier.findMany({ include: { departments: true } })
-
         if (!allSupplier) badRequestRes()
 
         return okayRes(allSupplier)
 
     } catch (error) {
-
         console.log(error);
-
-        return serverErrorRes()
-
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
     }
 }
 
@@ -181,27 +164,25 @@ export const PATCH = async (req: Request) => {
         card, origin, tags, note, employment_status, entry, departure, departments, meeting_info } = await req.json()
 
     const { searchParams } = new URL(req.url)
-
     const supplierID = searchParams.get('supplierID')
 
     try {
 
         if (supplierID) {
 
-            const checkSupplier = await prisma.supplier.findUnique({
+            const supplier = await prisma.supplier.findUnique({
                 where: { id: supplierID },
                 include: { departments: true, meeting_info: true }
             })
-
-            if (!checkSupplier) return notFoundRes('Supplier')
+            if (!supplier) return notFoundRes('Supplier')
 
             const departmentsToConnect = departments.map((departmentId: string) => ({ id: departmentId }));
 
-            const departmentsToRemove = checkSupplier.departments.filter((department) =>
+            const departmentsToRemove = supplier.departments.filter((department) =>
                 !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
             )
 
-            const meetingInfoToDeleteIDs = checkSupplier.meeting_info
+            const meetingInfoToDeleteIDs = supplier.meeting_info
                 .filter(existingInfo =>
                     !meeting_info.some((newInfo: any) =>
                         newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
@@ -211,21 +192,24 @@ export const PATCH = async (req: Request) => {
 
             const meetingInfoToCreate = meeting_info
                 .filter((newInfo: any) =>
-                    !checkSupplier.meeting_info.some(existingInfo =>
+                    !supplier.meeting_info.some(existingInfo =>
                         newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
                     )
                 );
 
+            //delete the unused supplier meeting info
             await prisma.supplierMeetingInfo.deleteMany({ where: { id: { in: meetingInfoToDeleteIDs } } });
 
+            // create a new supplier meeting info
             await prisma.supplierMeetingInfo.createMany({
                 data: meetingInfoToCreate.map((newInfo: any) => ({
-                    supplier_id: checkSupplier.id,
+                    supplierID: supplier.id,
                     service: newInfo.service,
                     meeting_code: newInfo.meeting_code,
                 }))
             });
 
+            //udpate the supplier
             const updatedSupplier = await prisma.supplier.update({
                 where: { id: supplierID },
                 data: {
@@ -235,7 +219,6 @@ export const PATCH = async (req: Request) => {
                 },
                 include: { departments: true, meeting_info: true }
             });
-
             if (!updatedSupplier) return badRequestRes()
 
             return okayRes(updatedSupplier)
@@ -245,13 +228,9 @@ export const PATCH = async (req: Request) => {
         return notFoundRes('supplierID')
 
     } catch (error) {
-
         console.log(error);
-
-        return serverErrorRes()
-
+        return serverErrorRes(error)
     } finally {
-
         prisma.$disconnect()
     }
 }
@@ -259,7 +238,6 @@ export const PATCH = async (req: Request) => {
 export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
-
     const ids = searchParams.getAll('supplierID');
 
     try {
@@ -267,11 +245,8 @@ export const DELETE = async (req: Request) => {
         if (ids.length > 0) {
 
             const deleteSupplier = await prisma.supplier.deleteMany({
-
                 where: { id: { in: ids } },
-
             })
-
             if (deleteSupplier.count === 0) return notFoundRes('Supplier')
 
             return okayRes(deleteSupplier)
@@ -280,13 +255,9 @@ export const DELETE = async (req: Request) => {
         return notFoundRes('Supplier')
 
     } catch (error) {
-
         console.log(error);
-
-        return serverErrorRes();
-
+        return serverErrorRes(error);
     } finally {
-
         prisma.$disconnect();
     }
 }

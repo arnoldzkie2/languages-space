@@ -10,6 +10,14 @@
             "note": "Note",
             "search": "Search Supplier"
         },
+        "courses": {
+            "h1": "Manage Courses",
+            "name": "Name",
+            "date": "Date",
+            "search": "Search Course",
+            "create": "Create Course",
+            "course-name": "Course Name"
+        },
         "news": {
             "h1": "Manage News",
             "title": "Title",
@@ -29,26 +37,37 @@
             "origin": "Origin",
             "note": "Note",
             "card": {
-                "client": "Client Card",
+                "client": "Cards",
                 "bind": "Bind Card"
             },
             "search": "Search Client",
-            "select": "Select Client"
+            "select": "Select Client",
+            "404": "Client Not Found"
         },
         "client-card": {
+            "manage": "Manage Client Card",
             "h1": "Manage Card",
             "create": "Create Card",
+            "update": "Update Card",
             "name": "Name",
             "price": "Price",
             "balance": "Balance",
             "validity": "Validity",
+            "invoice": "Invoice",
+            "repeat_purchases": "Repeat Purchases",
+            "online_renews": "Online Renews",
+            "online_purchases": "Online Purchases",
+            "settlement_period": "Settlement Period",
             "date": "Date",
             "select": "Select Card",
             "search": "Search Card",
-            "card": "Card"
+            "card": "Card",
+            "404": "Card Not Found",
+            "description": "Description",
+            "courses": "Supported Courses",
+            "suppliers": "Supported Suppliers"
         },
         "global": {
-            "cancel": "Cancel",
             "department": {
                 "select": "Department",
                 "all": "All Department"
@@ -81,15 +100,52 @@
             "statistics": "Statistics",
             "logout": "Logout"
         },
-        "operation": {
-            "view": "View",
-            "update": "Update",
-            "delete": "Delete",
-            "close": "Close"
-        },
         "schedule": {
             "h1": "Manage Schedule",
             "create": "Create Schedule"
+        },
+        "order": {
+            "h1": "Manage Orders",
+            "create": "Create Order",
+            "update": "Update Order",
+            "card": "Card",
+            "client_name": "Client",
+            "quantity": "Quantity",
+            "operator": "Operator",
+            "note": "Note",
+            "price": "Price",
+            "status": "Status",
+            "invoice_number": "Invoice #",
+            "express_number": "Express #",
+            "date": "Date",
+            "departments": "Departments",
+            "search": "Search Order"
+        }
+    },
+    "global": {
+        "cancel": "Cancel",
+        "create": "Create",
+        "delete": "Delete",
+        "update": "Update",
+        "view": "View",
+        "close": "Close",
+        "search": "Search"
+    },
+    "auth": {
+        "username": "Username",
+        "password": "Password",
+        "signin": "Sign In",
+        "signup": "Sign Up",
+        "name": "Full name",
+        "confirm_password": "Confirm Password",
+        "not_signup": "Don't have account yet? ",
+        "already_signup": "Already signed up?"
+    },
+    "client": {
+        "card": {
+            "validity": "Validity",
+            "balance": "Balance",
+            "price": "Price"
         }
     }
 }

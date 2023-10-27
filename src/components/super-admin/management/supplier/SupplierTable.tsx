@@ -92,6 +92,7 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
     }, [departmentID])
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
 
     return (
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
@@ -152,10 +153,10 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(supplier.id)} />
                                 <ul className={`${operation && selectedID === supplier.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => openViewSupplierModal(supplier)}>{t('operation.view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/supplier/update/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => deleteSupplierWarning(supplier)}>{t('operation.delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => openViewSupplierModal(supplier)}>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
+                                    <Link href={`/manage/supplier/update/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => deleteSupplierWarning(supplier)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>

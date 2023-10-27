@@ -1,5 +1,5 @@
 import '@/lib/styles/globals.css'
-import "@uploadthing/react/styles.css"
+// import "@uploadthing/react/styles.css"
 import SessionProviders from '@/components/SessionProvider'
 import { notFound } from 'next/navigation'
 import 'react-quill/dist/quill.snow.css';

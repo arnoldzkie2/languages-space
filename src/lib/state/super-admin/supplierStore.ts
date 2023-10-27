@@ -1,8 +1,14 @@
-import { Supplier, SupplierMeetingInfo, TotalSupplier } from '@/lib/types/super-admin/supplierTypes'
+import { Courses, Supplier, SupplierMeetingInfo, TotalCourse, TotalSupplier } from '@/lib/types/super-admin/supplierTypes'
 import axios from 'axios'
 import { create } from 'zustand'
 import useAdminGlobalStore from './globalStore'
 const totalSupplierValue = {
+    total: '',
+    searched: '',
+    selected: ''
+}
+
+const totalCoursesValue = {
     total: '',
     searched: '',
     selected: ''
@@ -38,7 +44,7 @@ const manageSupplierSearchQueryValue = {
     note: ''
 }
 
-export { totalSupplierValue, supplierFormDataValue, manageSupplierSearchQueryValue }
+export { totalSupplierValue, supplierFormDataValue, manageSupplierSearchQueryValue, totalCoursesValue }
 
 interface SupplierProps {
     supplier: Supplier[]
@@ -47,8 +53,14 @@ interface SupplierProps {
     selectedSupplier: Supplier[]
     viewSupplierModal: boolean
     totalSupplier: TotalSupplier
+    totalCourse: TotalCourse
     supplierSelectedID: string
+    courses: Courses[]
     supplierMeetingInfo: SupplierMeetingInfo[],
+    newCourse: boolean
+    updateCourse: boolean
+    selectedCourse: Courses | null
+    setTotalCourse: (total: TotalCourse) => void
     setSupplierData: (supplier: Supplier) => void
     setTotalSupplier: (total: TotalSupplier) => void
     closeViewSupplierModal: () => void
@@ -60,6 +72,11 @@ interface SupplierProps {
     getSupplierWithMeeting: () => Promise<void>
     setSupplierSelectedID: (supplierID: string) => void
     setSupplierMeetingInfo: (meetingInfo: SupplierMeetingInfo[]) => void
+    getCourses: () => Promise<void>
+    toggleCreateCourse: () => void
+    closeSelectedCourse: () => void
+    openSelectedCourse: (course: Courses) => void
+
 }
 
 const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
@@ -71,6 +88,15 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     totalSupplier: totalSupplierValue,
     selectedSupplier: [],
     supplierMeetingInfo: [],
+    newCourse: false,
+    courses: [],
+    updateCourse: false,
+    totalCourse: totalCoursesValue,
+    selectedCourse: null,
+    setTotalCourse: (total: TotalCourse) => set({ totalCourse: total }),
+    openSelectedCourse: (course: Courses) => set({ selectedCourse: course, updateCourse: true }),
+    closeSelectedCourse: () => set({ selectedCourse: null, updateCourse: false }),
+    toggleCreateCourse: () => set((state) => ({ newCourse: !state.newCourse })),
     setSupplierMeetingInfo: (meetingInfo: SupplierMeetingInfo[]) => set({ supplierMeetingInfo: meetingInfo }),
     setSupplierSelectedID: (supplierID: string) => set({ supplierSelectedID: supplierID }),
     setSupplierData: (supplier: Supplier) => set({ supplierData: supplier }),
@@ -81,49 +107,39 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     closeDeleteSupplierModal: () => set({ deleteSupplierModal: false, supplierData: undefined }),
     setSelectedSupplier: (suppliers: Supplier[]) => set({ selectedSupplier: suppliers }),
     getSupplier: async () => {
-
         try {
-
             const { departmentID } = useAdminGlobalStore.getState()
-
             const { data } = await axios.get(`/api/supplier${departmentID && `?departmentID=${departmentID}`}`)
-
             if (data.ok) {
-
                 set({ supplier: data.data })
-
             }
-
         } catch (error) {
-
             console.log(error);
-
             alert('Something went wrong')
-
         }
     },
     getSupplierWithMeeting: async () => {
-
         try {
-
             const { departmentID } = useAdminGlobalStore.getState()
-
             const { data } = await axios.get(`/api/supplier/meeting${departmentID && `?departmentID=${departmentID}`}`)
-
             if (data.ok) {
-
                 set({ supplier: data.data })
-
             }
-
         } catch (error) {
-
             console.log(error);
-
             alert('Something went wrong')
-
         }
     },
+    getCourses: async () => {
+        try {
+            const { data } = await axios.get('/api/courses')
+            if (data.ok) {
+                set({ courses: data.data })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }))
 
 export default useAdminSupplierStore

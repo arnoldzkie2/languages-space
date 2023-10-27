@@ -8,12 +8,10 @@ const ClientCardModal: React.FC = () => {
     const { cardData, closeViewCard } = useAdminClientCardStore()
 
     const copy = (value: any) => {
-
         navigator.clipboard.writeText(value)
-
         alert(`Copied ${value}`)
-
     }
+        
     return (
 
         <div className='fixed top-0 left-0 w-screen h-screen z-20 bg-gray-500 bg-opacity-60 grid place-items-center py-24 px-72'>

@@ -77,7 +77,7 @@ const Page = () => {
 
   const addMoreMeetingInfo = () => {
     const updatedMeetingInfo = [...formData.meeting_info, { service: '', meeting_code: '' }];
-    setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+    setFormData(prevState => ({ ...prevState, meeting_info: updatedMeetingInfo }))
   }
 
   const handleMeetinInfoChange = (
@@ -124,8 +124,7 @@ const Page = () => {
 
       if (newTag && !formData.tags.includes(newTag)) {
         const updatedTags = [...formData.tags, newTag];
-        const updatedFormData: SupplierFormDataProps = { ...formData, tags: updatedTags };
-        setFormData(updatedFormData);
+        setFormData(prevData => ({ ...prevData, tags: updatedTags }));
         event.currentTarget.value = ''; // Clear the input
       } else {
         event.currentTarget.value = ''
@@ -141,9 +140,7 @@ const Page = () => {
   };
 
   useEffect(() => {
-
     getDepartments()
-
   }, [])
 
   return (
@@ -177,7 +174,7 @@ const Page = () => {
 
                 <div className='w-full flex flex-col gap-2'>
                   <label htmlFor="email" className='font-medium'>Email Address (optional)</label>
-                  <input value={formData.email} onChange={handleChange} name='email' type="text" className='w-full border outline-none py-1 px-3' id='email' />
+                  <input value={formData.email} onChange={handleChange} name='email' type="email" className='w-full border outline-none py-1 px-3' id='email' />
                 </div>
 
                 <div className='w-full flex flex-col gap-2'>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/api/response";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
 
 export const POST = async (req: Request) => {
 
@@ -60,7 +60,7 @@ export const POST = async (req: Request) => {
 
         console.log(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 
@@ -81,7 +81,10 @@ export const GET = async (req: Request) => {
 
         if (clientID) {
 
-            const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true, cards: true } });
+            const client = await prisma.client.findUnique({
+                where: { id: clientID },
+                include: { departments: true, cards: true }
+            });
 
             if (!client) notFoundRes('Client')
 
@@ -103,7 +106,7 @@ export const GET = async (req: Request) => {
                         }
                     }
                 },
-                include: { departments: true }
+                include: { departments: true, cards: true }
             });
 
             if (!clientsInDepartment) return badRequestRes()
@@ -112,9 +115,9 @@ export const GET = async (req: Request) => {
 
         }
 
-        const allClient = await prisma.client.findMany({ include: { departments: true } })
+        const allClient = await prisma.client.findMany({ include: { departments: true, cards: true } })
 
-        if (!allClient) return serverErrorRes()
+        if (!allClient) return badRequestRes()
 
         return okayRes(allClient)
 
@@ -122,7 +125,7 @@ export const GET = async (req: Request) => {
 
         console.log(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 
@@ -147,9 +150,9 @@ export const DELETE = async (req: Request) => {
 
             })
 
-            if(!deleteClients) return badRequestRes()
+            if (!deleteClients) return badRequestRes()
 
-            if(deleteClients.count < 1) return notFoundRes('Client')
+            if (deleteClients.count < 1) return notFoundRes('Client')
 
             return okayRes(deleteClients)
 
@@ -161,7 +164,7 @@ export const DELETE = async (req: Request) => {
 
         console.log(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 
@@ -255,7 +258,7 @@ export const PATCH = async (req: Request) => {
 
         console.log(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 

@@ -1,4 +1,4 @@
-import { notFoundRes, existRes, badRequestRes, createdRes, serverErrorRes } from "@/lib/api/response"
+import { notFoundRes, existRes, badRequestRes, createdRes, serverErrorRes } from "@/lib/utils/apiResponse"
 import prisma from "@/lib/db"
 
 export const POST = async (req: Request) => {
@@ -15,14 +15,20 @@ export const POST = async (req: Request) => {
 
         if (!card) return notFoundRes('Client Card')
 
-        const { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = card
+        const { name, price, balance, invoice, validity, repeat_purchases, online_purchases, online_renews, settlement_period } = card
+
+        const currentDate = new Date();
+        const expirationDate = new Date(currentDate.getTime() + validity * 24 * 60 * 60 * 1000)
+        const expirationMonth = expirationDate.getMonth() + 1
+        const expirationDay = expirationDate.getDate();
+        const expirationYear = expirationDate.getFullYear();
+        const formattedExpirationDate = `${expirationMonth}/${expirationDay}/${expirationYear}`;
 
         const renewCard = await prisma.clientCard.update({
-            where: { id: clientCardID, client_id: clientID },
+            where: { id: clientCardID, clientID },
             data: {
-                name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period, client: { connect: { id: clientID } }
-            },
-            include: { client: true }
+                name, price, balance, invoice, validity: formattedExpirationDate, repeat_purchases, online_purchases, online_renews, settlement_period
+            }
         })
 
         if (!renewCard) return badRequestRes()
@@ -33,7 +39,7 @@ export const POST = async (req: Request) => {
 
         console.log(error);
 
-        return serverErrorRes()
+        return serverErrorRes(error)
 
     } finally {
 

@@ -5,7 +5,7 @@ import SideNav from '@/components/super-admin/SideNav'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { supplierFormDataValue } from '@/lib/state/super-admin/supplierStore'
 import { Department } from '@/lib/types/super-admin/globalType'
-import { SupplierFormDataProps } from '@/lib/types/super-admin/supplierTypes'
+import { SupplierFormDataProps, SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UploadButton } from '@uploadthing/react'
@@ -21,11 +21,8 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
     const router = useRouter()
 
-    const t = useTranslations('super-admin')
-
     const [formData, setFormData] = useState<SupplierFormDataProps>(supplierFormDataValue)
 
-    const [tagInput, setTagInput] = useState('')
     const { isSideNavOpen, departments, getDepartments } = useAdminGlobalStore()
 
     const [isLoading, setIsLoading] = useState(false)
@@ -37,11 +34,8 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
         e.preventDefault()
 
         const { name, user_name, password, meeting_info } = formData
-
         if (!name || !password || !user_name) return setErr('Fill up some inputs')
-
         if (user_name.length < 3) return setErr('Username minimum length 3')
-
         if (password.length < 3) return setErr('Password minimum length 3')
 
         const filteredMeetingInfo = meeting_info.filter(info =>
@@ -49,31 +43,22 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
         );
 
         const updatedFormData = { ...formData, meeting_info: filteredMeetingInfo };
-
         try {
 
             setIsLoading(true)
-
             const { data } = await axios.patch(`/api/supplier?supplierID=${supplierID}`, updatedFormData)
 
             if (data.ok) {
-
                 setIsLoading(false)
-
                 router.push('/manage/supplier')
-
             }
 
         } catch (error: any) {
-
             setIsLoading(false)
-
             console.log(error);
-
             if (error.response.data.msg === 'user_name_exist') {
                 return setErr('Username already exist!')
             }
-
             return setErr('Something went wrong')
         }
 
@@ -81,7 +66,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
     const addMoreMeetingInfo = () => {
         const updatedMeetingInfo = [...formData.meeting_info, { service: '', meeting_code: '' }];
-        setFormData({ ...formData, meeting_info: updatedMeetingInfo });
+        setFormData(prevState => ({ ...prevState, meeting_info: updatedMeetingInfo }))
     }
 
     const handleMeetinInfoChange = (
@@ -102,9 +87,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
     const handleChange = (e: any) => {
 
         const { name, type, value, checked } = e.target;
-
         let updatedFormData: any = { ...formData }; // Create a copy of the formData
-
         if (type === "checkbox") {
             if (checked) {
                 updatedFormData.departments = [...updatedFormData.departments, value];
@@ -114,24 +97,22 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
         } else {
             updatedFormData[name] = value; // Use a type assertion for the key
         }
-
         setFormData(updatedFormData)
-
     };
 
-    const handleTagInputChange = (event: any) => {
+    const handleTagInputChange = (event: React.KeyboardEvent<HTMLInputElement>) => {
 
         if (event.key === 'Enter') {
-
             event.preventDefault();
 
-            if (!formData.tags.includes(tagInput)) {
-                const updatedTags = [...formData.tags, tagInput];
-                const updatedFormData: SupplierFormDataProps = { ...formData, tags: updatedTags };
-                setFormData(updatedFormData);
-                setTagInput('')
+            const newTag = event.currentTarget.value.trim().toUpperCase();
+
+            if (newTag && !formData.tags.includes(newTag)) {
+                const updatedTags = [...formData.tags, newTag];
+                setFormData(prevData => ({ ...prevData, tags: updatedTags }));
+                event.currentTarget.value = ''; // Clear the input
             } else {
-                setTagInput('')
+                event.currentTarget.value = ''
             }
         }
 
@@ -141,44 +122,33 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
         const updatedTags = formData.tags.filter(item => item !== tag);
         const updatedFormData: SupplierFormDataProps = { ...formData, tags: updatedTags };
         setFormData(updatedFormData);
-    };
+    }
 
     const getSupplier = async () => {
 
         try {
 
             const { data } = await axios.get(`/api/supplier?supplierID=${supplierID}`)
-
             if (data.ok) {
-
                 const departmentIDs = data.data.departments.length > 0 ? data.data.departments.map((dept: Department) => dept.id) : []
-
                 data.data.departments = departmentIDs
-                data.data.tags = data.data.tags || []
                 setFormData(data.data)
-
             }
 
-
         } catch (error) {
-
             console.log(error);
-
             alert('Something went wrong')
-
             router.push('/manage/supplier')
-
         }
     }
 
     useEffect(() => {
-
         getDepartments()
-
         getSupplier()
-
     }, [])
 
+    const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
     return (
         <div className=''>
 
@@ -210,7 +180,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="email" className='font-medium'>Email Address (optional)</label>
-                                    <input value={formData.email || ''} onChange={handleChange} name='email' type="text" className='w-full border outline-none py-1 px-3' id='email' />
+                                    <input value={formData.email || ''} onChange={handleChange} name='email' type="email" className='w-full border outline-none py-1 px-3' id='email' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
@@ -322,6 +292,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                     <div key={index} className='flex flex-col gap-3 w-full p-4 border'>
                                         <input
                                             type="text"
+                                            required
                                             name="service"
                                             placeholder="Service"
                                             value={info.service}
@@ -330,6 +301,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                         />
                                         <input
                                             type="text"
+                                            required
                                             name="meeting_code"
                                             placeholder="Meeting Code"
                                             value={info.meeting_code}
@@ -357,8 +329,8 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                         </div>
                         <div className='flex items-center gap-10 w-1/2 self-end'>
-                            <Link href={'/manage/supplier'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{t('global.cancel')}</Link>
-                            <button disabled={isLoading && true} className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : t('operation.update')}</button>
+                            <Link href={'/manage/supplier'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{tt('cancel')}</Link>
+                            <button disabled={isLoading && true} className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : tt('update')}</button>
                         </div>
 
                     </form>

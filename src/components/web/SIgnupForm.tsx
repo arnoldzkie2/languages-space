@@ -3,10 +3,16 @@
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
-import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useState } from 'react';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+
 const SignupForm = () => {
+
+    const router = useRouter()
 
     const [error, setError] = useState<string>('')
 
@@ -18,6 +24,8 @@ const SignupForm = () => {
         password: '',
         confirm_password: ''
     })
+
+    const { isLoading, setIsLoading } = useAdminGlobalStore()
 
     const signupUser = async (event: any) => {
 
@@ -33,19 +41,24 @@ const SignupForm = () => {
         if (password.length < 6 || confirm_password.length < 6) return setError('Password is to short minimum 6 characters.')
 
         try {
-
-            const { data } = await axios.post('/api/client', {
+            setIsLoading(true)
+            const { data, status } = await axios.post('/api/client', {
                 name, user_name, password
             })
 
-            if (data?.message === 'Username already exist!') return setError('Username already exist!')
+            if (status === 409) return setError('Username already exist!')
 
-            if(data.success) setError('')
-
-            if (data.success) window.location.href = '/login'
+            if (data.ok) {
+                setIsLoading(false)
+                setError('')
+                router.push('/login')
+            }
 
         } catch (error) {
+            setIsLoading(false)
             console.log(error);
+            alert('Something went wrong')
+
         }
     }
 
@@ -58,25 +71,27 @@ const SignupForm = () => {
         }))
     }
 
+    const t = useTranslations('auth')
+
     return (
         <form className='flex flex-col gap-3 w-96 border p-8' onSubmit={signupUser}>
             <small className='text-center text-red-500 mb-2'>{error && error}</small>
             <input type="text"
                 name='name'
-                placeholder='Enter full name'
+                placeholder={t('name')}
                 className='px-4 h-11 border outline-none'
                 onChange={handleForm}
             />
             <input type="text"
                 name='user_name'
-                placeholder='Create username'
+                placeholder={t('username')}
                 className='px-4 h-11 border outline-none'
                 onChange={handleForm}
             />
             <div className='w-full relative'>
                 <input type={isText ? 'text' : 'password'}
                     name='password'
-                    placeholder='Create password'
+                    placeholder={t('password')}
                     className='px-4 h-11 border outline-none w-full'
                     onChange={handleForm}
                 />
@@ -84,14 +99,17 @@ const SignupForm = () => {
             <div className='w-full relative'>
                 <input type={isText ? 'text' : 'password'}
                     name='confirm_password'
-                    placeholder='Confirm password'
+                    placeholder={t('confirm_password')}
                     className='px-4 h-11 border outline-none w-full'
                     onChange={handleForm}
                 />
                 {signup.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}
             </div>
-            <button className='border-2 text-lg h-11 bg-black text-white mt-4'>Signup</button>
-            <div className='mt-3 text-slate-500 text-center'>Already signed up? <Link href='/login' className='text-black font-bold'>Login</Link></div>
+            <button disabled={isLoading}
+                className={`border-2 flex items-center justify-center rounded-md text-lg h-11 bg-black text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
+                {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
+                    : t('signup')}</button>
+            <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <Link href='/login' className='text-black font-bold'>{t('signin')}</Link></div>
         </form >
     );
 };

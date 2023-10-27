@@ -8,8 +8,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-// client schema area
-
 model Client {
   id           String       @id @default(uuid())
   profile      String?      @db.Text
@@ -24,44 +22,62 @@ model Client {
   address      String?
   origin       Json?
   note         String?
-  date         DateTime     @default(now())
   departments  Department[]
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  orders       Order[]
+  bookings     Booking[]
 }
 
 model ClientCard {
-  id                String   @id @default(uuid())
+  id                String    @id @default(uuid())
   name              String
-  price             Int
+  price             Float
   balance           Int
   validity          String
-  client            Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  client_id         String
+  client            Client    @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  clientID          String
   invoice           Boolean
   repeat_purchases  Boolean
   online_purchases  Boolean
   online_renews     Boolean
   settlement_period String
-  card_id           String
-  date              DateTime @default(now())
+  cardID            String
+  bookings          Booking[]
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
 
-  @@index([client_id])
+  @@index([clientID])
 }
 
 model ClientCardList {
-  id                String   @id @default(uuid())
-  name              String
-  price             Int
-  balance           Int
-  validity          String
-  invoice           Boolean
-  repeat_purchases  Boolean
-  online_purchases  Boolean
-  online_renews     Boolean
-  settlement_period String
-  date              DateTime @default(now())
+  id                  String          @id @default(uuid())
+  name                String
+  sold                Int
+  price               Int
+  balance             Int
+  validity            Int
+  invoice             Boolean
+  repeat_purchases    Boolean
+  online_purchases    Boolean
+  online_renews       Boolean
+  settlement_period   String
+  productID           String
+  productPriceID      String
+  created_at          DateTime        @default(now())
+  updated_at          DateTime        @updatedAt
+  orders              Order[]
+  supported_courses   Courses[]
+  supported_suppliers SupplierPrice[]
 }
 
-// supplier schema area
+model Courses {
+  id              String           @id @default(uuid())
+  name            String
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  supported_cards ClientCardList[]
+}
 
 model Supplier {
   id                String                @id @default(uuid())
@@ -77,45 +93,85 @@ model Supplier {
   gender            String?
   card              Json?
   tags              Json?
-  meeting_info      SupplierMeetingInfo[]
-  schedule          SupplierSchedule[]
   origin            String?
   note              String?
   employment_status String?
   entry             DateTime?
   departure         DateTime?
-  date              DateTime              @default(now())
+  created_at        DateTime              @default(now())
+  updated_at        DateTime              @updatedAt
+  meeting_info      SupplierMeetingInfo[]
+  schedule          SupplierSchedule[]
+  supplier_price    SupplierPrice[]
+  bookings          Booking[]
   departments       Department[]
 }
 
+model SupplierPrice {
+  id         String         @id @default(uuid())
+  price      Int
+  supplierID String
+  cardID     String
+  supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+
+  @@index([supplierID])
+  @@index([cardID])
+}
+
 model SupplierMeetingInfo {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   service      String
   meeting_code String
-  supplier     Supplier @relation(fields: [supplier_id], references: [id], onDelete: Cascade)
-  supplier_id  String
+  supplierID   String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  supplier     Supplier  @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  bookings     Booking[]
 
-  @@index([supplier_id])
+  @@index([supplierID])
 }
 
 model SupplierSchedule {
-  id             String    @id @default(uuid())
-  supplier       Supplier? @relation(fields: [supplier_id], references: [id], onDelete: Cascade)
-  supplier_id    String?
-  client_id      String?
-  client_name    String?
-  client_card_id String?
-  date           String
-  time           String
-  reserved       Boolean   @default(false)
-  meeting_info   Json?
-  note           String?
-  completed      Boolean   @default(false)
+  id         String    @id @default(uuid())
+  supplierID String
+  date       String
+  time       String
+  reserved   Boolean   @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  supplier   Supplier  @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  booking    Booking[]
 
-  @@index([supplier_id])
+  @@index([supplierID])
 }
 
-// agent schema area
+model Booking {
+  id            String              @id @default(uuid())
+  name          String
+  operator      String
+  status        String
+  note          String?
+  scheduleID    String
+  supplierID    String
+  clientID      String
+  clientCardID  String
+  meetingInfoID String
+  created_at    DateTime            @default(now())
+  updated_at    DateTime            @updatedAt
+  schedule      SupplierSchedule    @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
+  supplier      Supplier            @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  client        Client              @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  client_card   ClientCard          @relation(fields: [clientCardID], references: [id], onDelete: Cascade)
+  meeting_info  SupplierMeetingInfo @relation(fields: [meetingInfoID], references: [id], onDelete: Cascade)
+  departments   Department[]
+
+  @@index([scheduleID])
+  @@index([supplierID])
+  @@index([clientID])
+  @@index([clientCardID])
+  @@index([meetingInfoID])
+}
 
 model Agent {
   id                  String       @id @default(uuid())
@@ -129,43 +185,48 @@ model Agent {
   email               String?
   address             String?
   gender              String?
-  card                AgentCard?   @relation(fields: [agent_card_id], references: [id], onDelete: Cascade)
   origin              String
   note                String?
-  date                DateTime     @default(now())
+  agentCardID         String?
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
+  card                AgentCard?   @relation(fields: [agentCardID], references: [id], onDelete: Cascade)
   departments         Department[]
-  agent_card_id       String?
 
-  @@index([agent_card_id])
+  @@index([agentCardID])
 }
 
 model AgentCard {
-  id    String  @id @default(uuid())
-  type  Json
-  name  String
-  link  String
-  agent Agent[]
+  id         String   @id @default(uuid())
+  type       Json
+  name       String
+  link       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  agent      Agent[]
 }
 
-// order schema area 
-
 model Order {
-  id             String       @id @unique @default(uuid())
-  name           String
-  client_name    String
-  card           Json
+  id             String         @id @unique @default(uuid())
   quantity       Int
   price          Float
   operator       String
-  note           String?
   status         String
-  invoice_number Int
-  express_number Int
-  date           DateTime     @default(now())
+  note           String?
+  invoice_number String?
+  express_number String?
+  created        DateTime       @default(now())
+  cardID         String
+  clientID       String
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  card           ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+  client         Client         @relation(fields: [clientID], references: [id], onDelete: Cascade)
   departments    Department[]
-}
 
-// admin schema area
+  @@index([clientID])
+  @@index([cardID])
+}
 
 model Admin {
   id          String       @id @default(uuid())
@@ -173,27 +234,31 @@ model Admin {
   user_name   String       @unique
   email       String
   password    String
-  date        DateTime     @default(now())
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
   departments Department[]
 }
 
 model SuperAdmin {
-  id        String   @id @default(uuid())
-  user_name String   @unique
-  password  String
-  date      DateTime @default(now())
+  id         String   @id @default(uuid())
+  user_name  String   @unique
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Department {
-  id        String     @id @default(uuid())
-  name      String
-  date      DateTime   @default(now())
-  clients   Client[]
-  news      News[]
-  agents    Agent[]
-  suppliers Supplier[]
-  admin     Admin[]
-  orders    Order[]
+  id         String     @id @default(uuid())
+  name       String
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  clients    Client[]
+  news       News[]
+  agents     Agent[]
+  suppliers  Supplier[]
+  admins     Admin[]
+  orders     Order[]
+  bookings   Booking[]
 }
 
 model News {
@@ -202,9 +267,10 @@ model News {
   author        String
   keywords      Json?
   content       String      @db.Text
-  date          DateTime    @default(now())
-  department    Department? @relation(fields: [department_id], references: [id], onDelete: Cascade)
   department_id String?
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  department    Department? @relation(fields: [department_id], references: [id], onDelete: Cascade)
 
   @@index([department_id])
 }

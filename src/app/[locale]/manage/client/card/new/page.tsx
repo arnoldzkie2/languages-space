@@ -3,12 +3,10 @@
 import { OurFileRouter } from '@/app/api/uploadthing/core'
 import SideNav from '@/components/super-admin/SideNav'
 import { clientCardValue } from '@/lib/state/super-admin/clientCardStore'
-import { newClientFormValue } from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import { ClientFormData } from '@/lib/types/super-admin/clientType'
+import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { UploadButton } from '@uploadthing/react'
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
@@ -22,11 +20,23 @@ const Page = () => {
 
     const session = useSession()
 
+    const skeleton = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
     const [formData, setFormData] = useState(clientCardValue)
 
-    const t = useTranslations('super-admin')
+    const [supportedCourses, setSupportedCourses] = useState<string[]>([])
 
-    const { isSideNavOpen, departments, getDepartments } = useAdminGlobalStore()
+    const [supportedSuppliers, setSupportedSuppliers] = useState<{ supplierID: string, price: number }[]>([])
+
+    const { isSideNavOpen } = useAdminGlobalStore()
+
+    const [searchCourse, setSearchCourse] = useState('')
+    const [searchSupplier, setSearchSupplier] = useState('')
+
+    const { supplier, getSupplier, getCourses, courses } = useAdminSupplierStore()
+
+    const filterCourse = courses.filter(course => course.name.toUpperCase().includes(searchCourse.toUpperCase()))
+    const filterSupplier = supplier.filter(sup => sup.name.toUpperCase().includes(searchSupplier.toUpperCase()))
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -35,13 +45,9 @@ const Page = () => {
     const createCard = async (e: any) => {
 
         e.preventDefault()
-
         const { balance, price } = formData
-
         if (price < 1) return alert('Price must be greater than 0')
-
         if (balance < 1) return alert('Balance must be greater than 0')
-
 
         try {
 
@@ -50,27 +56,23 @@ const Page = () => {
             const { name, price, balance, online_purchases, online_renews, invoice, validity, repeat_purchases, settlement_period } = formData
 
             const { data } = await axios.post('/api/client/card-list',
-                { name, price: Number(price), balance: Number(balance), online_purchases, online_renews, invoice, validity, repeat_purchases, settlement_period }
+                {
+                    name, price: Number(price), balance: Number(balance), online_purchases, online_renews, invoice,
+                    validity: Number(validity), repeat_purchases, settlement_period,
+                    courses: supportedCourses, suppliers: supportedSuppliers
+                }
             )
 
             if (data.ok) {
-
                 setIsLoading(false)
-
                 router.push('/manage/client/card')
-
             }
 
         } catch (error: any) {
-
             setIsLoading(false)
-
             console.log(error);
-
             if (error.response.data.msg === 'client_card_name_exist') return setErr('Card name already exist!')
-
             return setErr('Something went wrong')
-
         }
 
     }
@@ -96,11 +98,50 @@ const Page = () => {
 
     }
 
+    const toggleCourseSelection = (courseID: string) => {
+        if (supportedCourses.includes(courseID)) {
+            // Course ID exists in the state, remove it
+            const updatedCourses = supportedCourses.filter((id) => id !== courseID);
+            setSupportedCourses(updatedCourses);
+        } else {
+            // Course ID doesn't exist in the state, add it
+            setSupportedCourses(prevState => [...prevState, courseID]);
+        }
+    };
+
+    const handleCheckboxChange = (supplierID: string, price: number) => {
+        // Check if the supplier is already in the supportedSuppliers array
+        const existingSupplierIndex = supportedSuppliers.findIndex(
+            (supplier) => supplier.supplierID === supplierID
+        );
+
+        // If the supplier is not in the array, add it with the selected price
+        if (existingSupplierIndex === -1) {
+            setSupportedSuppliers([
+                ...supportedSuppliers,
+                { supplierID, price },
+            ]);
+        } else {
+            // If the supplier is already in the array, remove it
+            const updatedSuppliers = supportedSuppliers.filter(
+                (supplier) => supplier.supplierID !== supplierID
+            );
+            setSupportedSuppliers(updatedSuppliers);
+        }
+    };
+
+
+    useEffect(() => {
+        getSupplier()
+        getCourses()
+    }, [])
+
     const clientHeaderSkeleton = (
         <li className='bg-slate-200 w-32 h-5 rounded-3xl animate-pulse'></li>
     )
 
-    console.log(formData);
+    const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
 
     return (
         <div className=''>
@@ -128,65 +169,131 @@ const Page = () => {
 
                 <div className='w-full px-8'>
 
-                    <form className='w-1/3 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={createCard}>
+                    <form className='w-1/2 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={createCard}>
                         {err && <small className='w-full text-red-400'>{err}</small>}
                         <div className='w-full flex gap-10'>
 
                             <div className='w-1/2 flex flex-col gap-4'>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="name" className='font-medium px-2'>Name</label>
+                                    <label htmlFor="name" className='font-medium px-2'>{t('client-card.name')}</label>
                                     <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="price" className='font-medium px-2'>Price</label>
+                                    <label htmlFor="price" className='font-medium px-2'>{t('client-card.price')}</label>
                                     <input required value={formData.price} onChange={handleChange} name='price' type="number" className=' w-full border outline-none py-1 px-3' id='price' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="balance" className='font-medium px-2'>Balance</label>
+                                    <label htmlFor="balance" className='font-medium px-2'>{t('client-card.balance')}</label>
                                     <input value={formData.balance} onChange={handleChange} name='balance' type="number" className='w-full border outline-none py-1 px-3' id='balance' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="validity" className='font-medium px-2'>Validity</label>
-                                    <input required  value={formData.validity} onChange={handleChange} name='validity' type="date" className='w-full border outline-none py-1 px-3' id='validity' />
+                                    <label htmlFor="validity" className='font-medium px-2'>{t('client-card.validity')}</label>
+                                    <input required value={formData.validity} onChange={handleChange} name='validity' type="number" className='w-full border outline-none py-1 px-3' id='validity' />
                                 </div>
 
                             </div>
                             <div className='w-1/2 flex flex-col gap-4'>
 
                                 <div className='w-full flex justify-between items-center gap-2'>
-                                    <label htmlFor="invoice" className='font-medium'>Invoice</label>
+                                    <label htmlFor="invoice" className='font-medium'>{t('client-card.invoice')}</label>
                                     <input checked={formData.invoice} onChange={handleChange} name='invoice' type="checkbox" className='border outline-none py-1 px-3' id='invoice' />
                                 </div>
 
                                 <div className='w-full flex justify-between items-center gap-2'>
-                                    <label htmlFor="repeat_purchases" className='font-medium'>Repeat Purchases</label>
+                                    <label htmlFor="repeat_purchases" className='font-medium'>{t('client-card.repeat_purchases')}</label>
                                     <input checked={formData.repeat_purchases} onChange={handleChange} name='repeat_purchases' type="checkbox" className=' border outline-none py-1 px-3' id='repeat_purchases' />
                                 </div>
                                 <div className='w-full flex justify-between items-center gap-2'>
-                                    <label htmlFor="online_renews" className='font-medium'>Online Renews</label>
+                                    <label htmlFor="online_renews" className='font-medium'>{t('client-card.online_renews')}</label>
                                     <input checked={formData.online_renews} onChange={handleChange} name='online_renews' type="checkbox" className=' border outline-none py-1 px-3' id='online_renews' />
                                 </div>
 
                                 <div className='w-full flex justify-between items-center gap-2'>
-                                    <label htmlFor="online_purchases" className='font-medium'>Online Purchases</label>
+                                    <label htmlFor="online_purchases" className='font-medium'>{t('client-card.online_purchases')}</label>
                                     <input checked={formData.online_purchases} onChange={handleChange} name='online_purchases' type="checkbox" className='border outline-none py-1 px-3' id='online_purchases' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="settlement_period" className='font-medium'>Settlement Period</label>
+                                    <label htmlFor="settlement_period" className='font-medium'>{t('client-card.settlement_period')}</label>
                                     <input required value={formData.settlement_period} onChange={handleChange} name='settlement_period' type="date" className='border outline-none py-1 px-3' id='settlement_period' />
                                 </div>
 
                             </div>
 
                         </div>
+
+                        <div className='w-full flex gap-10'>
+                            <div className='w-full flex flex-col gap-3'>
+                                <h1 className='font-bold'>{t('client-card.courses')}:</h1>
+                                <input type="text" value={searchCourse} onChange={(e) => setSearchCourse(e.target.value)} className='outline-none border px-3 py-1.5' placeholder={t('courses.search')} />
+                                <ul className='w-ful flex flex-col max-h-[500px] overflow-y-auto'>
+                                    {filterCourse.length > 0 ? filterCourse.map(course => (
+                                        <label htmlFor={course.id} key={course.id} className='flex border cursor-pointer hover:bg-slate-100 gap-3 items-center w-full p-3 rounded-sm'>
+                                            <input onChange={() => toggleCourseSelection(course.id)} checked={supportedCourses.includes(course.id)} id={course.id} type="checkbox" />
+                                            <div>{course.name}</div>
+                                        </label>
+                                    )) : skeleton.map(skel => (
+                                        <div className='flex border gap-3 items-center w-full p-3 h-16 rounded-sm' key={skel}>
+                                            <div className='w-5 h-5 bg-slate-100 animate-pulse rounded-md'></div>
+                                            <div className='w-full h-5 bg-slate-100 rounded-3xl animate-pulse'></div>
+                                        </div>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className='w-full flex flex-col gap-3'>
+                                <h1 className='font-bold'>{t('client-card.suppliers')}:</h1>
+                                <input type="text" value={searchSupplier} onChange={(e) => setSearchSupplier(e.target.value)} className='outline-none border px-3 py-1.5' placeholder={t('supplier.search')} />
+                                <ul className='w-ful flex flex-col max-h-[500px] overflow-y-auto'>
+                                    {filterSupplier.length > 0 ? filterSupplier.map(supplier => (
+                                        <label htmlFor={supplier.id} key={supplier.id} className='flex border cursor-pointer hover:bg-slate-100 gap-3 items-center w-full p-3 rounded-sm'>
+                                            <input
+                                                id={supplier.id}
+                                                type="checkbox"
+                                                onChange={(e) => {
+                                                    handleCheckboxChange(supplier.id, 1)
+                                                }}
+                                                checked={supportedSuppliers.some(
+                                                    (sup) => sup.supplierID === supplier.id
+                                                )}
+                                            />
+                                            <div className='mr-auto'>{supplier.name}</div>
+                                            <input
+                                                type="number"
+                                                className='w-12 appearance-none text-center px-2 py-0.5 outline-none border'
+                                                value={supportedSuppliers.find((supp) => supp.supplierID === supplier.id)?.price || ''}
+                                                onChange={(e) => {
+                                                    const newPrice = parseFloat(e.target.value);
+                                                    if (!isNaN(newPrice) && newPrice) {
+                                                        const updatedSuppliers = supportedSuppliers.map((supp) => {
+                                                            if (supp.supplierID === supplier.id) {
+                                                                return { supplierID: supp.supplierID, price: newPrice };
+                                                            }
+                                                            return supp;
+                                                        });
+                                                        setSupportedSuppliers(updatedSuppliers);
+                                                    }
+                                                }}
+
+                                            />
+                                        </label>
+                                    )) : skeleton.map(skel => (
+                                        <div key={skel} className='flex border gap-3 items-center w-full p-3 rounded-sm'>
+                                            <div className='w-5 h-5 rounded-md bg-slate-100 animate-pulse'></div>
+                                            <div className='mr-auto w-2/3 bg-slate-100 rounded-3xl animate-pulse h-5'></div>
+                                            <div className='w-10 h-5 rounded-md bg-slate-100 animate-pulse'></div>
+                                        </div>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                         <div className='flex items-center gap-10 w-full'>
-                            <Link href={'/manage/client/card'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>Cancel</Link>
-                            <button disabled={isLoading && true} className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : 'Create'}</button>
+                            <Link href={'/manage/client/card'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{tt('cancel')}</Link>
+                            <button disabled={isLoading && true} className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>{isLoading ?
+                                <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : tt('create')}</button>
                         </div>
 
                     </form>
