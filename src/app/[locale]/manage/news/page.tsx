@@ -107,7 +107,7 @@ const Web: React.FC = () => {
         <div className='flex h-screen'>
             <SideNav />
             <div className={`flex flex-col gap-8 w-full h-full ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
-
+        
                 <WebHeader />
 
                 <div className={`flex w-full h-full px-8 gap-8 items-start  `}>

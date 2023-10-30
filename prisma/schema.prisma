@@ -137,6 +137,7 @@ model SupplierSchedule {
   supplierID String
   date       String
   time       String
+  
   reserved   Boolean   @default(false)
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
@@ -157,6 +158,7 @@ model Booking {
   clientID      String
   clientCardID  String
   meetingInfoID String
+  price         Int
   created_at    DateTime            @default(now())
   updated_at    DateTime            @updatedAt
   schedule      SupplierSchedule    @relation(fields: [scheduleID], references: [id], onDelete: Cascade)

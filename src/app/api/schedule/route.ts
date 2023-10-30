@@ -73,7 +73,7 @@ export const POST = async (req: Request) => {
                     newSchedules.push({
                         date,
                         time,
-                        supplier_id: supplierID,
+                        supplierID,
                     });
                 }
             }

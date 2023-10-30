@@ -1,6 +1,13 @@
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
+import { TotalProps } from '@/lib/types/super-admin/globalType'
 import axios from 'axios'
 import { create } from 'zustand'
+
+const totalCards = {
+    selected: '',
+    searched: '',
+    total: ''
+}
 
 const clientCardValue = {
     name: '',
@@ -17,6 +24,7 @@ const clientCardValue = {
 export { clientCardValue }
 
 interface ClientCardProps {
+    totalCards: TotalProps
     cards: ClientCard[]
     getCards: () => Promise<void>
     viewCard: boolean
@@ -33,6 +41,7 @@ interface ClientCardProps {
     closeDeleteCardModal: () => void
     closeClientCardModal: () => void
     closeDeleteClientCardModal: () => void
+    setTotalCards: (total: TotalProps) => void
 }
 
 const useAdminClientCardStore = create<ClientCardProps>((set) => ({
@@ -40,25 +49,23 @@ const useAdminClientCardStore = create<ClientCardProps>((set) => ({
     getCards: async () => {
 
         try {
-
             const { data } = await axios.get('/api/client/card-list')
-
             if (data.ok) set({ cards: data.data })
 
         } catch (error) {
-
             console.log(error);
-
             alert('Something went wrong')
 
         }
     },
+    totalCards: totalCards,
     viewCard: false,
     viewClientCard: false,
     cardData: null,
     deleteCardModal: false,
     deleteClientCardModal: false,
     clientCardData: null,
+    setTotalCards: (total: TotalProps) => set({ totalCards: total }),
     closeDeleteClientCardModal: () => set({ deleteClientCardModal: false, clientCardData: null }),
     openDeleteClientCardModal: (card: ClientCard) => set({ clientCardData: card, deleteClientCardModal: true }),
     closeClientCardModal: () => set({ clientCardData: null, viewClientCard: false }),

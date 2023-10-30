@@ -23,20 +23,20 @@ CREATE TABLE `Client` (
 CREATE TABLE `ClientCard` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `price` INTEGER NOT NULL,
+    `price` DOUBLE NOT NULL,
     `balance` INTEGER NOT NULL,
     `validity` VARCHAR(191) NOT NULL,
-    `client_id` VARCHAR(191) NOT NULL,
+    `clientID` VARCHAR(191) NOT NULL,
     `invoice` BOOLEAN NOT NULL,
     `repeat_purchases` BOOLEAN NOT NULL,
     `online_purchases` BOOLEAN NOT NULL,
     `online_renews` BOOLEAN NOT NULL,
     `settlement_period` VARCHAR(191) NOT NULL,
-    `card_id` VARCHAR(191) NOT NULL,
+    `cardID` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    INDEX `ClientCard_client_id_idx`(`client_id`),
+    INDEX `ClientCard_clientID_idx`(`clientID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -44,6 +44,7 @@ CREATE TABLE `ClientCard` (
 CREATE TABLE `ClientCardList` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
+    `sold` INTEGER NOT NULL,
     `price` INTEGER NOT NULL,
     `balance` INTEGER NOT NULL,
     `validity` INTEGER NOT NULL,
@@ -52,8 +53,18 @@ CREATE TABLE `ClientCardList` (
     `online_purchases` BOOLEAN NOT NULL,
     `online_renews` BOOLEAN NOT NULL,
     `settlement_period` VARCHAR(191) NOT NULL,
-    `product_id` VARCHAR(191) NOT NULL,
-    `product_price_id` VARCHAR(191) NOT NULL,
+    `productID` VARCHAR(191) NOT NULL,
+    `productPriceID` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Courses` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -88,35 +99,64 @@ CREATE TABLE `Supplier` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `SupplierPrice` (
+    `id` VARCHAR(191) NOT NULL,
+    `price` INTEGER NOT NULL,
+    `supplierID` VARCHAR(191) NOT NULL,
+    `cardID` VARCHAR(191) NOT NULL,
+
+    INDEX `SupplierPrice_supplierID_idx`(`supplierID`),
+    INDEX `SupplierPrice_cardID_idx`(`cardID`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `SupplierMeetingInfo` (
     `id` VARCHAR(191) NOT NULL,
     `service` VARCHAR(191) NOT NULL,
     `meeting_code` VARCHAR(191) NOT NULL,
-    `supplier_id` VARCHAR(191) NOT NULL,
+    `supplierID` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    INDEX `SupplierMeetingInfo_supplier_id_idx`(`supplier_id`),
+    INDEX `SupplierMeetingInfo_supplierID_idx`(`supplierID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `SupplierSchedule` (
     `id` VARCHAR(191) NOT NULL,
-    `supplier_id` VARCHAR(191) NOT NULL,
-    `client_id` VARCHAR(191) NULL,
+    `supplierID` VARCHAR(191) NOT NULL,
     `date` VARCHAR(191) NOT NULL,
     `time` VARCHAR(191) NOT NULL,
     `reserved` BOOLEAN NOT NULL DEFAULT false,
-    `canceled` BOOLEAN NOT NULL DEFAULT false,
-    `meeting_info` JSON NULL,
-    `note` VARCHAR(191) NULL,
-    `completed` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
-    INDEX `SupplierSchedule_supplier_id_idx`(`supplier_id`),
-    INDEX `SupplierSchedule_client_id_idx`(`client_id`),
+    INDEX `SupplierSchedule_supplierID_idx`(`supplierID`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Booking` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `operator` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `note` VARCHAR(191) NULL,
+    `scheduleID` VARCHAR(191) NOT NULL,
+    `supplierID` VARCHAR(191) NOT NULL,
+    `clientID` VARCHAR(191) NOT NULL,
+    `clientCardID` VARCHAR(191) NOT NULL,
+    `meetingInfoID` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    INDEX `Booking_scheduleID_idx`(`scheduleID`),
+    INDEX `Booking_supplierID_idx`(`supplierID`),
+    INDEX `Booking_clientID_idx`(`clientID`),
+    INDEX `Booking_clientCardID_idx`(`clientCardID`),
+    INDEX `Booking_meetingInfoID_idx`(`meetingInfoID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -135,12 +175,12 @@ CREATE TABLE `Agent` (
     `gender` VARCHAR(191) NULL,
     `origin` VARCHAR(191) NOT NULL,
     `note` VARCHAR(191) NULL,
-    `agent_card_id` VARCHAR(191) NULL,
+    `agentCardID` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Agent_user_name_key`(`user_name`),
-    INDEX `Agent_agent_card_id_idx`(`agent_card_id`),
+    INDEX `Agent_agentCardID_idx`(`agentCardID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -159,20 +199,22 @@ CREATE TABLE `AgentCard` (
 -- CreateTable
 CREATE TABLE `Order` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
     `price` DOUBLE NOT NULL,
     `operator` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
     `note` VARCHAR(191) NULL,
     `invoice_number` VARCHAR(191) NULL,
     `express_number` VARCHAR(191) NULL,
     `created` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `schedule_id` VARCHAR(191) NOT NULL,
+    `cardID` VARCHAR(191) NOT NULL,
+    `clientID` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Order_id_key`(`id`),
-    INDEX `Order_schedule_id_idx`(`schedule_id`),
+    INDEX `Order_clientID_idx`(`clientID`),
+    INDEX `Order_cardID_idx`(`cardID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -206,7 +248,6 @@ CREATE TABLE `SuperAdmin` (
 CREATE TABLE `Department` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -235,6 +276,24 @@ CREATE TABLE `_ClientToDepartment` (
 
     UNIQUE INDEX `_ClientToDepartment_AB_unique`(`A`, `B`),
     INDEX `_ClientToDepartment_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_ClientCardListToCourses` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_ClientCardListToCourses_AB_unique`(`A`, `B`),
+    INDEX `_ClientCardListToCourses_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_BookingToDepartment` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_BookingToDepartment_AB_unique`(`A`, `B`),
+    INDEX `_BookingToDepartment_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable

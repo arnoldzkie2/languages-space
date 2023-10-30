@@ -87,6 +87,7 @@
             "page": "Page"
         },
         "side-nav": {
+            "department": "Department",
             "menu": "Menu",
             "dashboard": "Dashboard",
             "client": "Client",
@@ -95,6 +96,7 @@
             "supplier": "Supplier",
             "admin": "Admin",
             "orders": "Orders",
+            "booking": "Booking",
             "news": "Web News",
             "settings": "Settings",
             "statistics": "Statistics",
@@ -120,6 +122,25 @@
             "date": "Date",
             "departments": "Departments",
             "search": "Search Order"
+        },
+        "department": {
+            "h1": "Manage Department",
+            "create": "Create Department",
+            "search": "Search Department",
+            "update": "Update Department",
+            "name": "Name",
+            "date": "Date"
+        },
+        "booking": {
+            "h1": "Manage Booking",
+            "name": "Name",
+            "price": "Price",
+            "note": "Note",
+            "operator": "Operator",
+            "searcg": "Search Booking",
+            "create": "Create Booking",
+            "date": "Date",
+            "time": "Time"
         }
     },
     "global": {

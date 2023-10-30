@@ -1,14 +1,12 @@
+import { Department, TotalProps } from "@/lib/types/super-admin/globalType"
 import axios from "axios"
 import { create } from "zustand"
 
-
-interface Department {
-    id: string,
-    name: string,
-    date: string
+const totalDepartmentValue = {
+    selected: '',
+    total: '',
+    searched: ''
 }
-
-export type { Department }
 
 interface AdminGlobalStoreProps {
     isSideNavOpen: boolean
@@ -18,6 +16,11 @@ interface AdminGlobalStoreProps {
     departments: Department[]
     eye: boolean
     itemsPerPage: number
+    totalDepartment: TotalProps
+    skeleton: number[]
+    newDepartment: boolean,
+    updateDepartment: boolean
+    departmentData: Department | null
     toggleSideNav: () => void
     setDepartments: (depts: Department[]) => void
     setDepartmentID: (id: string) => void
@@ -28,8 +31,15 @@ interface AdminGlobalStoreProps {
     setIsLoading: (type: boolean) => void
     operation: boolean
     selectedID: string
+    deleteDepartment: boolean
     openOperation: (ID: string) => void
     closeOperation: () => void
+    setTotalDepartments: (total: TotalProps) => void
+    toggleNewDepartment: () => void
+    closeUpdateDepartment: () => void
+    closeDeleteDepartment: () => void
+    openUpdateDepartment: (dept: Department) => void
+    openDeleteDepartment: (dept: Department) => void
 }
 
 const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
@@ -41,31 +51,38 @@ const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
         try {
 
             const { data } = await axios.get('/api/department')
-
             if (data.ok) set({ departments: data.data })
 
         } catch (error) {
-
             console.log(error);
-
             alert('Something went wrong')
-
         }
-
     },
+    totalDepartment: totalDepartmentValue,
+    newDepartment: false,
+    updateDepartment: false,
+    skeleton: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     currentPage: 1,
-    itemsPerPage: 10,
-    setCurrentPage: (num: number) => set({ currentPage: num }),
     departmentID: '',
-    setDepartmentID: (id: string) => set({ departmentID: id }),
-    isCreatingDepartment: false,
-    toggleIsCreatingDepartment: () => set(state => ({ isCreatingDepartment: !state.isCreatingDepartment })),
+    itemsPerPage: 10,
     eye: false,
-    toggleEye: () => set(state => ({ eye: !state.eye })),
+    departmentData: null,
     isLoading: false,
-    setIsLoading: (type: boolean) => set({ isLoading: type }),
+    isCreatingDepartment: false,
     operation: false,
     selectedID: '',
+    deleteDepartment: false,
+    closeDeleteDepartment: () => set({ deleteDepartment: false, departmentData: null }),
+    openDeleteDepartment: (dept: Department) => set({ departmentData: dept, deleteDepartment: true }),
+    openUpdateDepartment: (dept: Department) => set(state => ({ departmentData: dept, updateDepartment: true })),
+    closeUpdateDepartment: () => set((state) => ({ updateDepartment: false, departmentData: null })),
+    toggleNewDepartment: () => set((state) => ({ newDepartment: !state.newDepartment })),
+    setTotalDepartments: (total: TotalProps) => set({ totalDepartment: total }),
+    setCurrentPage: (num: number) => set({ currentPage: num }),
+    setDepartmentID: (id: string) => set({ departmentID: id }),
+    toggleIsCreatingDepartment: () => set(state => ({ isCreatingDepartment: !state.isCreatingDepartment })),
+    toggleEye: () => set(state => ({ eye: !state.eye })),
+    setIsLoading: (type: boolean) => set({ isLoading: type }),
     openOperation: (ID: string) => set({ operation: true, selectedID: ID }),
     closeOperation: () => set({ operation: false, selectedID: '' })
 }))

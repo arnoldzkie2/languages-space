@@ -21,7 +21,7 @@ const ClientCard: React.FC<Props> = ({ params }) => {
 
     const { currentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
 
-    const { cards, getCards, viewCard, deleteCardModal } = useAdminClientCardStore()
+    const { cards, getCards, viewCard, deleteCardModal, totalCards, setTotalCards } = useAdminClientCardStore()
 
     const [searchQuery, setSearchQuery] = useState({
         name: '',
@@ -29,7 +29,6 @@ const ClientCard: React.FC<Props> = ({ params }) => {
         price: '',
         balance: ''
     })
-
 
     const filteredCard = cards.filter((card) => {
 
@@ -59,14 +58,26 @@ const ClientCard: React.FC<Props> = ({ params }) => {
 
         setSearchQuery(prevData => ({ ...prevData, [name]: value }))
     }
+
     useEffect(() => {
 
         getCards()
 
     }, [])
 
+    useEffect(() => {
+
+        setTotalCards({
+            selected: '',
+            searched: filteredCard.length.toString(),
+            total: cards.length.toString()
+        })
+
+    }, [cards.length, filteredCard.length])
+
+
     return (
-        <>
+        <div className='h-screen'>
             <SideNav />
 
             <div className={`flex flex-col h-full w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
@@ -79,14 +90,16 @@ const ClientCard: React.FC<Props> = ({ params }) => {
                         <SearchClientCard handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
 
-                    <ClientCardTable filteredTable={currentCards} clientID={params.clientID} />
+                    {/* <ClientCardTable filteredTable={currentCards} clientID={params.clientID} /> */}
 
                 </div>
+
+                    <Pagination totals={totalCards} getTotalPages={getTotalPages} />
 
                 {viewCard && <ClientCardModal />}
                 {deleteCardModal && <DeleteCardWarningModal />}
             </div>
-        </>
+        </div>
     )
 };
 

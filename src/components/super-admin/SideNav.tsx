@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Logout from './Logout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faCalendarDays, faChartLine, faDisplay, faGear, faHouse, faNewspaper, faUser, faUserSecret, faUserShield, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faCalendarDays, faChartLine,faBuilding, faDisplay, faGear, faHouse, faNewspaper, faUser, faUserSecret, faUserShield, faUsers, faBook } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next-intl/link';
 import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
@@ -18,6 +18,16 @@ const SideNav: React.FC = () => {
             translate: 'side-nav.dashboard',
             icon: faHouse,
             link: '/super-admin'
+        },
+        {
+            translate: 'side-nav.booking',
+            icon: faBook,
+            link: '/manage/booking'
+        },
+        {
+            translate: 'side-nav.department',
+            icon: faBuilding,
+            link: '/manage/department'
         },
         {
             translate: 'side-nav.client',

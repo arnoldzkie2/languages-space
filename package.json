@@ -17,7 +17,7 @@
     "@fullcalendar/daygrid": "^6.1.8",
     "@fullcalendar/list": "^6.1.8",
     "@fullcalendar/react": "^6.1.8",
-    "@prisma/client": "^5.4.2",
+    "@prisma/client": "^5.5.2",
     "@stripe/stripe-js": "^2.1.7",
     "@types/node": "20.2.5",
     "@types/react": "^18.2.7",
@@ -51,6 +51,6 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.5",
-    "prisma": "^5.4.2"
+    "prisma": "^5.5.2"
   }
 }

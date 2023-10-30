@@ -55,6 +55,7 @@ export const GET = async (req: Request) => {
                             title: true,
                             author: true,
                             keywords: true,
+                            created_at: true,
                             updated_at: true
                         }
                     }
@@ -73,6 +74,7 @@ export const GET = async (req: Request) => {
                 author: true,
                 keywords: true,
                 created_at: true,
+                updated_at: true
             }
         })
         if (!allNews) return badRequestRes()
