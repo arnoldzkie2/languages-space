@@ -1,6 +1,6 @@
-import { Department } from "@/lib/state/super-admin/globalStore"
 import { ClientCard } from "./clientCardType"
 import { Client } from "./clientType"
+import { Department } from "./globalType"
 
 interface Order {
     id: string

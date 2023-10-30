@@ -115,7 +115,7 @@ const Page = ({ params }: Props) => {
                     <div className='border py-4 px-6 flex flex-col shadow bg-white w-1/6'>
                         <SearchClientCard handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
-                    <ClientCardTable filteredTable={currentCards} clientID={client?.id || ''} />
+                    <ClientCardTable filteredTable={currentCards} />
                 </div>
             </div>
             {viewClientCard && <ViewClientCardModal />}
