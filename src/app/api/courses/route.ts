@@ -5,8 +5,22 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
     const courseID = searchParams.get('courseID')
-
+    const cardID = searchParams.get('cardID')
     try {
+
+        if (cardID) {
+            const card = await prisma.clientCard.findUnique({ where: { id: cardID } })
+            if (!card) return notFoundRes('Card')
+
+            const courses = await prisma.clientCardList.findUnique({
+                where: { id: card.cardID }, select: {
+                    supported_courses: true
+                }
+            })
+            if (!courses) return badRequestRes()
+
+            return okayRes(courses.supported_courses)
+        }
 
         if (courseID) {
 
@@ -38,8 +52,8 @@ export const POST = async (req: Request) => {
         if (name) {
 
             const existingCourse = await prisma.courses.findFirst({ where: { name } })
-            if(existingCourse) return existRes('course')
-            
+            if (existingCourse) return existRes('course')
+
             const newCourse = await prisma.courses.create({ data: { name } })
             if (!newCourse) return badRequestRes()
 

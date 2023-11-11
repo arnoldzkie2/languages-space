@@ -9,7 +9,9 @@ const serverErrorRes = (data: any) => {
     return NextResponse.json({ msg: 'Server error', error: data }, { status: 500 })
 }
 
-const badRequestRes = () => {
+const badRequestRes = (data?: any) => {
+    if (data) return NextResponse.json({ msg: 'Something went wrong', error: data }, { status: 400 })
+
     return NextResponse.json({ msg: 'Something went wrong' }, { status: 400 })
 }
 

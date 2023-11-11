@@ -31,7 +31,7 @@ export const POST = async (req: Request) => {
                 const expirationMonth = String(expirationDate.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so add 1
                 const expirationDay = String(expirationDate.getDate()).padStart(2, '0');
                 const formattedExpirationDate = `${expirationYear}-${expirationMonth}-${expirationDay}`;
-        
+
                 const bindCardToUser = await prisma.clientCard.create({
                     data: {
                         name: card.name,
@@ -41,10 +41,9 @@ export const POST = async (req: Request) => {
                         client: { connect: { id: client.id } },
                         invoice: card.invoice,
                         repeat_purchases: card.repeat_purchases,
-                        online_purchases: card.online_purchases,
                         online_renews: card.online_renews,
                         settlement_period: card.settlement_period,
-                        cardID: card.id
+                        card: { connect: { id: card.id } }
                     }
                 })
                 if (!bindCardToUser) return badRequestRes()

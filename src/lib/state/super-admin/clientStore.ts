@@ -31,7 +31,8 @@ const ManageClientSearchQueryValue = {
     phone_number: '',
     organization: '',
     origin: '',
-    note: ''
+    note: '',
+    cards: false
 }
 
 export { totalClientsValue, ManageClientSearchQueryValue, newClientFormValue }

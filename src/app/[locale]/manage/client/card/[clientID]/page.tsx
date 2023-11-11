@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
-import ClientCardTable from '@/components/super-admin/management/client-card/ClientCardTable'
-import DeleteClientCardWarningModal from '@/components/super-admin/management/client-card/DeleteClientCardWarningModal'
-import SearchClientCard from '@/components/super-admin/management/client-card/SearchCard'
-import ViewClientCardModal from '@/components/super-admin/management/client-card/ViewClientCardModal'
+import DeleteClientCardWarningModal from '@/components/super-admin/management/card/DeleteClientCardWarningModal'
+import SearchClientCard from '@/components/super-admin/management/card/SearchCard'
+import ViewClientCardModal from '@/components/super-admin/management/card/ViewClientCardModal'
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader'
+import ClientCardTable from '@/components/super-admin/management/client/card/ClientCardTable'
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
@@ -71,7 +71,6 @@ const Page = ({ params }: Props) => {
                     clientID: params.clientID
                 }
             })
-
             if (data.ok) {
                 setClient(data.data)
             }
@@ -115,7 +114,7 @@ const Page = ({ params }: Props) => {
                     <div className='border py-4 px-6 flex flex-col shadow bg-white w-1/6'>
                         <SearchClientCard handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
-                    <ClientCardTable filteredTable={currentCards} />
+                    <ClientCardTable filteredTable={currentCards} clientID={params.clientID} />
                 </div>
             </div>
             {viewClientCard && <ViewClientCardModal />}

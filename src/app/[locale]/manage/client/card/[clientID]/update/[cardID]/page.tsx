@@ -42,16 +42,18 @@ const Page = ({ params }: Props) => {
     const updateCard = async (e: any) => {
 
         e.preventDefault()
-        
+
+        const { name, price, balance, validity } = formData
+
         try {
             setIsLoading(true)
-            const { data } = await axios.patch('/api/client/card', formData, {
+            const { data } = await axios.patch('/api/client/card', { name, price: Number(price), balance: Number(balance), validity }, {
                 params: {
                     cardID: params.cardID
                 }
             })
 
-            if (data.ok)  {
+            if (data.ok) {
                 setIsLoading(false)
                 router.push(`/manage/client/card/${params.clientID}`)
             }

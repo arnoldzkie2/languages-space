@@ -3,19 +3,25 @@ import { SupplierSchedule } from "@/lib/types/super-admin/scheduleType"
 interface Props {
     event: {
         extendedProps: {
-            data: SupplierSchedule
-            viewSchedule: (scheduleData: SupplierSchedule) => void
+            data: SupplierSchedule;
+            viewBooking: (booking: string) => void;
+            openBindSchedule: (schedule: SupplierSchedule) => void;
         }
     }
 }
 
 const ScheduleComponent: React.FC<Props> = (schedule) => {
 
-    const { time, client_name, reserved } = schedule.event.extendedProps.data
+    const { time, clientName, status } = schedule.event.extendedProps.data
+
+    const bookingID = schedule.event.extendedProps.data.bookingID
+    const scheduleData = schedule.event.extendedProps.data
+    const viewBooking = schedule.event.extendedProps.viewBooking
+    const bindSchedule = schedule.event.extendedProps.openBindSchedule
 
     return (
-        <div onClick={() => schedule.event.extendedProps.viewSchedule(schedule.event.extendedProps.data)} className={`p-2 mx-2 my-0.5 w-full border hover:border-blue-600 ${reserved ? 'bg-blue-600 text-white' : 'bg-slate-200 text-gray-600'} cursor-pointer rounded-md flex items-center gap-2`}>
-            <strong>{time}</strong> {client_name && client_name}
+        <div onClick={() => status === 'reserved' ? viewBooking(bookingID || '') : bindSchedule(scheduleData)} className={`p-2 mx-2 my-0.5 w-full border hover:border-blue-600 ${status === 'reserved' ? 'bg-blue-600 text-white' : status === 'available' ? 'bg-slate-200 text-gray-600' : 'bg-orange-500'} cursor-pointer rounded-md flex items-center gap-2`}>
+            <strong>{time}</strong> {clientName && clientName}
         </div>
     )
 }

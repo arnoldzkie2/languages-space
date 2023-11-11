@@ -74,6 +74,7 @@ export const POST = async (req: Request) => {
                         date,
                         time,
                         supplierID,
+                        status: 'available'
                     });
                 }
             }
@@ -110,13 +111,10 @@ export const DELETE = async (req: Request) => {
         if (scheduleID) {
 
             const checkSchedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
-
             if (!checkSchedule) return badRequestRes()
-
-            if (checkSchedule?.reserved) return NextResponse.json({ msg: "This schedule is already reserved this can't be deleted." }, { status: 400 })
+            if (checkSchedule.status === 'reserved') return NextResponse.json({ msg: "This schedule is already reserved this can't be deleted." }, { status: 400 })
 
             const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
-
             if (!deleteSchedule) return badRequestRes()
 
             return okayRes()

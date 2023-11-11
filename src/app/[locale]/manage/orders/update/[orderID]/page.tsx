@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
+import useAdminCardStore from '@/lib/state/super-admin/cardStore'
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
@@ -24,51 +25,33 @@ interface Props {
 const Page = ({ params }: Props) => {
 
   const { orderID } = params
-
   const router = useRouter()
-
   const session = useSession()
-
   const t = useTranslations('super-admin')
 
   const [searchClient, setSearchClient] = useState('')
-
   const [searchCard, setSearchCard] = useState('')
-
+  const [err, setErr] = useState('')
   const [formData, setFormData] = useState<OrderFormValue>(newOrderFormValue)
 
-  const { isSideNavOpen } = useAdminGlobalStore()
-
-  const { cards, getCards } = useAdminClientCardStore()
-
+  const { isSideNavOpen, isLoading, setIsLoading } = useAdminGlobalStore()
+  const { cards, getCards } = useAdminCardStore()
   const { getClients, clients } = useAdminClientStore()
 
   const filterClient = clients.filter(client => client.name.toUpperCase().includes(searchClient.toUpperCase()))
-
   const filterCard = cards.filter(card => card.name.toUpperCase().includes(searchCard.toUpperCase()))
 
-  const [isLoading, setIsLoading] = useState(false)
-
-  const [err, setErr] = useState('')
-
   const retrieveOrder = async () => {
-
     try {
 
       const { data } = await axios.get('/api/orders', {
         params: { orderID }
       })
-
-      if (data.ok) {
-
-        setFormData(data.data)
-
-      }
+      if (data.ok) setFormData(data.data)
 
     } catch (error) {
       console.log(error)
       alert('Something went wrong')
-
     }
   }
 
@@ -77,13 +60,16 @@ const Page = ({ params }: Props) => {
     try {
 
       const { quantity, name, express_number, note, invoice_number, client, status, card } = formData
+      
       if (Number(quantity) < 1) return setErr('Quantity must be positive number')
       if (!card) return setErr('Select Card')
       if (!client) return setErr('Select Client')
+
       setIsLoading(true)
+
       const { data } = await axios.patch('/api/orders', {
         quantity: Number(quantity), name, express_number,
-        note, invoice_number, operator: 'Admin', status, card_id: card.id, client_id: client.id
+        note, invoice_number, operator: 'Admin', status, cardID: card.id, clientID: client.id
       }, {
         params: { orderID }
       })
@@ -108,15 +94,15 @@ const Page = ({ params }: Props) => {
   };
 
   useEffect(() => {
-
+    retrieveOrder()
     getClients()
     getCards()
-
   }, [])
 
   const clientHeaderSkeleton = (
     <li className='bg-slate-200 w-32 h-5 rounded-3xl animate-pulse'></li>
   )
+
   return (
     <div className=''>
 

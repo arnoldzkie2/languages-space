@@ -32,7 +32,8 @@
             "h1": "Manage Client",
             "create": "Create Client",
             "name": "Name",
-            "phone": "Phone Number",
+            "with-cards": "With Cards",
+            "phone": "Phone #",
             "organization": "Organization",
             "origin": "Origin",
             "note": "Note",
@@ -47,16 +48,20 @@
         "client-card": {
             "manage": "Manage Client Card",
             "h1": "Manage Card",
+            "quantity": "Quantity",
             "create": "Create Card",
+            "select-all": "Select All",
             "update": "Update Card",
             "name": "Name",
             "price": "Price",
+            "max": "Max",
             "balance": "Balance",
             "validity": "Validity",
+            "sold": "Sold",
             "invoice": "Invoice",
-            "repeat_purchases": "Repeat Purchases",
+            "available": "Available",
             "online_renews": "Online Renews",
-            "online_purchases": "Online Purchases",
+            "repeat_purchases": "Repeat Purchases",
             "settlement_period": "Settlement Period",
             "date": "Date",
             "select": "Select Card",
@@ -65,7 +70,8 @@
             "404": "Card Not Found",
             "description": "Description",
             "courses": "Supported Courses",
-            "suppliers": "Supported Suppliers"
+            "suppliers": "Supported Suppliers",
+            "client": "Client"
         },
         "global": {
             "department": {

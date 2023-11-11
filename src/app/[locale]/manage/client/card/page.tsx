@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import SideNav from '@/components/super-admin/SideNav';
+import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
-import ClientCardHeader from '@/components/super-admin/management/client-card/ClientCardHeader';
-import ClientCardModal from '@/components/super-admin/management/client-card/ClientCardModal';
-import ClientCardTable from '@/components/super-admin/management/client-card/ClientCardTable';
-import DeleteCardWarningModal from '@/components/super-admin/management/client-card/DeleteCardWarningModal';
-import SearchClientCard from '@/components/super-admin/management/client-card/SearchCard';
-import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
+import CardTable from '@/components/super-admin/management/card/CardTable';
+import ClientCardHeader from '@/components/super-admin/management/card/ClientCardHeader';
+import ClientCardModal from '@/components/super-admin/management/card/ClientCardModal';
+import DeleteCardWarningModal from '@/components/super-admin/management/card/DeleteCardWarningModal';
+import SearchClientCard from '@/components/super-admin/management/card/SearchCard';
+import useAdminCardStore from '@/lib/state/super-admin/cardStore';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import React, { useEffect, useState } from 'react';
 
@@ -19,9 +20,9 @@ interface Props {
 
 const ClientCard: React.FC<Props> = ({ params }) => {
 
-    const { currentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
+    const { currentPage, isSideNavOpen, itemsPerPage, departmentID } = useAdminGlobalStore()
 
-    const { cards, getCards, viewCard, deleteCardModal, totalCards, setTotalCards } = useAdminClientCardStore()
+    const { cards, getCards, viewCard, deleteCardModal, totalCards, setTotalCards } = useAdminCardStore()
 
     const [searchQuery, setSearchQuery] = useState({
         name: '',
@@ -45,11 +46,8 @@ const ClientCard: React.FC<Props> = ({ params }) => {
     })
 
     const indexOfLastItem = currentPage * itemsPerPage
-
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
-
     const currentCards = filteredCard.slice(indexOfFirstItem, indexOfLastItem)
-
     const getTotalPages = () => Math.ceil(filteredCard.length / itemsPerPage)
 
     const handleSearch = (e: any) => {
@@ -60,10 +58,8 @@ const ClientCard: React.FC<Props> = ({ params }) => {
     }
 
     useEffect(() => {
-
         getCards()
-
-    }, [])
+    }, [departmentID])
 
     useEffect(() => {
 
@@ -87,14 +83,15 @@ const ClientCard: React.FC<Props> = ({ params }) => {
                 <div className='flex w-full items-start gap-8 px-8'>
 
                     <div className='border py-4 px-6 flex flex-col shadow bg-white w-1/6'>
+                        <Departments />
                         <SearchClientCard handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
 
-                    {/* <ClientCardTable filteredTable={currentCards} clientID={params.clientID} /> */}
+                    <CardTable filteredTable={currentCards} />
 
                 </div>
 
-                    <Pagination totals={totalCards} getTotalPages={getTotalPages} />
+                <Pagination totals={totalCards} getTotalPages={getTotalPages} />
 
                 {viewCard && <ClientCardModal />}
                 {deleteCardModal && <DeleteCardWarningModal />}

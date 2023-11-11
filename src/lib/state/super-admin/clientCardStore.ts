@@ -11,13 +11,14 @@ const totalCards = {
 
 const clientCardValue = {
     name: '',
-    price: 0,
-    balance: 0,
-    validity: 0,
+    quantity: 1,
+    price: 1,
+    balance: 1,
+    validity: 1,
     invoice: false,
-    repeat_purchases: false,
-    online_purchases: false,
+    available: false,
     online_renews: false,
+    repeat_purchases: false,
     settlement_period: '',
 }
 
@@ -25,32 +26,25 @@ export { clientCardValue }
 
 interface ClientCardProps {
     totalCards: TotalProps
-    cards: ClientCard[]
-    getCards: () => Promise<void>
-    viewCard: boolean
-    cardData: ClientCard | null
-    deleteCardModal: boolean
+    clientCards: ClientCard[]
+    getClientCards: () => Promise<void>
     clientCardData: ClientCard | null
     viewClientCard: boolean
     deleteClientCardModal: boolean
-    closeViewCard: () => void
-    openViewCard: (card: ClientCard) => void
-    openDeleteCardModal: (card: ClientCard) => void
     openDeleteClientCardModal: (card: ClientCard) => void
-    openViewClientCard: (card: ClientCard) => void
-    closeDeleteCardModal: () => void
     closeClientCardModal: () => void
     closeDeleteClientCardModal: () => void
+    openViewClientCard: (card: ClientCard) => void
     setTotalCards: (total: TotalProps) => void
 }
 
 const useAdminClientCardStore = create<ClientCardProps>((set) => ({
-    cards: [],
-    getCards: async () => {
+    clientCards: [],
+    getClientCards: async () => {
 
         try {
             const { data } = await axios.get('/api/client/card-list')
-            if (data.ok) set({ cards: data.data })
+            if (data.ok) set({ clientCards: data.data })
 
         } catch (error) {
             console.log(error);
@@ -70,10 +64,6 @@ const useAdminClientCardStore = create<ClientCardProps>((set) => ({
     openDeleteClientCardModal: (card: ClientCard) => set({ clientCardData: card, deleteClientCardModal: true }),
     closeClientCardModal: () => set({ clientCardData: null, viewClientCard: false }),
     openViewClientCard: (card: ClientCard) => set({ clientCardData: card, viewClientCard: true }),
-    openViewCard: (card: ClientCard) => set({ viewCard: true, cardData: card }),
-    closeViewCard: () => set({ viewCard: false, cardData: undefined }),
-    openDeleteCardModal: (card: ClientCard) => set({ cardData: card, deleteCardModal: true }),
-    closeDeleteCardModal: () => set({ cardData: undefined, deleteCardModal: false })
 
 }))
 

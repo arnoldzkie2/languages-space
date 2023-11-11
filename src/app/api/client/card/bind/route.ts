@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { notFoundRes, existRes, badRequestRes, createdRes, serverErrorRes, okayRes } from "@/lib/utils/apiResponse";
 
@@ -15,7 +14,7 @@ export const POST = async (req: Request) => {
         const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
         if (!card) return notFoundRes('Client Card')
 
-        const { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = card
+        const { name, price, balance, validity, invoice, repeat_purchases, online_renews, settlement_period, id } = card
 
         //check if the repeat purchases is not supported
         if (!repeat_purchases) {
@@ -35,8 +34,8 @@ export const POST = async (req: Request) => {
         //finally bind the card to client
         const bindCard = await prisma.clientCard.create({
             data: {
-                name, price, balance, cardID: clientCardID, invoice, validity: formattedExpirationDate,
-                repeat_purchases, online_purchases, online_renews, settlement_period, client: { connect: { id: clientID } }
+                name, price, balance, card: { connect: { id } }, invoice, validity: formattedExpirationDate,
+                repeat_purchases, online_renews, settlement_period, client: { connect: { id: clientID } }
             },
             include: { client: true }
         })

@@ -41,11 +41,12 @@ const UpdateDepartmentModal = () => {
         setName(departmentData?.name!)
     }, [departmentData?.id])
 
+ 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
     return (
 
-        <div className='fixed top-0 left-0 grid place-items-center w-screen h-screen bg-black bg-opacity-40'>
+        <div className='fixed top-0 left-0 z-40 grid place-items-center w-screen h-screen bg-black bg-opacity-40'>
             <form onSubmit={updateDepartment} className='bg-white w-96 p-10 gap-4 flex flex-col relative rounded-sm'>
                 <h1 className='text-center'>{t('department.update')}</h1>
                 <FontAwesomeIcon onClick={closeUpdateDepartment} icon={faXmark} width={16} height={16} className='cursor-pointer absolute top-4 right-4 hover:text-blue-600' />

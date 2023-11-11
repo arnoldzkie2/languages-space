@@ -20,7 +20,7 @@ const SearchClientCard: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const t = useTranslations('super-admin')
 
     return (
-        <div className='w-full'>
+        <div className='pt-4 mt-4 border-t border-gray-300 w-full'>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
                 {t('client-card.search')}
             </div>

@@ -57,8 +57,8 @@ const OrderTable: React.FC<Props> = ({ filteredTable }) => {
             // Select all rows on the current page and keep existing selections
             updatedselectedOrder = [
                 ...selectedOrder,
-                ...filteredTable.filter(
-                    (client) => !selectedOrder.some((selectedClient) => selectedClient.id === client.id)
+                ...filteredTable.filter
+                    ((client) => !selectedOrder.some((selectedClient) => selectedClient.id === client.id)
                 ),
             ];
         }
@@ -86,7 +86,7 @@ const OrderTable: React.FC<Props> = ({ filteredTable }) => {
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
             <thead className="text-xs uppercase bg-slate-100 border">
                 <tr>
-                    <th scope='col' className='px-6 py-3'>
+                    <th scope='col' className='px-4 py-3'>
                         <input type="checkbox"
                             className='cursor-pointer w-4 h-4 outline-none'
                             title='Select all 10 rows'
@@ -94,75 +94,75 @@ const OrderTable: React.FC<Props> = ({ filteredTable }) => {
                             onChange={selectAllRows}
                         />
                     </th>
-                    <th scope="col" className="px-5 py-3">{t('order.card')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.client_name')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.quantity')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.price')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.status')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.invoice_number')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.express_number')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.note')}</th>
-                    <th scope="col" className="px-5 py-3">{t('order.date')}</th>
-                    <th scope="col" className="px-5 py-3">{t('global.operation')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.card')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.client_name')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.quantity')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.price')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.status')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.invoice_number')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.express_number')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.note')}</th>
+                    <th scope="col" className="px-4 py-3">{t('order.date')}</th>
+                    <th scope="col" className="px-4 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>
             <tbody>
                 {filteredTable && filteredTable.length > 0 ?
                     filteredTable.map(order => (
                         <tr className="bg-white border hover:bg-slate-50" key={order.id}>
-                            <td className='px-5 py-3'>
+                            <td className='px-4 py-3'>
                                 <input type="checkbox" id={order.id}
                                     className='cursor-pointer w-4 h-4 outline-none'
                                     onChange={() => handleSelection(order)}
                                     checked={selectedOrder.some(selectedorder => selectedorder.id === order.id)}
                                 />
                             </td>
-                            <td className='px-5 py-3'>
+                            <td className='px-4 py-3'>
                                 <div className='h-5 w-28'>
                                     {order.card.name}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-32'>
                                     {order.client.name}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-10'>
                                     {order.quantity}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-24'>
                                     ¥{order.price}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-24'>
                                     {order.status}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-32'>
                                     {order.invoice_number || 'No Data'}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-32'>
                                     {order.express_number || 'No Data'}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-32'>
                                     {order.note || 'No Data'}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
+                            <td className="px-4 py-3">
                                 <div className='h-5 w-44'>
-                                    {new Date(order.date).toLocaleString()}
+                                    {new Date(order.created_at).toLocaleString()}
                                 </div>
                             </td>
-                            <td className='py-3 relative px-5'>
+                            <td className='py-3 relative px-4'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(order.id)} />
                                 <ul className={`${operation && selectedID === order.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => openViewOrder(order)}>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
@@ -175,37 +175,37 @@ const OrderTable: React.FC<Props> = ({ filteredTable }) => {
                     )) :
                     skeleton.map(item => (
                         <tr key={item}>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-md animate-pulse w-5 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-4'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
                             </td>
                         </tr>

@@ -10,6 +10,14 @@
             "note": "备注",
             "search": "搜索供应商"
         },
+        "courses": {
+            "h1": "管理课程",
+            "name": "名称",
+            "date": "日期",
+            "search": "搜索课程",
+            "create": "创建课程",
+            "course-name": "课程名称"
+        },
         "news": {
             "h1": "管理新闻",
             "title": "标题",
@@ -24,72 +32,146 @@
             "h1": "管理客户",
             "create": "创建客户",
             "name": "名称",
+            "with-cards": "带卡",
             "phone": "电话号码",
             "organization": "组织",
             "origin": "来源",
             "note": "备注",
             "card": {
-                "client": "客户卡",
+                "client": "卡",
                 "bind": "绑定卡"
             },
             "search": "搜索客户",
-            "select": "选择客户"
+            "select": "选择客户",
+            "404": "未找到客户"
         },
         "client-card": {
-            "h1": "管理卡片",
-            "create": "创建卡片",
+            "manage": "管理客户卡",
+            "h1": "管理卡",
+            "create": "创建卡",
+            "select-all": "全选",
+            "update": "更新卡",
             "name": "名称",
             "price": "价格",
+            "max": "最大",
             "balance": "余额",
             "validity": "有效期",
+            "sold": "已售",
+            "invoice": "发票",
+            "available": "可用",
+            "online_renews": "在线续订",
+            "repeat_purchases": "重复购买",
+            "settlement_period": "结算周期",
             "date": "日期",
-            "select": "选择卡片",
-            "search": "搜索卡片",
-            "card": "卡片"
+            "select": "选择卡",
+            "search": "搜索卡",
+            "card": "卡",
+            "404": "未找到卡",
+            "description": "描述",
+            "courses": "支持的课程",
+            "suppliers": "支持的供应商",
+            "client": "客户"
         },
         "global": {
-            "cancel": "取消",
             "department": {
                 "select": "部门",
-                "all": "所有部门"
+                "all": "全部部门"
             },
             "operation": "操作",
             "download": "下载",
             "result": "结果：",
             "selected": "已选择：",
-            "total": "总数：",
-            "delete-confirm": "是的，我确认",
+            "total": "总计：",
+            "delete-confirm": "是，我确定",
             "confirm-cancel": "取消"
         },
         "pagination": {
             "prev": "上一页",
             "next": "下一页",
             "goto": "转到页面",
-            "page": "页面"
+            "page": "页"
         },
         "side-nav": {
+            "department": "部门",
             "menu": "菜单",
-            "dashboard": "仪表盘",
+            "dashboard": "仪表板",
             "client": "客户",
             "schedule": "日程",
             "agent": "代理",
             "supplier": "供应商",
             "admin": "管理员",
             "orders": "订单",
-            "news": "网站新闻",
+            "booking": "预订",
+            "news": "网络新闻",
             "settings": "设置",
             "statistics": "统计",
             "logout": "退出"
         },
-        "operation": {
-            "view": "查看",
-            "update": "更新",
-            "delete": "删除",
-            "close": "关闭"
-        },
         "schedule": {
             "h1": "管理日程",
             "create": "创建日程"
+        },
+        "order": {
+            "h1": "管理订单",
+            "create": "创建订单",
+            "update": "更新订单",
+            "card": "卡",
+            "client_name": "客户",
+            "quantity": "数量",
+            "operator": "操作员",
+            "note": "备注",
+            "price": "价格",
+            "status": "状态",
+            "invoice_number": "发票号",
+            "express_number": "快递号",
+            "date": "日期",
+            "departments": "部门",
+            "search": "搜索订单"
+        },
+        "department": {
+            "h1": "管理部门",
+            "create": "创建部门",
+            "search": "搜索部门",
+            "update": "更新部门",
+            "name": "名称",
+            "date": "日期"
+        },
+        "booking": {
+            "h1": "管理预订",
+            "name": "名称",
+            "price": "价格",
+            "note": "备注",
+            "operator": "操作员",
+            "searcg": "搜索预订",
+            "create": "创建预订",
+            "date": "日期",
+            "time": "时间"
+        }
+    },
+    "global": {
+        "cancel": "取消",
+        "create": "创建",
+        "delete": "删除",
+        "update": "更新",
+        "view": "查看",
+        "close": "关闭",
+        "search": "搜索"
+    },
+    "auth": {
+        "username": "用户名",
+        "password": "密码",
+        "signin": "登录",
+        "signup": "注册",
+        "name": "全名",
+        "confirm_password": "确认密码",
+        "not_signup": "还没有帐户？",
+        "already_signup": "已注册？"
+    },
+    "client": {
+        "card": {
+            "validity": "有效期",
+            "balance": "余额",
+            "price": "价格"
         }
     }
 }

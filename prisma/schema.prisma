@@ -27,27 +27,29 @@ model Client {
   updated_at   DateTime     @updatedAt
   orders       Order[]
   bookings     Booking[]
+  Reminders    Reminders[]
 }
 
 model ClientCard {
-  id                String    @id @default(uuid())
+  id                String         @id @default(uuid())
   name              String
   price             Float
   balance           Int
   validity          String
-  client            Client    @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  client            Client         @relation(fields: [clientID], references: [id], onDelete: Cascade)
   clientID          String
+  quantity          Int?
   invoice           Boolean
   repeat_purchases  Boolean
-  online_purchases  Boolean
   online_renews     Boolean
   settlement_period String
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  card              ClientCardList @relation(fields: [cardID], references: [id])
   cardID            String
-  bookings          Booking[]
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @updatedAt
 
   @@index([clientID])
+  @@index([cardID])
 }
 
 model ClientCardList {
@@ -57,9 +59,10 @@ model ClientCardList {
   price               Int
   balance             Int
   validity            Int
+  available           Boolean
+  quantity            Int?
   invoice             Boolean
   repeat_purchases    Boolean
-  online_purchases    Boolean
   online_renews       Boolean
   settlement_period   String
   productID           String
@@ -69,6 +72,11 @@ model ClientCardList {
   orders              Order[]
   supported_courses   Courses[]
   supported_suppliers SupplierPrice[]
+  active              ClientCard[]
+  department          Department?     @relation(fields: [departmentID], references: [id])
+  departmentID        String?
+
+  @@index([departmentID])
 }
 
 model Courses {
@@ -77,6 +85,8 @@ model Courses {
   created_at      DateTime         @default(now())
   updated_at      DateTime         @updatedAt
   supported_cards ClientCardList[]
+  booking         Booking[]
+  Reminders       Reminders[]
 }
 
 model Supplier {
@@ -105,74 +115,103 @@ model Supplier {
   supplier_price    SupplierPrice[]
   bookings          Booking[]
   departments       Department[]
+  Reminders         Reminders[]
 }
 
 model SupplierPrice {
-  id         String         @id @default(uuid())
-  price      Int
-  supplierID String
-  cardID     String
-  supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+  id           String         @id @default(uuid())
+  price        Int
+  clientCardID String
+  supplierID   String
+  cardID       String
+  supplier     Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  card         ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
 
   @@index([supplierID])
   @@index([cardID])
 }
 
 model SupplierMeetingInfo {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   service      String
   meeting_code String
   supplierID   String
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  supplier     Supplier  @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  bookings     Booking[]
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  supplier     Supplier @relation(fields: [supplierID], references: [id], onDelete: Cascade)
 
   @@index([supplierID])
 }
 
 model SupplierSchedule {
-  id         String    @id @default(uuid())
-  supplierID String
-  date       String
-  time       String
-  
-  reserved   Boolean   @default(false)
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  supplier   Supplier  @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  booking    Booking[]
-
+  id          String     @id @default(uuid())
+  supplierID  String
+  date        String
+  time        String
+  status      String
+  clientName  String?
+  clientID    String?
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  supplier    Supplier   @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  booking     Booking?   @relation(fields: [bookingID], references: [id], onDelete: Cascade)
+  bookingID   String?
+  Reminders   Reminders? @relation(fields: [remindersID], references: [id])
+  remindersID String?
   @@index([supplierID])
+  @@index([bookingID])
+  @@index([remindersID])
 }
 
 model Booking {
-  id            String              @id @default(uuid())
-  name          String
-  operator      String
-  status        String
-  note          String?
-  scheduleID    String
-  supplierID    String
-  clientID      String
-  clientCardID  String
-  meetingInfoID String
-  price         Int
-  created_at    DateTime            @default(now())
-  updated_at    DateTime            @updatedAt
-  schedule      SupplierSchedule    @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
-  supplier      Supplier            @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  client        Client              @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  client_card   ClientCard          @relation(fields: [clientCardID], references: [id], onDelete: Cascade)
-  meeting_info  SupplierMeetingInfo @relation(fields: [meetingInfoID], references: [id], onDelete: Cascade)
-  departments   Department[]
+  id           String             @id @default(uuid())
+  name         String
+  operator     String
+  status       String
+  note         String?
+  scheduleID   String
+  supplierID   String
+  clientID     String
+  clientCardID String
+  price        Int
+  meeting_info Json
+  created_at   DateTime           @default(now())
+  updated_at   DateTime           @updatedAt
+  course       Courses            @relation(fields: [courseID], references: [id])
+  schedule     SupplierSchedule[]
+  supplier     Supplier           @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  client       Client             @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  departments  Department[]
+  courseID     String
 
-  @@index([scheduleID])
   @@index([supplierID])
   @@index([clientID])
-  @@index([clientCardID])
-  @@index([meetingInfoID])
+  @@index([courseID])
+}
+
+model Reminders {
+  id           String             @id @default(uuid())
+  name         String
+  operator     String
+  status       String
+  note         String?
+  scheduleID   String
+  supplierID   String
+  clientID     String
+  clientCardID String
+  price        Int
+  meeting_info Json
+  created_at   DateTime           @default(now())
+  updated_at   DateTime           @updatedAt
+  course       Courses            @relation(fields: [courseID], references: [id])
+  schedule     SupplierSchedule[]
+  supplier     Supplier           @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  client       Client             @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  departments  Department[]
+  courseID     String
+  @@index([supplierID])
+  @@index([clientID])
+  @@index([courseID])
 }
 
 model Agent {
@@ -250,17 +289,19 @@ model SuperAdmin {
 }
 
 model Department {
-  id         String     @id @default(uuid())
-  name       String
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  clients    Client[]
-  news       News[]
-  agents     Agent[]
-  suppliers  Supplier[]
-  admins     Admin[]
-  orders     Order[]
-  bookings   Booking[]
+  id          String           @id @default(uuid())
+  name        String
+  created_at  DateTime         @default(now())
+  updated_at  DateTime         @updatedAt
+  clients     Client[]
+  news        News[]
+  agents      Agent[]
+  suppliers   Supplier[]
+  admins      Admin[]
+  orders      Order[]
+  bookings    Booking[]
+  cards       ClientCardList[]
+  reminders   Reminders[]
 }
 
 model News {

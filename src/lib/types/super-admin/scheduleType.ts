@@ -1,19 +1,19 @@
+import { Booking } from "./bookingType"
+import { Supplier, SupplierMeetingInfo } from "./supplierTypes"
+
 interface SupplierSchedule {
     id: string
-    supplier_id: string
-    client_id: string | null
-    client_name: string | null
-    client_card_id: string | null
     date: string
     time: string
-    reserved: boolean
-    meeting_info: {
-        id: string
-        service: string
-        meeting_code: string
-    } | null
-    note: string | null
-    completed: boolean
+    status: string
+    supplier: Supplier
+    clientName: string | null
+    clientID: string | null
+    supplierID: string
+    booking: Booking | null
+    bookingID: string | null
+    created_at: string
+    updated_at: string
 }
 
 export type { SupplierSchedule }

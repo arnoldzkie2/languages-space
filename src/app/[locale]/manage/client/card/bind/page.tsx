@@ -2,37 +2,31 @@
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
-import BindCardHeader from '@/components/super-admin/management/client-card/BindCardHeader'
-import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore'
+import BindCardHeader from '@/components/super-admin/management/card/BindCardHeader'
+import useAdminCardStore from '@/lib/state/super-admin/cardStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import { ClientCard } from '@/lib/types/super-admin/clientCardType'
+import { ClientCardList } from '@/lib/types/super-admin/clientCardType'
 import { Client } from '@/lib/types/super-admin/clientType'
-import { faChevronDown, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const router = useRouter()
-
     const [selectedClient, setSelectedClient] = useState<Client>()
-    const [selectedCard, setSelectedCard] = useState<ClientCard>()
+    const [selectedCard, setSelectedCard] = useState<ClientCardList>()
 
     const [clientSearchQuery, setClientSearchQuery] = useState('')
     const [cardSearchQuery, setCardSearchQuery] = useState('')
 
     const { clients, getClients } = useAdminClientStore()
-
     const { isSideNavOpen, departmentID, isLoading, setIsLoading } = useAdminGlobalStore()
-
-    const { cards, getCards } = useAdminClientCardStore()
+    const { cards, getCards } = useAdminCardStore()
 
     const filteredClient = clients.filter(client => client.name.toUpperCase().includes(clientSearchQuery.toUpperCase())).splice(0, 40)
-
     const filteredCard = cards.filter(card => card.name.toUpperCase().includes(cardSearchQuery.toUpperCase())).splice(0, 40)
 
     useEffect(() => {
@@ -128,11 +122,8 @@ const Page = () => {
 
                         <button disabled={isLoading && true} onClick={bindCardToUser} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} outline-none py-2 w-1/2 self-end text-white rounded-md`}>
                             {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : t('client.card.bind')}</button>
-
                     </div>
-
                 </div>
-
             </div>
         </div>
     )

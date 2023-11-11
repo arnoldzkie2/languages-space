@@ -7,7 +7,7 @@ interface Props {
     handleSearch: (event: ChangeEvent<HTMLInputElement>) => void
 
     searchQuery: {
-        name: string;
+        card: string;
         client_name: string;
         quantity: string;
         price: string;
@@ -30,11 +30,11 @@ const SearchOrder: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                 <div className='flex w-full text-gray-700 gap-3'>
 
                     <input type="text"
-                        placeholder={t('order.name')}
-                        name='name'
+                        placeholder={t('order.card')}
+                        name='card'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
-                        value={searchQuery.name}
+                        value={searchQuery.card}
                     />
 
                     <input type="text"

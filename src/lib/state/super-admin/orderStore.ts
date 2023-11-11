@@ -4,7 +4,7 @@ import axios from 'axios'
 import { create } from 'zustand'
 
 const ManageOrderSearchValue = {
-    name: '',
+    card: '',
     price: '',
     express_number: '',
     status: '',

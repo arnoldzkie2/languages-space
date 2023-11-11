@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import Logout from './Logout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faCalendarDays, faChartLine,faBuilding, faDisplay, faGear, faHouse, faNewspaper, faUser, faUserSecret, faUserShield, faUsers, faBook } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faCalendarDays, faChartLine, faBuilding, faDisplay, faGear, faHouse, faNewspaper, faUser, faUserSecret, faUserShield, faUsers, faBook, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next-intl/link';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import { usePathname } from 'next-intl/client';
+import { useRouter } from 'next/navigation';
 
 const SideNav: React.FC = () => {
 
@@ -77,6 +79,40 @@ const SideNav: React.FC = () => {
 
     ])
 
+    const locales = [
+        {
+            loc: 'en',
+            val: 'English'
+        },
+        {
+            loc: 'ja',
+            val: '日本語' // Japanese
+        },
+        {
+            loc: 'zh',
+            val: '中文' // Chinese (Simplified)
+        },
+        {
+            loc: 'vi',
+            val: 'Tiếng Việt' // Vietnamese
+        },
+        {
+            loc: 'kr',
+            val: '한국어' // Korean
+        }
+    ];
+
+    const router = useRouter()
+
+    const currentPathname = usePathname()
+
+    const handleTranslation = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedLocale = event.target.value;
+        const newPath = `/${selectedLocale}${currentPathname}`
+        router.push(newPath)
+    }
+    const locale = useLocale()
+
     return (
         <nav className={`border-r ${isSideNavOpen ? 'w-44 p-6' : 'w-16 px-3 py-6'} fixed h-screen flex flex-col bg-white`}>
             {
@@ -84,21 +120,32 @@ const SideNav: React.FC = () => {
                     <button
                         onClick={() => toggleSideNav()}
                         className='text-lg flex justify-between items-center pb-4 border-b border-gray-600 hover:text-blue-600'>
-                        Menu <FontAwesomeIcon icon={faArrowLeft} width={20} height={20} />
+                        {t('side-nav.menu')} <FontAwesomeIcon icon={faArrowLeft} width={20} height={20} />
                     </button>
                     :
                     <FontAwesomeIcon icon={faArrowRight} width={20} height={20}
                         className='pb-4 border-b text-xl text-black w-full border-gray-600 cursor-pointer hover:text-blue-600'
                         onClick={() => toggleSideNav()} />
             }
-            <ul className='flex flex-col gap-7 h-full py-7 justify-center'>
+            <ul className='flex flex-col gap-6 h-full py-7 justify-center'>
                 {navArray.map(nav => (
-                    <Link href={nav.link} className={`flex items-center hover:text-blue-600 w-full`} key={nav.link}>
+                    <Link href={nav.link} className={`flex text-base items-center outline-none hover:text-blue-600 w-full`} key={nav.link}>
                         {isSideNavOpen && <span className='mr-auto'>{t(nav.translate)}</span>}
-                        <FontAwesomeIcon width={20} height={20} icon={nav.icon} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
+                        <FontAwesomeIcon width={16} height={16} icon={nav.icon} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
                     </Link >
                 ))}
+                <div className='w-full relative'>
+                    <FontAwesomeIcon icon={faGlobe} width={16} height={16} className={`absolute top-2 ${isSideNavOpen ? 'right-0 -z-10' : 'right-3 z-10 cursor-pointer hover:text-blue-600'}`} onClick={toggleSideNav} />
+                    <select id='locale' className={`py-2 w-full px-1 ${isSideNavOpen ? 'block' : 'hidden'} text-sm bg-transparent border-0 cursor-pointer border-b appearance-none focus:outline-none focus:ring-0 hover:border-blue-500 outline-none`} value={locale} onChange={handleTranslation}>
+                        {locales.map(loc => (
+                            <option value={loc.loc} key={loc.loc} className='flex items-center justify-between'>
+                                {loc.val}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </ul>
+
             <Logout />
         </nav>
     );

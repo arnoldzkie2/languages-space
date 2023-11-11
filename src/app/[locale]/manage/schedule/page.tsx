@@ -14,7 +14,7 @@ import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore';
 import ScheduleComponent from '@/components/super-admin/management/schedule/ScheduleComponent';
 import NewScheduleModal from '@/components/super-admin/management/schedule/NewScheduleModal';
 import BindSchedlueModal from '@/components/super-admin/management/schedule/BindSchedlueModal';
-import ViewScheduleModal from '@/components/super-admin/management/schedule/VIewScheduleModal';
+import ViewBokingModal from '@/components/super-admin/management/schedule/ViewBokingModal';
 
 const Page = ({ }) => {
 
@@ -26,7 +26,7 @@ const Page = ({ }) => {
 
     const { getSupplierWithMeeting, supplier, supplierSelectedID, setSupplierSelectedID } = useAdminSupplierStore()
 
-    const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewSchedule, viewSchedule } = useAdminScheduleStore()
+    const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewBooking, viewBooking } = useAdminScheduleStore()
 
     const filterSupplier = supplier.filter(item => item.name.toUpperCase().includes(searchQuery.toUpperCase()))
 
@@ -59,7 +59,8 @@ const Page = ({ }) => {
         end: `${item.date}T${item.time}:01`,
         extendedProps: {
             data: item,
-            viewSchedule: item.reserved ? openViewSchedule : openBindSchedule
+            viewBooking: openViewBooking,
+            openBindSchedule: openBindSchedule
         },
     }))
 
@@ -124,7 +125,7 @@ const Page = ({ }) => {
 
             {newSchedule && <NewScheduleModal />}
             {bindSchedule && <BindSchedlueModal />}
-            {viewSchedule && <ViewScheduleModal />}
+            {viewBooking && <ViewBokingModal />}
         </>
     );
 };

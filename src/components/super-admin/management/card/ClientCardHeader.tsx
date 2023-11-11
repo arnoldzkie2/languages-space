@@ -1,6 +1,3 @@
-import {  faSquarePlus, faUser } from '@fortawesome/free-regular-svg-icons'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next-intl/link'
 import React from 'react'
 import { useSession } from 'next-auth/react'

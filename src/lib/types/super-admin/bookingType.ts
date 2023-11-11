@@ -13,16 +13,15 @@ interface Booking {
     scheduleID: string
     supplierID: string
     clientID: string
-    meetingInfoID: string
-    schedule: SupplierSchedule
-    supplier: Supplier
-    client: Client
-    client_card: ClientCard
+    clientCardID: string
     price: number
     meeting_info: SupplierMeetingInfo
-    departments: Department[]
     created_at: string
     updated_at: string
+    schedule: SupplierSchedule[]
+    supplier: Supplier
+    client: Client
+    departments: Department[]
 }
 
 export type { Booking }

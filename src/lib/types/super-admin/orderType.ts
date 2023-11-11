@@ -1,4 +1,4 @@
-import { ClientCard } from "./clientCardType"
+import { ClientCard, ClientCardList } from "./clientCardType"
 import { Client } from "./clientType"
 import { Department } from "./globalType"
 
@@ -7,7 +7,7 @@ interface Order {
     name: string
     client: Client
     client_id: string
-    card: ClientCard
+    card: ClientCardList
     card_id: string
     quantity: number
     price: number
@@ -16,13 +16,14 @@ interface Order {
     status: string
     invoice_number: string | null
     express_number: string | null
-    date: string
+    created_at: string
+    updated_at: string
     departments: Department[]
 }
 
 interface OrderFormValue {
     client: Client | null
-    card: ClientCard | null
+    card: ClientCardList | null
     name: string;
     express_number: string;
     status: string;

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
+import useAdminCardStore from '@/lib/state/super-admin/cardStore'
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
@@ -18,25 +19,18 @@ import React, { useEffect, useState } from 'react'
 const Page = () => {
 
     const router = useRouter()
-
+    const t = useTranslations('super-admin')
     const session = useSession()
 
-    const t = useTranslations('super-admin')
-
     const [searchClient, setSearchClient] = useState('')
-
     const [searchCard, setSearchCard] = useState('')
-
     const [formData, setFormData] = useState<OrderFormValue>(newOrderFormValue)
 
     const { isSideNavOpen } = useAdminGlobalStore()
-
-    const { cards, getCards } = useAdminClientCardStore()
-
+    const { cards, getCards } = useAdminCardStore()
     const { getClients, clients } = useAdminClientStore()
 
     const filterClient = clients.filter(client => client.name.toUpperCase().includes(searchClient.toUpperCase()))
-
     const filterCard = cards.filter(card => card.name.toUpperCase().includes(searchCard.toUpperCase()))
 
     const [isLoading, setIsLoading] = useState(false)

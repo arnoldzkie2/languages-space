@@ -65,7 +65,7 @@ export const PATCH = async (req: Request) => {
   const { searchParams } = new URL(req.url)
   const cardID = searchParams.get('cardID')
 
-  const { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period } = await req.json()
+  const { name, price, balance, validity } = await req.json()
 
   try {
 
@@ -76,7 +76,7 @@ export const PATCH = async (req: Request) => {
 
       const updateCard = await prisma.clientCard.update({
         where: { id: cardID },
-        data: { name, price, balance, validity, invoice, repeat_purchases, online_purchases, online_renews, settlement_period }
+        data: { name, price, balance, validity }
       })
       if (!updateCard) return badRequestRes()
 

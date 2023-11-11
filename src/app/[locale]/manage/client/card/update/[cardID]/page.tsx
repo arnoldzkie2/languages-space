@@ -2,9 +2,11 @@
 'use client'
 import { OurFileRouter } from '@/app/api/uploadthing/core'
 import SideNav from '@/components/super-admin/SideNav'
+import Departments from '@/components/super-admin/management/Departments'
 import { clientCardValue } from '@/lib/state/super-admin/clientCardStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
+import { Courses, Supplier } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -34,11 +36,11 @@ const Page = ({ params }: Props) => {
 
     const [supportedSuppliers, setSupportedSuppliers] = useState<{ supplierID: string, price: number }[]>([])
 
-    const { isSideNavOpen } = useAdminGlobalStore()
 
     const [searchCourse, setSearchCourse] = useState('')
     const [searchSupplier, setSearchSupplier] = useState('')
 
+    const { isSideNavOpen, departmentID, setDepartmentID } = useAdminGlobalStore()
     const { supplier, getSupplier, getCourses, courses } = useAdminSupplierStore()
 
     const filterCourse = courses.filter(course => course.name.toUpperCase().includes(searchCourse.toUpperCase()))
@@ -59,6 +61,7 @@ const Page = ({ params }: Props) => {
                 setSupportedSuppliers(data.data.supported_suppliers.map((sup: { supplierID: string, price: number }) => ({ supplierID: sup.supplierID, price: sup.price })))
                 setSupportedCourses(data.data.supported_courses.map((course: { id: string }) => course.id))
                 setFormData(data.data)
+                setDepartmentID(data.data.departmentID)
             }
 
         } catch (error) {
@@ -71,19 +74,20 @@ const Page = ({ params }: Props) => {
 
         e.preventDefault()
         const { balance, price } = formData
-        if (price < 1) return alert('Price must be greater than 0')
-        if (balance < 1) return alert('Balance must be greater than 0')
+        if (price < 1) return setErr('Price must be greater than 0')
+        if (balance < 1) return setErr('Balance must be greater than 0')
+        if (!departmentID) return setErr('Select Department')
 
         try {
 
             setIsLoading(true)
 
-            const { name, price, balance, online_purchases, online_renews, invoice, validity, repeat_purchases, settlement_period } = formData
+            const { name, price, balance, online_renews, invoice, available, validity, repeat_purchases, settlement_period, quantity } = formData
 
             const { data } = await axios.patch('/api/client/card-list',
                 {
-                    name, price: Number(price), balance: Number(balance), online_purchases, online_renews, invoice,
-                    validity: Number(validity), repeat_purchases, settlement_period,
+                    name, price: Number(price), balance: Number(balance), online_renews, invoice, available, departmentID,
+                    validity: Number(validity), repeat_purchases, settlement_period, quantity: Number(quantity),
                     courses: supportedCourses, suppliers: supportedSuppliers
                 }, {
                 params: {
@@ -125,6 +129,43 @@ const Page = ({ params }: Props) => {
             }));
         }
 
+    }
+
+    const selectAllCourses = (courses: Courses[]) => {
+
+        if (supportedCourses.length === courses.length) {
+            setSupportedCourses([])
+
+        } else {
+            const coursesID = courses.map(course => course.id)
+            setSupportedCourses(coursesID)
+        }
+
+    }
+
+    const selectAllSupplier = (suppliers: Supplier[]) => {
+
+
+        if (supportedSuppliers.length === supplier.length) {
+            setSupportedSuppliers([]);
+
+        } else {
+            const supplierPrices = suppliers.map(sup => {
+                // Check if the supplier is already supported
+                const supportedSupplier = supportedSuppliers.find(supported => supported.supplierID === sup.id);
+                if (supportedSupplier) {
+                    // If supported, set the price to the price from supportedSuppliers
+                    return supportedSupplier;
+                } else {
+                    // If not supported, set the price to 1
+                    return {
+                        supplierID: sup.id,
+                        price: 1
+                    };
+                }
+            });
+            setSupportedSuppliers(supplierPrices);
+        }
     }
 
     const toggleCourseSelection = (courseID: string) => {
@@ -204,6 +245,8 @@ const Page = ({ params }: Props) => {
 
                             <div className='w-1/2 flex flex-col gap-4'>
 
+                                <Departments />
+
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="name" className='font-medium px-2'>{t('client-card.name')}</label>
                                     <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
@@ -214,9 +257,10 @@ const Page = ({ params }: Props) => {
                                     <input required value={formData.price} onChange={handleChange} name='price' type="number" className=' w-full border outline-none py-1 px-3' id='price' />
                                 </div>
 
-                                <div className='w-full flex flex-col gap-2'>
+                                <div className='w-full flex flex-col gap-2 relative'>
                                     <label htmlFor="balance" className='font-medium px-2'>{t('client-card.balance')}</label>
                                     <input value={formData.balance} onChange={handleChange} name='balance' type="number" className='w-full border outline-none py-1 px-3' id='balance' />
+                                    <div className='absolute right-3 top-10 font-black cursor-pointer hover:text-blue-600 text-xs uppercase' onClick={() => setFormData(prevData => ({ ...prevData, balance: 99999 }))}>{t('client-card.max')}</div>
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
@@ -242,8 +286,13 @@ const Page = ({ params }: Props) => {
                                 </div>
 
                                 <div className='w-full flex justify-between items-center gap-2'>
-                                    <label htmlFor="online_purchases" className='font-medium'>{t('client-card.online_purchases')}</label>
-                                    <input checked={formData.online_purchases} onChange={handleChange} name='online_purchases' type="checkbox" className='border outline-none py-1 px-3' id='online_purchases' />
+                                    <label htmlFor="available" className='font-medium'>{t('client-card.available')}</label>
+                                    <input checked={formData.available} onChange={handleChange} name='available' type="checkbox" className='border outline-none py-1 px-3' id='available' />
+                                </div>
+
+                                <div className='w-full flex flex-col gap-2'>
+                                    <label htmlFor="quantity" className='font-medium'>{t('client-card.quantity')}</label>
+                                    <input required value={formData.quantity} onChange={handleChange} name='quantity' type="number" className='border outline-none py-1 px-3' id='quantity' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
@@ -258,6 +307,9 @@ const Page = ({ params }: Props) => {
                         <div className='w-full flex gap-10'>
                             <div className='w-full flex flex-col gap-3'>
                                 <h1 className='font-bold'>{t('client-card.courses')}:</h1>
+                                <label htmlFor="courses-all" className='flex cursor-pointer items-center gap-2'>{t('client-card.select-all')}
+                                    <input id='courses-all' checked={supportedCourses.length === courses.length} type='checkbox' onChange={() => selectAllCourses(courses)} />
+                                </label>
                                 <input type="text" value={searchCourse} onChange={(e) => setSearchCourse(e.target.value)} className='outline-none border px-3 py-1.5' placeholder={t('courses.search')} />
                                 <ul className='w-ful flex flex-col max-h-[500px] overflow-y-auto'>
                                     {filterCourse.length > 0 ? filterCourse.map(course => (
@@ -275,6 +327,9 @@ const Page = ({ params }: Props) => {
                             </div>
                             <div className='w-full flex flex-col gap-3'>
                                 <h1 className='font-bold'>{t('client-card.suppliers')}:</h1>
+                                <label htmlFor="suppliers-all" className='flex cursor-pointer items-center gap-2'>{t('client-card.select-all')}
+                                    <input id='suppliers-all' checked={supportedSuppliers.length === supplier.length} type='checkbox' onChange={() => selectAllSupplier(supplier)} />
+                                </label>
                                 <input type="text" value={searchSupplier} onChange={(e) => setSearchSupplier(e.target.value)} className='outline-none border px-3 py-1.5' placeholder={t('supplier.search')} />
                                 <ul className='w-ful flex flex-col max-h-[500px] overflow-y-auto'>
                                     {filterSupplier.length > 0 ? filterSupplier.map(supplier => (
@@ -291,23 +346,15 @@ const Page = ({ params }: Props) => {
                                             />
                                             <div className='mr-auto'>{supplier.name}</div>
                                             <input
-                                                type="text"
-                                                className='w-12 px-1 text-center py-0.5 outline-none border'
-                                                value={supportedSuppliers.find((supp) => supp.supplierID === supplier.id)?.price || '1'}
+                                                type="number"
+                                                className='w-12 appearance-none text-center px-2 py-0.5 outline-none border'
+                                                value={supportedSuppliers.find((supp) => supp.supplierID === supplier.id)?.price || ''}
                                                 onChange={(e) => {
                                                     const newPrice = parseFloat(e.target.value);
                                                     if (!isNaN(newPrice) && newPrice) {
                                                         const updatedSuppliers = supportedSuppliers.map((supp) => {
                                                             if (supp.supplierID === supplier.id) {
                                                                 return { supplierID: supp.supplierID, price: newPrice };
-                                                            }
-                                                            return supp;
-                                                        });
-                                                        setSupportedSuppliers(updatedSuppliers);
-                                                    } else {
-                                                        const updatedSuppliers = supportedSuppliers.map((supp) => {
-                                                            if (supp.supplierID === supplier.id) {
-                                                                return { supplierID: supp.supplierID, price: 1 };
                                                             }
                                                             return supp;
                                                         });

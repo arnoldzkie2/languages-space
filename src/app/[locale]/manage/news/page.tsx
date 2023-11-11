@@ -25,7 +25,7 @@ const Web: React.FC = () => {
         const searchAuthor = searchQuery.author.toUpperCase();
         const searchTitle = searchQuery.title.toUpperCase();
         const searchKeyword = searchQuery.keywords.toUpperCase();
-        const searchDate = searchQuery.date.toUpperCase();
+        const searchDate = searchQuery.created_at.toUpperCase();
 
         const hasMatchingKeyword = newsItem.keywords.some((keyword) =>
             keyword.toUpperCase().includes(searchKeyword)
@@ -35,7 +35,7 @@ const Web: React.FC = () => {
             (searchTitle === '' || newsItem.title?.toUpperCase().includes(searchTitle)) &&
             (searchAuthor === '' || newsItem.author?.toUpperCase().includes(searchAuthor)) &&
             (searchKeyword === '' || hasMatchingKeyword) &&
-            (searchDate === '' || newsItem.date.toUpperCase().includes(searchDate))
+            (searchDate === '' || newsItem.created_at.toUpperCase().includes(searchDate))
         );
     });
 

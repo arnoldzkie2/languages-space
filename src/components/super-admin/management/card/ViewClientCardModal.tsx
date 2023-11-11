@@ -51,12 +51,6 @@ const ViewClientCardModal = () => {
                         <input readOnly type="checkbox" className=' outline-none border px-3 py-2 cursor-pointer' checked={clientCardData?.online_renews} />
                     </div>
 
-                    <div className='flex items-center justify-between w-2/3'>
-
-                        <label className=''>Online Purchases:</label>
-                        <input readOnly type="checkbox" className=' outline-none border px-3 py-2 cursor-pointer' checked={clientCardData?.online_purchases} />
-                    </div>
-
                 </div>
 
             </form>

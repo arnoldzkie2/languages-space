@@ -12,16 +12,13 @@ import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
-
     const [searchQuery, setSearchQuery] = useState(ManageOrderSearchValue)
-
+    
+    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
     const { getOrders, setTotalOrders, selectedOrder, orders, totalOrders } = useAdminOrderStore()
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
 
-        console.log(searchQuery);
-        
         const { name, value } = event.target
         setCurrentPage(1)
         setSearchQuery(prevState => ({
@@ -30,7 +27,7 @@ const Page = () => {
     }
 
     const filteredOrders = orders.filter((order) => {
-        const searchCard = searchQuery.name.toUpperCase();
+        const searchCard = searchQuery.card.toUpperCase();
         const searchClient = searchQuery.client_name.toUpperCase();
         const searchQuantity = searchQuery.quantity.toUpperCase();
         const searchPrice = searchQuery.price.toUpperCase();
@@ -49,19 +46,15 @@ const Page = () => {
             (searchStatus === '' || order.status.toUpperCase().includes(searchStatus)) &&
             (searchInvoice === '' || order.invoice_number?.toUpperCase().includes(searchInvoice)) &&
             (searchExpress === '' || order.express_number?.toUpperCase().includes(searchExpress)) &&
-            (searchDate === '' || order.date?.toUpperCase().includes(searchDate)) &&
+            (searchDate === '' || order.created_at?.toUpperCase().includes(searchDate)) &&
             (searchNote === '' || order.note?.toUpperCase().includes(searchNote))
         );
     })
 
     const indexOfLastItem = currentPage * itemsPerPage
-
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
-
     const currentOrders = filteredOrders.slice(indexOfFirstItem, indexOfLastItem)
-
     const getTotalPages = () => Math.ceil(filteredOrders.length / itemsPerPage)
-
 
     useEffect(() => {
         getOrders()

@@ -30,13 +30,9 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
   let translation;
 
   try {
-
     translation = (await import(`../../translation/${locale}.json`)).default;
-
   } catch (error) {
-
     notFound()
-
   }
 
   return (

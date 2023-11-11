@@ -6,7 +6,8 @@ interface SearchNewsProps {
         author: string
         title: string
         keywords: string
-        date: string
+        created_at: string
+        updated_at: string
     }
 
     handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -54,7 +55,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                         name='date'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
-                        value={searchQuery.date}
+                        value={searchQuery.created_at}
                     />
                 </div>
             </div>

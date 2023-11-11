@@ -15,73 +15,69 @@ import useAdminClientStore, { ManageClientSearchQueryValue } from '@/lib/state/s
 
 const ManageClient: FC = () => {
 
-    const { departmentID, currentPage, setCurrentPage, isSideNavOpen } = useAdminGlobalStore()
+    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
 
     const { totalClients, clients, setTotalClients, selectedClients, deleteModal, viewClientModal, getClients } = useAdminClientStore()
 
     const [searchQuery, setSearchQuery] = useState(ManageClientSearchQueryValue)
 
     const filteredClients = clients.filter((client) => {
-
         const searchName = searchQuery.name.toUpperCase();
         const searchPhone = searchQuery.phone_number.toUpperCase();
         const searchOrganization = searchQuery.organization.toUpperCase();
         const searchOrigin = searchQuery.origin.toUpperCase();
-        const searchNote = searchQuery.note.toUpperCase()
+        const searchNote = searchQuery.note.toUpperCase();
+        const filterCard = searchQuery.cards;
 
-        return (
+        if (filterCard) {
+            // If filterCard is true, filter based on client.cards.length
+            if (client.cards && client.cards.length > 0) {
+                return (
+                    (searchName === '' || client.name.toUpperCase().includes(searchName)) &&
+                    (searchPhone === '' || client.phone_number?.toUpperCase().includes(searchPhone)) &&
+                    (searchOrganization === '' || client.organization?.toUpperCase().includes(searchOrganization)) &&
+                    (searchOrigin === '' || client.origin?.toUpperCase().includes(searchOrigin)) &&
+                    (searchNote === '' || client.note?.toUpperCase().includes(searchNote))
+                );
+            }
+        } else {
+            // If filterCard is false, apply other filters without checking client.cards.length
+            return (
+                (searchName === '' || client.name.toUpperCase().includes(searchName)) &&
+                (searchPhone === '' || client.phone_number?.toUpperCase().includes(searchPhone)) &&
+                (searchOrganization === '' || client.organization?.toUpperCase().includes(searchOrganization)) &&
+                (searchOrigin === '' || client.origin?.toUpperCase().includes(searchOrigin)) &&
+                (searchNote === '' || client.note?.toUpperCase().includes(searchNote))
+            );
+        }
+    });
 
-            (searchName === '' || client.name.toUpperCase().includes(searchName)) &&
-            (searchPhone === '' || client.phone_number?.toUpperCase().includes(searchPhone)) &&
-            (searchOrganization === '' || client.organization?.toUpperCase().includes(searchOrganization)) &&
-            (searchOrigin === '' || client.origin?.toUpperCase().includes(searchOrigin)) &&
-            (searchNote === '' || client.note?.toUpperCase().includes(searchNote))
-
-        );
-    })
-
-    const itemsPerPage = 10
 
     const indexOfLastItem = currentPage * itemsPerPage
-
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
-
     const currentClients = filteredClients.slice(indexOfFirstItem, indexOfLastItem)
 
     const getTotalPages = () => Math.ceil(filteredClients.length / itemsPerPage)
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-        const { name, value } = event.target
-
+        const { name, value, type, checked } = event.target
         setCurrentPage(1)
-
         setSearchQuery(prevState => ({
-            ...prevState, [name]: value
+            ...prevState, [name]: type === 'checkbox' ? checked : value
         }))
-
     }
 
     useEffect(() => {
-
         getClients()
-
         setCurrentPage(1)
-
         setSearchQuery(ManageClientSearchQueryValue)
-
     }, [departmentID])
 
     useEffect(() => {
-
         setTotalClients({
-
             selected: selectedClients.length.toString(),
-
             searched: filteredClients.length.toString(),
-
             total: clients.length.toString()
-
         })
 
     }, [clients.length, filteredClients.length, selectedClients.length])

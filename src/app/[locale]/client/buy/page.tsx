@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import ClientHeader from '@/components/client/ClientHeader'
-import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore'
+import useAdminCardStore from '@/lib/state/super-admin/cardStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import { ClientCard } from '@/lib/types/super-admin/clientCardType'
+import {  ClientCardList } from '@/lib/types/super-admin/clientCardType'
 import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -12,12 +12,10 @@ import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const { cards, getCards } = useAdminClientCardStore()
-
     const session: any = useSession()
-
     const [searchQuery, setSearchQery] = useState('')
-
+    
+    const { cards, getCards } = useAdminCardStore()
     const { isLoading, setIsLoading } = useAdminGlobalStore()
 
     const filterCards = cards.filter(card => card.name.toUpperCase().includes(searchQuery.toUpperCase()))
@@ -28,7 +26,7 @@ const Page = () => {
 
     }, [session])
 
-    const checkoutCard = async (card: ClientCard) => {
+    const checkoutCard = async (card: ClientCardList) => {
 
         try {
 

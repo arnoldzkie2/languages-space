@@ -134,7 +134,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                 </select>
                             </td>
                             <td className="py-3 px-6 h-5 w-36 max-w-[9rem] overflow-x-auto">{news.author}</td>
-                            <td className="py-3 px-6 h-5 w-52">{new Date(news.date).toLocaleString()}</td>
+                            <td className="py-3 px-6 h-5 w-52">{new Date(news.created_at).toLocaleString()}</td>
                             <td className="py-3 px-6 h-5 w-14 relative">
                                 <FontAwesomeIcon icon={faEllipsis} className='cursor-pointer text-2xl text-black' onClick={() => openOperation(news.id)} />
                                 <ul className={`${operation && selectedID === news.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>

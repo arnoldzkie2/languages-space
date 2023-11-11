@@ -9,7 +9,8 @@ interface News {
     title: string;
     author: string;
     content: string;
-    date: string;
+    created_at: string;
+    updated_at: string;
     keywords: string[]
 }
 

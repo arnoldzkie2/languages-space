@@ -2,7 +2,7 @@
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
 import Pagination from '@/components/super-admin/management/Pagination'
-import DeleteCardWarningModal from '@/components/super-admin/management/client-card/DeleteCardWarningModal'
+import DeleteCardWarningModal from '@/components/super-admin/management/card/DeleteCardWarningModal'
 import DeleteDepartmentWarningModal from '@/components/super-admin/management/department/DeleteDepartmentWarningModal'
 import DepartmentHeader from '@/components/super-admin/management/department/DepartmentHeader'
 import DepartmentTable from '@/components/super-admin/management/department/DepartmentTable'

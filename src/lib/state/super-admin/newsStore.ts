@@ -6,7 +6,8 @@ const ManageWebSearchQueryValue = {
     author: '',
     content: '',
     keywords: '',
-    date: ''
+    created_at: '',
+    updated_at: ''
 }
 
 const totalNewsValue = {
@@ -21,7 +22,8 @@ const newsValue = {
     author: '',
     content: '',
     keywords: [],
-    date: ''
+    created_at: '',
+    updated_at: ''
 }
 
 export { ManageWebSearchQueryValue, totalNewsValue, newsValue }
