@@ -14,6 +14,7 @@ interface AdminGlobalStoreProps {
     departmentID: string
     isCreatingDepartment: boolean
     departments: Department[]
+    err: string
     eye: boolean
     itemsPerPage: number
     totalDepartment: TotalProps
@@ -40,12 +41,15 @@ interface AdminGlobalStoreProps {
     closeDeleteDepartment: () => void
     openUpdateDepartment: (dept: Department) => void
     openDeleteDepartment: (dept: Department) => void
+    setErr: (err: string) => void
 }
 
 const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
     isSideNavOpen: false,
     toggleSideNav: () => set(state => ({ isSideNavOpen: !state.isSideNavOpen })),
     departments: [],
+    err: '',
+    setErr: (err: string) => set({ err: err }),
     setDepartments: (depts: Department[]) => set(state => ({ departments: depts })),
     getDepartments: async () => {
         try {

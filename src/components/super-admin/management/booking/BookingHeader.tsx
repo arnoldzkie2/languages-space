@@ -1,10 +1,9 @@
-import { faSquarePlus, faUser } from '@fortawesome/free-regular-svg-icons'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next-intl/link'
 import React from 'react'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
+import DownloadTable from '../DownloadTable'
+import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 
 const BookingHeader = () => {
 
@@ -15,6 +14,8 @@ const BookingHeader = () => {
     const clientHeaderSkeleton = (
         <li className='bg-slate-200 animate-pulse w-40 h-5 rounded-3xl'></li>
     )
+
+    const { bookings, selectedBookings } = useAdminBookingStore()
 
     return (
         <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between bg-white`}>
@@ -28,6 +29,9 @@ const BookingHeader = () => {
                     <Link href={'/manage/booking/new'} className='flex items-center text-gray-600 justify-center w-40 hover:text-blue-600 cursor-pointer gap-1'>
                         <div>{t('booking.create')}</div>
                     </Link> : clientHeaderSkeleton}
+                {session.status !== 'loading' ?
+                    <DownloadTable tables={bookings} selectedTable={selectedBookings} />
+                    : clientHeaderSkeleton}
             </ul>
         </nav>
     )

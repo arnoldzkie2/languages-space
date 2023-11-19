@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next-intl/link';
 import React from 'react';
 import { useTranslations } from 'next-intl';
@@ -19,7 +17,7 @@ const ClientHeader: React.FC = ({ }) => {
 
     return (
         <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between bg-white`}>
-            <h1 className='font-black text-gray-600 text-xl uppercase'>{t('client-card.manage')}</h1>
+            <h1 className='font-black text-gray-600 text-xl uppercase'>{t('client.h1')}</h1>
             <ul className='flex items-center h-full ml-auto gap-5'>
                 {session.status !== 'loading' ?
                     <Link href={'/manage/client/new'} className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>

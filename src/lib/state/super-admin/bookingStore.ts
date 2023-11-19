@@ -14,9 +14,15 @@ const totalBookingValue = {
 interface BookingProps {
 
     bookings: Booking[]
+    selectedBookings: Booking[]
     getBookings: () => Promise<void>
     totalBooking: TotalProps
+    bookingData: Booking | null
+    deleteBooking: boolean
     setTotalBooking: (total: TotalProps) => void
+    setSelectedBookings: (bookings: Booking[]) => void
+    openDeleteWarningModal: (booking: Booking) => void
+    closeDeleteWarningModal: () => void
 }
 
 const useAdminBookingStore = create<BookingProps>((set) => ({
@@ -36,6 +42,12 @@ const useAdminBookingStore = create<BookingProps>((set) => ({
             alert('Something went wrong')
         }
     },
+    bookingData: null,
+    deleteBooking: false,
+    openDeleteWarningModal: (booking: Booking) => set({ deleteBooking: true, bookingData: booking }),
+    closeDeleteWarningModal: () => set({ deleteBooking: false, bookingData: null }),
+    selectedBookings: [],
+    setSelectedBookings: (bookings: Booking[]) => set({ selectedBookings: bookings }),
     totalBooking: totalBookingValue,
     setTotalBooking: (total: TotalProps) => set({ totalBooking: total })
 }))

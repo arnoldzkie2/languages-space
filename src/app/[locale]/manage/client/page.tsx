@@ -4,7 +4,7 @@
 import SideNav from '@/components/super-admin/SideNav';
 import ClientTable from '@/components/super-admin/management/client/ClientTable';
 import Departments from '@/components/super-admin/management/Departments';
-import DeleteWarningModal from '@/components/super-admin/management/client/DeleteClientWarningModal';
+import DeleteClientWarningModal from '@/components/super-admin/management/client/DeleteClientWarningModal';
 import ClientModal from '@/components/super-admin/management/client/ClientModal';
 import Pagination from '@/components/super-admin/management/Pagination';
 import { useEffect, useState, FC, Suspense } from 'react';
@@ -105,7 +105,7 @@ const ManageClient: FC = () => {
 
             </div>
 
-            {deleteModal && <DeleteWarningModal />}
+            {deleteModal && <DeleteClientWarningModal />}
 
             {viewClientModal && <ClientModal />}
 

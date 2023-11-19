@@ -8,9 +8,13 @@ interface Props {
 
     searchQuery: {
         name: string;
-        price: string
+        operator: string;
+        price: string;
+        status: string;
+        client: string;
+        supplier: string;
+        schedule: string;
         note: string;
-        operator: string
     }
 
 }
@@ -21,11 +25,9 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     return (
         <div className='w-full'>
-            <div className='flex justify-between items-center mb-2 font-medium px-2'>
-                {t('client-card.search')}
-            </div>
+
             <div>
-                <div className='flex flex-col text-gray-700 gap-3'>
+                <div className='flex w-full text-gray-700 gap-3'>
 
                     <input type="text"
                         placeholder={t('client-card.name')}
@@ -33,6 +35,22 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.name}
+                    />
+
+                    <input type="text"
+                        placeholder={t('booking.client')}
+                        name='client'
+                        className='w-full border text-sm px-3 outline-none py-2'
+                        onChange={handleSearch}
+                        value={searchQuery.client}
+                    />
+
+                    <input type="text"
+                        placeholder={t('booking.supplier')}
+                        name='supplier'
+                        className='w-full border text-sm px-3 outline-none py-2'
+                        onChange={handleSearch}
+                        value={searchQuery.supplier}
                     />
 
                     <input

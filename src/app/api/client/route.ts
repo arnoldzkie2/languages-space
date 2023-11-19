@@ -51,7 +51,6 @@ export const POST = async (req: Request) => {
                 profile, name, password, user_name, organization, phone_number, email, address, gender, origin, note
             }
         })
-
         if (!newUser) return badRequestRes()
 
         return createdRes()
@@ -72,9 +71,7 @@ export const POST = async (req: Request) => {
 export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
-
     const clientID = searchParams.get('clientID')
-
     const departmentID = searchParams.get('departmentID')
 
     try {
@@ -138,15 +135,15 @@ export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
 
-    const ids = searchParams.getAll('clientID');
+    const clientIDS = searchParams.getAll('clientID');
 
     try {
 
-        if (ids.length > 0) {
+        if (clientIDS.length > 0) {
 
             const deleteClients = await prisma.client.deleteMany({
 
-                where: { id: { in: ids } },
+                where: { id: { in: clientIDS } },
 
             })
 

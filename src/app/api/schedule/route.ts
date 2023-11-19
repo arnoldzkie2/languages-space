@@ -12,29 +12,70 @@ export const GET = async (req: Request) => {
 
         if (supplierID && date) {
 
-            const supplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
+            const supplier = await prisma.supplier.findUnique({
+                where: { id: supplierID }, include: {
+                    schedule: {
+                        where: {
+                            supplierID, date
+                        }
+                    }
+                }
+            })
             if (!supplier) return notFoundRes('Supplier')
 
-            const supplierSchedule = await prisma.supplierSchedule.findMany({
-                where: {
-                    supplierID, date
-                },
-            })
-
-            if (!supplierSchedule) return badRequestRes()
-
-            return okayRes(supplierSchedule)
+            return okayRes(supplier.schedule)
 
         }
 
-        if (!supplierID) return notFoundRes('supplierID')
+        if (supplierID) {
 
-        return notFoundRes('Date')
+            const supplier = await prisma.supplier.findUnique({
+                where: { id: supplierID }, include: { schedule: true }
+            })
+            if (!supplier) return notFoundRes('Supplier')
 
-    } catch (error) {
-        console.log(error);
-        return serverErrorRes(error)
+            // Filter schedules to include only those starting from today onwards
+            const currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0); // Set time to midnight
+
+            const filteredSchedule = supplier.schedule.filter(event => {
+                const eventDate = new Date(event.date + 'T00:00:00Z'); // Assuming 'event.date' is in UTC
+                eventDate.setHours(0, 0, 0, 0); // Set time to midnight
+                return eventDate >= currentDate;
+            });
+
+            // Sort schedules by date and time
+            const sortedSchedule = filteredSchedule.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+
+                // Compare dates first
+                if (dateA < dateB) return -1;
+                if (dateA > dateB) return 1;
+
+                // If dates are equal, compare times
+                const timeA = a.time.split(':').map(Number);
+                const timeB = b.time.split(':').map(Number);
+
+                if (timeA[0] < timeB[0]) return -1;
+                if (timeA[0] > timeB[0]) return 1;
+
+                // If hours are equal, compare minutes
+                if (timeA[1] < timeB[1]) return -1;
+                if (timeA[1] > timeB[1]) return 1;
+
+                return 0; // Events have the same date and time
+            });
+
+        return okayRes(sortedSchedule)
     }
+
+        return notFoundRes('supplierID')
+
+} catch (error) {
+    console.log(error);
+    return serverErrorRes(error)
+}
 
 }
 

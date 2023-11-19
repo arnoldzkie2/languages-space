@@ -158,6 +158,7 @@ model SupplierSchedule {
   bookingID   String?
   Reminders   Reminders? @relation(fields: [remindersID], references: [id])
   remindersID String?
+
   @@index([supplierID])
   @@index([bookingID])
   @@index([remindersID])
@@ -181,12 +182,14 @@ model Booking {
   schedule     SupplierSchedule[]
   supplier     Supplier           @relation(fields: [supplierID], references: [id], onDelete: Cascade)
   client       Client             @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  departments  Department[]
+  department   Department         @relation(fields: [departmentID], references: [id])
   courseID     String
+  departmentID String
 
   @@index([supplierID])
   @@index([clientID])
   @@index([courseID])
+  @@index([departmentID])
 }
 
 model Reminders {
@@ -209,6 +212,7 @@ model Reminders {
   client       Client             @relation(fields: [clientID], references: [id], onDelete: Cascade)
   departments  Department[]
   courseID     String
+
   @@index([supplierID])
   @@index([clientID])
   @@index([courseID])
@@ -289,19 +293,19 @@ model SuperAdmin {
 }
 
 model Department {
-  id          String           @id @default(uuid())
-  name        String
-  created_at  DateTime         @default(now())
-  updated_at  DateTime         @updatedAt
-  clients     Client[]
-  news        News[]
-  agents      Agent[]
-  suppliers   Supplier[]
-  admins      Admin[]
-  orders      Order[]
-  bookings    Booking[]
-  cards       ClientCardList[]
-  reminders   Reminders[]
+  id         String           @id @default(uuid())
+  name       String
+  created_at DateTime         @default(now())
+  updated_at DateTime         @updatedAt
+  clients    Client[]
+  news       News[]
+  agents     Agent[]
+  suppliers  Supplier[]
+  admins     Admin[]
+  orders     Order[]
+  bookings   Booking[]
+  cards      ClientCardList[]
+  reminders  Reminders[]
 }
 
 model News {

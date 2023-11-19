@@ -3,6 +3,7 @@ import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { create } from 'zustand'
 import useAdminGlobalStore from './globalStore'
 import axios from 'axios'
+import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 
 const newClientFormValue = {
     name: '',
@@ -44,6 +45,7 @@ interface ClientProps {
     deleteModal: boolean
     totalClients: TotalProps
     viewClientModal: boolean
+    clientCards: ClientCard[]
     selectedClients: Client[]
     clientSelectedID: string
     setClients: (allClients: Client[]) => void
@@ -58,6 +60,7 @@ interface ClientProps {
     getClients: () => Promise<void>
     setClientSelectedID: (clientID: string) => void
     getClientsWithCards: () => Promise<void>
+    getClientCards: (clientID: string) => Promise<void>
 }
 
 const useAdminClientStore = create<ClientProps>((set) => ({
@@ -68,6 +71,25 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     totalClients: totalClientsValue,
     viewClientModal: false,
     selectedClients: [],
+    clientCards: [],
+    getClientCards: async (clientID: string) => {
+
+        try {
+
+            const { data } = await axios.get('/api/client', {
+                params: { clientID }
+            })
+
+            if (data.ok) {
+                set({ clientCards: data.data.cards })
+            }
+
+        } catch (error) {
+            console.log(error);
+            alert('Something went wrong')
+        }
+
+    },
     clientSelectedID: '',
     setClientSelectedID: (clientID: string) => set({ clientSelectedID: clientID }),
     setClients: (allClients: Client[]) => set({ clients: allClients }),

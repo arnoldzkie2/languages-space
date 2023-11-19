@@ -86,6 +86,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
     }, [selectedNews, filteredTable]);
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
 
     const [newsTableSkeleton, setNewsTableSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
@@ -138,10 +139,10 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                             <td className="py-3 px-6 h-5 w-14 relative">
                                 <FontAwesomeIcon icon={faEllipsis} className='cursor-pointer text-2xl text-black' onClick={() => openOperation(news.id)} />
                                 <ul className={`${operation && selectedID === news.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' >{t('operation.view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/news/update-news/${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openNewsDeleteWarning(news)}>{t('operation.delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' >{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
+                                    <Link href={`/manage/news/update-news/${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openNewsDeleteWarning(news)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>
