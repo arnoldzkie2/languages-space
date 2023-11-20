@@ -127,9 +127,9 @@ const SideNav: React.FC = () => {
                         className='pb-4 border-b text-xl text-black w-full border-gray-600 cursor-pointer hover:text-blue-600'
                         onClick={() => toggleSideNav()} />
             }
-            <ul className='flex flex-col gap-6 h-full py-7 justify-center'>
+            <ul className='flex flex-col gap-4 h-full py-7 justify-center'>
                 {navArray.map(nav => (
-                    <Link href={nav.link} className={`flex text-base items-center outline-none hover:text-blue-600 w-full`} key={nav.link}>
+                    <Link href={nav.link} className={`flex text-base border-b hover:border-blue-600 pb-2 items-center outline-none hover:text-blue-600 w-full`} key={nav.link}>
                         {isSideNavOpen && <span className='mr-auto'>{t(nav.translate)}</span>}
                         <FontAwesomeIcon width={16} height={16} icon={nav.icon} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
                     </Link >

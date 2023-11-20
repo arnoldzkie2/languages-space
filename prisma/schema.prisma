@@ -201,6 +201,7 @@ model Reminders {
   scheduleID   String
   supplierID   String
   clientID     String
+  departmentID String
   clientCardID String
   price        Int
   meeting_info Json
@@ -210,12 +211,13 @@ model Reminders {
   schedule     SupplierSchedule[]
   supplier     Supplier           @relation(fields: [supplierID], references: [id], onDelete: Cascade)
   client       Client             @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  departments  Department[]
+  department   Department         @relation(fields: [departmentID], references: [id])
   courseID     String
 
   @@index([supplierID])
   @@index([clientID])
   @@index([courseID])
+  @@index([departmentID])
 }
 
 model Agent {

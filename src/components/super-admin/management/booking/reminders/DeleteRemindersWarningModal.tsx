@@ -12,29 +12,30 @@ interface Props {
 
 }
 
-const DeleteBookingWarningModal: React.FC<Props> = () => {
+const DeleteRemindersWarningModal: React.FC<Props> = () => {
 
     const { isLoading, setIsLoading } = useAdminGlobalStore()
-    const { bookingData, selectedBookings, closeDeleteBookingWarningModal, getBookings, setSelectedBookings } = useAdminBookingStore()
 
-    const deleteBooking = async () => {
+    const { remindersData, selectedReminders, closeDeleteRemindersWarningModal, getReminders, setSelectedReminders } = useAdminBookingStore()
+
+    const deleteReminders = async (e: any) => {
+
+        e.preventDefault()
 
         try {
 
             setIsLoading(true)
 
-            if (selectedBookings.length > 0) {
-                const newsIds = selectedBookings.map((bookings) => bookings.id);
-                const queryString = newsIds.map((id) => `bookingID=${encodeURIComponent(id)}`).join('&');
-                var { data } = await axios.delete(`/api/booking?${queryString}`, {
-                    params: {
-                        type: 'delete'
-                    }
-                });
+            if (selectedReminders.length > 0) {
+
+                const newsIds = selectedReminders.map((bookings) => bookings.id);
+                const queryString = newsIds.map((id) => `remindersID=${encodeURIComponent(id)}`).join('&');
+                var { data } = await axios.delete(`/api/booking/reminders?${queryString}`);
 
             } else {
-                var { data } = await axios.delete(`/api/booking`, {
-                    params: { bookingID: bookingData?.id, type: 'delete' }
+                
+                var { data } = await axios.delete(`/api/booking/reminders`, {
+                    params: { remindersID: remindersData?.id, type: 'delete' }
                 })
 
             }
@@ -42,9 +43,9 @@ const DeleteBookingWarningModal: React.FC<Props> = () => {
             if (data.ok) {
 
                 setIsLoading(false)
-                closeDeleteBookingWarningModal()
-                getBookings()
-                setSelectedBookings([])
+                closeDeleteRemindersWarningModal()
+                getReminders()
+                setSelectedReminders([])
 
             }
 
@@ -57,29 +58,29 @@ const DeleteBookingWarningModal: React.FC<Props> = () => {
 
     const t = useTranslations('global')
     const tt = useTranslations('super-admin')
-    
+
     return (
         <div className='fixed top-0 left-0 w-screen z-20 h-screen grid place-items-center bg-opacity-50 bg-gray-600'>
             <div className='bg-white p-10 rounded-lg shadow-lg flex flex-col gap-3 overflow-y-auto h-3/4 w-1/2'>
                 <h1 className='text-xl pb-4 text-center'>{tt('booking.delete')}</h1>
-                {selectedBookings.length > 0 ?
-                    selectedBookings.map(booking => (
+                {selectedReminders.length > 0 ?
+                    selectedReminders.map(booking => (
                         <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={booking.id}>
                             <div>BOOKING ID: <span className='font-normal text-gray-700'>{booking.id}</span></div>
                             <div>NAME: <span className='font-normal text-gray-700'>{booking.name}</span></div>
                         </div>
                     ))
                     :
-                    <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={bookingData?.id}>
-                        <div>BOOKING ID: <span className='font-normal text-gray-700'>{bookingData?.id}</span></div>
-                        <div>NAME: <span className='font-normal text-gray-700'>{bookingData?.name}</span></div>
+                    <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={remindersData?.id}>
+                        <div>BOOKING ID: <span className='font-normal text-gray-700'>{remindersData?.id}</span></div>
+                        <div>NAME: <span className='font-normal text-gray-700'>{remindersData?.name}</span></div>
                     </div>
                 }
                 <div className='flex items-center w-full justify-end mt-5 gap-5'>
-                    <button className='text-sm border py-2 px-3 rounded-lg hover:bg-gray-100' onClick={() => closeDeleteBookingWarningModal()}>{t('cancel')}</button>
+                    <button className='text-sm border py-2 px-3 rounded-lg hover:bg-gray-100' onClick={() => closeDeleteRemindersWarningModal()}>{t('cancel')}</button>
                     <button disabled={isLoading}
                         className={`text-sm text-white rounded-lg flex items-center justify-center px-3 py-2 ${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'}`}
-                        onClick={() => deleteBooking()}>
+                        onClick={(e: any) => deleteReminders(e)}>
                         {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animte-spin' /> : t('confirm')}</button>
                 </div>
             </div>
@@ -87,4 +88,4 @@ const DeleteBookingWarningModal: React.FC<Props> = () => {
     );
 };
 
-export default DeleteBookingWarningModal;
+export default DeleteRemindersWarningModal;

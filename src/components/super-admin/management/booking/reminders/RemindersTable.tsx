@@ -8,7 +8,6 @@ import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next-intl/link'
 import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
-import axios from 'axios';
 
 interface Props {
 
@@ -16,79 +15,55 @@ interface Props {
 
 }
 
-const BookingTable: React.FC<Props> = ({ filteredTable }) => {
+const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
 
     const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
 
-    const { openDeleteBookingWarningMOdal, getBookings, selectedBookings, setSelectedBookings } = useAdminBookingStore()
+    const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders } = useAdminBookingStore()
+
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
-    const cancelBooking = async (e: any, bookingID: string) => {
-
-        e.preventDefault()
-        try {
-
-            setIsLoading(true)
-            const { data } = await axios.delete('/api/booking', {
-                params: { bookingID, type: 'cancel' }
-            })
-
-            if (data.ok) {
-                setIsLoading(false)
-                getBookings()
-            }
-
-        } catch (error) {
-            setIsLoading(false)
-            console.log(error);
-            alert('Something went wrong')
-        }
-    }
-
     const handleSelection = (booking: Booking) => {
 
-        const isSelected = selectedBookings.some((selectedBooking) => selectedBooking.id === booking.id);
+        const isSelected = selectedReminders.some((selectedBooking) => selectedBooking.id === booking.id);
 
         if (isSelected) {
-            const updatedSelectedBooking = selectedBookings.filter((selectedBooking) => selectedBooking.id !== booking.id);
-            setSelectedBookings(updatedSelectedBooking);
+            const updatedSelectedBooking = selectedReminders.filter((selectedBooking) => selectedBooking.id !== booking.id);
+            setSelectedReminders(updatedSelectedBooking);
         } else {
-            const updatedSelectedBooking = [...selectedBookings, booking];
-            setSelectedBookings(updatedSelectedBooking);
+            const updatedSelectedBooking = [...selectedReminders, booking];
+            setSelectedReminders(updatedSelectedBooking);
 
         }
-    };
-
+    }
 
     const selectAllRows = () => {
 
         if (filteredTable.length === 0) return;
-
         let updatedSelectedBooking: Booking[];
-
         const isSelected = filteredTable.every((booking) =>
-            selectedBookings.some((selectedBooking) => selectedBooking.id === booking.id)
+            selectedReminders.some((selectedBooking) => selectedBooking.id === booking.id)
         );
 
         if (isSelected) {
             // Unselect all rows on the current page
-            updatedSelectedBooking = selectedBookings.filter((selectedBooking) =>
+            updatedSelectedBooking = selectedReminders.filter((selectedBooking) =>
                 filteredTable.every((booking) => booking.id !== selectedBooking.id)
             );
         } else {
             // Select all rows on the current page and keep existing selections
             updatedSelectedBooking = [
-                ...selectedBookings,
+                ...selectedReminders,
                 ...filteredTable.filter(
-                    (booking) => !selectedBookings.some((selectedBooking) => selectedBooking.id === booking.id)
+                    (booking) => !selectedReminders.some((selectedBooking) => selectedBooking.id === booking.id)
                 ),
             ];
         }
 
-        setSelectedBookings(updatedSelectedBooking);
+        setSelectedReminders(updatedSelectedBooking);
 
     };
 
@@ -97,10 +72,10 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
         const areAllBookingSelected =
             currentPageIds.length > 0 &&
             currentPageIds.every((id) =>
-                selectedBookings.some((booking) => booking.id === id)
+                selectedReminders.some((booking) => booking.id === id)
             );
         setIsRowChecked(areAllBookingSelected);
-    }, [selectedBookings, filteredTable]);
+    }, [selectedReminders, filteredTable]);
 
 
     return (
@@ -129,71 +104,66 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
             </thead>
             <tbody>
                 {filteredTable && filteredTable.length > 0 ?
-                    filteredTable.map(booking => (
-                        <tr className="bg-white border hover:bg-slate-50" key={booking.id}>
+                    filteredTable.map(reminders => (
+                        <tr className="bg-white border hover:bg-slate-50" key={reminders.id}>
                             <td className='px-5 py-3'>
-                                <input type="checkbox" id={booking.id}
+                                <input type="checkbox" id={reminders.id}
                                     className='cursor-pointer w-4 h-4 outline-none'
-                                    onChange={() => handleSelection(booking)}
-                                    checked={selectedBookings.some(selectedBooking => selectedBooking.id === booking.id)}
+                                    onChange={() => handleSelection(reminders)}
+                                    checked={selectedReminders.some(selectedBooking => selectedBooking.id === reminders.id)}
                                 />
                             </td>
                             <td className='px-5 py-3'>
                                 <div className='h-5 w-36'>
-                                    {booking.name}
+                                    {reminders.name}
                                 </div>
                             </td>
                             <td className='px-5 py-3'>
                                 <div className='h-5 w-36'>
-                                    {booking.client.name}
+                                    {reminders.client.name}
                                 </div>
                             </td>
                             <td className='px-5 py-3'>
                                 <div className='h-5 w-36'>
-                                    {booking.supplier.name}
+                                    {reminders.supplier.name}
                                 </div>
                             </td>
                             <td className='px-5 py-3'>
                                 <div className='h-5 w-36'>
-                                    {booking.schedule[0].date} ({booking.schedule[0].time})
+                                    {reminders.schedule[0].date} ({reminders.schedule[0].time})
                                 </div>
                             </td>
                             <td className="px-5 py-3">
                                 <div className='h-5 w-16'>
-                                    {booking.price}
+                                    {reminders.price}
                                 </div>
                             </td>
                             <td className="px-5 py-3">
                                 <div className='h-5 w-28'>
-                                    {booking.operator}
+                                    {reminders.operator}
                                 </div>
                             </td>
                             <td className="px-5 py-3">
                                 <div className='h-5 w-28 uppercase'>
-                                    {booking.status}
+                                    {reminders.status}
                                 </div>
                             </td>
                             <td className="px-5 py-3">
                                 <div className='h-5 w-32'>
-                                    {booking.note}
+                                    {reminders.note}
                                 </div>
                             </td>
                             <td className="px-5 py-3">
                                 <div className='h-5 w-44'>
-                                    {new Date(booking.created_at).toLocaleString()}
+                                    {new Date(reminders.created_at).toLocaleString()}
                                 </div>
                             </td>
                             <td className='py-3 relative px-5'>
-                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(booking.id)} />
-                                <ul className={`${operation && selectedID === booking.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
+                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(reminders.id)} />
+                                <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/booking/update/${booking.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <button disabled={isLoading} className='flex mb-1 justify-between items-center cursor-dpointer hover:text-red-600' onClick={(e: any) => cancelBooking(e, booking.id)}>
-                                        {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : <div className='flex items-center w-full justify-between'>
-                                            {tt('cancel')} <FontAwesomeIcon icon={faBan} />
-                                        </div>}
-                                    </button>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteBookingWarningMOdal(booking)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                    <Link href={`/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteRemindersWarningMOdal(reminders)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
@@ -201,7 +171,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                     )) :
                     skeleton.map(item => (
                         <tr key={item}>
-                             <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-5'>
                                 <div className='bg-slate-200 rounded-md animate-pulse w-5 h-5'></div>
                             </td>
                             <td className='py-3.5 px-5'>
@@ -242,4 +212,4 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
     );
 };
 
-export default BookingTable;
+export default RemindersTable;

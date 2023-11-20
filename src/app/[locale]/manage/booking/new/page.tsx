@@ -2,12 +2,9 @@
 'use client'
 
 import SideNav from '@/components/super-admin/SideNav'
-import BookingHeader from '@/components/super-admin/management/booking/BookingHeader'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { Client } from '@/lib/types/super-admin/clientType'
-import { SupplierSchedule } from '@/lib/types/super-admin/scheduleType'
 import { Courses, Supplier, SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

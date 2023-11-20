@@ -150,6 +150,7 @@
             "select-schedule": "Select Schedule",
             "client": "Client",
             "note": "Note",
+            "delete": "Are you sure you want to delete this booking?",
             "clientcard": "Client Card",
             "clientcard-select": "Select Card",
             "meeting-info": "Select Meeting Info",
@@ -159,7 +160,14 @@
             "create": "Create Booking",
             "update": "Update Booking",
             "date": "Date",
-            "time": "Time"
+            "time": "Time", 
+            "reminders": {
+                "h1": "Manage Booking Reminders",
+                "h2": "Reminders",
+                "delete": "Are you sure you want to delete this reminder?",
+                "create": "Create Reminders",
+                "update": "Update Reminders"
+            }
         }
     },
     "global": {
