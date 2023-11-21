@@ -10,6 +10,7 @@ import DeleteCardWarningModal from '@/components/super-admin/management/card/Del
 import SearchClientCard from '@/components/super-admin/management/card/SearchCard';
 import useAdminCardStore from '@/lib/state/super-admin/cardStore';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 interface Props {
@@ -19,6 +20,13 @@ interface Props {
 }
 
 const ClientCard: React.FC<Props> = ({ params }) => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const { currentPage, isSideNavOpen, itemsPerPage, departmentID } = useAdminGlobalStore()
 

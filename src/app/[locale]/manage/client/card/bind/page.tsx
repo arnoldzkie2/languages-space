@@ -11,10 +11,18 @@ import { Client } from '@/lib/types/super-admin/clientType'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const [selectedClient, setSelectedClient] = useState<Client>()
     const [selectedCard, setSelectedCard] = useState<ClientCardList>()

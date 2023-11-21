@@ -12,8 +12,16 @@ import ClientHeader from '@/components/super-admin/management/client/ClientHeade
 import SearchClient from '@/components/super-admin/management/client/SearchClient';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminClientStore, { ManageClientSearchQueryValue } from '@/lib/state/super-admin/clientStore';
+import { signIn, useSession } from 'next-auth/react';
 
 const ManageClient: FC = () => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
 

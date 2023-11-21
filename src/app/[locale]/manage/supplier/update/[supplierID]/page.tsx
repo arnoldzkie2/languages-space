@@ -10,6 +10,7 @@ import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UploadButton } from '@uploadthing/react'
 import axios from 'axios'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useRouter } from 'next/navigation'
@@ -17,6 +18,13 @@ import React, { useEffect, useState } from 'react'
 
 const Page = ({ params }: { params: { supplierID: string } }) => {
 
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
+    
     const { supplierID } = params
 
     const router = useRouter()

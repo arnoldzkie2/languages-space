@@ -6,6 +6,7 @@ import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useRouter } from 'next/navigation'
@@ -19,6 +20,13 @@ interface Props {
 }
 
 const Page = ({ params }: Props) => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const router = useRouter()
 

@@ -4,6 +4,8 @@ import SessionProviders from '@/components/SessionProvider'
 import { notFound } from 'next/navigation'
 import 'react-quill/dist/quill.snow.css';
 import { NextIntlClientProvider } from 'next-intl'
+
+
 export const metadata = {
   title: 'Languages Spaces',
   description: "Let's talk english here.",
@@ -39,9 +41,9 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
     <html lang={locale}>
       <body className='bg-slate-50'>
         <NextIntlClientProvider locale={locale} messages={translation}>
-            <SessionProviders>
-              {children}
-            </SessionProviders>
+          <SessionProviders>
+            {children}
+          </SessionProviders>
         </NextIntlClientProvider>
       </body>
     </html>

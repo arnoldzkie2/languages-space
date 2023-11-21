@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import Departments from '@/components/super-admin/management/Departments';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import { signIn, useSession } from 'next-auth/react';
 
 interface FormData {
     title: string
@@ -18,6 +19,13 @@ interface FormData {
 }
 
 const CreateNews = () => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const router = useRouter()
 

@@ -9,11 +9,19 @@ import DeleteBookingWarningModal from '@/components/super-admin/management/booki
 import SearchBooking from '@/components/super-admin/management/booking/SearchBooking';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 
 
 const Page: React.FC = () => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const { currentPage, isSideNavOpen, itemsPerPage, departmentID } = useAdminGlobalStore()
 

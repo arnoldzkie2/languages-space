@@ -9,7 +9,7 @@ import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UploadButton } from '@uploadthing/react'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useRouter } from 'next/navigation'
@@ -17,9 +17,14 @@ import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const router = useRouter()
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
-    const session = useSession()
+    const router = useRouter()
 
     const t = useTranslations('super-admin')
 

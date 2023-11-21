@@ -10,7 +10,7 @@ import { Courses, Supplier } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useRouter } from 'next/navigation'
@@ -18,9 +18,14 @@ import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const router = useRouter()
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
-    const session = useSession()
+    const router = useRouter()
 
     const skeleton = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 

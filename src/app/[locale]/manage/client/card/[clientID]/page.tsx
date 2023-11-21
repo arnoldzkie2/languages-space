@@ -11,6 +11,7 @@ import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import { Client } from '@/lib/types/super-admin/clientType'
 import axios from 'axios'
+import { signIn, useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 
 interface Props {
@@ -20,6 +21,13 @@ interface Props {
 }
 
 const Page = ({ params }: Props) => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const [client, setClient] = useState<Client>()
 

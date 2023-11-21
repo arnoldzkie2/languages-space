@@ -4,20 +4,29 @@ import SideNav from '@/components/super-admin/SideNav';
 import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
 import SearchBooking from '@/components/super-admin/management/booking/SearchBooking';
+import ConfirmBookingModal from '@/components/super-admin/management/booking/reminders/ConfirmBookingModal';
 import DeleteRemindersWarningModal from '@/components/super-admin/management/booking/reminders/DeleteRemindersWarningModal';
 import RemindersHeader from '@/components/super-admin/management/booking/reminders/RemindersHeader';
 import RemindersTable from '@/components/super-admin/management/booking/reminders/RemindersTable';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 
 
 const Page: React.FC = () => {
 
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
+
     const { currentPage, isSideNavOpen, itemsPerPage, departmentID } = useAdminGlobalStore()
 
-    const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders } = useAdminBookingStore()
+    const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders,confirmBooking } = useAdminBookingStore()
 
     const [searchQuery, setSearchQuery] = useState({
         name: '',
@@ -100,6 +109,7 @@ const Page: React.FC = () => {
 
                 {/* {viewCard && <ClientCardModal />} */}
                 {deleteReminders && <DeleteRemindersWarningModal />}
+                {confirmBooking && <ConfirmBookingModal />}
 
             </div>
         </div>

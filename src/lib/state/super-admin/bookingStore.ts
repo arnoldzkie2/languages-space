@@ -24,6 +24,7 @@ interface BookingProps {
     bookingData: Booking | null
     remindersData: Booking | null
     deleteBooking: boolean
+    confirmBooking: boolean
     deleteReminders: boolean
     setTotalBooking: (total: TotalProps) => void
     setTotalReminders: (total: TotalProps) => void
@@ -31,7 +32,9 @@ interface BookingProps {
     setSelectedBookings: (bookings: Booking[]) => void
     openDeleteBookingWarningMOdal: (booking: Booking) => void
     openDeleteRemindersWarningMOdal: (booking: Booking) => void
+    openConfirmBookingModal: (data: Booking) => void
     closeDeleteBookingWarningModal: () => void
+    closeConfirmBookingModal: () => void
     closeDeleteRemindersWarningModal: () => void
 }
 
@@ -69,6 +72,9 @@ const useAdminBookingStore = create<BookingProps>((set) => ({
     remindersData: null,
     deleteBooking: false,
     deleteReminders: false,
+    confirmBooking: false,
+    openConfirmBookingModal: (data: Booking) => set({ confirmBooking: true, remindersData: data }),
+    closeConfirmBookingModal: () => set({ confirmBooking: false, bookingData: null }),
     openDeleteBookingWarningMOdal: (booking: Booking) => set({ deleteBooking: true, bookingData: booking }),
     openDeleteRemindersWarningMOdal: (booking: Booking) => set({ deleteReminders: true, remindersData: booking }),
     closeDeleteBookingWarningModal: () => set({ deleteBooking: false, bookingData: null }),

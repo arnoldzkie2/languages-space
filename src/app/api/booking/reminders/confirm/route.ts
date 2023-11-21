@@ -24,11 +24,10 @@ export const POST = async (req: Request) => {
 
             const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, price } = reminder
 
-
             if (!scheduleID) return notFoundRes('scheduleID')
             if (!supplierID) return notFoundRes('supplierID')
             if (!clientID) return notFoundRes('clientID')
-            if(!meeting_info) return notFoundRes('Meeting Info')
+            if (!meeting_info) return notFoundRes('Meeting Info')
             if (!clientCardID) return notFoundRes('clientCardiD')
 
             //check schedule
@@ -83,6 +82,9 @@ export const POST = async (req: Request) => {
                 }
             })
             if (!updateSchedule) return badRequestRes()
+
+            const updateReminders = await prisma.reminders.update({ where: { id: reminder.id }, data: {status: 'booked'} })
+            if(!updateReminders) return badRequestRes()
 
             return createdRes()
 

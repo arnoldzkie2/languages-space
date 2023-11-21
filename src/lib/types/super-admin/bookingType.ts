@@ -1,4 +1,3 @@
-import { ClientCard } from "./clientCardType"
 import { Client } from "./clientType"
 import { Department } from "./globalType"
 import { SupplierSchedule } from "./scheduleType"
@@ -11,6 +10,7 @@ interface Booking {
     status: string
     note: string | null
     scheduleID: string
+    card_name: string
     supplierID: string
     clientID: string
     clientCardID: string

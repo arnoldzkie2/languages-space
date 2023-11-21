@@ -10,13 +10,20 @@ import { Courses, Supplier, SupplierMeetingInfo } from '@/lib/types/super-admin/
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
+
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+        signIn()
+    },
+})
 
   const router = useRouter()
 
@@ -47,8 +54,6 @@ const Page = () => {
 
     setFormData(prevData => ({ ...prevData, [name]: value }))
   }
-
-  const session = useSession()
 
   const getSupplierSchedule = async () => {
     try {

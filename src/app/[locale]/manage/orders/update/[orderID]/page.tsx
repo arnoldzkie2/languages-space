@@ -10,7 +10,7 @@ import { OrderFormValue } from '@/lib/types/super-admin/orderType'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useRouter } from 'next/navigation'
@@ -24,9 +24,16 @@ interface Props {
 
 const Page = ({ params }: Props) => {
 
+
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      signIn()
+    },
+  })
+
   const { orderID } = params
   const router = useRouter()
-  const session = useSession()
   const t = useTranslations('super-admin')
 
   const [searchClient, setSearchClient] = useState('')
@@ -60,7 +67,7 @@ const Page = ({ params }: Props) => {
     try {
 
       const { quantity, name, express_number, note, invoice_number, client, status, card } = formData
-      
+
       if (Number(quantity) < 1) return setErr('Quantity must be positive number')
       if (!card) return setErr('Select Card')
       if (!client) return setErr('Select Client')

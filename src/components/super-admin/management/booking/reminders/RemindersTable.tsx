@@ -8,6 +8,7 @@ import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next-intl/link'
 import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
+import axios from 'axios';
 
 interface Props {
 
@@ -19,7 +20,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
 
     const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
 
-    const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders } = useAdminBookingStore()
+    const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders, openConfirmBookingModal } = useAdminBookingStore()
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
@@ -75,8 +76,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                 selectedReminders.some((booking) => booking.id === id)
             );
         setIsRowChecked(areAllBookingSelected);
-    }, [selectedReminders, filteredTable]);
-
+    }, [selectedReminders, filteredTable])
 
     return (
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
@@ -163,6 +163,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                                 <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
                                     <Link href={`/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-600' onClick={() => openConfirmBookingModal(reminders)}>{t('booking.reminders.confirm')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteRemindersWarningMOdal(reminders)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>

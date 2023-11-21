@@ -15,8 +15,16 @@ import ScheduleComponent from '@/components/super-admin/management/schedule/Sche
 import NewScheduleModal from '@/components/super-admin/management/schedule/NewScheduleModal';
 import BindSchedlueModal from '@/components/super-admin/management/schedule/BindSchedlueModal';
 import ViewBokingModal from '@/components/super-admin/management/schedule/ViewBokingModal';
+import { signIn, useSession } from 'next-auth/react';
 
 const Page = ({ }) => {
+    
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const [searchQuery, setSearchQuery] = useState('')
 

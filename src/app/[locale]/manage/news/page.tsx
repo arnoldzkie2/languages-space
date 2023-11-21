@@ -10,10 +10,18 @@ import WebHeader from '@/components/super-admin/management/web-news/WebHeader';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminNewsStore, { ManageWebSearchQueryValue } from '@/lib/state/super-admin/newsStore';
 import axios from 'axios';
+import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 
 const Web: React.FC = () => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const { currentPage, isSideNavOpen, departmentID, departments, setCurrentPage } = useAdminGlobalStore()
 

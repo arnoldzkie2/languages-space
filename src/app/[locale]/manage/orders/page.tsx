@@ -8,9 +8,17 @@ import OrderTable from '@/components/super-admin/management/order/OrderTable'
 import SearchOrder from '@/components/super-admin/management/order/SearchOrder'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminOrderStore, { ManageOrderSearchValue } from '@/lib/state/super-admin/orderStore'
+import { signIn, useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
+
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
 
     const [searchQuery, setSearchQuery] = useState(ManageOrderSearchValue)
     

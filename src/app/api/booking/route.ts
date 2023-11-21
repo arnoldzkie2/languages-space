@@ -133,7 +133,7 @@ export const POST = async (req: Request) => {
         //create booking
         const createBooking = await prisma.booking.create({
             data: {
-                note, status, operator, name, price,
+                note, status, operator, name, price,card_name: card.name,
                 supplier: { connect: { id: supplierID } },
                 client: { connect: { id: clientID } },
                 schedule: { connect: { id: scheduleID } },
@@ -221,7 +221,7 @@ export const PATCH = async (req: Request) => {
                     id: bookingID
                 },
                 data: {
-                    note, status, operator, name, price, courseID,
+                    note, status, operator, name, price, courseID,card_name: card.name,
                     supplierID, clientID, clientCardID, meeting_info, scheduleID, departmentID: client.departments[0].id
                 }
             })

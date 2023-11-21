@@ -173,6 +173,7 @@ model Booking {
   scheduleID   String
   supplierID   String
   clientID     String
+  card_name    String
   clientCardID String
   price        Int
   meeting_info Json
@@ -202,6 +203,7 @@ model Reminders {
   supplierID   String
   clientID     String
   departmentID String
+  card_name    String
   clientCardID String
   price        Int
   meeting_info Json
