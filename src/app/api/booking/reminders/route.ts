@@ -122,7 +122,7 @@ export const POST = async (req: Request) => {
         const supplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
         if (!supplier) return notFoundRes('Supplier')
 
-        const card = await prisma.clientCard.findUnique({ where: { id: clientCardID } })
+        const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
         if (!card) return notFoundRes('Card')
         if (card.balance < price) return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 })
 
@@ -133,12 +133,12 @@ export const POST = async (req: Request) => {
         //create reminders
         const createReminders = await prisma.reminders.create({
             data: {
-                note, status, operator, name, price,
+                note, status, operator, name, price, card_name: card.name,
                 supplier: { connect: { id: supplierID } },
                 client: { connect: { id: clientID } },
                 schedule: { connect: { id: scheduleID } },
                 meeting_info, clientCardID, scheduleID,
-                department: { connect: { id: client.departments[0].id } },
+                department: { connect: { id: card.card.departmentID } },
                 course: { connect: { id: courseID } }
             },
         })
@@ -191,7 +191,7 @@ export const PATCH = async (req: Request) => {
             if (!supplier) return notFoundRes('Supplier')
 
             //check card
-            const card = await prisma.clientCard.findUnique({ where: { id: clientCardID } })
+            const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
             if (!card) return notFoundRes('Card')
 
             //retrieve the price
@@ -203,8 +203,8 @@ export const PATCH = async (req: Request) => {
                     id: remindersID
                 },
                 data: {
-                    note, status, operator, name, price, courseID,
-                    supplierID, clientID, clientCardID, meeting_info, scheduleID, departmentID: client.departments[0].id
+                    note, status, operator, name, price, courseID, card_name: card.name,
+                    supplierID, clientID, clientCardID, meeting_info, scheduleID, departmentID: card.card.departmentID
                 }
             })
             if (!updateReminders) return badRequestRes()
@@ -235,7 +235,6 @@ export const DELETE = async (req: Request) => {
             const deleteBookings = await prisma.reminders.deleteMany({
                 where: { id: { in: remindersIDS } }
             })
-
             if (deleteBookings.count === 0) return badRequestRes()
 
             return okayRes(deleteBookings.count)

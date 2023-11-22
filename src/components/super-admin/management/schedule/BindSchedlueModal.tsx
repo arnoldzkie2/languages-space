@@ -134,7 +134,7 @@ const BindSchedlueModal = () => {
                 supplierID: supplierSelectedID,
                 clientID: clientSelectedID,
                 clientCardID: cardSelectedID,
-                meeting_info, note, price,
+                meeting_info, note, price: Number(price),
                 name: "1v1 Class", operator: 'Admin',
                 status: "Pending",
                 courseID: courseSelectedID

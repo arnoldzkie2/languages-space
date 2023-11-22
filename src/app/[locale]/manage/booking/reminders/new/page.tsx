@@ -21,9 +21,9 @@ const Page = () => {
   const session = useSession({
     required: true,
     onUnauthenticated() {
-        signIn()
+      signIn()
     },
-})
+  })
 
   const router = useRouter()
 
@@ -78,7 +78,7 @@ const Page = () => {
 
       const { clientCardID, clientID, meeting_info, supplierID, scheduleID, price, note, courseID, name } = formData
 
-      if (!name) return setErr('Write Name for this booking')
+      if (!name) return setErr('Write Name for this booking reminders')
       if (!clientID) return setErr('Select Client')
       if (!clientCardID) return setErr('Select Card')
       if (!meeting_info.id) return setErr('Select Meeting Info')
@@ -234,9 +234,9 @@ const Page = () => {
                   <label htmlFor="scheduleID" className='text-gray-700 font-medium px-3'>{t('booking.schedule')}</label>
                   <select className='px-3 py-1.5 w-full outline-none border' name="scheduleID" value={formData.scheduleID} onChange={handleChange} id="scheduleID">
                     <option value="">{t('booking.select-schedule')}</option>
-                    {supplierSchedule.length > 0 ? supplierSchedule.map(schedule => (
+                    {formData.supplierID && supplierSchedule.length > 0 ? supplierSchedule.map(schedule => (
                       <option value={schedule.id} key={schedule.id}>{schedule.date} ({schedule.time}) {schedule.status === 'reserved' && '(reserved)'}</option>
-                    )) : <option disabled>Select Supplier First.</option>}
+                    )) : formData.supplierID && supplierSchedule.length < 1 ? <option disabled>No Schedule Set.</option> : <option disabled>Select Supplier First.</option>}
                   </select>
                 </div>
 

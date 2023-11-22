@@ -142,6 +142,7 @@
         "booking": {
             "h1": "Manage Booking",
             "name": "Name",
+            "card": "Card",
             "price": "Price",
             "status": "Status",
             "course": "Course",

@@ -1,14 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faEllipsis, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import {  faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {  faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next-intl/link'
 import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
-import axios from 'axios';
 
 interface Props {
 
@@ -82,7 +81,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
             <thead className="text-xs uppercase bg-slate-100 border">
                 <tr>
-                    <th scope='col' className='px-5 py-3'>
+                    <th scope='col' className='px-3 py-3'>
                         <input type="checkbox"
                             className='cursor-pointer w-4 h-4 outline-none'
                             title='Select all 10 rows'
@@ -90,78 +89,83 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                             onChange={selectAllRows}
                         />
                     </th>
-                    <th scope="col" className="px-5 py-3">{t('booking.name')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.client')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.supplier')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.schedule')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.price')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.operator')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.status')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.note')}</th>
-                    <th scope="col" className="px-5 py-3">{t('booking.date')}</th>
-                    <th scope="col" className="px-5 py-3">{t('global.operation')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.name')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.client')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.supplier')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.card')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.schedule')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.price')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.operator')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.status')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.note')}</th>
+                    <th scope="col" className="px-3 py-3">{t('booking.date')}</th>
+                    <th scope="col" className="px-3 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>
             <tbody>
                 {filteredTable && filteredTable.length > 0 ?
                     filteredTable.map(reminders => (
                         <tr className="bg-white border hover:bg-slate-50" key={reminders.id}>
-                            <td className='px-5 py-3'>
+                            <td className='px-3 py-3'>
                                 <input type="checkbox" id={reminders.id}
                                     className='cursor-pointer w-4 h-4 outline-none'
                                     onChange={() => handleSelection(reminders)}
                                     checked={selectedReminders.some(selectedBooking => selectedBooking.id === reminders.id)}
                                 />
                             </td>
-                            <td className='px-5 py-3'>
-                                <div className='h-5 w-36'>
+                            <td className='px-3 overflow-x-auto py-3'>
+                                <div className='h-5 whitespace-nowrap w-36'>
                                     {reminders.name}
                                 </div>
                             </td>
-                            <td className='px-5 py-3'>
-                                <div className='h-5 w-36'>
+                            <td className='px-3 overflow-x-auto py-3'>
+                                <div className='h-5 whitespace-nowrap w-36'>
                                     {reminders.client.name}
                                 </div>
                             </td>
-                            <td className='px-5 py-3'>
-                                <div className='h-5 w-36'>
+                            <td className='px-3 overflow-x-auto py-3'>
+                                <div className='h-5 whitespace-nowrap w-36'>
                                     {reminders.supplier.name}
                                 </div>
                             </td>
-                            <td className='px-5 py-3'>
-                                <div className='h-5 w-36'>
+                            <td className='px-3 overflow-x-auto py-3'>
+                                <div className='h-5 whitespace-nowrap w-36'>
+                                    {reminders.card_name}
+                                </div>
+                            </td>
+                            <td className='px-3 overflow-x-auto py-3'>
+                                <div className='h-5 whitespace-nowrap w-36'>
                                     {reminders.schedule[0].date} ({reminders.schedule[0].time})
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
-                                <div className='h-5 w-16'>
+                            <td className="px-3 overflow-x-auto py-3">
+                                <div className='h-5 whitespace-nowrap w-16'>
                                     {reminders.price}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
-                                <div className='h-5 w-28'>
+                            <td className="px-3 overflow-x-auto py-3">
+                                <div className='h-5 whitespace-nowrap w-28'>
                                     {reminders.operator}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
-                                <div className='h-5 w-28 uppercase'>
+                            <td className="px-3 overflow-x-auto py-3">
+                                <div className='h-5 whitespace-nowrap w-28 uppercase'>
                                     {reminders.status}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
-                                <div className='h-5 w-32'>
+                            <td className="px-3 py-3 overflow-x-auto">
+                                <div className='h-5 w-32 whitespace-nowrap'>
                                     {reminders.note}
                                 </div>
                             </td>
-                            <td className="px-5 py-3">
-                                <div className='h-5 w-44'>
+                            <td className="px-3 py-3 overflow-x-auto">
+                                <div className='h-5 w-44 whitespace-nowrap'>
                                     {new Date(reminders.created_at).toLocaleString()}
                                 </div>
                             </td>
-                            <td className='py-3 relative px-5'>
+                            <td className='py-3 relative px-3'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(reminders.id)} />
                                 <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
                                     <Link href={`/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-600' onClick={() => openConfirmBookingModal(reminders)}>{t('booking.reminders.confirm')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteRemindersWarningMOdal(reminders)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
@@ -172,37 +176,40 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                     )) :
                     skeleton.map(item => (
                         <tr key={item}>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-md animate-pulse w-5 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                            </td>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-16 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                            <td className='py-3.5 px-3'>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                            <td className='py-3.5 px-3'>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-5'>
+                            <td className='py-3.5 px-3'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
                             </td>
                         </tr>

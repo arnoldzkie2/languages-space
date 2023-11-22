@@ -54,7 +54,7 @@ export const POST = async (req: Request) => {
             //create booking
             const createBooking = await prisma.booking.create({
                 data: {
-                    note, status, operator, name, price,
+                    note, status, operator, name, price, card_name: card.name,
                     supplier: { connect: { id: supplierID } },
                     client: { connect: { id: clientID } },
                     schedule: { connect: { id: scheduleID } },
@@ -83,8 +83,8 @@ export const POST = async (req: Request) => {
             })
             if (!updateSchedule) return badRequestRes()
 
-            const updateReminders = await prisma.reminders.update({ where: { id: reminder.id }, data: {status: 'booked'} })
-            if(!updateReminders) return badRequestRes()
+            const updateReminders = await prisma.reminders.update({ where: { id: reminder.id }, data: { status: 'booked' } })
+            if (!updateReminders) return badRequestRes()
 
             return createdRes()
 

@@ -73,8 +73,8 @@ model ClientCardList {
   supported_courses   Courses[]
   supported_suppliers SupplierPrice[]
   active              ClientCard[]
-  department          Department?     @relation(fields: [departmentID], references: [id])
-  departmentID        String?
+  department          Department     @relation(fields: [departmentID], references: [id])
+  departmentID        String
 
   @@index([departmentID])
 }

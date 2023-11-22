@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useRef, useState } from 'react';
-import axios from 'axios';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { useTranslations } from 'next-intl';
 

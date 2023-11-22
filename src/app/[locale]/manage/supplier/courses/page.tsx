@@ -12,7 +12,7 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
-export const Page = () => {
+const Page = () => {
 
     const session = useSession({
         required: true,
@@ -76,3 +76,6 @@ export const Page = () => {
         </div>
     );
 };
+
+
+export default Page

@@ -32,6 +32,8 @@ const Page = () => {
 
     }, [session])
 
+    console.log(session);
+
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
             <h1 className='pb-10 text-4xl font-bold'>Language Space</h1>
