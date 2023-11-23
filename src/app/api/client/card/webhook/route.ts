@@ -35,6 +35,7 @@ export const POST = async (req: Request) => {
                 const bindCardToUser = await prisma.clientCard.create({
                     data: {
                         name: card.name,
+                        quantity: card.quantity,
                         price: card.price,
                         balance: card.balance,
                         validity: formattedExpirationDate,
