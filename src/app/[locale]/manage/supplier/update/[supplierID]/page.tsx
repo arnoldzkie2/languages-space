@@ -276,7 +276,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label className='block font-medium'>Departments</label>
+                                    <label className='block font-medium'>{tt('departments')}</label>
                                     {departments && departments.map((dept) => (
                                         <div key={dept.id} className="flex items-center">
                                             <input onChange={handleChange}
@@ -316,10 +316,10 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                             className='py-1.5 px-2 outline-none border rounded-md'
                                             onChange={(e) => handleMeetinInfoChange(e, index)}
                                         />
-                                        <button type='button' onClick={() => removeMeetingInfo(index)} className='bg-red-500 hover:bg-red-600 w-1/2 self-end text-white py-1.5 rounded-md outline-none'>Remove</button>
+                                        <button type='button' onClick={() => removeMeetingInfo(index)} className='bg-red-500 hover:bg-red-600 w-1/2 self-end text-white py-1.5 rounded-md outline-none'>{tt('remove')}</button>
                                     </div>
                                 ))}
-                                <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-full text-white'>Add More</button>
+                                <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-full text-white'>{tt('add-more')}</button>
                             </div>
 
                         </div>

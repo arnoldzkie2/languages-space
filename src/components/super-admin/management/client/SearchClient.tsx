@@ -19,7 +19,7 @@ interface Props {
 const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
-    const tt = useTranslations()
+    const tt = useTranslations('global')
 
     return (
         <div className='pt-4 mt-4 border-t border-gray-300 w-full'>

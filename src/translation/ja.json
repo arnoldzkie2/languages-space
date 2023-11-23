@@ -1,3 +1,220 @@
 {
-    
+    "super-admin": {
+        "supplier": {
+            "create": "サプライヤー作成",
+            "h1": "サプライヤー管理",
+            "select": "サプライヤー選択",
+            "select-first": "最初にサプライヤーを選択",
+            "select-meeting": "ミーティング情報選択",
+            "search": "サプライヤー検索",
+            "tags": "サプライヤータグ"
+        },
+        "courses": {
+            "h1": "コース管理",
+            "search": "コース検索",
+            "create": "コース作成",
+            "course-name": "コース名"
+        },
+        "news": {
+            "h1": "ニュース管理",
+            "title": "タイトル",
+            "update": "ニュース更新",
+            "author": "著者",
+            "keywords": "キーワード",
+            "add-keyword": "キーワード追加",
+            "create": "ニュース作成",
+            "search": "ニュース検索"
+        },
+        "client": {
+            "client": "クライアント",
+            "h1": "クライアント管理",
+            "select-first": "最初にクライアントを選択",
+            "create": "クライアント作成",
+            "with-cards": "カード付き",
+            "phone": "電話番号",
+            "organization": "組織",
+            "card": {
+                "client": "カード",
+                "bind": "カードバインド"
+            },
+            "search": "クライアント検索",
+            "select": "クライアント選択",
+            "404": "クライアントが見つかりません"
+        },
+        "client-card": {
+            "manage": "クライアントカード管理",
+            "h1": "カード管理",
+            "quantity": "数量",
+            "create": "カード作成",
+            "select-all": "すべて選択",
+            "select-first": "最初にカードを選択",
+            "update": "カード更新",
+            "max": "最大",
+            "balance": "残高",
+            "validity": "有効期限",
+            "sold": "販売済み",
+            "invoice": "請求書",
+            "available": "利用可能",
+            "online_renews": "オンライン更新",
+            "repeat_purchases": "繰り返し購入",
+            "settlement_period": "決済期間",
+            "select": "カード選択",
+            "search": "カード検索",
+            "card": "カード",
+            "404": "カードが見つかりません",
+            "description": "説明",
+            "courses": "サポートされているコース",
+            "suppliers": "サポートされているサプライヤー",
+            "client": "クライアント"
+        },
+        "global": {
+            "department": {
+                "select": "部門",
+                "all": "すべての部門"
+            },
+            "operation": "操作",
+            "download": "ダウンロード",
+            "result": "結果:",
+            "selected": "選択済み:",
+            "cancel": "キャンセル",
+            "total": "合計:",
+            "delete-confirm": "はい、確認します",
+            "confirm-cancel": "キャンセルしない"
+        },
+        "pagination": {
+            "prev": "前のページ",
+            "next": "次のページ",
+            "goto": "ページに移動",
+            "page": "ページ"
+        },
+        "side-nav": {
+            "department": "部門",
+            "menu": "メニュー",
+            "dashboard": "ダッシュボード",
+            "client": "クライアント",
+            "schedule": "スケジュール",
+            "agent": "エージェント",
+            "supplier": "サプライヤー",
+            "admin": "管理者",
+            "orders": "注文",
+            "booking": "予約",
+            "news": "Webニュース",
+            "settings": "設定",
+            "statistics": "統計",
+            "logout": "ログアウト"
+        },
+        "schedule": {
+            "h1": "スケジュール管理",
+            "create": "スケジュール作成",
+            "no-schedule": "スケジュールが設定されていません",
+            "meeting": "ミーティングサービス選択",
+            "delete": "スケジュール削除"
+        },
+        "order": {
+            "h1": "注文管理",
+            "create": "注文作成",
+            "update": "注文更新",
+            "card": "カード",
+            "client_name": "クライアント",
+            "quantity": "数量",
+            "operator": "オペレーター",
+            "invoice_number": "請求書番号",
+            "express_number": "エクスプレス番号",
+            "departments": "部門",
+            "search": "注文検索"
+        },
+        "department": {
+            "h1": "部門管理",
+            "create": "部門作成",
+            "search": "部門検索",
+            "update": "部門更新"
+        },
+        "booking": {
+            "h1": "予約管理",
+            "card": "カード",
+            "course": "コース",
+            "select-course": "コース選択",
+            "select-schedule": "スケジュール選択",
+            "delete": "この予約を削除してもよろしいですか？",
+            "clientcard-select": "カード選択",
+            "search": "予約検索",
+            "create": "予約作成",
+            "update": "予約更新",
+            "confirm": "予約確認",
+            "reminders": {
+                "h1": "予約リマインダー管理",
+                "h2": "リマインダー",
+                "delete": "このリマインダーを削除してもよろしいですか？",
+                "confirmation": "このリマインダーを予約してもよろしいですか？",
+                "create": "リマインダー作成",
+                "confirm": "予約!",
+                "update": "リマインダー更新"
+            }
+        }
+    },
+    "global": {
+        "cancel": "キャンセル",
+        "confirm": "確認",
+        "create": "作成",
+        "client": "クライアント",
+        "supplier": "サプライヤー",
+        "agent": "エージェント",
+        "course": "コース",
+        "admin": "管理者",
+        "delete": "削除",
+        "employment": "雇用状況",
+        "update": "更新",
+        "view": "表示",
+        "price": "価格",
+        "time": "時間",
+        "meeting-code": "会議コード",
+        "service": "サービス",
+        "departments": "部門",
+        "payment": "支払い情報",
+        "remove": "削除",
+        "add-more": "追加",
+        "status": "状態",
+        "close": "閉じる",
+        "search": "検索",
+        "name": "名前",
+        "balance": "残高",
+        "username": "ユーザー名",
+        "meeting": "ミーティング情報",
+        "address": "住所",
+        "email": "電子メールアドレス",
+        "select": "選択",
+        "clientcard": "クライアントカード",
+        "password": "パスワード",
+        "phone": "電話番号",
+        "operator": "オペレーター",
+        "schedule": "スケジュール",
+        "card": "カード",
+        "date": "日付",
+        "gender": "性別",
+        "employment-status": "雇用状態",
+        "organization": "組織",
+        "profile": "プロフィール画像",
+        "origin": "出身地",
+        "note": "注意",
+        "invoice": "請求書番号",
+        "express": "エクスプレス番号",
+        "tags": "タグ"
+    },
+    "auth": {
+        "username": "ユーザー名",
+        "password": "パスワード",
+        "signin": "サインイン",
+        "signup": "サインアップ",
+        "name": "フルネーム",
+        "confirm_password": "パスワード確認",
+        "not_signup": "まだアカウントをお持ちでないですか？ ",
+        "already_signup": "すでにサインアップ済みですか？"
+    },
+    "client": {
+        "card": {
+            "validity": "有効期限",
+            "balance": "残高",
+            "price": "価格"
+        }
+    }
 }

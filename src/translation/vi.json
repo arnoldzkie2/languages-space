@@ -1,3 +1,220 @@
 {
-    
+    "super-admin": {
+        "supplier": {
+            "create": "Tạo Nhà cung cấp",
+            "h1": "Quản lý Nhà cung cấp",
+            "select": "Chọn Nhà cung cấp",
+            "select-first": "Chọn Nhà cung cấp Trước",
+            "select-meeting": "Chọn Thông tin Họp",
+            "search": "Tìm Nhà cung cấp",
+            "tags": "Nhãn Nhà cung cấp"
+        },
+        "courses": {
+            "h1": "Quản lý Khóa học",
+            "search": "Tìm Khóa học",
+            "create": "Tạo Khóa học",
+            "course-name": "Tên Khóa học"
+        },
+        "news": {
+            "h1": "Quản lý Tin tức",
+            "title": "Tiêu đề",
+            "update": "Cập nhật Tin tức",
+            "author": "Tác giả",
+            "keywords": "Từ khóa",
+            "add-keyword": "Thêm Từ khóa",
+            "create": "Tạo Tin tức",
+            "search": "Tìm Tin tức"
+        },
+        "client": {
+            "client": "Khách hàng",
+            "h1": "Quản lý Khách hàng",
+            "select-first": "Chọn Khách hàng Trước",
+            "create": "Tạo Khách hàng",
+            "with-cards": "Với Thẻ",
+            "phone": "Số điện thoại",
+            "organization": "Tổ chức",
+            "card": {
+                "client": "Thẻ",
+                "bind": "Liên kết Thẻ"
+            },
+            "search": "Tìm Khách hàng",
+            "select": "Chọn Khách hàng",
+            "404": "Không tìm thấy Khách hàng"
+        },
+        "client-card": {
+            "manage": "Quản lý Thẻ Khách hàng",
+            "h1": "Quản lý Thẻ",
+            "quantity": "Số lượng",
+            "create": "Tạo Thẻ",
+            "select-all": "Chọn Tất cả",
+            "select-first": "Chọn Thẻ Trước",
+            "update": "Cập nhật Thẻ",
+            "max": "Tối đa",
+            "balance": "Số dư",
+            "validity": "Hiệu lực",
+            "sold": "Đã bán",
+            "invoice": "Hóa đơn",
+            "available": "Có sẵn",
+            "online_renews": "Gia hạn Trực tuyến",
+            "repeat_purchases": "Mua lại",
+            "settlement_period": "Kỳ thanh toán",
+            "select": "Chọn Thẻ",
+            "search": "Tìm Thẻ",
+            "card": "Thẻ",
+            "404": "Không tìm thấy Thẻ",
+            "description": "Mô tả",
+            "courses": "Các Khóa học Hỗ trợ",
+            "suppliers": "Các Nhà cung cấp Hỗ trợ",
+            "client": "Khách hàng"
+        },
+        "global": {
+            "department": {
+                "select": "Bộ phận",
+                "all": "Tất cả Bộ phận"
+            },
+            "operation": "Hoạt động",
+            "download": "Tải xuống",
+            "result": "Kết quả:",
+            "selected": "Đã chọn:",
+            "cancel": "Hủy bỏ",
+            "total": "Tổng cộng:",
+            "delete-confirm": "Có, Tôi chắc chắn",
+            "confirm-cancel": "Không hủy bỏ"
+        },
+        "pagination": {
+            "prev": "Trang Trước",
+            "next": "Trang Sau",
+            "goto": "Điều hướng đến trang",
+            "page": "Trang"
+        },
+        "side-nav": {
+            "department": "Bộ phận",
+            "menu": "Menu",
+            "dashboard": "Bảng điều khiển",
+            "client": "Khách hàng",
+            "schedule": "Lịch trình",
+            "agent": "Đại lý",
+            "supplier": "Nhà cung cấp",
+            "admin": "Quản trị viên",
+            "orders": "Đơn hàng",
+            "booking": "Đặt phòng",
+            "news": "Tin tức Web",
+            "settings": "Cài đặt",
+            "statistics": "Thống kê",
+            "logout": "Đăng xuất"
+        },
+        "schedule": {
+            "h1": "Quản lý Lịch trình",
+            "create": "Tạo Lịch trình",
+            "no-schedule": "Không có Lịch trình",
+            "meeting": "Chọn Dịch vụ Họp",
+            "delete": "Xóa Lịch trình"
+        },
+        "order": {
+            "h1": "Quản lý Đơn hàng",
+            "create": "Tạo Đơn hàng",
+            "update": "Cập nhật Đơn hàng",
+            "card": "Thẻ",
+            "client_name": "Khách hàng",
+            "quantity": "Số lượng",
+            "operator": "Người vận hành",
+            "invoice_number": "Số hóa đơn",
+            "express_number": "Số chuyển phát",
+            "departments": "Bộ phận",
+            "search": "Tìm Đơn hàng"
+        },
+        "department": {
+            "h1": "Quản lý Bộ phận",
+            "create": "Tạo Bộ phận",
+            "search": "Tìm Bộ phận",
+            "update": "Cập nhật Bộ phận"
+        },
+        "booking": {
+            "h1": "Quản lý Đặt phòng",
+            "card": "Thẻ",
+            "course": "Khóa học",
+            "select-course": "Chọn Khóa học",
+            "select-schedule": "Chọn Lịch trình",
+            "delete": "Bạn có chắc chắn muốn xóa đặt phòng này không?",
+            "clientcard-select": "Chọn Thẻ",
+            "search": "Tìm Đặt phòng",
+            "create": "Tạo Đặt phòng",
+            "update": "Cập nhật Đặt phòng",
+            "confirm": "Xác nhận Đặt phòng",
+            "reminders": {
+                "h1": "Quản lý Nhắc nhở Đặt phòng",
+                "h2": "Nhắc nhở",
+                "delete": "Bạn có chắc chắn muốn xóa nhắc nhở này không?",
+                "confirmation": "Bạn có chắc chắn muốn đặt nhắc nhở này không?",
+                "create": "Tạo Nhắc nhở",
+                "confirm": "Đặt phòng!",
+                "update": "Cập nhật Nhắc nhở"
+            }
+        }
+    },
+    "global": {
+        "cancel": "Hủy bỏ",
+        "confirm": "Xác nhận",
+        "create": "Tạo",
+        "client": "Khách hàng",
+        "supplier": "Nhà cung cấp",
+        "agent": "Đại lý",
+        "course": "Khóa học",
+        "admin": "Quản trị viên",
+        "delete": "Xóa",
+        "employment": "Tình trạng Việc làm",
+        "update": "Cập nhật",
+        "view": "Xem",
+        "price": "Giá",
+        "time": "Thời gian",
+        "meeting-code": "Mã Họp",
+        "service": "Dịch vụ",
+        "departments": "Bộ phận",
+        "payment": "Thông tin Thanh toán",
+        "remove": "Xóa",
+        "add-more": "Thêm",
+        "status": "Trạng thái",
+        "close": "Đóng",
+        "search": "Tìm kiếm",
+        "name": "Tên",
+        "balance": "Số dư",
+        "username": "Tên người dùng",
+        "meeting": "Thông tin Họp",
+        "address": "Địa chỉ",
+        "email": "Địa chỉ Email",
+        "select": "Chọn",
+        "clientcard": "Thẻ Khách hàng",
+        "password": "Mật khẩu",
+        "phone": "Số điện thoại",
+        "operator": "Người vận hành",
+        "schedule": "Lịch trình",
+        "card": "Thẻ",
+        "date": "Ngày",
+        "gender": "Giới tính",
+        "employment-status": "Tình trạng Việc làm",
+        "organization": "Tổ chức",
+        "profile": "Hình ảnh Hồ sơ",
+        "origin": "Xuất xứ",
+        "note": "Chú ý",
+        "invoice": "Số hóa đơn",
+        "express": "Số chuyển phát",
+        "tags": "Tags"
+    },
+    "auth": {
+        "username": "Tên người dùng",
+        "password": "Mật khẩu",
+        "signin": "Đăng nhập",
+        "signup": "Đăng ký",
+        "name": "Họ và tên",
+        "confirm_password": "Xác nhận Mật khẩu",
+        "not_signup": "Chưa có tài khoản? ",
+        "already_signup": "Đã đăng ký?"
+    },
+    "client": {
+        "card": {
+            "validity": "Hiệu lực",
+            "balance": "Số dư",
+            "price": "Giá"
+        }
+    }
 }

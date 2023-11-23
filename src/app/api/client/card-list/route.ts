@@ -349,6 +349,9 @@ export const DELETE = async (req: Request) => {
             const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
             if (!card) return notFoundRes('Client Card')
 
+            const retrieveProduct = await stripe.products.retrieve(card.productID)
+            if(!retrieveProduct) return notFoundRes('Product')
+            
             // deactivate the product 
             const deactivateProduct = await stripe.products.update(card.productID, {
                 default_price: '',

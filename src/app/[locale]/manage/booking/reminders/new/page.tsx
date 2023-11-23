@@ -245,7 +245,7 @@ const Page = () => {
                 </div>
 
                 <div className='flex flex-col gap-2 w-full'>
-                  <label htmlFor="supplierID" className='text-gray-700 font-medium px-3'>{t('booking.meeting-info')}</label>
+                  <label htmlFor="supplierID" className='text-gray-700 font-medium px-3'>{tt('meeting')}</label>
                   <ul className='flex flex-col'>
                     {singleSupplier?.meeting_info.map((info: SupplierMeetingInfo) => (
                       <li key={info.id}
