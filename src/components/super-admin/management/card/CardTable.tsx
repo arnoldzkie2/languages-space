@@ -26,14 +26,14 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
             <thead className="text-xs uppercase bg-slate-100 border">
                 <tr>
-                    <th scope="col" className="px-6 py-3">{t('client-card.name')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client-card.price')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client-card.balance')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('name')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('price')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('balance')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.quantity')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.validity')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.sold')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client-card.client')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client-card.date')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('client')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('date')}</th>
                     <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>

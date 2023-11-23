@@ -97,12 +97,12 @@ const OrderTable: React.FC<Props> = ({ filteredTable }) => {
                     <th scope="col" className="px-4 py-3">{t('order.card')}</th>
                     <th scope="col" className="px-4 py-3">{t('order.client_name')}</th>
                     <th scope="col" className="px-4 py-3">{t('order.quantity')}</th>
-                    <th scope="col" className="px-4 py-3">{t('order.price')}</th>
-                    <th scope="col" className="px-4 py-3">{t('order.status')}</th>
+                    <th scope="col" className="px-4 py-3">{tt('price')}</th>
+                    <th scope="col" className="px-4 py-3">{tt('status')}</th>
                     <th scope="col" className="px-4 py-3">{t('order.invoice_number')}</th>
                     <th scope="col" className="px-4 py-3">{t('order.express_number')}</th>
-                    <th scope="col" className="px-4 py-3">{t('order.note')}</th>
-                    <th scope="col" className="px-4 py-3">{t('order.date')}</th>
+                    <th scope="col" className="px-4 py-3">{tt('note')}</th>
+                    <th scope="col" className="px-4 py-3">{tt('date')}</th>
                     <th scope="col" className="px-4 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>

@@ -52,9 +52,10 @@ const Page = () => {
     const createCard = async (e: any) => {
 
         e.preventDefault()
-        const { balance, price } = formData
+        const { balance, price, quantity } = formData
         if (!departmentID) return setErr('Select Department')
         if (price < 1) return setErr('Price must be greater than 0')
+        if (quantity < 1) return setErr("Quantity must be greater than 0")
         if (balance < 1) return setErr('Balance must be greater than 0')
 
         try {
@@ -223,18 +224,18 @@ const Page = () => {
                                 <Departments />
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="name" className='font-medium px-2'>{t('client-card.name')}</label>
+                                    <label htmlFor="name" className='font-medium px-2'>{tt('name')}</label>
                                     <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="price" className='font-medium px-2'>{t('client-card.price')}</label>
+                                    <label htmlFor="price" className='font-medium px-2'>{tt('price')}</label>
                                     <input required value={formData.price} onChange={handleChange} name='price' type="number" className=' w-full border outline-none py-1 px-3' id='price' />
                                 </div>
 
 
                                 <div className='w-full flex flex-col gap-2 relative'>
-                                    <label htmlFor="balance" className='font-medium px-2'>{t('client-card.balance')}</label>
+                                    <label htmlFor="balance" className='font-medium px-2'>{tt('balance')}</label>
                                     <input value={formData.balance} onChange={handleChange} name='balance' type="number" className='w-full border outline-none py-1 px-3' id='balance' />
                                     <div className='absolute right-3 top-10 font-black cursor-pointer hover:text-blue-600 text-xs uppercase' onClick={() => setFormData(prevData => ({ ...prevData, balance: 99999 }))}>{t('client-card.max')}</div>
                                 </div>

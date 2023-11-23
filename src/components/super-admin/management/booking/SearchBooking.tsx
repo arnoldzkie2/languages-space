@@ -22,6 +22,7 @@ interface Props {
 const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
 
     return (
         <div className='w-full'>
@@ -30,7 +31,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                 <div className='flex w-full text-gray-700 gap-3'>
 
                     <input type="text"
-                        placeholder={t('client-card.name')}
+                        placeholder={tt('name')}
                         name='name'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -38,7 +39,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('booking.client')}
+                        placeholder={tt('client')}
                         name='client'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -46,7 +47,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('booking.supplier')}
+                        placeholder={tt('supplier')}
                         name='supplier'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -54,7 +55,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input
-                        placeholder={t('client-card.price')}
+                        placeholder={tt('price')}
                         name='price'
                         type='number'
                         className='w-full border text-sm px-3 outline-none py-2'
@@ -63,7 +64,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input
-                        placeholder={t('client-card.balance')}
+                        placeholder={tt('balance')}
                         name='balance'
                         type='number'
                         className='w-full border text-sm px-3 outline-none py-2'

@@ -19,7 +19,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
 
     const { selectedNews, setSelectedNews, openNewsDeleteWarning } = useAdminNewsStore()
 
-    const { operation, openOperation, closeOperation, selectedID } = useAdminGlobalStore()
+    const { operation, openOperation, closeOperation, selectedID, skeleton } = useAdminGlobalStore()
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
@@ -88,8 +88,6 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
-    const [newsTableSkeleton, setNewsTableSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
     return (
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
             <thead className="text-xs uppercase bg-slate-50 border">
@@ -104,7 +102,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                     <th scope="col" className="py-3 px-6">{t('news.title')}</th>
                     <th scope="col" className="py-3 px-6">{t('news.keywords')}</th>
                     <th scope="col" className="py-3 px-6">{t('news.author')}</th>
-                    <th scope="col" className="py-3 px-6">{t('news.date')}</th>
+                    <th scope="col" className="py-3 px-6">{tt('date')}</th>
                     <th scope="col" className="py-3 px-6">{t('global.operation')}</th>
                 </tr>
             </thead>
@@ -140,14 +138,14 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                 <FontAwesomeIcon icon={faEllipsis} className='cursor-pointer text-2xl text-black' onClick={() => openOperation(news.id)} />
                                 <ul className={`${operation && selectedID === news.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' >{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/news/update-news/${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <Link href={`/manage/news/update/${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openNewsDeleteWarning(news)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>
                     )) :
-                    newsTableSkeleton.map(item => (
+                    skeleton.map(item => (
                         <tr key={item}>
                             <td className='py-3 px-6'>
                                 <div className='h-5 bg-slate-200 animate-pulse rounded-md w-5'></div>

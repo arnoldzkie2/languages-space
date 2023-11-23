@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
+import Link from 'next-intl/link'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
@@ -128,8 +129,10 @@ const Page = () => {
                             <div>{t('client-card.card')}: {selectedCard?.name && `${selectedCard?.name} (${selectedCard?.price})`}</div>
                         </div>
 
-                        <button disabled={isLoading && true} onClick={bindCardToUser} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} outline-none py-2 w-1/2 self-end text-white rounded-md`}>
+                        <button disabled={isLoading && true} onClick={bindCardToUser} className={`${isLoading ? 'bg-blue-500' :
+                            'bg-blue-600 hover:bg-blue-500'} outline-none py-2 w-1/2 self-end text-white rounded-md`}>
                             {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : t('client.card.bind')}</button>
+
                     </div>
                 </div>
             </div>

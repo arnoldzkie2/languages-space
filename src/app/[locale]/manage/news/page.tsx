@@ -4,9 +4,9 @@ import SideNav from '@/components/super-admin/SideNav';
 import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
 import NewsDeleteWarningModal from '@/components/super-admin/management/web-news/NewsDeleteWarningModal';
+import NewsHeader from '@/components/super-admin/management/web-news/NewsHeader';
 import NewsTable from '@/components/super-admin/management/web-news/NewsTable';
 import SearchNews from '@/components/super-admin/management/web-news/SearchNews';
-import WebHeader from '@/components/super-admin/management/web-news/WebHeader';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminNewsStore, { ManageWebSearchQueryValue } from '@/lib/state/super-admin/newsStore';
 import axios from 'axios';
@@ -116,7 +116,7 @@ const Web: React.FC = () => {
             <SideNav />
             <div className={`flex flex-col gap-8 w-full h-full ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
         
-                <WebHeader />
+                <NewsHeader />
 
                 <div className={`flex w-full h-full px-8 gap-8 items-start  `}>
 

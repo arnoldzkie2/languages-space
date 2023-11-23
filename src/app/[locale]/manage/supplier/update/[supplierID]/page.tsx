@@ -177,37 +177,37 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                             <div className='w-full flex flex-col gap-4'>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="name" className='font-medium'>Name</label>
+                                    <label htmlFor="name" className='font-medium'>{tt('name')}</label>
                                     <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="username" className='font-medium'>Username</label>
+                                    <label htmlFor="username" className='font-medium'>{tt('username')}</label>
                                     <input required value={formData.user_name} onChange={handleChange} name='user_name' type="text" className='w-full border outline-none py-1 px-3' id='username' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="email" className='font-medium'>Email Address (optional)</label>
+                                    <label htmlFor="email" className='font-medium'>{tt('email')} (optional)</label>
                                     <input value={formData.email || ''} onChange={handleChange} name='email' type="email" className='w-full border outline-none py-1 px-3' id='email' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="password" className='font-medium'>Password</label>
+                                    <label htmlFor="password" className='font-medium'>{tt('password')}</label>
                                     <input required value={formData.password} onChange={handleChange} name='password' type="text" className='w-full border outline-none py-1 px-3' id='password' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="phone" className='font-medium'>Phone Number (optional)</label>
+                                    <label htmlFor="phone" className='font-medium'>{tt('phone')} (optional)</label>
                                     <input value={formData.phone_number || ''} onChange={handleChange} name='phone_number' type="text" className='w-full border outline-none py-1 px-3' id='phone' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="organization" className='font-medium'>Organization (optional)</label>
+                                    <label htmlFor="organization" className='font-medium'>{tt('organization')} (optional)</label>
                                     <input value={formData.organization || ''} onChange={handleChange} name='organization' type="text" className='w-full border outline-none py-1 px-3' id='organization' />
                                 </div>
 
                                 <div className='flex flex-col gap-3 items-start'>
-                                    <span className='block font-medium'>Profile Image</span>
+                                    <span className='block font-medium'>{tt('profile')}</span>
                                     <UploadButton<OurFileRouter>
                                         endpoint="profileUploader"
                                         onClientUploadComplete={(res) => {
@@ -229,7 +229,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="tags" className='font-medium' title='Enter to add tags'>Tags (optional)</label>
+                                    <label htmlFor="tags" className='font-medium' title='Enter to add tags'>{tt('tags')} (optional)</label>
                                     <input onKeyDown={handleTagInputChange} name='tags' type="text" className='w-full border outline-none py-1 px-3' id='tags' />
                                 </div>
 
@@ -238,7 +238,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                             <div className='w-full flex flex-col gap-4'>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="gender" className='font-medium'>Gender (optional)</label>
+                                    <label htmlFor="gender" className='font-medium'>{tt('gender')} (optional)</label>
                                     <select name="gender" id="gender" onChange={handleChange} value={formData.gender || ''} className='py-1 outline-none px-3 border'>
                                         <option value="" disabled>Select</option>
                                         <option value="male">Male</option>
@@ -247,7 +247,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                     </select>
                                 </div>
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="employment_status" className='font-medium'>Employment Status (optional)</label>
+                                    <label htmlFor="employment_status" className='font-medium'>{tt('employment')} (optional)</label>
                                     <select name="employment_status" id="employment_status" onChange={handleChange} value={formData.employment_status || ''} className='py-1 outline-none px-3 border'>
                                         <option value="" disabled>Select</option>
                                         <option value="full-time">Full-time</option>
@@ -256,22 +256,22 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="address" className='font-medium'>Address (optional)</label>
+                                    <label htmlFor="address" className='font-medium'>{tt('address')} (optional)</label>
                                     <input value={formData.address || ''} onChange={handleChange} name='address' type="text" className='w-full border outline-none py-1 px-3' id='address' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="origin" className='font-medium'>Origin (optional)</label>
+                                    <label htmlFor="origin" className='font-medium'>{tt('origin')} (optional)</label>
                                     <input value={formData.origin || ''} onChange={handleChange} name='origin' type="text" className='w-full border outline-none py-1 px-3' id='origin' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="payment_info" className='font-medium'>Payment Info (optional)</label>
+                                    <label htmlFor="payment_info" className='font-medium'>{tt('payment')} (optional)</label>
                                     <input value={formData.payment_info || ''} onChange={handleChange} name='payment_info' type="text" className='w-full border outline-none py-1 px-3' id='payment_info' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="note" className='font-medium'>Note (optional)</label>
+                                    <label htmlFor="note" className='font-medium'>{tt('note')} (optional)</label>
                                     <input value={formData.note || ''} onChange={handleChange} name='note' type="text" className='w-full border outline-none py-1 px-3' id='note' />
                                 </div>
 
@@ -295,14 +295,14 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                             </div>
 
                             <div className='flex flex-col gap-3 w-full'>
-                                <h1>Meeting Info</h1>
+                                <h1>{tt('meeting')}</h1>
                                 {formData.meeting_info.map((info, index) => (
                                     <div key={index} className='flex flex-col gap-3 w-full p-4 border'>
                                         <input
                                             type="text"
                                             required
                                             name="service"
-                                            placeholder="Service"
+                                            placeholder={tt('service')}
                                             value={info.service}
                                             className='py-1.5 px-2 outline-none border rounded-md'
                                             onChange={(e) => handleMeetinInfoChange(e, index)}
@@ -311,7 +311,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                             type="text"
                                             required
                                             name="meeting_code"
-                                            placeholder="Meeting Code"
+                                            placeholder={tt('meeting-code')}
                                             value={info.meeting_code}
                                             className='py-1.5 px-2 outline-none border rounded-md'
                                             onChange={(e) => handleMeetinInfoChange(e, index)}
@@ -324,7 +324,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                         </div>
                         <div className='flex flex-col gap-3'>
-                            <span className='font-medium'>Supplier Tags</span>
+                            <span className='font-medium'>{t('supplier.tags')}</span>
 
                             <ul className='w-full flex items-center gap-5 flex-wrap'>
                                 {formData.tags.map(item => (

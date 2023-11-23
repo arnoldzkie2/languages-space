@@ -115,16 +115,16 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                             onChange={selectAllRows}
                         />
                     </th>
-                    <th scope="col" className="px-3 py-3">{t('booking.name')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.client')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.supplier')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.card')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.schedule')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.price')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.operator')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.status')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.note')}</th>
-                    <th scope="col" className="px-3 py-3">{t('booking.date')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('name')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('client')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('supplier')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('card')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('schedule')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('price')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('operator')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('status')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('note')}</th>
+                    <th scope="col" className="px-3 py-3">{tt('date')}</th>
                     <th scope="col" className="px-3 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>

@@ -108,15 +108,15 @@ const Page = ({ params }: Props) => {
                         <div className='w-full flex gap-10'>
                             <div className='w-1/2 flex flex-col gap-4'>
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="name" className='font-medium px-2'>{t('client-card.name')}</label>
+                                    <label htmlFor="name" className='font-medium px-2'>{tt('name')}</label>
                                     <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
                                 </div>
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="price" className='font-medium px-2'>{t('client-card.price')}</label>
+                                    <label htmlFor="price" className='font-medium px-2'>{tt('price')}</label>
                                     <input required value={formData.price} onChange={handleChange} name='price' type="number" className=' w-full border outline-none py-1 px-3' id='price' />
                                 </div>
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="balance" className='font-medium px-2'>{t('client-card.balance')}</label>
+                                    <label htmlFor="balance" className='font-medium px-2'>{tt('balance')}</label>
                                     <input value={formData.balance} onChange={handleChange} name='balance' type="number" className='w-full border outline-none py-1 px-3' id='balance' />
                                 </div>
                                 <div className='w-full flex flex-col gap-2'>

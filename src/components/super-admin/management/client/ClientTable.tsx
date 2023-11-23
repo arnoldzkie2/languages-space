@@ -106,11 +106,11 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                             onChange={selectAllRows}
                         />
                     </th>
-                    <th scope="col" className="px-6 py-3">{t('client.name')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client.phone')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client.organization')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client.origin')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client.note')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('name')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('phone')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('organization')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('origin')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('note')}</th>
                     <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>

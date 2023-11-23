@@ -243,7 +243,7 @@ const BindSchedlueModal = () => {
                         )) : formData.courses.length < 1 && formData.cardSelectedID ? <option className='' disabled>This card has 0 supported courses</option> : <option disabled>Select Card First</option>}
 
                     </select>
-                    <h1 className='font-medium px-1'>Select Meeting Service</h1>
+                    <h1 className='font-medium px-1'>{t('schedule.meeting')}</h1>
                     <ul className='flex flex-col gap-2 max-h-20 min-h-[5rem] overflow-y-auto'>
                         {supplierMeetingInfo.map(info => (
                             <li key={info.id} onClick={() => {
@@ -259,8 +259,8 @@ const BindSchedlueModal = () => {
                     <input id='price' className='py-1.5 px-2 border rounded-md outline-none' type="number" placeholder={t('booking.price')} value={formData.price} onChange={(e: any) => setFormData(prevData => ({ ...prevData, price: e.target.value }))} />
                     </div>
                     <div className='flex items-center w-full gap-10'>
-                        <button onClick={(e: any) => deleteSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : 'Delete Schedule'}</button>
-                        <button onClick={(e: any) => bookSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : 'Confirm Booking'}</button>
+                        <button onClick={(e: any) => deleteSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('schedule.delete')}</button>
+                        <button onClick={(e: any) => bookSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('booking.confirm')}</button>
                     </div>
                 </div>
             </div>

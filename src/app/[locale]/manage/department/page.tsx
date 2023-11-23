@@ -6,14 +6,14 @@ import DeleteDepartmentWarningModal from '@/components/super-admin/management/de
 import DepartmentHeader from '@/components/super-admin/management/department/DepartmentHeader';
 import DepartmentTable from '@/components/super-admin/management/department/DepartmentTable';
 import NewDepartmentModal from '@/components/super-admin/management/department/NewDepartmentModal';
-import SearchDepartment from '@/components/super-admin/management/department/SearchDepartment';
 import UpdateDepartmentModal from '@/components/super-admin/management/department/UpdateDepartmentModal';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import axios from 'axios';
 import { signIn, useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 
-export const Page = () => {
+const Page = () => {
 
     const session = useSession({
         required: true,
@@ -76,6 +76,9 @@ export const Page = () => {
 
     }, [departments.length, filterDepartments.length]);
 
+    const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
+
     return (
         <div className='flex h-screen'>
             <SideNav />
@@ -85,7 +88,22 @@ export const Page = () => {
                 <div className={`flex w-full h-full px-8 gap-8 items-start  `}>
 
                     <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6 gap-4'>
-                        <SearchDepartment searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                        <div className='w-full'>
+                            <div className='flex justify-between items-center mb-2 font-medium px-2'>
+                                {t('department.search')}
+                            </div>
+                            <div>
+                                <div className='flex flex-col text-gray-700 gap-3'>
+
+                                    <input type="text"
+                                        placeholder={tt('name')}
+                                        className='w-full border text-sm px-3 outline-none py-2'
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        value={searchQuery}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <DepartmentTable filteredTable={currentDepartments} />
@@ -102,3 +120,5 @@ export const Page = () => {
         </div>
     );
 };
+
+export default Page

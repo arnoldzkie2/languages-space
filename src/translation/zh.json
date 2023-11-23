@@ -4,6 +4,7 @@
             "create": "创建供应商",
             "h1": "管理供应商",
             "name": "名称",
+            "select": "选择供应商",
             "phone": "电话号码",
             "organization": "组织",
             "origin": "来源",
@@ -32,7 +33,7 @@
             "h1": "管理客户",
             "create": "创建客户",
             "name": "名称",
-            "with-cards": "带卡",
+            "with-cards": "带有卡",
             "phone": "电话号码",
             "organization": "组织",
             "origin": "来源",
@@ -48,6 +49,7 @@
         "client-card": {
             "manage": "管理客户卡",
             "h1": "管理卡",
+            "quantity": "数量",
             "create": "创建卡",
             "select-all": "全选",
             "update": "更新卡",
@@ -56,7 +58,7 @@
             "max": "最大",
             "balance": "余额",
             "validity": "有效期",
-            "sold": "已售",
+            "sold": "已售出",
             "invoice": "发票",
             "available": "可用",
             "online_renews": "在线续订",
@@ -75,15 +77,16 @@
         "global": {
             "department": {
                 "select": "部门",
-                "all": "全部部门"
+                "all": "所有部门"
             },
             "operation": "操作",
             "download": "下载",
-            "result": "结果：",
-            "selected": "已选择：",
-            "total": "总计：",
-            "delete-confirm": "是，我确定",
-            "confirm-cancel": "取消"
+            "result": "结果:",
+            "selected": "已选择:",
+            "cancel": "取消",
+            "total": "总计:",
+            "delete-confirm": "是的，我确定",
+            "confirm-cancel": "不取消"
         },
         "pagination": {
             "prev": "上一页",
@@ -96,20 +99,20 @@
             "menu": "菜单",
             "dashboard": "仪表板",
             "client": "客户",
-            "schedule": "日程",
+            "schedule": "时间表",
             "agent": "代理",
             "supplier": "供应商",
             "admin": "管理员",
             "orders": "订单",
             "booking": "预订",
-            "news": "网络新闻",
+            "news": "网页新闻",
             "settings": "设置",
             "statistics": "统计",
-            "logout": "退出"
+            "logout": "登出"
         },
         "schedule": {
-            "h1": "管理日程",
-            "create": "创建日程"
+            "h1": "管理时间表",
+            "create": "创建时间表"
         },
         "order": {
             "h1": "管理订单",
@@ -122,8 +125,8 @@
             "note": "备注",
             "price": "价格",
             "status": "状态",
-            "invoice_number": "发票号",
-            "express_number": "快递号",
+            "invoice_number": "发票号码",
+            "express_number": "快递号码",
             "date": "日期",
             "departments": "部门",
             "search": "搜索订单"
@@ -139,17 +142,40 @@
         "booking": {
             "h1": "管理预订",
             "name": "名称",
+            "card": "卡",
             "price": "价格",
+            "status": "状态",
+            "course": "课程",
+            "select-course": "选择课程",
+            "schedule": "时间表",
+            "select-schedule": "选择时间表",
+            "client": "客户",
             "note": "备注",
+            "delete": "确定要删除此预订吗？",
+            "clientcard": "客户卡",
+            "clientcard-select": "选择卡",
+            "meeting-info": "选择会议信息",
+            "supplier": "供应商",
             "operator": "操作员",
             "searcg": "搜索预订",
             "create": "创建预订",
+            "update": "更新预订",
             "date": "日期",
-            "time": "时间"
+            "time": "时间",
+            "reminders": {
+                "h1": "管理预订提醒",
+                "h2": "提醒",
+                "delete": "确定要删除此提醒吗？",
+                "confirmation": "确定要预订此提醒吗？",
+                "create": "创建提醒",
+                "confirm": "预订！",
+                "update": "更新提醒"
+            }
         }
     },
     "global": {
         "cancel": "取消",
+        "confirm": "确认",
         "create": "创建",
         "delete": "删除",
         "update": "更新",
@@ -165,7 +191,7 @@
         "name": "全名",
         "confirm_password": "确认密码",
         "not_signup": "还没有帐户？",
-        "already_signup": "已注册？"
+        "already_signup": "已经注册？"
     },
     "client": {
         "card": {

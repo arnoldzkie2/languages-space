@@ -19,6 +19,7 @@ interface Props {
 const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations()
 
     return (
         <div className='pt-4 mt-4 border-t border-gray-300 w-full'>
@@ -29,7 +30,7 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                 <div className='flex flex-col text-gray-700 gap-3'>
 
                     <input type="text"
-                        placeholder={t('client.name')}
+                        placeholder={tt('name')}
                         name='name'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -37,7 +38,7 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('client.phone')}
+                        placeholder={tt('phone')}
                         name='phone_number'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -45,7 +46,7 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('client.organization')}
+                        placeholder={tt('organization')}
                         name='organization'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -53,7 +54,7 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('client.origin')}
+                        placeholder={tt('origin')}
                         name='origin'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -61,7 +62,7 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('client.note')}
+                        placeholder={tt('note')}
                         name='note'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}

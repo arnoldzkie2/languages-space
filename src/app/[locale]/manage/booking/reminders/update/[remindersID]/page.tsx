@@ -209,6 +209,8 @@ const Page = ({ params }: Props) => {
     }, [])
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
+
     const clientHeaderSkeleton = (
         <li className='bg-slate-200 animate-pulse w-40 h-5 rounded-3xl'></li>
     )
@@ -244,12 +246,12 @@ const Page = ({ params }: Props) => {
                             <div className='flex flex-col w-full gap-4'>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="name" className='text-gray-700 font-medium px-3'>{t('booking.name')}</label>
-                                    <input type="text" id='name' name='name' placeholder={t('booking.name')} value={formData.name} onChange={handleChange} className='w-full border px-3 py-1.5 outline-none' />
+                                    <label htmlFor="name" className='text-gray-700 font-medium px-3'>{tt('name')}</label>
+                                    <input type="text" id='name' name='name' placeholder={tt('name')} value={formData.name} onChange={handleChange} className='w-full border px-3 py-1.5 outline-none' />
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="supplierID" className='text-gray-700 font-medium px-3'>{t('booking.supplier')}</label>
+                                    <label htmlFor="supplierID" className='text-gray-700 font-medium px-3'>{tt('supplier')}</label>
                                     <select className='px-3 py-1.5 w-full outline-none border' name="supplierID" value={formData.supplierID} onChange={handleChange} id="supplierID">
                                         <option value="">{t('supplier.select')}</option>
                                         {supplier.length > 0 ? supplier.map(sup => (
@@ -259,17 +261,17 @@ const Page = ({ params }: Props) => {
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="scheduleID" className='text-gray-700 font-medium px-3'>{t('booking.schedule')}</label>
+                                    <label htmlFor="scheduleID" className='text-gray-700 font-medium px-3'>{tt('schedule')}</label>
                                     <select className='px-3 py-1.5 w-full outline-none border' name="scheduleID" value={formData.scheduleID} onChange={handleChange} id="scheduleID">
                                         <option value="">{t('booking.select-schedule')}</option>
                                         {supplierSchedule.length > 0 ? supplierSchedule.map(schedule => (
                                             <option value={schedule.id} key={schedule.id}>{schedule.date} ({schedule.time}) {schedule.status === 'reserved' && '(reserved)'}</option>
-                                        )) : <option disabled>Select Supplier First.</option>}
+                                        )) : <option disabled>{t('supplier.select-first')}</option>}
                                     </select>
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="supplierID" className='text-gray-700 font-medium px-3'>{t('booking.meeting-info')}</label>
+                                    <label htmlFor="supplierID" className='text-gray-700 font-medium px-3'>{t('supplier.select-meeting')}</label>
                                     <ul className='flex flex-col'>
                                         {singleSupplier?.meeting_info.map((info: SupplierMeetingInfo) => (
                                             <li key={info.id}
@@ -287,12 +289,12 @@ const Page = ({ params }: Props) => {
                             <div className='flex flex-col w-full gap-4'>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="note" className='text-gray-700 font-medium px-3'>{t('booking.note')} (optional)</label>
-                                    <input type="text" id='note' name='note' placeholder={t('booking.note')} value={formData.note} onChange={handleChange} className='w-full border px-3 py-1.5 outline-none' />
+                                    <label htmlFor="note" className='text-gray-700 font-medium px-3'>{tt('note')} (optional)</label>
+                                    <input type="text" id='note' name='note' placeholder={tt('note')} value={formData.note} onChange={handleChange} className='w-full border px-3 py-1.5 outline-none' />
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="clientID" className='text-gray-700 font-medium px-3'>{t('booking.client')}</label>
+                                    <label htmlFor="clientID" className='text-gray-700 font-medium px-3'>{tt('client')}</label>
                                     <select required className='px-3 py-1.5 w-full outline-none border' name="clientID" value={formData.clientID} onChange={handleChange} id="clientID">
                                         <option value="">{t('client.select')}</option>
                                         {clients.length > 0 ? clients.map(client => (
@@ -302,27 +304,27 @@ const Page = ({ params }: Props) => {
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="clientCardID" className='text-gray-700 font-medium px-3'>{t('booking.clientcard')}</label>
+                                    <label htmlFor="clientCardID" className='text-gray-700 font-medium px-3'>{tt('clientcard')}</label>
                                     <select required className='px-3 py-1.5 w-full outline-none border' name="clientCardID" value={formData.clientCardID} onChange={handleChange} id="clientCardID">
                                         <option value="">{t('booking.clientcard-select')}</option>
                                         {clientCards.length > 0 ? clientCards.map(card => (
                                             <option value={card.id} key={card.id}>{card.name} ({card.balance})</option>
-                                        )) : <option disabled>Select Client First.</option>}
+                                        )) : <option disabled>{t('client.select-first')}</option>}
                                     </select>
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{t('booking.course')}</label>
+                                    <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{tt('course')}</label>
                                     <select required className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
                                         <option value="">{t('booking.select-course')}</option>
                                         {cardCourses.length > 0 ? cardCourses.map(card => (
                                             <option value={card.id} key={card.id}>{card.name}</option>
-                                        )) : <option disabled>Select Card First.</option>}
+                                        )) : <option disabled>{t('client-card.select-first')}</option>}
                                     </select>
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="price" className='text-gray-700 font-medium px-3'>{t('booking.price')}</label>
+                                    <label htmlFor="price" className='text-gray-700 font-medium px-3'>{tt('price')}</label>
                                     <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.price} onChange={handleChange} name='price' />
                                 </div>
 

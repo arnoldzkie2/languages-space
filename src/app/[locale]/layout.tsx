@@ -19,7 +19,7 @@ interface Props {
 }
 export function generateStaticParams() {
 
-  const allTranslation = ['en', 'zh', 'ja', 'ko', 'vi']
+  const allTranslation = ['en', 'zh', 'ja', 'kr', 'vi']
 
   return allTranslation.map((lang) => ({
     locale: lang

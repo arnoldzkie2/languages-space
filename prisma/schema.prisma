@@ -38,7 +38,7 @@ model ClientCard {
   validity          String
   client            Client         @relation(fields: [clientID], references: [id], onDelete: Cascade)
   clientID          String
-  quantity          Int?
+  quantity          Int
   invoice           Boolean
   repeat_purchases  Boolean
   online_renews     Boolean
@@ -60,7 +60,7 @@ model ClientCardList {
   balance             Int
   validity            Int
   available           Boolean
-  quantity            Int?
+  quantity            Int
   invoice             Boolean
   repeat_purchases    Boolean
   online_renews       Boolean

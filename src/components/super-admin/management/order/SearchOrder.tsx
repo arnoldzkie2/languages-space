@@ -23,6 +23,7 @@ interface Props {
 const SearchOrder: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
 
     return (
         <div className='border-gray-300 w-full'>
@@ -54,7 +55,7 @@ const SearchOrder: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('order.price')}
+                        placeholder={tt('price')}
                         name='price'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -62,14 +63,14 @@ const SearchOrder: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <input type="text"
-                        placeholder={t('order.note')}
+                        placeholder={tt('note')}
                         name='note'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.note}
                     />
                     <input type="text"
-                        placeholder={t('order.status')}
+                        placeholder={tt('status')}
                         name='status'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}

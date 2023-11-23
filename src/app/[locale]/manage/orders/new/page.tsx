@@ -27,6 +27,7 @@ const Page = () => {
 
     const router = useRouter()
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
 
     const [searchClient, setSearchClient] = useState('')
     const [searchCard, setSearchCard] = useState('')
@@ -87,6 +88,7 @@ const Page = () => {
     const clientHeaderSkeleton = (
         <li className='bg-slate-200 w-32 h-5 rounded-3xl animate-pulse'></li>
     )
+
     return (
         <div className=''>
 
@@ -118,7 +120,7 @@ const Page = () => {
                             <div className='w-full flex flex-col gap-4'>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="client_name" className='font-medium px-2'>Select Client</label>
+                                    <label htmlFor="client_name" className='font-medium px-2'>{t('client.select')}</label>
                                     <div className='relative'>
                                         <input value={searchClient} onChange={(e) => setSearchClient(e.target.value)} type="text" className='w-full border outline-none py-1 px-3' id='client_name' />
                                         <ul className={`flex-col absolute bg-slate-50 shadow w-full ${searchClient ? 'flex' : 'hidden'}`}>
@@ -134,7 +136,7 @@ const Page = () => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="card" className='font-medium px-2'>Select Card</label>
+                                    <label htmlFor="card" className='font-medium px-2'>{t('client-card.select')}</label>
                                     <div className='relative'>
                                         <input value={searchCard} onChange={(e) => setSearchCard(e.target.value)} type="text" className='w-full border outline-none py-1 px-3' id='card' />
                                         <ul className={`flex-col absolute bg-slate-50 shadow w-full ${searchCard ? 'flex' : 'hidden'}`}>
@@ -155,7 +157,7 @@ const Page = () => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="quantity" className='font-medium px-2'>Quantity</label>
+                                    <label htmlFor="quantity" className='font-medium px-2'>{t('client-card.quantity')}</label>
                                     <input required value={formData.quantity} onChange={handleChange} name='quantity' type="number" className='w-full border outline-none py-1 px-3' id='quantity' />
                                 </div>
                             </div>
@@ -163,34 +165,36 @@ const Page = () => {
                             <div className='w-full flex flex-col gap-4'>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="status" className='font-medium px-2'>Status</label>
+                                    <label htmlFor="status" className='font-medium px-2'>{tt('status')}</label>
                                     <input required value={formData.status} onChange={handleChange} name='status' type="text" className='w-full border outline-none py-1 px-3' id='status' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="note" className='font-medium px-2'>Note</label>
+                                    <label htmlFor="note" className='font-medium px-2'>{tt('note')}</label>
                                     <input value={formData.note} onChange={handleChange} name='note' type="text" className='w-full border outline-none py-1 px-3' id='note' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="invoice_number" className='font-medium px-2'>Invoice Number (optional)</label>
+                                    <label htmlFor="invoice_number" className='font-medium px-2'>{tt('invoice')} (optional)</label>
                                     <input value={formData.invoice_number} onChange={handleChange} name='invoice_number' type="text" className='w-full border outline-none py-1 px-3' id='invoice_number' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="express_number" className='font-medium px-2'>Express Number (optional)</label>
+                                    <label htmlFor="express_number" className='font-medium px-2'>{tt('express')} (optional)</label>
                                     <input value={formData.express_number} onChange={handleChange} name='express_number' type="text" className='w-full border outline-none py-1 px-3' id='express_number' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="price" className='font-medium px-2'>Price</label>
+                                    <label htmlFor="price" className='font-medium px-2'>{tt('price')}</label>
                                     <input type="text" readOnly value={`¥ ${formData.card && formData.card.price * Number(formData.quantity) || ''}`} className='w-full border outline-none py-1 px-3' />
                                 </div>
                             </div>
                         </div>
                         <div className='flex items-center gap-10 w-1/2 self-end'>
-                            <Link href={'/manage/orders'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>Cancel</Link>
-                            <button disabled={isLoading && true} className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : 'Create'}</button>
+                            <Link href={'/manage/orders'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{tt('cancel')}</Link>
+                            <button disabled={isLoading && true}
+                                className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>
+                                {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : tt('create')}</button>
                         </div>
 
                     </form>

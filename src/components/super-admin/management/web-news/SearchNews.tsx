@@ -17,6 +17,7 @@ interface SearchNewsProps {
 const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
 
     return (
         <div className=''>
@@ -51,7 +52,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                     />
 
                     <input type="text"
-                        placeholder={t('news.date')}
+                        placeholder={tt('date')}
                         name='date'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
