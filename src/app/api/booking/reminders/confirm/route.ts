@@ -22,7 +22,7 @@ export const POST = async (req: Request) => {
             })
             if (!reminder) return notFoundRes('Reminder')
 
-            const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, departmentID, quantity } = reminder
+            const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, departmentID, quantity, settlement } = reminder
 
             if (!scheduleID) return notFoundRes('scheduleID')
             if (!supplierID) return notFoundRes('supplierID')
@@ -64,7 +64,7 @@ export const POST = async (req: Request) => {
                 //create booking
                 const createBooking = await prisma.booking.create({
                     data: {
-                        note, status, operator, name, price: bookingPrice, card_name: card.name, quantity,
+                        note, status, operator, name, price: bookingPrice, card_name: card.name, quantity, settlement,
                         supplier: { connect: { id: supplierID } },
                         client: { connect: { id: clientID } },
                         schedule: { connect: { id: scheduleID } },
@@ -100,7 +100,7 @@ export const POST = async (req: Request) => {
                 //create booking
                 const createBooking = await prisma.booking.create({
                     data: {
-                        note, status, operator, name, price: bookingPrice, card_name: card.name, quantity,
+                        note, status, operator, name, price: bookingPrice, card_name: card.name, quantity, settlement,
                         supplier: { connect: { id: supplierID } },
                         client: { connect: { id: clientID } },
                         schedule: { connect: { id: scheduleID } },

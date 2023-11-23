@@ -1,54 +1,54 @@
 {
     "super-admin": {
         "supplier": {
-            "create": "サプライヤー作成",
-            "h1": "サプライヤー管理",
-            "select": "サプライヤー選択",
+            "create": "サプライヤーの作成",
+            "h1": "サプライヤーの管理",
+            "select": "サプライヤーの選択",
             "select-first": "最初にサプライヤーを選択",
-            "select-meeting": "ミーティング情報選択",
-            "search": "サプライヤー検索",
+            "select-meeting": "ミーティング情報の選択",
+            "search": "サプライヤーの検索",
             "tags": "サプライヤータグ"
         },
         "courses": {
-            "h1": "コース管理",
-            "search": "コース検索",
-            "create": "コース作成",
+            "h1": "コースの管理",
+            "search": "コースの検索",
+            "create": "コースの作成",
+            "select": "コースの選択",
             "course-name": "コース名"
         },
         "news": {
-            "h1": "ニュース管理",
+            "h1": "ニュースの管理",
             "title": "タイトル",
-            "update": "ニュース更新",
+            "update": "ニュースの更新",
             "author": "著者",
             "keywords": "キーワード",
-            "add-keyword": "キーワード追加",
-            "create": "ニュース作成",
-            "search": "ニュース検索"
+            "add-keyword": "キーワードの追加",
+            "create": "ニュースの作成",
+            "search": "ニュースの検索"
         },
         "client": {
             "client": "クライアント",
-            "h1": "クライアント管理",
+            "h1": "クライアントの管理",
             "select-first": "最初にクライアントを選択",
-            "create": "クライアント作成",
+            "create": "クライアントの作成",
             "with-cards": "カード付き",
             "phone": "電話番号",
             "organization": "組織",
             "card": {
                 "client": "カード",
-                "bind": "カードバインド"
+                "bind": "カードのバインド"
             },
-            "search": "クライアント検索",
-            "select": "クライアント選択",
+            "search": "クライアントの検索",
+            "select": "クライアントの選択",
             "404": "クライアントが見つかりません"
         },
         "client-card": {
-            "manage": "クライアントカード管理",
-            "h1": "カード管理",
-            "quantity": "数量",
-            "create": "カード作成",
+            "manage": "クライアントカードの管理",
+            "h1": "カードの管理",
+            "create": "カードの作成",
             "select-all": "すべて選択",
             "select-first": "最初にカードを選択",
-            "update": "カード更新",
+            "update": "カードの更新",
             "max": "最大",
             "balance": "残高",
             "validity": "有効期限",
@@ -58,13 +58,13 @@
             "online_renews": "オンライン更新",
             "repeat_purchases": "繰り返し購入",
             "settlement_period": "決済期間",
-            "select": "カード選択",
-            "search": "カード検索",
+            "select": "カードの選択",
+            "search": "カードの検索",
             "card": "カード",
             "404": "カードが見つかりません",
             "description": "説明",
-            "courses": "サポートされているコース",
-            "suppliers": "サポートされているサプライヤー",
+            "courses": "サポートされるコース",
+            "suppliers": "サポートされるサプライヤー",
             "client": "クライアント"
         },
         "global": {
@@ -78,13 +78,13 @@
             "selected": "選択済み:",
             "cancel": "キャンセル",
             "total": "合計:",
-            "delete-confirm": "はい、確認します",
-            "confirm-cancel": "キャンセルしない"
+            "delete-confirm": "はい、確実です",
+            "confirm-cancel": "いいえ、キャンセルしない"
         },
         "pagination": {
             "prev": "前のページ",
             "next": "次のページ",
-            "goto": "ページに移動",
+            "goto": "ページへ移動",
             "page": "ページ"
         },
         "side-nav": {
@@ -104,16 +104,16 @@
             "logout": "ログアウト"
         },
         "schedule": {
-            "h1": "スケジュール管理",
-            "create": "スケジュール作成",
+            "h1": "スケジュールの管理",
+            "create": "スケジュールの作成",
             "no-schedule": "スケジュールが設定されていません",
-            "meeting": "ミーティングサービス選択",
-            "delete": "スケジュール削除"
+            "meeting": "ミーティングサービスの選択",
+            "delete": "スケジュールの削除"
         },
         "order": {
-            "h1": "注文管理",
-            "create": "注文作成",
-            "update": "注文更新",
+            "h1": "注文の管理",
+            "create": "注文の作成",
+            "update": "注文の更新",
             "card": "カード",
             "client_name": "クライアント",
             "quantity": "数量",
@@ -121,34 +121,35 @@
             "invoice_number": "請求書番号",
             "express_number": "エクスプレス番号",
             "departments": "部門",
-            "search": "注文検索"
+            "search": "注文の検索"
         },
         "department": {
-            "h1": "部門管理",
-            "create": "部門作成",
-            "search": "部門検索",
-            "update": "部門更新"
+            "h1": "部門の管理",
+            "create": "部門の作成",
+            "select": "部門の選択",
+            "search": "部門の検索",
+            "update": "部門の更新"
         },
         "booking": {
-            "h1": "予約管理",
+            "h1": "予約の管理",
             "card": "カード",
             "course": "コース",
-            "select-course": "コース選択",
-            "select-schedule": "スケジュール選択",
+            "select-course": "コースの選択",
+            "select-schedule": "スケジュールの選択",
             "delete": "この予約を削除してもよろしいですか？",
-            "clientcard-select": "カード選択",
-            "search": "予約検索",
-            "create": "予約作成",
-            "update": "予約更新",
-            "confirm": "予約確認",
+            "clientcard-select": "カードの選択",
+            "search": "予約の検索",
+            "create": "予約の作成",
+            "update": "予約の更新",
+            "confirm": "予約の確認",
             "reminders": {
-                "h1": "予約リマインダー管理",
+                "h1": "予約リマインダーの管理",
                 "h2": "リマインダー",
                 "delete": "このリマインダーを削除してもよろしいですか？",
                 "confirmation": "このリマインダーを予約してもよろしいですか？",
-                "create": "リマインダー作成",
-                "confirm": "予約!",
-                "update": "リマインダー更新"
+                "create": "リマインダーの作成",
+                "confirm": "予約！",
+                "update": "リマインダーの更新"
             }
         }
     },
@@ -162,18 +163,19 @@
         "course": "コース",
         "admin": "管理者",
         "delete": "削除",
-        "employment": "雇用状況",
+        "employment": "雇用状態",
         "update": "更新",
         "view": "表示",
         "price": "価格",
         "time": "時間",
-        "meeting-code": "会議コード",
+        "meeting-code": "ミーティングコード",
         "service": "サービス",
         "departments": "部門",
+        "settlement": "決済期間",
         "payment": "支払い情報",
         "remove": "削除",
         "add-more": "追加",
-        "status": "状態",
+        "status": "ステータス",
         "close": "閉じる",
         "search": "検索",
         "name": "名前",
@@ -181,8 +183,9 @@
         "username": "ユーザー名",
         "meeting": "ミーティング情報",
         "address": "住所",
-        "email": "電子メールアドレス",
+        "email": "メールアドレス",
         "select": "選択",
+        "quantity": "数量",
         "clientcard": "クライアントカード",
         "password": "パスワード",
         "phone": "電話番号",
@@ -195,7 +198,7 @@
         "organization": "組織",
         "profile": "プロフィール画像",
         "origin": "出身地",
-        "note": "注意",
+        "note": "メモ",
         "invoice": "請求書番号",
         "express": "エクスプレス番号",
         "tags": "タグ"
@@ -206,7 +209,7 @@
         "signin": "サインイン",
         "signup": "サインアップ",
         "name": "フルネーム",
-        "confirm_password": "パスワード確認",
+        "confirm_password": "パスワードの確認",
         "not_signup": "まだアカウントをお持ちでないですか？ ",
         "already_signup": "すでにサインアップ済みですか？"
     },

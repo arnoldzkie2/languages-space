@@ -6,13 +6,14 @@
             "select": "Chọn Nhà cung cấp",
             "select-first": "Chọn Nhà cung cấp Trước",
             "select-meeting": "Chọn Thông tin Họp",
-            "search": "Tìm Nhà cung cấp",
-            "tags": "Nhãn Nhà cung cấp"
+            "search": "Tìm kiếm Nhà cung cấp",
+            "tags": "Thẻ Nhà cung cấp"
         },
         "courses": {
             "h1": "Quản lý Khóa học",
-            "search": "Tìm Khóa học",
+            "search": "Tìm kiếm Khóa học",
             "create": "Tạo Khóa học",
+            "select": "Chọn Khóa học",
             "course-name": "Tên Khóa học"
         },
         "news": {
@@ -23,7 +24,7 @@
             "keywords": "Từ khóa",
             "add-keyword": "Thêm Từ khóa",
             "create": "Tạo Tin tức",
-            "search": "Tìm Tin tức"
+            "search": "Tìm kiếm Tin tức"
         },
         "client": {
             "client": "Khách hàng",
@@ -31,20 +32,19 @@
             "select-first": "Chọn Khách hàng Trước",
             "create": "Tạo Khách hàng",
             "with-cards": "Với Thẻ",
-            "phone": "Số điện thoại",
+            "phone": "Số điện thoại #",
             "organization": "Tổ chức",
             "card": {
                 "client": "Thẻ",
                 "bind": "Liên kết Thẻ"
             },
-            "search": "Tìm Khách hàng",
+            "search": "Tìm kiếm Khách hàng",
             "select": "Chọn Khách hàng",
-            "404": "Không tìm thấy Khách hàng"
+            "404": "Khách hàng Không Tìm thấy"
         },
         "client-card": {
             "manage": "Quản lý Thẻ Khách hàng",
             "h1": "Quản lý Thẻ",
-            "quantity": "Số lượng",
             "create": "Tạo Thẻ",
             "select-all": "Chọn Tất cả",
             "select-first": "Chọn Thẻ Trước",
@@ -55,16 +55,16 @@
             "sold": "Đã bán",
             "invoice": "Hóa đơn",
             "available": "Có sẵn",
-            "online_renews": "Gia hạn Trực tuyến",
+            "online_renews": "Gia hạn trực tuyến",
             "repeat_purchases": "Mua lại",
             "settlement_period": "Kỳ thanh toán",
             "select": "Chọn Thẻ",
-            "search": "Tìm Thẻ",
+            "search": "Tìm kiếm Thẻ",
             "card": "Thẻ",
-            "404": "Không tìm thấy Thẻ",
+            "404": "Thẻ Không Tìm thấy",
             "description": "Mô tả",
-            "courses": "Các Khóa học Hỗ trợ",
-            "suppliers": "Các Nhà cung cấp Hỗ trợ",
+            "courses": "Khóa học được hỗ trợ",
+            "suppliers": "Nhà cung cấp được hỗ trợ",
             "client": "Khách hàng"
         },
         "global": {
@@ -76,15 +76,15 @@
             "download": "Tải xuống",
             "result": "Kết quả:",
             "selected": "Đã chọn:",
-            "cancel": "Hủy bỏ",
-            "total": "Tổng cộng:",
-            "delete-confirm": "Có, Tôi chắc chắn",
-            "confirm-cancel": "Không hủy bỏ"
+            "cancel": "Hủy",
+            "total": "Tổng:",
+            "delete-confirm": "Có Tôi Chắc Chắn",
+            "confirm-cancel": "Không Hủy"
         },
         "pagination": {
-            "prev": "Trang Trước",
-            "next": "Trang Sau",
-            "goto": "Điều hướng đến trang",
+            "prev": "Trang trước",
+            "next": "Trang tiếp theo",
+            "goto": "Đi đến trang",
             "page": "Trang"
         },
         "side-nav": {
@@ -96,8 +96,8 @@
             "agent": "Đại lý",
             "supplier": "Nhà cung cấp",
             "admin": "Quản trị viên",
-            "orders": "Đơn hàng",
-            "booking": "Đặt phòng",
+            "orders": "Đơn đặt hàng",
+            "booking": "Đặt chỗ",
             "news": "Tin tức Web",
             "settings": "Cài đặt",
             "statistics": "Thống kê",
@@ -106,7 +106,7 @@
         "schedule": {
             "h1": "Quản lý Lịch trình",
             "create": "Tạo Lịch trình",
-            "no-schedule": "Không có Lịch trình",
+            "no-schedule": "Chưa có Lịch trình",
             "meeting": "Chọn Dịch vụ Họp",
             "delete": "Xóa Lịch trình"
         },
@@ -118,42 +118,43 @@
             "client_name": "Khách hàng",
             "quantity": "Số lượng",
             "operator": "Người vận hành",
-            "invoice_number": "Số hóa đơn",
-            "express_number": "Số chuyển phát",
+            "invoice_number": "Hóa đơn #",
+            "express_number": "Số hiệu Nhanh chóng #",
             "departments": "Bộ phận",
-            "search": "Tìm Đơn hàng"
+            "search": "Tìm kiếm Đơn hàng"
         },
         "department": {
             "h1": "Quản lý Bộ phận",
             "create": "Tạo Bộ phận",
-            "search": "Tìm Bộ phận",
+            "select": "Chọn Bộ phận",
+            "search": "Tìm kiếm Bộ phận",
             "update": "Cập nhật Bộ phận"
         },
         "booking": {
-            "h1": "Quản lý Đặt phòng",
+            "h1": "Quản lý Đặt chỗ",
             "card": "Thẻ",
             "course": "Khóa học",
             "select-course": "Chọn Khóa học",
             "select-schedule": "Chọn Lịch trình",
-            "delete": "Bạn có chắc chắn muốn xóa đặt phòng này không?",
+            "delete": "Bạn có chắc muốn xóa đặt chỗ này không?",
             "clientcard-select": "Chọn Thẻ",
-            "search": "Tìm Đặt phòng",
-            "create": "Tạo Đặt phòng",
-            "update": "Cập nhật Đặt phòng",
-            "confirm": "Xác nhận Đặt phòng",
+            "search": "Tìm kiếm Đặt chỗ",
+            "create": "Tạo Đặt chỗ",
+            "update": "Cập nhật Đặt chỗ",
+            "confirm": "Xác nhận Đặt chỗ",
             "reminders": {
-                "h1": "Quản lý Nhắc nhở Đặt phòng",
+                "h1": "Quản lý Nhắc nhở Đặt chỗ",
                 "h2": "Nhắc nhở",
-                "delete": "Bạn có chắc chắn muốn xóa nhắc nhở này không?",
-                "confirmation": "Bạn có chắc chắn muốn đặt nhắc nhở này không?",
+                "delete": "Bạn có chắc muốn xóa nhắc nhở này không?",
+                "confirmation": "Bạn có chắc muốn đặt chỗ nhắc nhở này không?",
                 "create": "Tạo Nhắc nhở",
-                "confirm": "Đặt phòng!",
+                "confirm": "Đặt chỗ!",
                 "update": "Cập nhật Nhắc nhở"
             }
         }
     },
     "global": {
-        "cancel": "Hủy bỏ",
+        "cancel": "Hủy",
         "confirm": "Xác nhận",
         "create": "Tạo",
         "client": "Khách hàng",
@@ -162,7 +163,7 @@
         "course": "Khóa học",
         "admin": "Quản trị viên",
         "delete": "Xóa",
-        "employment": "Tình trạng Việc làm",
+        "employment": "Tình trạng việc làm",
         "update": "Cập nhật",
         "view": "Xem",
         "price": "Giá",
@@ -170,9 +171,10 @@
         "meeting-code": "Mã Họp",
         "service": "Dịch vụ",
         "departments": "Bộ phận",
-        "payment": "Thông tin Thanh toán",
+        "settlement": "Kỳ thanh toán",
+        "payment": "Thông tin thanh toán",
         "remove": "Xóa",
-        "add-more": "Thêm",
+        "add-more": "Thêm nhiều hơn",
         "status": "Trạng thái",
         "close": "Đóng",
         "search": "Tìm kiếm",
@@ -183,6 +185,7 @@
         "address": "Địa chỉ",
         "email": "Địa chỉ Email",
         "select": "Chọn",
+        "quantity": "Số lượng",
         "clientcard": "Thẻ Khách hàng",
         "password": "Mật khẩu",
         "phone": "Số điện thoại",
@@ -191,13 +194,13 @@
         "card": "Thẻ",
         "date": "Ngày",
         "gender": "Giới tính",
-        "employment-status": "Tình trạng Việc làm",
+        "employment-status": "Tình trạng việc làm",
         "organization": "Tổ chức",
-        "profile": "Hình ảnh Hồ sơ",
-        "origin": "Xuất xứ",
-        "note": "Chú ý",
+        "profile": "Hình đại diện",
+        "origin": "Nguồn gốc",
+        "note": "Ghi chú",
         "invoice": "Số hóa đơn",
-        "express": "Số chuyển phát",
+        "express": "Số hiệu Nhanh chóng",
         "tags": "Tags"
     },
     "auth": {

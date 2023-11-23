@@ -157,7 +157,7 @@ const Page = () => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="quantity" className='font-medium px-2'>{t('client-card.quantity')}</label>
+                                    <label htmlFor="quantity" className='font-medium px-2'>{tt('quantity')}</label>
                                     <input required value={formData.quantity} onChange={handleChange} name='quantity' type="number" className='w-full border outline-none py-1 px-3' id='quantity' />
                                 </div>
                             </div>
