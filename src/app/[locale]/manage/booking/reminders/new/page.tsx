@@ -2,6 +2,7 @@
 'use client'
 
 import SideNav from '@/components/super-admin/SideNav'
+import Departments from '@/components/super-admin/management/Departments'
 import BookingHeader from '@/components/super-admin/management/booking/BookingHeader'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
@@ -33,8 +34,9 @@ const Page = () => {
     scheduleID: '',
     supplierID: '',
     clientID: '',
+    settlement: '',
     clientCardID: '',
-    price: 0,
+    quantity: 1,
     meeting_info: {
       id: '',
       service: '',
@@ -43,7 +45,7 @@ const Page = () => {
     courseID: '',
   })
 
-  const { isSideNavOpen, err, setErr, isLoading, setIsLoading } = useAdminGlobalStore()
+  const { isSideNavOpen, err, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useAdminGlobalStore()
   const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
   const { supplier, getSupplierWithMeeting, cardCourses, setCardCourses, supplierData,
     setSupplierData, supplierSchedule, setSupplierSchedule,
@@ -71,12 +73,10 @@ const Page = () => {
   }
 
   const createReminders = async (e: any) => {
-
     e.preventDefault()
-
     try {
 
-      const { clientCardID, clientID, meeting_info, supplierID, scheduleID, price, note, courseID, name } = formData
+      const { clientCardID, clientID, meeting_info, supplierID, scheduleID, note, courseID, name, quantity, settlement } = formData
 
       if (!name) return setErr('Write Name for this booking reminders')
       if (!clientID) return setErr('Select Client')
@@ -84,13 +84,15 @@ const Page = () => {
       if (!meeting_info.id) return setErr('Select Meeting Info')
       if (!supplierID) return setErr('Select Supplier')
       if (!scheduleID) return setErr('Select Schedule')
+      if (quantity < 1) return setErr('Quantity Must be positive number')
       if (!courseID) return setErr('Select Course')
-      if (!price) return setErr('Price must be positive number')
+      if(!settlement) return setErr('Select Settlement Period')
+      if (!departmentID) return setErr('Select Department')
 
       setIsLoading(true)
       const { data } = await axios.post('/api/booking/reminders', {
-        note, clientCardID, clientID, meeting_info,
-        supplierID, scheduleID, price: Number(price), courseID,
+        note, clientCardID, clientID, meeting_info, departmentID,
+        supplierID, scheduleID, quantity: Number(quantity), courseID,
         name, operator: 'Admin', status: 'pending'
       })
 
@@ -129,25 +131,6 @@ const Page = () => {
     }
   }
 
-  const getSupplierPrice = async () => {
-    try {
-
-      const { data } = await axios.get('/api/supplier/price', {
-        params: { clientCardID: formData.clientCardID, supplierID: formData.supplierID }
-      })
-
-      if (data.ok) setFormData(prevData => ({ ...prevData, price: data.data }))
-
-    } catch (error: any) {
-      console.log(error);
-      if (error.response.data.error === 'supplier_not_supported') {
-        setFormData(prevData => ({ ...prevData, cardSelectedID: '' }))
-        return alert('Supplier is not suppported in this card')
-      }
-      alert('Something went wrong')
-    }
-  }
-
   useEffect(() => {
 
     if (formData.clientID) {
@@ -170,16 +153,19 @@ const Page = () => {
 
     if (formData.clientCardID) {
       getCourses()
-      getSupplierPrice()
     }
 
   }, [formData.clientCardID])
 
   useEffect(() => {
-    setClientCards()
+    setClientCards([])
     setCardCourses([])
     getSupplierWithMeeting()
     getClientsWithCards()
+  }, [departmentID])
+
+  useEffect(() => {
+    setDepartmentID('')
   }, [])
 
   const t = useTranslations('super-admin')
@@ -218,6 +204,12 @@ const Page = () => {
             {err && <small className='text-red-600 mb-2'>{err}</small>}
             <div className='flex w-full h-full gap-10'>
               <div className='flex flex-col w-full gap-4'>
+
+                <div className='flex flex-col gap-2 w-full'>
+                  <label htmlFor="department">{t('department.select')}</label>
+                  <Departments />
+                </div>
+
 
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="name" className='text-gray-700 font-medium px-3'>{tt('name')}</label>
@@ -287,6 +279,7 @@ const Page = () => {
                   </select>
                 </div>
 
+
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{tt('course')}</label>
                   <select required className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
@@ -298,8 +291,14 @@ const Page = () => {
                 </div>
 
                 <div className='flex flex-col gap-2 w-full'>
-                  <label htmlFor="price" className='text-gray-700 font-medium px-3'>{tt('price')}</label>
-                  <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.price} onChange={handleChange} name='price' />
+                  <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('settlement')}</label>
+                  <input type="date" required className='w-full px-3 py-1.5 border outline-none' value={formData.settlement} name='settlement' onChange={handleChange} />
+                </div>
+
+
+                <div className='flex flex-col gap-2 w-full'>
+                  <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('quantity')}</label>
+                  <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.quantity} onChange={handleChange} name='quantity' />
                 </div>
 
                 <button disabled={isLoading} className={`w-full py-2 text-white rounded-md mt-6 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>

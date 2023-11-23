@@ -13,6 +13,7 @@
             "h1": "Manage Courses",
             "search": "Search Course",
             "create": "Create Course",
+            "select": "Select Course",
             "course-name": "Course Name"
         },
         "news": {
@@ -44,7 +45,6 @@
         "client-card": {
             "manage": "Manage Client Card",
             "h1": "Manage Card",
-            "quantity": "Quantity",
             "create": "Create Card",
             "select-all": "Select All",
             "select-first": "Select Card First",
@@ -126,6 +126,7 @@
         "department": {
             "h1": "Manage Department",
             "create": "Create Department",
+            "select": "Select Department",
             "search": "Search Department",
             "update": "Update Department"
         },
@@ -170,6 +171,7 @@
         "meeting-code": "Meeting Code",
         "service": "Service",
         "departments": "Departments",
+        "settlement": "Settlement Period",
         "payment": "Payment Info",
         "remove": "Remove",
         "add-more": "Add More",
@@ -183,6 +185,7 @@
         "address": "Address",
         "email": "Email Address",
         "select": "Select",
+        "quantity": "Quantity",
         "clientcard": "Client Card",
         "password": "Password",
         "phone": "Phone Number",

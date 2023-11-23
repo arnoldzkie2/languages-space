@@ -28,7 +28,7 @@ const ClientCard: React.FC<Props> = ({ params }) => {
         },
     })
 
-    const { currentPage, isSideNavOpen, itemsPerPage, departmentID } = useAdminGlobalStore()
+    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useAdminGlobalStore()
 
     const { cards, getCards, viewCard, deleteCardModal, totalCards, setTotalCards } = useAdminCardStore()
 
@@ -78,6 +78,10 @@ const ClientCard: React.FC<Props> = ({ params }) => {
         })
 
     }, [cards.length, filteredCard.length])
+
+    useEffect(() => {
+        setDepartmentID('')
+    }, [])
 
 
     return (

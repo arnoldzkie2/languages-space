@@ -91,24 +91,17 @@ export const GET = async (req: Request) => {
 
         if (departmentID) {
 
-            const checkDepartment = await prisma.department.findUnique({ where: { id: departmentID } })
-
-            if (!checkDepartment) return notFoundRes('Department')
-
-            const clientsInDepartment = await prisma.client.findMany({
-                where: {
-                    departments: {
-                        some: {
-                            id: departmentID
-                        }
+            const clientsInDepartment = await prisma.department.findUnique({
+                where: { id: departmentID }, include: {
+                    clients: {
+                        include: { departments: true, cards: true }
                     }
-                },
-                include: { departments: true, cards: true }
-            });
+                }
+            })
 
-            if (!clientsInDepartment) return badRequestRes()
+            if (!clientsInDepartment) return notFoundRes('Department')
 
-            return okayRes(clientsInDepartment)
+            return okayRes(clientsInDepartment.clients)
 
         }
 

@@ -12,6 +12,7 @@ interface Booking {
     scheduleID: string
     card_name: string
     supplierID: string
+    quantity: number
     clientID: string
     clientCardID: string
     price: number

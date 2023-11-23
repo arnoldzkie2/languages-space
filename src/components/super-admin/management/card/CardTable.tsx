@@ -29,7 +29,6 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
                     <th scope="col" className="px-6 py-3">{tt('name')}</th>
                     <th scope="col" className="px-6 py-3">{tt('price')}</th>
                     <th scope="col" className="px-6 py-3">{tt('balance')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client-card.quantity')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.validity')}</th>
                     <th scope="col" className="px-6 py-3">{t('client-card.sold')}</th>
                     <th scope="col" className="px-6 py-3">{tt('client')}</th>
@@ -56,11 +55,7 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
                                     {card.balance}
                                 </div>
                             </td>
-                            <td className="px-6 py-3">
-                                <div className='h-5 w-20'>
-                                    {card.quantity}
-                                </div>
-                            </td>
+                        
                             <td className="px-6 py-3">
                                 <div className='h-5 w-20'>
                                     {card.validity}
@@ -104,9 +99,7 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
-                            </td>
+                       
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
                             </td>

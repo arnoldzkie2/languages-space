@@ -100,22 +100,26 @@ export const GET = async (req: Request) => {
 
 export const POST = async (req: Request) => {
 
-    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, price } = await req.json()
+    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, quantity, departmentID, settlement } = await req.json()
 
     if (!scheduleID) return notFoundRes('scheduleID')
     if (!supplierID) return notFoundRes('supplierID')
     if (!clientID) return notFoundRes('clientID')
     if (!clientCardID) return notFoundRes('clientCardiD')
+    if (!departmentID) return notFoundRes('departmentID')
 
     try {
+
+        const department = await prisma.department.findUnique({ where: { id: departmentID } })
+        if (!department) return notFoundRes('Department')
 
         //check schedule
         const schedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
         if (!schedule) return notFoundRes('Schedule')
-        if (schedule.status === 'reserved') return NextResponse.json({ msg: 'This schedule is already reserved' }, { status: 409 })
+        if (schedule.status === 'reserved') return NextResponse.json({ msg: 'schedule_reserved' }, { status: 409 })
 
         //check client
-        const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } })
+        const client = await prisma.client.findUnique({ where: { id: clientID } })
         if (!client) return notFoundRes('Client')
 
         //check supplier
@@ -128,45 +132,86 @@ export const POST = async (req: Request) => {
             }
         })
         if (!card) return notFoundRes('Card')
-        if (card.balance < price) return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 })
+
+        //check supplier price
+        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, clientCardID: card.cardID } })
+
+        //check if supplire is supported
+        if (!supplierPrice) return NextResponse.json({ msg: 'supplier_not_supported' })
+
+        //check if balance is enough
+        if (card.balance < supplierPrice.price) return NextResponse.json({ msg: 'not_enough_balance_to_book' }, { status: 400 })
 
         const currentDate = new Date();
         const cardValidityDate = new Date(card.validity);
-        if (currentDate > cardValidityDate) return NextResponse.json({ msg: 'Card is not valid' }, { status: 400 })
+        if (currentDate > cardValidityDate) return NextResponse.json({ msg: 'card expired' }, { status: 400 })
 
-        //create booking
-        const createBooking = await prisma.booking.create({
-            data: {
-                note, status, operator, name, price, card_name: card.name,
-                supplier: { connect: { id: supplierID } },
-                client: { connect: { id: clientID } },
-                schedule: { connect: { id: scheduleID } },
-                meeting_info, clientCardID, scheduleID,
-                department: { connect: { id: card.card.departmentID } },
-                course: { connect: { id: courseID } }
-            },
-        })
-        if (!createBooking) return badRequestRes()
+        if (department.name.toLocaleLowerCase() === 'verbalace') {
 
-        //reduce client card balance
-        const payClient = await prisma.clientCard.update({
-            where: { id: card.id },
-            data: { balance: card.balance - price }
-        })
-        if (!payClient) return badRequestRes()
+            const bookingPrice = card.price / card.card.balance
 
-        //update the schedule
-        const updateSchedule = await prisma.supplierSchedule.update({
-            where: { id: scheduleID },
-            data: {
-                status: 'reserved',
-                clientID: client.id,
-                clientName: client.name
-            }
-        })
-        if (!updateSchedule) return badRequestRes()
+            //create booking for verbalace
+            const createBooking = await prisma.booking.create({
+                data: {
+                    note, status, operator, name, price: bookingPrice, card_name: card.name, quantity, settlement,
+                    supplier: { connect: { id: supplierID } },
+                    client: { connect: { id: clientID } },
+                    schedule: { connect: { id: scheduleID } },
+                    meeting_info, clientCardID, scheduleID,
+                    department: { connect: { id: department.id } },
+                    course: { connect: { id: courseID } }
+                },
+            })
+            if (!createBooking) return badRequestRes()
 
-        return createdRes()
+            //reduce client card balance
+            const reduceClientCardBalance = await prisma.clientCard.update({
+                where: { id: card.id },
+                data: { balance: card.balance - supplierPrice.price }
+            })
+            if (!reduceClientCardBalance) return badRequestRes()
+
+            //update the schedule
+            const updateSchedule = await prisma.supplierSchedule.update({
+                where: { id: scheduleID },
+                data: {
+                    status: 'reserved',
+                    clientID: client.id,
+                    clientName: client.name
+                }
+            })
+            if (!updateSchedule) return badRequestRes()
+
+            return createdRes()
+
+        } else if (department.name.toLocaleLowerCase() === 'fingerpower') {
+
+            const bookingPrice = quantity * card.price
+            const createBooking = await prisma.booking.create({
+                data: {
+                    note, status, operator, name, price: bookingPrice, card_name: card.name, quantity, settlement,
+                    supplier: { connect: { id: supplierID } },
+                    client: { connect: { id: clientID } },
+                    schedule: { connect: { id: scheduleID } },
+                    meeting_info, clientCardID, scheduleID,
+                    department: { connect: { id: department.id } },
+                    course: { connect: { id: courseID } }
+                },
+            })
+            if (!createBooking) return badRequestRes()
+
+            const updateSchedule = await prisma.supplierSchedule.update({
+                where: { id: scheduleID },
+                data: {
+                    status: 'reserved',
+                    clientID: client.id,
+                    clientName: client.name
+                }
+            })
+            if (!updateSchedule) return badRequestRes()
+
+            return createdRes()
+        }
 
     } catch (error) {
         console.log(error);
@@ -180,18 +225,21 @@ export const POST = async (req: Request) => {
 export const PATCH = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
-    const bookingID = searchParams.get('bookingID')
 
-    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, price } = await req.json()
+    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, departmentID, quantity, settlement } = await req.json()
 
     if (!scheduleID) return notFoundRes('scheduleID')
     if (!supplierID) return notFoundRes('supplierID')
     if (!clientID) return notFoundRes('clientID')
     if (!clientCardID) return notFoundRes('clientCardiD')
+    const bookingID = searchParams.get('bookingID')
 
     try {
 
         if (bookingID) {
+
+            const department = await prisma.department.findUnique({ where: { id: departmentID } })
+            if (!department) return notFoundRes("Department")
 
             //check booking
             const booking = await prisma.booking.findUnique({ where: { id: bookingID } })
@@ -200,12 +248,18 @@ export const PATCH = async (req: Request) => {
             const prevCard = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
             if (!prevCard) return notFoundRes('Client Card')
 
+            const prevSupplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, clientCardID: prevCard.cardID } })
+            if (!prevSupplierPrice) return notFoundRes('Supplier Price')
+
             //check schedule
             const schedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
             if (!schedule) return notFoundRes('Schedule')
 
+            if (booking.scheduleID !== scheduleID) {
+                if (schedule.status === 'reserved') return NextResponse.json({ msg: 'schedule_reserved' }, { status: 409 })
+            }
             //check client
-            const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } })
+            const client = await prisma.client.findUnique({ where: { id: clientID } })
             if (!client) return notFoundRes('Client')
 
             //check supplier
@@ -220,36 +274,65 @@ export const PATCH = async (req: Request) => {
             })
             if (!card) return notFoundRes('Card')
 
-            //retrieve the price
-            if (card.balance < price) return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 })
+            //check supplierprice
+            const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card.cardID } })
+            if (!supplierPrice) return notFoundRes('supplier_not_supported')
 
-            //update the booking
-            const updateBooking = await prisma.booking.update({
-                where: {
-                    id: bookingID
-                },
-                data: {
-                    note, status, operator, name, price, courseID, card_name: card.name,
-                    supplierID, clientID, clientCardID, meeting_info, scheduleID, departmentID: card.card.departmentID
-                }
-            })
-            if (!updateBooking) return badRequestRes()
+            //check if balance is enough to book
+            if (card.balance < supplierPrice?.price) return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 })
 
-            // reduce client card balance
-            const payClient = await prisma.clientCard.update({
-                where: { id: updateBooking.clientCardID },
-                data: { balance: card.balance - price }
-            })
-            if (!payClient) return badRequestRes()
+            if (department.name.toLocaleLowerCase() === 'verbalace') {
 
-            //refund the previous client
-            const refundClient = await prisma.clientCard.update({
-                where: { id: booking.clientCardID },
-                data: { balance: prevCard.balance + booking.price }
-            })
-            if (!refundClient) return badRequestRes()
+                const bookingPrice = card.price / card.card.balance
 
-            return okayRes()
+                //update the booking
+                const updateBooking = await prisma.booking.update({
+                    where: {
+                        id: bookingID
+                    },
+                    data: {
+                        note, status, operator, name, price: bookingPrice, courseID, card_name: card.name, quantity,settlement,
+                        supplierID, clientID, clientCardID, meeting_info, scheduleID, departmentID: department.id
+                    }
+                })
+                if (!updateBooking) return badRequestRes()
+
+                // reduce client card balance
+                const payClient = await prisma.clientCard.update({
+                    where: { id: updateBooking.clientCardID },
+                    data: { balance: card.balance - supplierPrice.price }
+                })
+                if (!payClient) return badRequestRes()
+
+                //refund the previous client
+                const refundClient = await prisma.clientCard.update({
+                    where: { id: booking.clientCardID },
+                    data: { balance: prevCard.balance + prevSupplierPrice.price }
+                })
+                if (!refundClient) return badRequestRes()
+
+                return okayRes()
+
+            } else if (department.name.toLocaleLowerCase() === 'fingerpower') {
+
+                const bookingPrice = quantity * card.price
+
+                const updateBooking = await prisma.booking.update({
+                    where: {
+                        id: bookingID
+                    },
+                    data: {
+                        note, status, operator, name, price: bookingPrice, courseID, card_name: card.name, quantity,settlement,
+                        supplierID, clientID, clientCardID, meeting_info, scheduleID, departmentID: department.id
+                    }
+                })
+                if (!updateBooking) return badRequestRes()
+
+                return okayRes()
+
+            } else {
+                return badRequestRes()
+            }
         }
 
         return notFoundRes('bookingID')

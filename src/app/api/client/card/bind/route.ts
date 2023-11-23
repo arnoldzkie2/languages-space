@@ -14,7 +14,7 @@ export const POST = async (req: Request) => {
         const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
         if (!card) return notFoundRes('Client Card')
 
-        const { name, price, balance, validity, invoice, quantity, repeat_purchases, online_renews, settlement_period, id } = card
+        const { name, price, balance, validity, invoice, repeat_purchases, online_renews, id } = card
 
         //check if the repeat purchases is not supported
         if (!repeat_purchases) {
@@ -34,8 +34,8 @@ export const POST = async (req: Request) => {
         //finally bind the card to client
         const bindCard = await prisma.clientCard.create({
             data: {
-                name, price, quantity, balance, card: { connect: { id } }, invoice, validity: formattedExpirationDate,
-                repeat_purchases, online_renews, settlement_period, client: { connect: { id: clientID } }
+                name, price, balance, card: { connect: { id } }, invoice, validity: formattedExpirationDate,
+                repeat_purchases, online_renews, client: { connect: { id: clientID } }
             },
             include: { client: true }
         })

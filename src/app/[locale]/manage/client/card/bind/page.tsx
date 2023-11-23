@@ -32,7 +32,7 @@ const Page = () => {
     const [cardSearchQuery, setCardSearchQuery] = useState('')
 
     const { clients, getClients } = useAdminClientStore()
-    const { isSideNavOpen, departmentID, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { isSideNavOpen, departmentID, isLoading, setIsLoading, setDepartmentID } = useAdminGlobalStore()
     const { cards, getCards } = useAdminCardStore()
 
     const filteredClient = clients.filter(client => client.name.toUpperCase().includes(clientSearchQuery.toUpperCase())).splice(0, 40)
@@ -83,6 +83,10 @@ const Page = () => {
     }
 
     const t = useTranslations('super-admin')
+
+    useEffect(() => {
+        setDepartmentID('')
+    }, [])
 
     return (
         <div>

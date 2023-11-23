@@ -39,7 +39,7 @@ const Page = () => {
     const [searchCourse, setSearchCourse] = useState('')
     const [searchSupplier, setSearchSupplier] = useState('')
 
-    const { isSideNavOpen, departmentID } = useAdminGlobalStore()
+    const { isSideNavOpen, departmentID, setDepartmentID } = useAdminGlobalStore()
     const { supplier, getSupplier, getCourses, courses } = useAdminSupplierStore()
 
     const filterCourse = courses.filter(course => course.name.toUpperCase().includes(searchCourse.toUpperCase()))
@@ -52,23 +52,22 @@ const Page = () => {
     const createCard = async (e: any) => {
 
         e.preventDefault()
-        const { balance, price, quantity } = formData
+        const { balance, price } = formData
         if (!departmentID) return setErr('Select Department')
         if (price < 1) return setErr('Price must be greater than 0')
-        if (quantity < 1) return setErr("Quantity must be greater than 0")
         if (balance < 1) return setErr('Balance must be greater than 0')
 
         try {
 
             setIsLoading(true)
 
-            const { name, price, balance, repeat_purchases, online_renews, invoice, validity, available, settlement_period, quantity } = formData
+            const { name, price, balance, repeat_purchases, online_renews, invoice, validity, available } = formData
 
             const { data } = await axios.post('/api/client/card-list',
                 {
                     name, price: Number(price), balance: Number(balance), repeat_purchases, online_renews, invoice,
-                    validity: Number(validity), available, settlement_period, departmentID,
-                    courses: supportedCourses, suppliers: supportedSuppliers, quantity: Number(quantity)
+                    validity: Number(validity), available, departmentID,
+                    courses: supportedCourses, suppliers: supportedSuppliers
                 }
             )
 
@@ -180,6 +179,10 @@ const Page = () => {
     useEffect(() => {
         getSupplier()
         getCourses()
+    }, [departmentID])
+
+    useEffect(() => {
+        setDepartmentID('')
     }, [])
 
     const clientHeaderSkeleton = (
@@ -265,15 +268,6 @@ const Page = () => {
                                 <div className='w-full flex justify-between items-center gap-2'>
                                     <label htmlFor="repeat_purchases" className='font-medium'>{t('client-card.repeat_purchases')}</label>
                                     <input checked={formData.repeat_purchases} onChange={handleChange} name='repeat_purchases' type="checkbox" className='border outline-none py-1 px-3' id='repeat_purchases' />
-                                </div>
-
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="quantity" className='font-medium'>{t('client-card.quantity')}</label>
-                                    <input required value={formData.quantity} onChange={handleChange} name='quantity' type="number" className='border outline-none py-1 px-3' id='quantity' />
-                                </div>
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="settlement_period" className='font-medium'>{t('client-card.settlement_period')}</label>
-                                    <input required value={formData.settlement_period} onChange={handleChange} name='settlement_period' type="date" className='border outline-none py-1 px-3' id='settlement_period' />
                                 </div>
 
                             </div>

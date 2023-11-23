@@ -16,12 +16,10 @@ interface ClientCard {
     card: ClientCardList
     created_at: Date
     updated_at: Date
-    quantity: number
 }
 
 interface ClientCardList {
     id: string
-    quantity: number
     name: string
     sold: number
     price: number

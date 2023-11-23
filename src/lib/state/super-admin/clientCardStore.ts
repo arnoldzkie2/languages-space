@@ -11,7 +11,6 @@ const totalCards = {
 
 const clientCardValue = {
     name: '',
-    quantity: 1,
     price: 1,
     balance: 1,
     validity: 1,
@@ -19,7 +18,6 @@ const clientCardValue = {
     available: false,
     online_renews: false,
     repeat_purchases: false,
-    settlement_period: '',
 }
 
 export { clientCardValue }

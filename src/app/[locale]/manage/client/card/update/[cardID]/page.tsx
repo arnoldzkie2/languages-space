@@ -78,9 +78,8 @@ const Page = ({ params }: Props) => {
     const updateCard = async (e: any) => {
 
         e.preventDefault()
-        const { balance, price, quantity } = formData
+        const { balance, price } = formData
         if (price < 1) return setErr('Price must be greater than 0')
-        if (quantity < 1) return setErr('Quantity must be greater than 0')
         if (balance < 1) return setErr('Balance must be greater than 0')
         if (!departmentID) return setErr('Select Department')
 
@@ -88,12 +87,12 @@ const Page = ({ params }: Props) => {
 
             setIsLoading(true)
 
-            const { name, price, balance, online_renews, invoice, available, validity, repeat_purchases, settlement_period, quantity } = formData
+            const { name, price, balance, online_renews, invoice, available, validity, repeat_purchases } = formData
 
             const { data } = await axios.patch('/api/client/card-list',
                 {
                     name, price: Number(price), balance: Number(balance), online_renews, invoice, available, departmentID,
-                    validity: Number(validity), repeat_purchases, settlement_period, quantity: Number(quantity),
+                    validity: Number(validity), repeat_purchases,
                     courses: supportedCourses, suppliers: supportedSuppliers
                 }, {
                 params: {
@@ -210,6 +209,10 @@ const Page = ({ params }: Props) => {
         retrieveCard()
         getSupplier()
         getCourses()
+    }, [departmentID])
+
+    useEffect(() => {
+        setDepartmentID('')
     }, [])
 
     const clientHeaderSkeleton = (
@@ -294,16 +297,6 @@ const Page = ({ params }: Props) => {
                                 <div className='w-full flex justify-between items-center gap-2'>
                                     <label htmlFor="available" className='font-medium'>{t('client-card.available')}</label>
                                     <input checked={formData.available} onChange={handleChange} name='available' type="checkbox" className='border outline-none py-1 px-3' id='available' />
-                                </div>
-
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="quantity" className='font-medium'>{t('client-card.quantity')}</label>
-                                    <input required value={formData.quantity} onChange={handleChange} name='quantity' type="number" className='border outline-none py-1 px-3' id='quantity' />
-                                </div>
-
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="settlement_period" className='font-medium'>{t('client-card.settlement_period')}</label>
-                                    <input required value={formData.settlement_period} onChange={handleChange} name='settlement_period' type="date" className='border outline-none py-1 px-3' id='settlement_period' />
                                 </div>
 
                             </div>

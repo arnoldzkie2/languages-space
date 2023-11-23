@@ -23,7 +23,7 @@ const Page: React.FC = () => {
         },
     })
 
-    const { currentPage, isSideNavOpen, itemsPerPage, departmentID } = useAdminGlobalStore()
+    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useAdminGlobalStore()
 
     const { bookings, getBookings, totalBooking, setTotalBooking, deleteBooking } = useAdminBookingStore()
     const [searchQuery, setSearchQuery] = useState({
@@ -83,6 +83,10 @@ const Page: React.FC = () => {
         })
 
     }, [bookings.length, filterBooking.length])
+
+    useEffect(() => {
+        setDepartmentID('')
+    }, [])
 
     return (
         <div className='h-screen'>

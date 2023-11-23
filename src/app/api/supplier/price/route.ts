@@ -18,7 +18,7 @@ export const GET = async (req: Request) => {
         const price = await prisma.supplierPrice.findFirst({ where: { clientCardID: card.cardID, supplierID } })
         if (!price) return badRequestRes('supplier_not_supported')
 
-        return okayRes(price.price * card.quantity)
+        return okayRes(price.price)
 
     } catch (error) {
         console.log(error);

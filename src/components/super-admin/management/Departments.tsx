@@ -29,7 +29,7 @@ const Departments = () => {
     
     return (
         <div className="relative">
-            <select onChange={handleDepartmentChange} value={departmentID} className="text-gray-600 w-full border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 pr-7 appearance-none outline-none cursor-pointer">
+            <select onChange={handleDepartmentChange} value={departmentID} id="department" className="text-gray-600 w-full border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 pr-7 appearance-none outline-none cursor-pointer">
                 <option value=''>{t('global.department.all')}</option>
                 {departments &&
                     departments.length > 0 &&

@@ -1,10 +1,11 @@
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
 import stripe from "@/lib/utils/getStripe";
+import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
 
-    const { quantity, name, price, balance, validity, invoice, repeat_purchases, available, online_renews, settlement_period, courses, suppliers, departmentID } = await req.json()
+    const { name, price, balance, validity, invoice, repeat_purchases, available, online_renews, courses, suppliers, departmentID } = await req.json()
 
     try {
 
@@ -16,7 +17,7 @@ export const POST = async (req: Request) => {
         const newCard = await prisma.clientCardList.create({
             data: {
                 name, price, balance, validity, invoice, repeat_purchases, available,
-                online_renews, quantity, settlement_period, productID: '', productPriceID: '', sold: 0,
+                online_renews, productID: '', productPriceID: '', sold: 0,
                 supported_courses: {
                     connect: courses.map((id: string) => ({ id }))
                 }, department: { connect: { id: departmentID } }
@@ -166,8 +167,8 @@ export const PATCH = async (req: Request) => {
     const { searchParams } = new URL(req.url)
     const clientCardID = searchParams.get('clientCardID')
 
-    const { name, price, balance, validity, invoice, repeat_purchases, quantity, available, departmentID,
-        online_renews, settlement_period, courses, suppliers } = await req.json()
+    const { name, price, balance, validity, invoice, repeat_purchases, available, departmentID,
+        online_renews, courses, suppliers } = await req.json()
 
     try {
 
@@ -201,7 +202,7 @@ export const PATCH = async (req: Request) => {
                     where: { id: clientCardID },
                     data: {
                         balance, validity, invoice, repeat_purchases, departmentID, available,
-                        online_renews, settlement_period, name, quantity,
+                        online_renews, name,
                         supported_courses: {
                             connect: courses.map((id: string) => ({ id })),
                             disconnect: coursesToDisconnect.map(course => ({ id: course.id }))
@@ -261,8 +262,8 @@ export const PATCH = async (req: Request) => {
                 const updateCard = await prisma.clientCardList.update({
                     where: { id: clientCardID },
                     data: {
-                        quantity, price, balance, validity, invoice, repeat_purchases, departmentID, available,
-                        online_renews, settlement_period, productPriceID: newProductPrice.id, name,
+                        price, balance, validity, invoice, repeat_purchases, departmentID, available,
+                        online_renews, productPriceID: newProductPrice.id, name,
                         supported_courses: {
                             connect: courses.map((id: string) => ({ id })),
                             disconnect: coursesToDisconnect.map(course => ({ id: course.id }))
@@ -296,8 +297,8 @@ export const PATCH = async (req: Request) => {
             const updateCard = await prisma.clientCardList.update({
                 where: { id: clientCardID },
                 data: {
-                    balance, validity, quantity, invoice, repeat_purchases, departmentID, available,
-                    online_renews, settlement_period,
+                    balance, validity, invoice, repeat_purchases, departmentID, available,
+                    online_renews,
                     supported_courses: {
                         connect: courses.map((id: string) => ({ id })),
                         disconnect: coursesToDisconnect.map(course => ({ id: course.id }))
@@ -346,12 +347,10 @@ export const DELETE = async (req: Request) => {
 
         if (clientCardID) {
 
-            const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
+            const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID }, include: { active: true } })
             if (!card) return notFoundRes('Client Card')
+            if (card.active.length > 0) return NextResponse.json({ msg: 'card has client' }, { status: 400 })
 
-            const retrieveProduct = await stripe.products.retrieve(card.productID)
-            if(!retrieveProduct) return notFoundRes('Product')
-            
             // deactivate the product 
             const deactivateProduct = await stripe.products.update(card.productID, {
                 default_price: '',

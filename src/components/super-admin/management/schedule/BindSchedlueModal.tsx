@@ -14,7 +14,7 @@ import { Courses } from '@/lib/types/super-admin/supplierTypes'
 
 interface FormData {
     note: string
-    price: number
+    quantity: number
     courseSelectedID: string
     cardSelectedID: string
     meetingSelectedID: string
@@ -43,9 +43,9 @@ const BindSchedlueModal = () => {
         cardSelectedID: '',
         courseSelectedID: '',
         meetingSelectedID: '',
+        quantity: 1,
         courses: [],
         clientCard: [],
-        price: 0,
         meeting_info: {
             id: '',
             service: '',
@@ -118,12 +118,13 @@ const BindSchedlueModal = () => {
     const bookSchedule = async (e: any) => {
 
         e.preventDefault()
-        const { note, meeting_info, price, cardSelectedID, courseSelectedID } = formData
+        const { note, meeting_info, cardSelectedID, courseSelectedID, quantity } = formData
 
         if (!meeting_info.id) return alert('Select A Meeting Info')
         if (!clientSelectedID) return alert('Select A Client')
         if (!cardSelectedID) return alert('Select a card to use')
         if (!courseSelectedID) return alert('Choose course')
+        if (quantity < 1) return alert('Quantity must be greater than 0')
 
         try {
 
@@ -134,9 +135,9 @@ const BindSchedlueModal = () => {
                 supplierID: supplierSelectedID,
                 clientID: clientSelectedID,
                 clientCardID: cardSelectedID,
-                meeting_info, note, price: Number(price),
+                meeting_info, note,
                 name: "1v1 Class", operator: 'Admin',
-                status: "Pending",
+                status: "Pending", quantity, departmentID,
                 courseID: courseSelectedID
             })
 
@@ -233,14 +234,14 @@ const BindSchedlueModal = () => {
                             <option value={card.id} key={card.id}>
                                 {card.name} ({card.balance})
                             </option>
-                        )) : <option disabled>Select Client First.</option>}
+                        )) : <option disabled>{t('client.select-first')}</option>}
                     </select>
 
                     <select name="courses" className='px-2 py-1.5 outline-none' id="courses" value={formData.courseSelectedID} onChange={(e) => setFormData(prevData => ({ ...prevData, courseSelectedID: e.target.value }))}>
-                        <option value="" disabled>Select Course</option>
+                        <option value="" disabled>{t('courses.select')}</option>
                         {formData.courses.length > 0 ? formData.courses.map(course => (
                             <option value={course.id} key={course.id}>{course.name}</option>
-                        )) : formData.courses.length < 1 && formData.cardSelectedID ? <option className='' disabled>This card has 0 supported courses</option> : <option disabled>Select Card First</option>}
+                        )) : formData.courses.length < 1 && formData.cardSelectedID ? <option className='' disabled>This card has 0 supported courses</option> : <option disabled>{t('client-card.select-first')}</option>}
 
                     </select>
                     <h1 className='font-medium px-1'>{t('schedule.meeting')}</h1>
@@ -253,11 +254,11 @@ const BindSchedlueModal = () => {
                         ))}
                     </ul>
 
-                    <input className='py-1.5 px-2 border rounded-md outline-none' type="text" placeholder={t('booking.note')} value={formData.note} onChange={(e: any) => setFormData(prevData => ({ ...prevData, note: e.target.value }))} />
-                    <div className='flex flex-col gap-2 text-gray-700'>
-                        <label htmlFor="price" className='font-medium'>{t('booking.price')}</label>
-                    <input id='price' className='py-1.5 px-2 border rounded-md outline-none' type="number" placeholder={t('booking.price')} value={formData.price} onChange={(e: any) => setFormData(prevData => ({ ...prevData, price: e.target.value }))} />
-                    </div>
+                    <input className='py-1.5 px-2 border rounded-md outline-none'
+                        type="text" placeholder={tt('note')}
+                        value={formData.note}
+                        onChange={(e: any) => setFormData(prevData => ({ ...prevData, note: e.target.value }))} />
+
                     <div className='flex items-center w-full gap-10'>
                         <button onClick={(e: any) => deleteSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('schedule.delete')}</button>
                         <button onClick={(e: any) => bookSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('booking.confirm')}</button>

@@ -38,9 +38,10 @@ const Page = ({ params }: Props) => {
         note: '',
         scheduleID: '',
         supplierID: '',
+        settlement: '',
         clientID: '',
+        quantity: 1,
         clientCardID: '',
-        price: 0,
         meeting_info: {
             id: '',
             service: '',
@@ -49,8 +50,8 @@ const Page = ({ params }: Props) => {
         courseID: '',
     })
 
-    const { isSideNavOpen, err, setErr, isLoading, setIsLoading } = useAdminGlobalStore()
-    const { getClientsWithCards, clients, clientCards, getClientCards } = useAdminClientStore()
+    const { isSideNavOpen, err, setErr, isLoading, setIsLoading, setDepartmentID, departmentID } = useAdminGlobalStore()
+    const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
     const { supplier, getSupplierWithMeeting, cardCourses, setCardCourses, supplierData,
         setSupplierData, supplierSchedule, setSupplierSchedule,
         singleSupplier, getSingleSupplier } = useAdminSupplierStore()
@@ -104,7 +105,7 @@ const Page = ({ params }: Props) => {
 
         try {
 
-            const { clientCardID, clientID, meeting_info, supplierID, scheduleID, price, note, courseID, name } = formData
+            const { clientCardID, clientID, meeting_info, supplierID, scheduleID, quantity, note, courseID, name, settlement } = formData
 
             if (!name) return setErr('Write Name for this booking')
             if (!clientID) return setErr('Select Client')
@@ -113,12 +114,12 @@ const Page = ({ params }: Props) => {
             if (!supplierID) return setErr('Select Supplier')
             if (!scheduleID) return setErr('Select Schedule')
             if (!courseID) return setErr('Select Course')
-            if (!price) return setErr('Price must be positive number')
+            if (!settlement) return setErr('Select Settlement Period')
 
             setIsLoading(true)
             const { data } = await axios.patch('/api/booking/reminders', {
-                note, clientCardID, clientID, meeting_info,
-                supplierID, scheduleID, price: Number(price), courseID,
+                note, clientCardID, clientID, meeting_info, settlement,
+                supplierID, scheduleID, quantity: Number(quantity), courseID,
                 name, operator: 'Admin', status: 'pending'
             }, { params: { remindersID: params.remindersID } })
 
@@ -204,8 +205,14 @@ const Page = ({ params }: Props) => {
     }, [formData.clientCardID])
 
     useEffect(() => {
+        setClientCards([])
+        setCardCourses([])
         getSupplierWithMeeting()
         getClientsWithCards()
+    }, [departmentID])
+
+    useEffect(() => {
+        setDepartmentID('')
     }, [])
 
     const t = useTranslations('super-admin')
@@ -324,8 +331,14 @@ const Page = ({ params }: Props) => {
                                 </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="price" className='text-gray-700 font-medium px-3'>{tt('price')}</label>
-                                    <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.price} onChange={handleChange} name='price' />
+                                    <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('settlement')}</label>
+                                    <input type="date" required className='w-full px-3 py-1.5 border outline-none' value={formData.settlement} name='settlement' onChange={handleChange} />
+                                </div>
+
+
+                                <div className='flex flex-col gap-2 w-full'>
+                                    <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('quantity')}</label>
+                                    <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.quantity} onChange={handleChange} name='quantity' />
                                 </div>
 
                                 <button disabled={isLoading} className={`w-full py-2 text-white rounded-md mt-6 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>

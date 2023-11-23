@@ -13,7 +13,7 @@ export const POST = async (req: Request) => {
         const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
         if (!card) return notFoundRes('Client Card')
 
-        const { name, price, balance, invoice, validity, repeat_purchases, online_renews, settlement_period } = card
+        const { name, price, balance, invoice, validity, repeat_purchases, online_renews } = card
 
         const currentDate = new Date();
         const expirationDate = new Date(currentDate.getTime() + validity * 24 * 60 * 60 * 1000)
@@ -25,7 +25,7 @@ export const POST = async (req: Request) => {
         const renewCard = await prisma.clientCard.update({
             where: { id: clientCardID, clientID },
             data: {
-                name, price, balance, invoice, validity: formattedExpirationDate, repeat_purchases, online_renews, settlement_period
+                name, price, balance, invoice, validity: formattedExpirationDate, repeat_purchases, online_renews
             }
         })
 

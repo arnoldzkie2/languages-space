@@ -2,6 +2,7 @@
 'use client'
 
 import SideNav from '@/components/super-admin/SideNav'
+import Departments from '@/components/super-admin/management/Departments'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
@@ -13,7 +14,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 
 interface Props {
   params: {
@@ -39,8 +40,9 @@ const Page = ({ params }: Props) => {
     supplierID: '',
     clientID: '',
     status: '',
+    settlement: '',
+    quantity: 1,
     clientCardID: '',
-    price: 0,
     meeting_info: {
       id: '',
       service: '',
@@ -49,8 +51,8 @@ const Page = ({ params }: Props) => {
     courseID: '',
   })
 
-  const { isSideNavOpen, err, setErr, isLoading, setIsLoading } = useAdminGlobalStore()
-  const { getClientsWithCards, clients, clientCards, getClientCards } = useAdminClientStore()
+  const { isSideNavOpen, err, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useAdminGlobalStore()
+  const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
   const { supplier, getSupplierWithMeeting, cardCourses, setCardCourses,
     supplierSchedule, setSupplierSchedule,
     singleSupplier, getSingleSupplier } = useAdminSupplierStore()
@@ -85,6 +87,7 @@ const Page = ({ params }: Props) => {
 
       if (data.ok) {
         setFormData(data.data)
+        setDepartmentID(data.data.departmentID)
       }
 
     } catch (error) {
@@ -105,22 +108,24 @@ const Page = ({ params }: Props) => {
 
     try {
 
-      const { clientCardID, clientID, status, meeting_info, supplierID, scheduleID, price, note, courseID, name } = formData
+      const { clientCardID, clientID, status, meeting_info, supplierID, scheduleID, note, courseID, name, quantity, settlement } = formData
 
       if (!name) return setErr('Write Name for this booking')
       if (!clientID) return setErr('Select Client')
       if (!clientCardID) return setErr('Select Card')
       if (!meeting_info.id) return setErr('Select Meeting Info')
       if (!supplierID) return setErr('Select Supplier')
+      if (quantity < 1) return setErr('Quantity must be greater than 0')
+      if (!departmentID) return setErr('Select Department')
       if (!scheduleID) return setErr('Select Schedule')
       if (!courseID) return setErr('Select Course')
-      if (!price) return setErr('Price must be positive number')
+      if (!settlement) return setErr('Select Settlement Period')
 
       setIsLoading(true)
       const { data } = await axios.patch('/api/booking', {
         note, clientCardID, clientID, meeting_info,
-        supplierID, scheduleID, price: Number(price), courseID,
-        name, operator: 'Admin', status,
+        supplierID, scheduleID, courseID, departmentID, settlement,
+        name, operator: 'Admin', status, quantity: Number(quantity)
       }, {
         params: { bookingID: params.bookingID }
       })
@@ -155,25 +160,6 @@ const Page = ({ params }: Props) => {
     }
   }
 
-  const getSupplierPrice = async () => {
-    try {
-
-      const { data } = await axios.get('/api/supplier/price', {
-        params: { clientCardID: formData.clientCardID, supplierID: formData.supplierID }
-      })
-
-      if (data.ok) setFormData(prevData => ({ ...prevData, price: data.data }))
-
-    } catch (error: any) {
-      console.log(error);
-      if (error.response.data.error === 'supplier_not_supported') {
-        setFormData(prevData => ({ ...prevData, cardSelectedID: '' }))
-        return alert('Supplier is not suppported in this card')
-      }
-      alert('Something went wrong')
-    }
-  }
-
   useEffect(() => {
 
     if (formData.clientID) {
@@ -196,14 +182,19 @@ const Page = ({ params }: Props) => {
 
     if (formData.clientCardID) {
       getCourses()
-      getSupplierPrice()
     }
 
   }, [formData.clientCardID])
 
   useEffect(() => {
+    setClientCards([])
+    setCardCourses([])
     getSupplierWithMeeting()
     getClientsWithCards()
+  }, [departmentID])
+
+  useEffect(() => {
+    setDepartmentID('')
   }, [])
 
   const t = useTranslations('super-admin')
@@ -238,16 +229,22 @@ const Page = ({ params }: Props) => {
               <div className='flex flex-col w-full gap-4'>
 
                 <div className='flex flex-col gap-2 w-full'>
+                  <label htmlFor="department">{t('department.select')}</label>
+                  <Departments />
+                </div>
+
+                <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="name" className='text-gray-700 font-medium px-3'>{tt('name')}</label>
                   <input type="text" id='name' name='name' placeholder={tt('name')} value={formData.name} onChange={handleChange} className='w-full border px-3 py-1.5 outline-none' />
                 </div>
-
 
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="status" className='text-gray-700 font-medium px-3'>{tt('status')}</label>
                   <select name="status" className='outline-none px-3 py-1' id="status" value={formData.status} onChange={handleChange}>
                     <option value="pending">Pending</option>
                     <option value="completed">Completed</option>
+                    <option value="invoiced">Invoiced</option>
+                    <option value="settled">Settled</option>
                     <option value="canceled">Canceled</option>
                   </select>
                 </div>
@@ -324,9 +321,16 @@ const Page = ({ params }: Props) => {
                   </select>
                 </div>
 
+
                 <div className='flex flex-col gap-2 w-full'>
-                  <label htmlFor="price" className='text-gray-700 font-medium px-3'>{tt('price')}</label>
-                  <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.price} onChange={handleChange} name='price' />
+                  <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('settlement')}</label>
+                  <input type="date" required className='w-full px-3 py-1.5 border outline-none' value={formData.settlement} name='settlement' onChange={handleChange} />
+                </div>
+
+
+                <div className='flex flex-col gap-2 w-full'>
+                  <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('quantity')}</label>
+                  <input type="number" className='w-full px-3 py-1.5 border outline-none' value={formData.quantity} name='quantity' onChange={handleChange} />
                 </div>
 
                 <button disabled={isLoading} className={`w-full py-2 text-white rounded-md mt-5 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>

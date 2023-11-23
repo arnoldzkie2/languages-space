@@ -11,7 +11,7 @@ datasource db {
 model Client {
   id           String       @id @default(uuid())
   profile      String?      @db.Text
-  name         String
+  name         String?
   user_name    String       @unique
   phone_number String?
   email        String?
@@ -31,22 +31,20 @@ model Client {
 }
 
 model ClientCard {
-  id                String         @id @default(uuid())
-  name              String
-  price             Float
-  balance           Int
-  validity          String
-  client            Client         @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  clientID          String
-  quantity          Int
-  invoice           Boolean
-  repeat_purchases  Boolean
-  online_renews     Boolean
-  settlement_period String
-  created_at        DateTime       @default(now())
-  updated_at        DateTime       @updatedAt
-  card              ClientCardList @relation(fields: [cardID], references: [id])
-  cardID            String
+  id               String         @id @default(uuid())
+  name             String
+  price            Float
+  balance          Int
+  validity         String
+  clientID         String
+  invoice          Boolean
+  repeat_purchases Boolean
+  online_renews    Boolean
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  client           Client         @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  card             ClientCardList @relation(fields: [cardID], references: [id])
+  cardID           String
 
   @@index([clientID])
   @@index([cardID])
@@ -60,11 +58,9 @@ model ClientCardList {
   balance             Int
   validity            Int
   available           Boolean
-  quantity            Int
   invoice             Boolean
   repeat_purchases    Boolean
   online_renews       Boolean
-  settlement_period   String
   productID           String
   productPriceID      String
   created_at          DateTime        @default(now())
@@ -73,7 +69,7 @@ model ClientCardList {
   supported_courses   Courses[]
   supported_suppliers SupplierPrice[]
   active              ClientCard[]
-  department          Department     @relation(fields: [departmentID], references: [id])
+  department          Department      @relation(fields: [departmentID], references: [id])
   departmentID        String
 
   @@index([departmentID])
@@ -175,7 +171,9 @@ model Booking {
   clientID     String
   card_name    String
   clientCardID String
+  settlement   String
   price        Int
+  quantity     Int
   meeting_info Json
   created_at   DateTime           @default(now())
   updated_at   DateTime           @updatedAt
@@ -204,8 +202,10 @@ model Reminders {
   clientID     String
   departmentID String
   card_name    String
+  settlement   String
   clientCardID String
   price        Int
+  quantity     Int
   meeting_info Json
   created_at   DateTime           @default(now())
   updated_at   DateTime           @updatedAt

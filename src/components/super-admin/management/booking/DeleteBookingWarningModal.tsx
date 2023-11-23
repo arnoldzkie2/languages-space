@@ -80,7 +80,7 @@ const DeleteBookingWarningModal: React.FC<Props> = () => {
                     <button disabled={isLoading}
                         className={`text-sm text-white rounded-lg flex items-center justify-center px-3 py-2 ${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'}`}
                         onClick={() => deleteBooking()}>
-                        {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animte-spin' /> : t('confirm')}</button>
+                        {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('confirm')}</button>
                 </div>
             </div>
         </div>

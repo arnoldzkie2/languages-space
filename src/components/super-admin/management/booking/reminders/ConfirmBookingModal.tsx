@@ -42,12 +42,12 @@ const ConfirmBookingModal = () => {
                 <h1 className='text-xl pb-4 text-center'>{t('booking.reminders.confirmation')}</h1>
 
                 <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={remindersData?.id}>
-                    <div className='flex items-center justify-between'>NAME: <span className='font-normal text-gray-700'>{remindersData?.name}</span></div>
-                    <div className='flex items-center justify-between'>CLIENT: <span className='font-normal text-gray-700'>{remindersData?.client.name}</span></div>
-                    <div className='flex items-center justify-between'>CARD: <span className='font-normal text-gray-700'>{remindersData?.card_name}</span></div>
-                    <div className='flex items-center justify-between'>SUPPLIER: <span className='font-normal text-gray-700'>{remindersData?.supplier.name}</span></div>
-                    <div className='flex items-center justify-between'>SCHEDULE: <span className='font-normal text-gray-700'>{remindersData?.schedule[0].date} ({remindersData?.schedule[0].time})</span></div>
-                    <div className='flex items-center justify-between'>PRICE: <span className='font-normal text-gray-700'>¥{remindersData?.price}</span></div>
+                    <div className='flex items-center justify-between'>{tt('name')}: <span className='font-normal text-gray-700'>{remindersData?.name}</span></div>
+                    <div className='flex items-center justify-between'>{tt('client')}: <span className='font-normal text-gray-700'>{remindersData?.client.name}</span></div>
+                    <div className='flex items-center justify-between'>{tt('card')}: <span className='font-normal text-gray-700'>{remindersData?.card_name}</span></div>
+                    <div className='flex items-center justify-between'>{tt('supplier')}: <span className='font-normal text-gray-700'>{remindersData?.supplier.name}</span></div>
+                    <div className='flex items-center justify-between'>{tt('schedule')}: <span className='font-normal text-gray-700'>{remindersData?.schedule[0].date} ({remindersData?.schedule[0].time})</span></div>
+                    <div className='flex items-center justify-between'>{tt('price')}: <span className='font-normal text-gray-700'>{remindersData?.price}</span></div>
                 </div>
                 <div className='flex items-center w-full justify-end mt-5 gap-5'>
                     <button className='text-sm border py-2 px-3 rounded-lg hover:bg-gray-100' onClick={() => closeConfirmBookingModal()}>{tt('cancel')}</button>

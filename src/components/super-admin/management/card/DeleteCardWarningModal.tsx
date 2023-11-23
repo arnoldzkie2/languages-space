@@ -27,19 +27,17 @@ const DeleteCardWarningModal: React.FC<Props> = () => {
             if (data.ok) {
 
                 setIsLoading(false)
-
                 closeDeleteCardModal()
-
                 getCards()
 
             }
 
-        } catch (error) {
-
+        } catch (error: any) {
+            if(error.response.data.msg === 'card has client') {
+                alert("You can't delete a card that has client")
+            }
             setIsLoading(false)
-
             alert('Something went wrong')
-
             console.log(error);
 
         }

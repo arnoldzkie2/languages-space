@@ -107,7 +107,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
             <thead className="text-xs uppercase bg-slate-100 border">
                 <tr>
-                    <th scope='col' className='px-3 py-3'>
+                    <th scope='col' className='px-2 py-3'>
                         <input type="checkbox"
                             className='cursor-pointer w-4 h-4 outline-none'
                             title='Select all 10 rows'
@@ -115,81 +115,87 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                             onChange={selectAllRows}
                         />
                     </th>
-                    <th scope="col" className="px-3 py-3">{tt('name')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('client')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('supplier')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('card')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('schedule')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('price')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('operator')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('status')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('note')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('date')}</th>
-                    <th scope="col" className="px-3 py-3">{t('global.operation')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('name')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('client')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('supplier')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('card')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('schedule')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('quantity')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('price')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('operator')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('status')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('note')}</th>
+                    <th scope="col" className="px-2 py-3">{tt('date')}</th>
+                    <th scope="col" className="px-2 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>
             <tbody>
                 {filteredTable && filteredTable.length > 0 ?
                     filteredTable.map(booking => (
                         <tr className="bg-white border hover:bg-slate-50" key={booking.id}>
-                            <td className='px-3 py-3'>
+                            <td className='px-2 py-3'>
                                 <input type="checkbox" id={booking.id}
                                     className='cursor-pointer w-4 h-4 outline-none'
                                     onChange={() => handleSelection(booking)}
                                     checked={selectedBookings.some(selectedBooking => selectedBooking.id === booking.id)}
                                 />
                             </td>
-                            <td className='px-3 overflow-x-auto py-3'>
+                            <td className='px-2 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
                                     {booking.name}
                                 </div>
                             </td>
-                            <td className='px-3 overflow-x-auto py-3'>
+                            <td className='px-2 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
                                     {booking.client.name}
                                 </div>
                             </td>
-                            <td className='px-3 overflow-x-auto py-3'>
+                            <td className='px-2 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
                                     {booking.supplier.name}
                                 </div>
                             </td>
-                            <td className='px-3 overflow-x-auto py-3'>
+                            <td className='px-2 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
                                     {booking.card_name}
                                 </div>
                             </td>
-                            <td className='px-3 overflow-x-auto py-3'>
+                            <td className='px-2 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
                                     {booking.schedule[0].date} ({booking.schedule[0].time})
                                 </div>
                             </td>
-                            <td className="px-3 overflow-x-auto py-3">
+                            <td className="px-2 overflow-x-auto py-3">
+                                <div className='h-5 whitespace-nowrap w-12'>
+                                    {booking.quantity}
+                                </div>
+                            </td>
+                            <td className="px-2 overflow-x-auto py-3">
                                 <div className='h-5 whitespace-nowrap w-16'>
                                     {booking.price}
                                 </div>
                             </td>
-                            <td className="px-3 overflow-x-auto py-3">
+                            <td className="px-2 overflow-x-auto py-3">
                                 <div className='h-5 whitespace-nowrap w-28'>
                                     {booking.operator}
                                 </div>
                             </td>
-                            <td className="px-3 overflow-x-auto py-3">
+                            <td className="px-2 overflow-x-auto py-3">
                                 <div className='h-5 whitespace-nowrap w-28 uppercase'>
                                     {booking.status}
                                 </div>
                             </td>
-                            <td className="px-3 py-3 overflow-x-auto">
+                            <td className="px-2 py-3 overflow-x-auto">
                                 <div className='h-5 w-32 whitespace-nowrap'>
                                     {booking.note}
                                 </div>
                             </td>
-                            <td className="px-3 py-3 overflow-x-auto">
+                            <td className="px-2 py-3 overflow-x-auto">
                                 <div className='h-5 w-44 whitespace-nowrap'>
                                     {new Date(booking.created_at).toLocaleString()}
                                 </div>
                             </td>
-                            <td className='py-3 relative px-3'>
+                            <td className='py-3 relative px-2'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(booking.id)} />
                                 <ul className={`${operation && selectedID === booking.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <Link href={`/manage/booking/update/${booking.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
@@ -206,40 +212,43 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                     )) :
                     skeleton.map(item => (
                         <tr key={item}>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-md animate-pulse w-5 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-12 h-5'></div>
+                            </td>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-16 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
                             </td>
-                            <td className='py-3.5 px-3'>
+                            <td className='py-3.5 px-2'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
                             </td>
                         </tr>

@@ -24,9 +24,9 @@ const Page: React.FC = () => {
         },
     })
 
-    const { currentPage, isSideNavOpen, itemsPerPage, departmentID } = useAdminGlobalStore()
+    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useAdminGlobalStore()
 
-    const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders,confirmBooking } = useAdminBookingStore()
+    const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders, confirmBooking } = useAdminBookingStore()
 
     const [searchQuery, setSearchQuery] = useState({
         name: '',
@@ -86,13 +86,17 @@ const Page: React.FC = () => {
 
     }, [reminders.length, filterReminders.length])
 
+    useEffect(() => {
+        setDepartmentID('')
+    }, [])
+
     return (
         <div className='h-screen'>
             <SideNav />
 
             <div className={`flex flex-col h-full w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-              <RemindersHeader />
+                <RemindersHeader />
 
                 <div className='flex w-full flex-col items-start gap-8 px-8'>
 

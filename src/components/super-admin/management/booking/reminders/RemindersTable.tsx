@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {  useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {  faCheck, faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import {  faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
@@ -167,7 +167,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(reminders.id)} />
                                 <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <Link href={`/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-600' onClick={() => openConfirmBookingModal(reminders)}>{t('booking.reminders.confirm')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-600' onClick={() => openConfirmBookingModal(reminders)}>{t('booking.reminders.confirm')} <FontAwesomeIcon icon={faCheck} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteRemindersWarningMOdal(reminders)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>

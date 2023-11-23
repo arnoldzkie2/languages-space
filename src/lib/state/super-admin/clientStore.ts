@@ -60,8 +60,8 @@ interface ClientProps {
     getClients: () => Promise<void>
     setClientSelectedID: (clientID: string) => void
     getClientsWithCards: () => Promise<void>
+    setClientCards: (cards: ClientCard[]) => void
     getClientCards: (clientID: string) => Promise<void>
-    setClientCards: () => void
 }
 
 const useAdminClientStore = create<ClientProps>((set) => ({
@@ -92,7 +92,7 @@ const useAdminClientStore = create<ClientProps>((set) => ({
 
     },
     clientSelectedID: '',
-    setClientCards: () => set({ clientCards: [] }),
+    setClientCards: (cards: ClientCard[]) => set({ clientCards: cards }),
     setClientSelectedID: (clientID: string) => set({ clientSelectedID: clientID }),
     setClients: (allClients: Client[]) => set({ clients: allClients }),
     setMethod: (name: string) => set(state => ({ method: name })),

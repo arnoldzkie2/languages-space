@@ -35,7 +35,6 @@ export const POST = async (req: Request) => {
                 const bindCardToUser = await prisma.clientCard.create({
                     data: {
                         name: card.name,
-                        quantity: card.quantity,
                         price: card.price,
                         balance: card.balance,
                         validity: formattedExpirationDate,
@@ -43,7 +42,6 @@ export const POST = async (req: Request) => {
                         invoice: card.invoice,
                         repeat_purchases: card.repeat_purchases,
                         online_renews: card.online_renews,
-                        settlement_period: card.settlement_period,
                         card: { connect: { id: card.id } }
                     }
                 })
