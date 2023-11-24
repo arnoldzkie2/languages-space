@@ -61,7 +61,7 @@ export const POST = async (req: Request) => {
 
             if (department.name.toLocaleLowerCase() === 'fingerpower') {
 
-                const bookingPrice = quantity * card.card.price
+                const bookingPrice = Number(quantity) * card.card.price
 
                 //create booking
                 const createBooking = await prisma.booking.create({

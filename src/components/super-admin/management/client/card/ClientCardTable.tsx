@@ -1,27 +1,51 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faRotateRight, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next-intl/link'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType';
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
+import axios from 'axios';
 
 interface Props {
 
     filteredTable: ClientCard[]
     clientID: string
+    getClientCards: () => Promise<void>
 
 }
 
-const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID }) => {
+const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID, getClientCards }) => {
 
 
     const { operation, selectedID, skeleton, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
 
     const { openViewClientCard, openDeleteClientCardModal } = useAdminClientCardStore()
+
+    const renewCard = async (e: any, clientCardID: string) => {
+        e.preventDefault()
+        try {
+
+            setIsLoading(true)
+            const { data } = await axios.post('/api/client/card/renew', { clientCardID })
+            if (data.ok) {
+                setIsLoading(false)
+                getClientCards()
+                alert('Success')
+            }
+
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log(error)
+            if (error.response.data.msg) {
+                return alert(error.response.data.msg)
+            }
+            alert('Something went wrong')
+        }
+    }
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
@@ -69,6 +93,8 @@ const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID }) => {
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(card.id)} />
                                 <ul className={`${operation && selectedID === card.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
+                                    <button disabled={isLoading} onClick={(e: any) => renewCard(e, card.id)} className={`flex mb-1 justify-between items-center cursor-pointer ${isLoading ? 'text-green-500' : 'hover:text-green-500'}`}>{tt('renew')} {isLoading ?
+                                        <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : <FontAwesomeIcon icon={faRotateRight} width={16} height={16} />}</button>
                                     <li onClick={() => openViewClientCard(card)} className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
                                     <Link href={`/manage/client/card/${clientID}/update/${card.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteClientCardModal(card)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>

@@ -131,11 +131,11 @@ const SideNav: React.FC = () => {
                 {navArray.map(nav => (
                     <Link href={nav.link} className={`flex text-base border-b hover:border-blue-600 pb-2 items-center outline-none hover:text-blue-600 w-full`} key={nav.link}>
                         {isSideNavOpen && <span className='mr-auto'>{t(nav.translate)}</span>}
-                        <FontAwesomeIcon width={16} height={16} icon={nav.icon} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[16px] h-[16px]'}`} />
+                        <FontAwesomeIcon width={20} height={20} icon={nav.icon} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[20px] h-[20px]'}`} />
                     </Link >
                 ))}
                 <div className='w-full relative'>
-                    <FontAwesomeIcon icon={faGlobe} width={16} height={16} className={`absolute top-2 ${isSideNavOpen ? 'right-0 -z-10' : 'right-3 z-10 cursor-pointer hover:text-blue-600'}`} onClick={toggleSideNav} />
+                    <FontAwesomeIcon icon={faGlobe} width={20} height={20} className={`absolute top-2 ${isSideNavOpen ? 'right-0 -z-10' : 'right-3 z-10 cursor-pointer hover:text-blue-600'}`} onClick={toggleSideNav} />
                     <select id='locale' className={`py-2 w-full px-1 ${isSideNavOpen ? 'block' : 'hidden'} text-sm bg-transparent border-0 cursor-pointer border-b appearance-none focus:outline-none focus:ring-0 hover:border-blue-500 outline-none`} value={locale} onChange={handleTranslation}>
                         {locales.map(loc => (
                             <option value={loc.loc} key={loc.loc} className='flex items-center justify-between'>

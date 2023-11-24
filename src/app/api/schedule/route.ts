@@ -67,15 +67,15 @@ export const GET = async (req: Request) => {
                 return 0; // Events have the same date and time
             });
 
-        return okayRes(sortedSchedule)
-    }
+            return okayRes(sortedSchedule)
+        }
 
         return notFoundRes('supplierID')
 
-} catch (error) {
-    console.log(error);
-    return serverErrorRes(error)
-}
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    }
 
 }
 
@@ -151,9 +151,42 @@ export const DELETE = async (req: Request) => {
 
         if (scheduleID) {
 
-            const checkSchedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
-            if (!checkSchedule) return badRequestRes()
-            if (checkSchedule.status === 'reserved') return NextResponse.json({ msg: "This schedule is already reserved this can't be deleted." }, { status: 400 })
+            const schedule = await prisma.supplierSchedule.findUnique({
+                where: { id: scheduleID }, include: { booking: true }
+            })
+            if (!schedule) return badRequestRes()
+
+            if (schedule.status === 'reserved' && schedule.booking) {
+
+                //destruct the booking
+                const { booking } = schedule
+
+                //retrieve the client's card used in booking
+                const clientCard = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
+                if (!clientCard) return notFoundRes('Client Card')
+
+                //get the supplier price to refund the client's card
+                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { clientCardID: clientCard.cardID, supplierID: booking.supplierID } })
+                if (!supplierPrice) return NextResponse.json({ msg: 'Supplier Is Not Supported' }, { status: 409 })
+
+                //refund the client's card by the supplier price amount
+                const refundClient = await prisma.clientCard.update({
+                    where: { id: booking.clientCardID },
+                    data: { balance: clientCard.balance + supplierPrice.price }
+                })
+                if (!refundClient) return badRequestRes()
+
+                const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
+                if (!deleteSchedule) return badRequestRes()
+
+                //delete the booking as well
+                const deleteBooking = await prisma.booking.delete({ where: { id: booking.id } })
+                if (!deleteBooking) return badRequestRes()
+
+                //and return a 200 response
+                return okayRes()
+
+            }
 
             const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
             if (!deleteSchedule) return badRequestRes()

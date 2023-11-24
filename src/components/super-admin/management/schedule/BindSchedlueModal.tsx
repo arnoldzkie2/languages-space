@@ -260,6 +260,14 @@ const BindSchedlueModal = () => {
 
                     <div className='flex flex-col gap-2 w-full'>
 
+                        <label htmlFor="note" className='font-medium px-2 text-gray-700'>{tt('quantity')}</label>
+                        <input className='py-1.5 px-3 border rounded-md outline-none'
+                            type="text" id='quantity'
+                            value={formData.quantity}
+                            onChange={(e: any) => setFormData(prevData => ({ ...prevData, quantity: e.target.value }))} />
+                    </div>
+                    <div className='flex flex-col gap-2 w-full'>
+
                         <label htmlFor="note" className='font-medium px-2 text-gray-700'>{tt('note')}</label>
                         <input className='py-1.5 px-3 border rounded-md outline-none'
                             type="text" id='note'

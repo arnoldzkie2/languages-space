@@ -283,6 +283,8 @@ export const PATCH = async (req: Request) => {
 
                 const updatePreviousSchedule = await prisma.supplierSchedule.update({
                     where: { id: booking.scheduleID }, data: {
+                        clientID: null,
+                        clientName: null,
                         status: 'available'
                     }
                 })
@@ -290,6 +292,8 @@ export const PATCH = async (req: Request) => {
 
                 const updateNewSchedule = await prisma.supplierSchedule.update({
                     where: { id: schedule.id }, data: {
+                        clientID: client.id,
+                        clientName: client.name,
                         status: 'reserved'
                     }
                 })
@@ -391,14 +395,18 @@ export const DELETE = async (req: Request) => {
                 const booking = await prisma.booking.findUnique({ where: { id: bookingID } })
                 if (!booking) return notFoundRes('Booking')
 
+
                 //retrieve client card
                 const clientCard = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
                 if (!clientCard) return notFoundRes('Client Card')
 
+                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, clientCardID: clientCard.cardID } })
+                if (!supplierPrice) return badRequestRes()
+
                 //refund the client
                 const refundClient = await prisma.clientCard.update({
                     where: { id: clientCard.id },
-                    data: { balance: clientCard.balance + booking.price }
+                    data: { balance: clientCard.balance + supplierPrice.price }
                 })
                 if (!refundClient) return badRequestRes()
 
