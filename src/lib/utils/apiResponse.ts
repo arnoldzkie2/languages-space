@@ -1,4 +1,3 @@
-import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 
 const notFoundRes = (name: string) => {

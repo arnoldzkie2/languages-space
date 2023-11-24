@@ -2,6 +2,7 @@
 'use client'
 
 import SideNav from '@/components/super-admin/SideNav'
+import Departments from '@/components/super-admin/management/Departments'
 import BookingHeader from '@/components/super-admin/management/booking/BookingHeader'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
@@ -38,6 +39,7 @@ const Page = ({ params }: Props) => {
         note: '',
         scheduleID: '',
         supplierID: '',
+        status: '',
         settlement: '',
         clientID: '',
         quantity: 1,
@@ -87,6 +89,7 @@ const Page = ({ params }: Props) => {
 
             if (data.ok) {
                 setFormData(data.data)
+                setDepartmentID(data.data.departmentID)
             }
 
         } catch (error) {
@@ -108,19 +111,13 @@ const Page = ({ params }: Props) => {
             const { clientCardID, clientID, meeting_info, supplierID, scheduleID, quantity, note, courseID, name, settlement } = formData
 
             if (!name) return setErr('Write Name for this booking')
-            if (!clientID) return setErr('Select Client')
-            if (!clientCardID) return setErr('Select Card')
-            if (!meeting_info.id) return setErr('Select Meeting Info')
-            if (!supplierID) return setErr('Select Supplier')
-            if (!scheduleID) return setErr('Select Schedule')
-            if (!courseID) return setErr('Select Course')
-            if (!settlement) return setErr('Select Settlement Period')
+            if (!departmentID) return setErr('Select Department')
 
             setIsLoading(true)
             const { data } = await axios.patch('/api/booking/reminders', {
                 note, clientCardID, clientID, meeting_info, settlement,
                 supplierID, scheduleID, quantity: Number(quantity), courseID,
-                name, operator: 'Admin', status: 'pending'
+                name, operator: 'Admin', status: 'pending', departmentID
             }, { params: { remindersID: params.remindersID } })
 
             if (data.ok) {
@@ -158,6 +155,46 @@ const Page = ({ params }: Props) => {
         }
     }
 
+    const bookNow = async (e: any) => {
+
+        e.preventDefault()
+
+        try {
+
+            const { clientCardID, clientID, meeting_info, supplierID, scheduleID, quantity, note, courseID, name, settlement } = formData
+
+            if (!name) return setErr('Write Name for this booking')
+            if (!departmentID) return setErr('Select Department')
+
+            setIsLoading(true)
+            const { data } = await axios.patch('/api/booking/reminders', {
+                note, clientCardID, clientID, meeting_info, settlement,
+                supplierID, scheduleID, quantity: Number(quantity), courseID,
+                name, operator: 'Admin', status: 'pending', departmentID
+            }, { params: { remindersID: params.remindersID } })
+
+            if (data.ok) {
+
+                const { data } = await axios.post('/api/booking/reminders/confirm', {
+                    remindersID: params.remindersID
+                })
+
+                if (data.ok) {
+                    setIsLoading(false)
+                    alert('Success')
+                    router.push('/manage/booking/reminders')
+                }
+
+            }
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log(error);
+            if (error.response.data.msg) {
+                return alert(error.response.data.msg)
+            }
+            alert('Something went wrong')
+        }
+    }
     const getSupplierPrice = async () => {
         try {
 
@@ -169,9 +206,8 @@ const Page = ({ params }: Props) => {
 
         } catch (error: any) {
             console.log(error);
-            if (error.response.data.error === 'supplier_not_supported') {
-                setFormData(prevData => ({ ...prevData, cardSelectedID: '' }))
-                return alert('Supplier is not suppported in this card')
+            if (error.response.data.msg) {
+                return alert(error.response.data.msg)
             }
             alert('Something went wrong')
         }
@@ -246,11 +282,16 @@ const Page = ({ params }: Props) => {
                     </ul>
                 </nav>
                 <div className='w-full px-8 h-full'>
-                    <form onSubmit={updateReminders} className='bg-white w-1/3 h-full border p-10'>
+                    {formData.name ? <form onSubmit={updateReminders} className='bg-white w-1/3 h-full border p-10'>
 
                         {err && <small className='text-red-600 mb-2'>{err}</small>}
                         <div className='flex w-full h-full gap-10'>
                             <div className='flex flex-col w-full gap-4'>
+
+                                <div className='flex flex-col gap-2 w-full'>
+                                    <label htmlFor="department">{t('department.select')}</label>
+                                    <Departments />
+                                </div>
 
                                 <div className='flex flex-col gap-2 w-full'>
                                     <label htmlFor="name" className='text-gray-700 font-medium px-3'>{tt('name')}</label>
@@ -289,6 +330,9 @@ const Page = ({ params }: Props) => {
                                     </ul>
                                 </div>
 
+                                {formData.status !== 'booked' && <button disabled={isLoading} onClick={(e: any) => bookNow(e)} type='button' className={`w-full py-2 text-white rounded-md mt-6 ${isLoading ? 'bg-green-500' : 'bg-green-600 hover:bg-green-500'}`}>
+                                    {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('booking.confirm')}</button>
+                                }
 
                                 <Link href={'/manage/booking/reminders'} className='border w-full py-2 flex items-center justify-center hover:bg-slate-100'>{t('global.cancel')}</Link>
 
@@ -302,7 +346,7 @@ const Page = ({ params }: Props) => {
 
                                 <div className='flex flex-col gap-2 w-full'>
                                     <label htmlFor="clientID" className='text-gray-700 font-medium px-3'>{tt('client')}</label>
-                                    <select required className='px-3 py-1.5 w-full outline-none border' name="clientID" value={formData.clientID} onChange={handleChange} id="clientID">
+                                    <select className='px-3 py-1.5 w-full outline-none border' name="clientID" value={formData.clientID} onChange={handleChange} id="clientID">
                                         <option value="">{t('client.select')}</option>
                                         {clients.length > 0 ? clients.map(client => (
                                             <option value={client.id} key={client.id}>{client.name}</option>
@@ -312,7 +356,7 @@ const Page = ({ params }: Props) => {
 
                                 <div className='flex flex-col gap-2 w-full'>
                                     <label htmlFor="clientCardID" className='text-gray-700 font-medium px-3'>{tt('clientcard')}</label>
-                                    <select required className='px-3 py-1.5 w-full outline-none border' name="clientCardID" value={formData.clientCardID} onChange={handleChange} id="clientCardID">
+                                    <select className='px-3 py-1.5 w-full outline-none border' name="clientCardID" value={formData.clientCardID} onChange={handleChange} id="clientCardID">
                                         <option value="">{t('booking.clientcard-select')}</option>
                                         {clientCards.length > 0 ? clientCards.map(card => (
                                             <option value={card.id} key={card.id}>{card.name} ({card.balance})</option>
@@ -322,7 +366,7 @@ const Page = ({ params }: Props) => {
 
                                 <div className='flex flex-col gap-2 w-full'>
                                     <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{tt('course')}</label>
-                                    <select required className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
+                                    <select className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
                                         <option value="">{t('booking.select-course')}</option>
                                         {cardCourses.length > 0 ? cardCourses.map(card => (
                                             <option value={card.id} key={card.id}>{card.name}</option>
@@ -332,13 +376,13 @@ const Page = ({ params }: Props) => {
 
                                 <div className='flex flex-col gap-2 w-full'>
                                     <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('settlement')}</label>
-                                    <input type="date" required className='w-full px-3 py-1.5 border outline-none' value={formData.settlement} name='settlement' onChange={handleChange} />
+                                    <input type="date" className='w-full px-3 py-1.5 border outline-none' value={formData.settlement} name='settlement' onChange={handleChange} />
                                 </div>
 
 
                                 <div className='flex flex-col gap-2 w-full'>
                                     <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('quantity')}</label>
-                                    <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.quantity} onChange={handleChange} name='quantity' />
+                                    <input type="number" className='px-3 py-1 w-full outline-none border' value={formData.quantity} onChange={handleChange} name='quantity' />
                                 </div>
 
                                 <button disabled={isLoading} className={`w-full py-2 text-white rounded-md mt-6 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
@@ -347,11 +391,11 @@ const Page = ({ params }: Props) => {
                             </div>
 
                         </div>
-                    </form>
+                    </form> : <div className='w-1/4 h-full grid place-content-center bg-white border'><FontAwesomeIcon icon={faSpinner} width={35} height={35} className='w-[35px] h-[35px] animate-spin' /></div>}
                 </div>
 
             </div>
-        </div>
+        </div >
     )
 
 }

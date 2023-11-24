@@ -120,18 +120,18 @@ const SideNav: React.FC = () => {
                     <button
                         onClick={() => toggleSideNav()}
                         className='text-lg flex justify-between items-center pb-4 border-b border-gray-600 hover:text-blue-600'>
-                        {t('side-nav.menu')} <FontAwesomeIcon icon={faArrowLeft} width={20} height={20} />
+                        {t('side-nav.menu')} <FontAwesomeIcon icon={faArrowLeft} width={20} height={20} className='w-[20px] h-[20px]' />
                     </button>
                     :
                     <FontAwesomeIcon icon={faArrowRight} width={20} height={20}
-                        className='pb-4 border-b text-xl text-black w-full border-gray-600 cursor-pointer hover:text-blue-600'
+                        className='pb-4 border-b text-xl text-black mr-auto ml-auto border-gray-600 w-[20px] h-[20px] cursor-pointer hover:text-blue-600'
                         onClick={() => toggleSideNav()} />
             }
-            <ul className='flex flex-col gap-4 h-full py-7 justify-center'>
+            <ul className='flex flex-col items-center gap-4 h-full py-7 justify-center'>
                 {navArray.map(nav => (
                     <Link href={nav.link} className={`flex text-base border-b hover:border-blue-600 pb-2 items-center outline-none hover:text-blue-600 w-full`} key={nav.link}>
                         {isSideNavOpen && <span className='mr-auto'>{t(nav.translate)}</span>}
-                        <FontAwesomeIcon width={16} height={16} icon={nav.icon} className={`${!isSideNavOpen && 'flex justify-center w-full hover:text-blue-600 text-xl'}`} />
+                        <FontAwesomeIcon width={16} height={16} icon={nav.icon} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[16px] h-[16px]'}`} />
                     </Link >
                 ))}
                 <div className='w-full relative'>

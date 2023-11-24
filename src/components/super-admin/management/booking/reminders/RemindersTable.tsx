@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faCheck, faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
-import {  faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { faCheck, faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next-intl/link'
@@ -19,7 +19,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
 
     const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
 
-    const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders, openConfirmBookingModal } = useAdminBookingStore()
+    const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders } = useAdminBookingStore()
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
@@ -90,10 +90,6 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                         />
                     </th>
                     <th scope="col" className="px-3 py-3">{tt('name')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('client')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('supplier')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('card')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('schedule')}</th>
                     <th scope="col" className="px-3 py-3">{tt('price')}</th>
                     <th scope="col" className="px-3 py-3">{tt('operator')}</th>
                     <th scope="col" className="px-3 py-3">{tt('status')}</th>
@@ -116,26 +112,6 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='px-3 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
                                     {reminders.name}
-                                </div>
-                            </td>
-                            <td className='px-3 overflow-x-auto py-3'>
-                                <div className='h-5 whitespace-nowrap w-36'>
-                                    {reminders.client.name}
-                                </div>
-                            </td>
-                            <td className='px-3 overflow-x-auto py-3'>
-                                <div className='h-5 whitespace-nowrap w-36'>
-                                    {reminders.supplier.name}
-                                </div>
-                            </td>
-                            <td className='px-3 overflow-x-auto py-3'>
-                                <div className='h-5 whitespace-nowrap w-36'>
-                                    {reminders.card_name}
-                                </div>
-                            </td>
-                            <td className='px-3 overflow-x-auto py-3'>
-                                <div className='h-5 whitespace-nowrap w-36'>
-                                    {reminders.schedule[0].date} ({reminders.schedule[0].time})
                                 </div>
                             </td>
                             <td className="px-3 overflow-x-auto py-3">
@@ -167,7 +143,6 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(reminders.id)} />
                                 <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <Link href={`/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-600' onClick={() => openConfirmBookingModal(reminders)}>{t('booking.reminders.confirm')} <FontAwesomeIcon icon={faCheck} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteRemindersWarningMOdal(reminders)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>

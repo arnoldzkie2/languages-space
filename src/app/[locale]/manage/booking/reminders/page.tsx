@@ -4,7 +4,6 @@ import SideNav from '@/components/super-admin/SideNav';
 import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
 import SearchBooking from '@/components/super-admin/management/booking/SearchBooking';
-import ConfirmBookingModal from '@/components/super-admin/management/booking/reminders/ConfirmBookingModal';
 import DeleteRemindersWarningModal from '@/components/super-admin/management/booking/reminders/DeleteRemindersWarningModal';
 import RemindersHeader from '@/components/super-admin/management/booking/reminders/RemindersHeader';
 import RemindersTable from '@/components/super-admin/management/booking/reminders/RemindersTable';
@@ -26,7 +25,7 @@ const Page: React.FC = () => {
 
     const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useAdminGlobalStore()
 
-    const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders, confirmBooking } = useAdminBookingStore()
+    const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders } = useAdminBookingStore()
 
     const [searchQuery, setSearchQuery] = useState({
         name: '',
@@ -113,7 +112,6 @@ const Page: React.FC = () => {
 
                 {/* {viewCard && <ClientCardModal />} */}
                 {deleteReminders && <DeleteRemindersWarningModal />}
-                {confirmBooking && <ConfirmBookingModal />}
 
             </div>
         </div>

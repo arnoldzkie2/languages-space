@@ -17,6 +17,7 @@ interface FormData {
     quantity: number
     courseSelectedID: string
     cardSelectedID: string
+    settlement: string
     meetingSelectedID: string
     clientCard: ClientCard[]
     courses: Courses[]
@@ -42,6 +43,7 @@ const BindSchedlueModal = () => {
         note: '',
         cardSelectedID: '',
         courseSelectedID: '',
+        settlement: '',
         meetingSelectedID: '',
         quantity: 1,
         courses: [],
@@ -118,7 +120,7 @@ const BindSchedlueModal = () => {
     const bookSchedule = async (e: any) => {
 
         e.preventDefault()
-        const { note, meeting_info, cardSelectedID, courseSelectedID, quantity } = formData
+        const { note, meeting_info, cardSelectedID, courseSelectedID, quantity, settlement } = formData
 
         if (!meeting_info.id) return alert('Select A Meeting Info')
         if (!clientSelectedID) return alert('Select A Client')
@@ -135,9 +137,9 @@ const BindSchedlueModal = () => {
                 supplierID: supplierSelectedID,
                 clientID: clientSelectedID,
                 clientCardID: cardSelectedID,
-                meeting_info, note,
+                meeting_info, note, settlement,
                 name: "1v1 Class", operator: 'Admin',
-                status: "Pending", quantity, departmentID,
+                status: "pending", quantity, departmentID,
                 courseID: courseSelectedID
             })
 
@@ -153,16 +155,9 @@ const BindSchedlueModal = () => {
         } catch (error: any) {
             setIsLoading(false)
             console.log(error);
-            if (error.response.data.msg === 'Supplier Price not found') {
-                return alert('Supplier is not supported in this card')
+            if (error.response.data.msg) {
+                return alert(error.response.data.msg)
             }
-            if (error.response.data.msg === 'Not enough balance to book') {
-                return alert("Card don't have enough balance to book")
-            }
-            if (error.response.data.msg === 'Card is not valid') {
-                return alert('Card is expired')
-            }
-
             alert('Something went wrong')
         }
     }
@@ -254,10 +249,23 @@ const BindSchedlueModal = () => {
                         ))}
                     </ul>
 
-                    <input className='py-1.5 px-2 border rounded-md outline-none'
-                        type="text" placeholder={tt('note')}
-                        value={formData.note}
-                        onChange={(e: any) => setFormData(prevData => ({ ...prevData, note: e.target.value }))} />
+                    <div className='flex flex-col gap-2 w-full'>
+
+                        <label htmlFor="settlement" className='font-medium px-2 text-gray-700'>{tt('settlement')}</label>
+                        <input className='py-1.5 px-3 border rounded-md outline-none'
+                            type="date" id='settlement'
+                            value={formData.settlement}
+                            onChange={(e: any) => setFormData(prevData => ({ ...prevData, settlement: e.target.value }))} />
+                    </div>
+
+                    <div className='flex flex-col gap-2 w-full'>
+
+                        <label htmlFor="note" className='font-medium px-2 text-gray-700'>{tt('note')}</label>
+                        <input className='py-1.5 px-3 border rounded-md outline-none'
+                            type="text" id='note'
+                            value={formData.note}
+                            onChange={(e: any) => setFormData(prevData => ({ ...prevData, note: e.target.value }))} />
+                    </div>
 
                     <div className='flex items-center w-full gap-10'>
                         <button onClick={(e: any) => deleteSchedule(e)} disabled={isLoading} className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('schedule.delete')}</button>

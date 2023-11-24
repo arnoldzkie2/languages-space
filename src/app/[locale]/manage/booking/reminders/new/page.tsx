@@ -3,7 +3,6 @@
 
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
-import BookingHeader from '@/components/super-admin/management/booking/BookingHeader'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
@@ -47,8 +46,8 @@ const Page = () => {
 
   const { isSideNavOpen, err, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useAdminGlobalStore()
   const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
-  const { supplier, getSupplierWithMeeting, cardCourses, setCardCourses, supplierData,
-    setSupplierData, supplierSchedule, setSupplierSchedule,
+  const { supplier, getSupplierWithMeeting, cardCourses, setCardCourses,
+    supplierSchedule, setSupplierSchedule,
     singleSupplier, getSingleSupplier } = useAdminSupplierStore()
 
   const handleChange = (e: any) => {
@@ -79,17 +78,11 @@ const Page = () => {
       const { clientCardID, clientID, meeting_info, supplierID, scheduleID, note, courseID, name, quantity, settlement } = formData
 
       if (!name) return setErr('Write Name for this booking reminders')
-      if (!clientID) return setErr('Select Client')
-      if (!clientCardID) return setErr('Select Card')
-      if (!meeting_info.id) return setErr('Select Meeting Info')
-      if (!supplierID) return setErr('Select Supplier')
-      if (!scheduleID) return setErr('Select Schedule')
       if (quantity < 1) return setErr('Quantity Must be positive number')
-      if (!courseID) return setErr('Select Course')
-      if(!settlement) return setErr('Select Settlement Period')
       if (!departmentID) return setErr('Select Department')
+      if (!clientCardID)
 
-      setIsLoading(true)
+        setIsLoading(true)
       const { data } = await axios.post('/api/booking/reminders', {
         note, clientCardID, clientID, meeting_info, departmentID,
         supplierID, scheduleID, quantity: Number(quantity), courseID,
@@ -103,15 +96,13 @@ const Page = () => {
       }
 
     } catch (error: any) {
-
       setIsLoading(false)
-      if (error.response.data.msg === 'This schedule is already reserved') {
-        return setErr('This Schedule is already reserved')
-      }
       console.log(error);
+      if (error.response.data.msg) {
+        return setErr(error.reseponse.data.msg)
+      }
       alert('Something went wrong')
     }
-
   }
 
   const getCourses = async () => {
@@ -261,7 +252,7 @@ const Page = () => {
 
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="clientID" className='text-gray-700 font-medium px-3'>{tt('client')}</label>
-                  <select required className='px-3 py-1.5 w-full outline-none border' name="clientID" value={formData.clientID} onChange={handleChange} id="clientID">
+                  <select className='px-3 py-1.5 w-full outline-none border' name="clientID" value={formData.clientID} onChange={handleChange} id="clientID">
                     <option value="">{t('client.select')}</option>
                     {clients.length > 0 ? clients.map(client => (
                       <option value={client.id} key={client.id}>{client.name}</option>
@@ -271,7 +262,7 @@ const Page = () => {
 
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="clientCardID" className='text-gray-700 font-medium px-3'>{tt('clientcard')}</label>
-                  <select required className='px-3 py-1.5 w-full outline-none border' name="clientCardID" value={formData.clientCardID} onChange={handleChange} id="clientCardID">
+                  <select className='px-3 py-1.5 w-full outline-none border' name="clientCardID" value={formData.clientCardID} onChange={handleChange} id="clientCardID">
                     <option value="">{t('booking.clientcard-select')}</option>
                     {clientCards.length > 0 ? clientCards.map(card => (
                       <option value={card.id} key={card.id}>{card.name} ({card.balance})</option>
@@ -282,7 +273,7 @@ const Page = () => {
 
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{tt('course')}</label>
-                  <select required className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
+                  <select className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
                     <option value="">{t('booking.select-course')}</option>
                     {cardCourses.length > 0 ? cardCourses.map(card => (
                       <option value={card.id} key={card.id}>{card.name}</option>
@@ -292,13 +283,13 @@ const Page = () => {
 
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('settlement')}</label>
-                  <input type="date" required className='w-full px-3 py-1.5 border outline-none' value={formData.settlement} name='settlement' onChange={handleChange} />
+                  <input type="date" className='w-full px-3 py-1.5 border outline-none' value={formData.settlement} name='settlement' onChange={handleChange} />
                 </div>
 
 
                 <div className='flex flex-col gap-2 w-full'>
                   <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('quantity')}</label>
-                  <input required type="number" className='px-3 py-1 w-full outline-none border' value={formData.quantity} onChange={handleChange} name='quantity' />
+                  <input type="number" className='px-3 py-1 w-full outline-none border' value={formData.quantity} onChange={handleChange} name='quantity' />
                 </div>
 
                 <button disabled={isLoading} className={`w-full py-2 text-white rounded-md mt-6 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>

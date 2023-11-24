@@ -27,7 +27,6 @@ model Client {
   updated_at   DateTime     @updatedAt
   orders       Order[]
   bookings     Booking[]
-  Reminders    Reminders[]
 }
 
 model ClientCard {
@@ -82,7 +81,6 @@ model Courses {
   updated_at      DateTime         @updatedAt
   supported_cards ClientCardList[]
   booking         Booking[]
-  Reminders       Reminders[]
 }
 
 model Supplier {
@@ -111,7 +109,6 @@ model Supplier {
   supplier_price    SupplierPrice[]
   bookings          Booking[]
   departments       Department[]
-  Reminders         Reminders[]
 }
 
 model SupplierPrice {
@@ -152,7 +149,6 @@ model SupplierSchedule {
   supplier    Supplier   @relation(fields: [supplierID], references: [id], onDelete: Cascade)
   booking     Booking?   @relation(fields: [bookingID], references: [id], onDelete: Cascade)
   bookingID   String?
-  Reminders   Reminders? @relation(fields: [remindersID], references: [id])
   remindersID String?
 
   @@index([supplierID])
@@ -197,28 +193,21 @@ model Reminders {
   operator     String
   status       String
   note         String?
-  scheduleID   String
-  supplierID   String
-  clientID     String
-  departmentID String
-  card_name    String
-  settlement   String
-  clientCardID String
-  price        Int
+  supplierID   String?
+  clientID     String?
+  departmentID String?
+  card_name    String?
+  settlement   String?
+  clientCardID String?
+  courseID     String?
+  scheduleID   String?
+  price        Int?
   quantity     Int
-  meeting_info Json
+  meeting_info Json?
+  department   Department?        @relation(fields: [departmentID], references: [id], onDelete: Cascade)
   created_at   DateTime           @default(now())
   updated_at   DateTime           @updatedAt
-  course       Courses            @relation(fields: [courseID], references: [id])
-  schedule     SupplierSchedule[]
-  supplier     Supplier           @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  client       Client             @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  department   Department         @relation(fields: [departmentID], references: [id])
-  courseID     String
 
-  @@index([supplierID])
-  @@index([clientID])
-  @@index([courseID])
   @@index([departmentID])
 }
 
