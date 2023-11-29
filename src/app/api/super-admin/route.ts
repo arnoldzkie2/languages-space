@@ -45,10 +45,7 @@ export const GET = async (req: Request) => {
 
         }
 
-        const allSuperAmin = await prisma.superAdmin.findMany()
-        if (!allSuperAmin) return badRequestRes()
-
-        return okayRes(allSuperAmin)
+        return notFoundRes('Super admin')
 
     } catch (error) {
         console.log(error);
@@ -61,6 +58,7 @@ export const GET = async (req: Request) => {
 export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
+
     const superAdminID = searchParams.get('superAdminID')
 
     try {

@@ -1,6 +1,6 @@
+'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
-'use client'
 import { useSession } from "next-auth/react";
 import { useRouter } from "next-intl/client";
 import { useEffect } from "react";
@@ -23,9 +23,7 @@ interface SessionProps {
 const Page = () => {
 
     const router = useRouter()
-
     const session: SessionProps = useSession()
-
     const department = useSearchParams().get('department')
 
     useEffect(() => {
