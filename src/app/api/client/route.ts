@@ -3,10 +3,8 @@ import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 interface FormData {
-    profile: {
-        key: string
-        url: string
-    }
+    profile_key: string
+    profile_url: string
     name: string
     organization: string
     username: string
@@ -20,10 +18,9 @@ interface FormData {
     departments: string[]
 }
 
-
 export const POST = async (req: Request) => {
 
-    const { profile, name, organization, username, password, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
+    const { profile_key, profile_url, name, organization, username, password, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
 
     try {
 
@@ -53,7 +50,7 @@ export const POST = async (req: Request) => {
 
             const newUser = await prisma.client.create({
                 data: {
-                    profile_key: profile.key, profile_url: profile.url, name, password, username, organization, phone_number, email, address, gender, origin, note, departments: {
+                    profile_key, profile_url, name, password, username, organization, phone_number, email, address, gender, origin, note, departments: {
                         connect: departments.map((id: string) => ({ id }))
                     }
                 }
@@ -67,7 +64,7 @@ export const POST = async (req: Request) => {
 
         const newUser = await prisma.client.create({
             data: {
-                profile_key: profile.key, profile_url: profile.url, name, password, username, organization, phone_number, email, address, gender, origin, note
+                profile_key, profile_url, name, password, username, organization, phone_number, email, address, gender, origin, note
             }
         })
         if (!newUser) return badRequestRes()

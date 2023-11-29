@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import useClientStore from '@/lib/state/client/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import { useTranslations } from 'next-intl'
@@ -12,10 +13,16 @@ interface Props {
 
 const ClientCards: React.FC<Props> = ({ cards }) => {
 
+
+    const { setPage } = useClientStore()
     const t = useTranslations('client')
     const tt = useTranslations('global')
 
     const skeleton = [1, 2, 3]
+
+    useEffect(() => {
+        setPage('cards')
+    }, [])
 
     return (
         <ul className='flex flex-col gap-3 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>

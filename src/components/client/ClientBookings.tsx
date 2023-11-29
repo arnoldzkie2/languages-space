@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import useClientStore from '@/lib/state/client/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { Booking } from '@/lib/types/super-admin/bookingType'
 import { useTranslations } from 'next-intl'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface Props {
     bookings: Booking[]
@@ -15,6 +17,7 @@ const ClientBookings: React.FC<Props> = ({ bookings }) => {
     const ttt = useTranslations('super-admin')
 
 
+    const { setPage } = useClientStore()
     const { skeleton, currentPage, setCurrentPage, itemsPerPage } = useAdminGlobalStore()
     const getTotalPages = () => Math.ceil(bookings.length / itemsPerPage)
 
@@ -33,6 +36,10 @@ const ClientBookings: React.FC<Props> = ({ bookings }) => {
             setCurrentPage(currentPage + 1);
         }
     }
+
+    useEffect(() => {
+        setPage('bookings')
+    }, [])
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>

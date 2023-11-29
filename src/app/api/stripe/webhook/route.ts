@@ -42,7 +42,7 @@ export const POST = async (req: Request) => {
                 const expirationDay = String(expirationDate.getDate()).padStart(2, '0');
                 const formattedExpirationDate = `${expirationYear}-${expirationMonth}-${expirationDay}`;
 
-                if (existCard && card.online_renews && card.repeat_purchases) {
+                if (existCard && card.repeat_purchases) {
 
                     //renew the card for user
                     const renewCard = await prisma.clientCard.update({

@@ -183,6 +183,7 @@
         "username": "Username",
         "meeting": "Meeting Info",
         "address": "Address",
+        "show-more": "Show More",
         "optional": "(optional)",
         "email": "Email Address",
         "select": "Select",
@@ -230,7 +231,9 @@
         "card": {
             "validity": "Validity",
             "buy-date": "Buy Date",
+            "days": "Days",
             "balance": "Balance",
+            "buy": "Buy Now",
             "price": "Price"
         },
         "profile": {

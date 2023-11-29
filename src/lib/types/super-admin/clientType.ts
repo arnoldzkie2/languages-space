@@ -14,7 +14,8 @@ interface Client {
     address: string | null
     origin: any
     note: string | null
-    date: string
+    created_at: string
+    updated_at: string
     departments: { id: string, name: string, date: string }[] | null
     cards: ClientCard[]
 }

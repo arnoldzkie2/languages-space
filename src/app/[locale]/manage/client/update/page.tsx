@@ -229,11 +229,11 @@ const Page = () => {
                                                 if (res) {
 
                                                     const { data } = await axios.post('/api/uploadthing/profile/change/client', {
-                                                        file: res[0], clientID: session.data.user.id
+                                                        file: res[0], clientID: formData.id
                                                     })
 
                                                     if (data.ok) {
-                                                        setFormData(prevState => ({ ...prevState, profile_url: res[0].url }))
+                                                        setFormData(prevState => ({ ...prevState, profile_url: res[0].url, profile_key: res[0].key }))
                                                         setOkMsg('Profile Changed')
                                                         setTimeout(() => {
                                                             setOkMsg('')

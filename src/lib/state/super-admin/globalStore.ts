@@ -24,6 +24,9 @@ interface AdminGlobalStoreProps {
     newDepartment: boolean,
     updateDepartment: boolean
     departmentData: Department | null
+    prevProfileKey: string
+    setPrevProfileKey: (profile: string) => void
+    deleteProfile: (profileKey: string) => Promise<void>
     toggleSideNav: () => void
     setDepartments: (depts: Department[]) => void
     setDepartmentID: (id: string) => void
@@ -51,6 +54,16 @@ interface AdminGlobalStoreProps {
 const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
     isSideNavOpen: false,
     okMsg: '',
+    prevProfileKey: '',
+    setPrevProfileKey: (profile: string) => set({ prevProfileKey: profile }),
+    deleteProfile: async (profileKey: string) => {
+        try {
+            const { data } = await axios.delete('/api/uploadthing', { params: { key: profileKey } })
+        } catch (error) {
+            console.log(error);
+            alert('Something went wrong')
+        }
+    },
     locales: [{
         loc: 'en',
         val: 'English'

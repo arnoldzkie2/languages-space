@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { Order } from '@/lib/types/super-admin/orderType'
 import { useTranslations } from 'next-intl'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Pagination from '../super-admin/management/Pagination'
+import useClientStore from '@/lib/state/client/clientStore'
 
 interface Props {
     orders: Order[]
@@ -15,6 +17,7 @@ const ClientOrders: React.FC<Props> = ({ orders }) => {
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
 
+    const { setPage } = useClientStore()
 
     const { skeleton, currentPage, setCurrentPage, itemsPerPage } = useAdminGlobalStore()
     const getTotalPages = () => Math.ceil(orders.length / itemsPerPage)
@@ -34,6 +37,10 @@ const ClientOrders: React.FC<Props> = ({ orders }) => {
             setCurrentPage(currentPage + 1);
         }
     }
+
+    useEffect(() => {
+        setPage('orders')
+    }, [])
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 xl:w-1/2 order-1 md:order-2'>

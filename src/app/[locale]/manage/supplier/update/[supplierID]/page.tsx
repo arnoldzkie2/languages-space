@@ -30,7 +30,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
     const [formData, setFormData] = useState<SupplierFormDataProps>(supplierFormDataValue)
 
-    const { isSideNavOpen, departments, getDepartments } = useAdminGlobalStore()
+    const { isSideNavOpen, departments, getDepartments, setOkMsg } = useAdminGlobalStore()
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -169,7 +169,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
 
                 <div className='w-full px-8'>
 
-                    <form className='w-1/2 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={updateSupplier}>
+                    <form className='w-2/3 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={updateSupplier}>
                         {err && <small className='w-full text-red-400'>{err}</small>}
                         <div className='w-full flex gap-20'>
 
@@ -203,28 +203,6 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="organization" className='font-medium'>{tt('organization')} (optional)</label>
                                     <input value={formData.organization || ''} onChange={handleChange} name='organization' type="text" className='w-full border outline-none py-1 px-3' id='organization' />
-                                </div>
-
-                                <div className='flex flex-col gap-3 items-start'>
-                                    <span className='block font-medium'>{tt('profile')}</span>
-                                    <UploadButton
-                                        endpoint="profileUploader"
-                                        onClientUploadComplete={(res) => {
-
-                                            if (res) {
-
-                                                setFormData(prevData => ({ ...prevData, profile: res[0].url }))
-                                                alert("Upload Completed");
-
-                                            }
-
-                                        }}
-                                        onUploadError={(error: Error) => {
-
-                                            alert('Something went wrong.')
-
-                                        }}
-                                    />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
@@ -289,6 +267,37 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                             <label htmlFor={`department_${dept.id}`} className="mr-4">{dept.name}</label>
                                         </div>
                                     ))}
+                                </div>
+                                <div>
+                                    <div className='flex flex-col gap-3 items-start'>
+                                        <span className='block font-medium'>{tt('profile')}</span>
+                                        <UploadButton
+                                            endpoint="profileUploader"
+                                            onClientUploadComplete={async (res) => {
+
+                                                if (res) {
+
+                                                    const { data } = await axios.post('/api/uploadthing/profile/change/supplier', {
+                                                        file: res[0], supplierID: formData.id
+                                                    })
+
+                                                    if (data.ok) {
+                                                        setFormData(prevState => ({ ...prevState, profile_url: res[0].url, profile_key: res[0].key }))
+                                                        setOkMsg('Profile Changed')
+                                                        setTimeout(() => {
+                                                            setOkMsg('')
+                                                        }, 4000)
+                                                    }
+
+                                                }
+
+                                            }}
+                                            onUploadError={(error: Error) => {
+                                                alert('Something went wrong.')
+                                            }}
+                                        />
+                                    </div>
+
                                 </div>
 
                             </div>

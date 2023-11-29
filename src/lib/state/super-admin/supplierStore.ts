@@ -33,7 +33,8 @@ const supplierFormDataValue = {
     }],
     origin: '',
     phone_number: '',
-    profile: '',
+    profile_url: '',
+    profile_key: '',
     tags: []
 }
 

@@ -86,7 +86,8 @@ model Courses {
 
 model Supplier {
   id                String                @id @default(uuid())
-  profile           String?
+  profile_key           String?
+  profile_url           String?
   name              String
   username          String                @unique
   organization      String?

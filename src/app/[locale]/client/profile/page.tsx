@@ -3,6 +3,7 @@
 import ClientHeader from '@/components/client/ClientHeader'
 import ClientInfo from '@/components/client/ClientInfo'
 import ClientProfile from '@/components/client/ClientProfile'
+import useClientStore from '@/lib/state/client/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import axios from 'axios'
 import { signIn, useSession } from 'next-auth/react'
@@ -17,21 +18,12 @@ const Page = () => {
         },
     })
 
-    const { isLoading, setIsLoading, setOkMsg, setErr } = useAdminGlobalStore()
-
-    const [client, setClient] = useState({
-        name: '',
-        email: '',
-        phone_number: '',
-        profile_url: '',
-        gender: '',
-        address: '',
-        username: '',
-    })
+    const { setIsLoading, setOkMsg, setErr } = useAdminGlobalStore()
+    const { client, setClient } = useClientStore()
 
     const handleChange = (e: any) => {
         const { name, value } = e.target
-        setClient(prevData => ({ ...prevData, [name]: value }))
+        setClient({ ...client, [name]: value })
     }
 
     const updateClient = async (e: any) => {
@@ -73,9 +65,11 @@ const Page = () => {
         try {
 
             const { data } = await axios.get('/api/client', { params: { clientID: session.data.user.id } })
+
             if (data.ok) {
                 setClient(data.data)
             }
+
         } catch (error: any) {
             console.log(error);
             if (error.response.data.msg) {
@@ -97,7 +91,7 @@ const Page = () => {
 
             <div className='px-5 md:flex-row lg:justify-center text-gray-700 sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
                 <ClientProfile />
-                <ClientInfo setClient={setClient} updateClient={updateClient} handleChange={handleChange} client={client} />
+                <ClientInfo updateClient={updateClient} handleChange={handleChange} />
             </div>
         </>
     )

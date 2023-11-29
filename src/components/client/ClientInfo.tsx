@@ -8,32 +8,16 @@ import Image from 'next/image';
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { UploadButton } from '@/utils/uploadthing'
-interface Props {
-    client: {
-        name: string;
-        email: string;
-        profile_url: string
-        phone_number: string;
-        gender: string;
-        address: string;
-        username: string;
-    }
+import { useEffect } from 'react'
+import useClientStore from '@/lib/state/client/clientStore'
 
-    setClient: React.Dispatch<React.SetStateAction<{
-        name: string;
-        email: string;
-        phone_number: string;
-        profile_url: string;
-        gender: string;
-        address: string;
-        username: string;
-    }>>
+interface Props {
 
     handleChange: (e: any) => void
     updateClient: (e: any) => Promise<void | NodeJS.Timeout>
 }
 
-const ClientInfo: React.FC<Props> = ({ client, updateClient, handleChange, setClient }) => {
+const ClientInfo: React.FC<Props> = ({ updateClient, handleChange }) => {
 
     const session: any = useSession()
 
@@ -41,6 +25,7 @@ const ClientInfo: React.FC<Props> = ({ client, updateClient, handleChange, setCl
     const tt = useTranslations('global')
 
     const { isLoading, okMsg, err, setOkMsg, setErr } = useAdminGlobalStore()
+    const { setPage, client, setClient } = useClientStore()
 
     const skeleton = (
         <div className='flex flex-col gap-1.5 w-full'>
@@ -48,6 +33,10 @@ const ClientInfo: React.FC<Props> = ({ client, updateClient, handleChange, setCl
             <div className='w-full h-7 bg-slate-200 animate-pulse rounded-md'></div>
         </div>
     )
+
+    useEffect(() => {
+        setPage('profile')
+    }, [])
 
     return (
         <form onSubmit={updateClient} className='flex flex-col gap-5 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
@@ -73,7 +62,7 @@ const ClientInfo: React.FC<Props> = ({ client, updateClient, handleChange, setCl
                                     })
 
                                     if (data.ok) {
-                                        setClient(prevClient => ({ ...prevClient, profile_url: res[0].url }))
+                                        setClient({ ...client, profile_url: res[0].url })
                                         setOkMsg('Profile Changed')
                                         setTimeout(() => {
                                             setOkMsg('')
@@ -84,6 +73,9 @@ const ClientInfo: React.FC<Props> = ({ client, updateClient, handleChange, setCl
                             onUploadError={(error: Error) => {
                                 setErr('Something went wrong.')
 
+                            }}
+                            appearance={{
+                                button: 'hover:bg-blue-500'
                             }}
                         />
                     </div>

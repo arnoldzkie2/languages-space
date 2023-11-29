@@ -7,6 +7,7 @@ import { ClientFormData } from '@/lib/types/super-admin/clientType'
 import { UploadButton } from '@/utils/uploadthing'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Image from 'next/image'
 import axios from 'axios'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
@@ -29,7 +30,7 @@ const Page = () => {
 
     const [formData, setFormData] = useState<ClientFormData>(newClientFormValue)
 
-    const { isSideNavOpen, departments, getDepartments, err, setErr } = useAdminGlobalStore()
+    const { isSideNavOpen, departments, getDepartments, err, setErr, setOkMsg, deleteProfile, prevProfileKey, setPrevProfileKey } = useAdminGlobalStore()
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -77,8 +78,24 @@ const Page = () => {
     };
 
     useEffect(() => {
+        setPrevProfileKey('')
         getDepartments()
     }, [])
+
+    useEffect(() => {
+
+        if (prevProfileKey) {
+
+            deleteProfile(prevProfileKey)
+            setPrevProfileKey(formData.profile_key)
+
+        } else {
+
+            setPrevProfileKey(formData.profile_key)
+
+        }
+
+    }, [formData.profile_key])
 
     const clientHeaderSkeleton = (
         <li className='bg-slate-200 w-32 h-5 rounded-3xl animate-pulse'></li>
@@ -195,28 +212,33 @@ const Page = () => {
                                     ))}
                                 </div>
 
-                                <div className='flex flex-col gap-3 items-start'>
-                                    <span className='block font-medium'>{tt('profile')}</span>
-                                    <UploadButton
-                                        endpoint="profileUploader"
-                                        onClientUploadComplete={(res) => {
+                                <div className='flex w-full justify-around items-center'>
 
-                                            // Do something with the response
-                                            if (res) {
+                                    <Image width={120} height={120} src={formData.profile_url || '/profile/profile.svg'} alt='Client Profile' className='rounded-full border' />
 
-                                                setFormData(prevData => ({ ...prevData, profile_url: res[0].url }))
-                                                alert("Upload Completed");
+                                    <div className='flex flex-col gap-3'>
+                                        <label className='block font-medium'>{tt('profile')}</label>
+                                        <UploadButton
+                                            endpoint="profileUploader"
+                                            onClientUploadComplete={async (res) => {
+                                                // Do something with the response
+                                                if (res) {
 
-                                            }
+                                                    setFormData(prevState => ({ ...prevState, profile_url: res[0].url, profile_key: res[0].key }))
+                                                    setOkMsg('Profile Changed')
+                                                    setTimeout(() => {
+                                                        setOkMsg('')
+                                                    }, 4000)
+                                                }
+                                            }}
+                                            onUploadError={(error: Error) => {
+                                                setErr('Something went wrong.')
 
-                                        }}
-                                        onUploadError={(error: Error) => {
-                                            alert('Something went wrong.')
+                                            }}
+                                        />
+                                    </div>
 
-                                        }}
-                                    />
                                 </div>
-
                             </div>
                         </div>
                         <div className='flex items-center gap-10 w-1/2 self-end'>

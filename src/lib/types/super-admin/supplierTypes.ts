@@ -1,5 +1,6 @@
 import { ClientCard } from "./clientCardType"
 import { Department } from "./globalType"
+import { SupplierSchedule } from "./scheduleType"
 
 interface TotalSupplier {
     total: string
@@ -9,32 +10,35 @@ interface TotalSupplier {
 
 interface Supplier {
     id: string
-    profile?: string
+    profile_key: string | null
+    profile_url: string | null
     name: string
     username: string
-    organization?: string
+    organization: string | null
     payment_information: string
-    phone_number?: string
+    phone_number: string | null
     password: string
-    email?: string
-    address?: string
-    gender?: string
+    email: string | null
+    address: string | null
+    gender: string | null
     card: any
-    meeting_info: any
+    meeting_info: SupplierMeetingInfo[]
     tags: any
-    schedule: any
-    origin?: string
-    note?: string
-    employment_status?: string
-    entry: string
-    departure: string
+    schedule: SupplierSchedule[]
+    origin: string | null
+    note: string | null
+    employment_status: string
+    entry: string | null
+    departure: string | null
     departments: Department[]
     created_at: string
     updated_at: string
 }
 
 interface SupplierFormDataProps {
-    profile: string
+    id?: string
+    profile_url: string
+    profile_key: string
     name: string
     email: string
     phone_number: string

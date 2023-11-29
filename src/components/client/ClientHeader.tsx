@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import useClientStore from '@/lib/state/client/clientStore'
 import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
@@ -6,7 +7,7 @@ import { signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import Image from 'next/image'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 const ClientHeader = () => {
 
@@ -14,11 +15,16 @@ const ClientHeader = () => {
 
     const [isOpen, setIsOpen] = useState(false)
 
-    const { setPage } = useClientStore()
+    const { setPage, client, getClient } = useClientStore()
 
     const skeleton = (
-        <li className='bg-slate-200 animate-pulse h-5 w-24 rounded-3xl'></li>
+        <li className='bg-slate-200 animate-pulse h-5 w-28 rounded-3xl'></li>
     )
+
+    useEffect(() => {
+        if (session.status === 'authenticated' && session.data.user.id)
+            getClient(session.data.user.id)
+    }, [])
 
     const t = useTranslations('client')
 
@@ -47,8 +53,8 @@ const ClientHeader = () => {
                 </div>
                 <div className={`mt-2 flex items-center gap-5 lg:ml-auto`}>
                     <Link href={'/client/profile'} onClick={() => setPage('profile')} className='flex items-center gap-2 px-3 py-1 border hover:bg-slate-100 rounded-md'>
-                        <Image src={session?.data?.user.profile_url || '/profile/profile.svg'} alt='Profile' width={30} height={30} className='rounded-full border max-h-7 max-w-7' />
-                        {session.status === 'authenticated' ? <h1>{session?.data?.user.username}</h1> : skeleton}
+                        <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={30} height={30} className='rounded-full border max-h-7 max-w-7' />
+                        {session.status === 'authenticated' ? <h1 className='w-28'>{session?.data?.user.username}</h1> : skeleton}
                     </Link>
                     <button onClick={() => signOut({
                         redirect: true,

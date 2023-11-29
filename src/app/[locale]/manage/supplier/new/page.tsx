@@ -11,6 +11,7 @@ import axios from 'axios'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -30,11 +31,11 @@ const Page = () => {
 
   const [formData, setFormData] = useState<SupplierFormDataProps>(supplierFormDataValue)
 
-  const { isSideNavOpen, departments, getDepartments, isLoading, setIsLoading } = useAdminGlobalStore()
-
-  const [err, setErr] = useState('')
+  const { isSideNavOpen, departments, getDepartments, isLoading, setIsLoading, err, setErr, prevProfileKey, setPrevProfileKey, deleteProfile } = useAdminGlobalStore()
 
   const registerSupplier = async (e: any) => {
+
+    e.preventDefault()
 
     const { meeting_info } = formData;
 
@@ -43,8 +44,6 @@ const Page = () => {
     );
 
     const updatedFormData = { ...formData, meeting_info: filteredMeetingInfo };
-
-    e.preventDefault()
 
     const { name, username, password } = updatedFormData
     if (!name || !password || !username) return setErr('Fill up some inputs')
@@ -137,8 +136,29 @@ const Page = () => {
   };
 
   useEffect(() => {
+    setPrevProfileKey('')
     getDepartments()
   }, [])
+
+  useEffect(() => {
+    setPrevProfileKey('')
+    getDepartments()
+  }, [])
+
+  useEffect(() => {
+
+    if (prevProfileKey) {
+
+      deleteProfile(prevProfileKey)
+      setPrevProfileKey(formData.profile_key)
+
+    } else {
+
+      setPrevProfileKey(formData.profile_key)
+
+    }
+
+  }, [formData.profile_key])
 
   return (
     <div className=''>
@@ -189,25 +209,23 @@ const Page = () => {
                   <input value={formData.organization} onChange={handleChange} name='organization' type="text" className='w-full border outline-none py-1 px-3' id='organization' />
                 </div>
 
-                <div className='flex flex-col gap-3 items-start'>
-                  <span className='block font-medium'>{tt('profile')}</span>
-                  <UploadButton
-                    endpoint="profileUploader"
-                    onClientUploadComplete={(res) => {
-                      if (res) {
-                        setFormData(prevData => ({ ...prevData, profile: res[0].url }))
-                        alert("Upload Completed");
-                      }
-                    }}
-                    onUploadError={(error: Error) => {
-                      alert('Something went wrong.')
-                    }}
-                  />
-                </div>
-
                 <div className='w-full flex flex-col gap-2'>
                   <label htmlFor="tags" className='font-medium' title='Enter to add tags'>{t('supplier.tags')} (optional)</label>
                   <input onKeyDown={handleTagInputChange} name='tags' type="text" className='w-full border outline-none py-1 px-3' id='tags' />
+                </div>
+
+                <div className='flex flex-col gap-3'>
+                  <span className='font-medium'>{t('supplier.tags')}</span>
+
+                  <ul className='w-full flex items-center gap-5 flex-wrap'>
+                    {formData.tags.map(item => (
+                      <li key={item} onClick={() => handleRemoveTag(item)} className='border cursor-pointer bg-slate-100 py-1 px-3 flex items-center gap-2'>
+                        <div>{item}</div>
+                        <FontAwesomeIcon icon={faXmark} />
+                      </li>
+                    ))}
+                  </ul>
+
                 </div>
 
               </div>
@@ -268,7 +286,26 @@ const Page = () => {
                     </div>
                   ))}
                 </div>
+                <div className='flex items-center justify-between w-full mt-2'>
 
+                  <Image width={110} height={110} src={formData.profile_url || '/profile/profile.svg'} alt='Supplier Profile' className='border rounded-full' />
+
+                  <div className='flex flex-col gap-3 items-start'>
+                    <span className='block font-medium'>{tt('profile')}</span>
+                    <UploadButton
+                      endpoint="profileUploader"
+                      onClientUploadComplete={(res) => {
+                        if (res) {
+                          setFormData(prevData => ({ ...prevData, profile_key: res[0].key, profile_url: res[0].url }))
+                          alert("Upload Completed");
+                        }
+                      }}
+                      onUploadError={(error: Error) => {
+                        alert('Something went wrong.')
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className='flex flex-col gap-3 w-full'>
@@ -298,19 +335,7 @@ const Page = () => {
               </div>
 
             </div>
-            <div className='flex flex-col gap-3'>
-              <span className='font-medium'>{t('supplier.tags')}</span>
 
-              <ul className='w-full flex items-center gap-5 flex-wrap'>
-                {formData.tags.map(item => (
-                  <li key={item} onClick={() => handleRemoveTag(item)} className='border cursor-pointer bg-slate-100 py-1 px-3 flex items-center gap-2'>
-                    <div>{item}</div>
-                    <FontAwesomeIcon icon={faXmark} />
-                  </li>
-                ))}
-              </ul>
-
-            </div>
             <div className='flex items-center gap-10 w-1/2 self-end'>
               <Link href={'/manage/supplier'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{tt('cancel')}</Link>
               <button disabled={isLoading && true} className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : tt('create')}</button>
