@@ -229,7 +229,7 @@ const Page = () => {
                                                 if (res) {
 
                                                     const { data } = await axios.post('/api/uploadthing/profile/change/client', {
-                                                        file: res[0], clientID: formData.id
+                                                        profile: res[0], clientID: formData.id
                                                     })
 
                                                     if (data.ok) {

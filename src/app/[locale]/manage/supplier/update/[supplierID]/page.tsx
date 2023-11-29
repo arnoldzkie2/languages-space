@@ -278,7 +278,7 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                                 if (res) {
 
                                                     const { data } = await axios.post('/api/uploadthing/profile/change/supplier', {
-                                                        file: res[0], supplierID: formData.id
+                                                        profile: res[0], supplierID: formData.id
                                                     })
 
                                                     if (data.ok) {
