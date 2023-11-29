@@ -29,7 +29,7 @@ const createdRes = (data?: any) => {
 }
 
 const existRes = (name: string) => {
-    return NextResponse.json({ msg: `${name}_exist` }, { status: 409 })
+    return NextResponse.json({ msg: `${name} already exist` }, { status: 409 })
 }
 
 const unauthorizedRes = async () => {

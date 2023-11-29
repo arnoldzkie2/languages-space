@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { notFoundRes, existRes, badRequestRes, createdRes, serverErrorRes, okayRes } from "@/lib/utils/apiResponse";
+import { notFoundRes, existRes, badRequestRes, createdRes, serverErrorRes, okayRes } from "@/utils/apiResponse";
 
 export const POST = async (req: Request) => {
 
@@ -17,6 +17,7 @@ export const POST = async (req: Request) => {
         const { name, price, balance, validity, invoice, repeat_purchases, online_renews, id } = card
 
         //check if the repeat purchases is not supported
+
         if (!repeat_purchases) {
             const existingCard = await prisma.clientCard.findFirst({ where: { clientID, name } })
             if (existingCard) return existRes('client_card')

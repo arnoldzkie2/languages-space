@@ -3,27 +3,31 @@
 import ClientHeader from '@/components/client/ClientHeader'
 import useAdminCardStore from '@/lib/state/super-admin/cardStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import {  ClientCardList } from '@/lib/types/super-admin/clientCardType'
+import { ClientCardList } from '@/lib/types/super-admin/clientCardType'
 import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const session: any = useSession()
+    const session: any = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
+
     const [searchQuery, setSearchQery] = useState('')
-    
+
     const { cards, getCards } = useAdminCardStore()
     const { isLoading, setIsLoading } = useAdminGlobalStore()
 
     const filterCards = cards.filter(card => card.name.toUpperCase().includes(searchQuery.toUpperCase()))
 
     useEffect(() => {
-
         if (session.status === 'authenticated') getCards()
-
     }, [session])
 
     const checkoutCard = async (card: ClientCardList) => {
@@ -31,10 +35,11 @@ const Page = () => {
         try {
 
             setIsLoading(true)
-            const { data } = await axios.post('/api/client/card/payment-session', {
-                clientID: session.data?.user.id,
+            
+            const { data } = await axios.post('/api/stripe/checkout', {
+                clientID: session.data.user.id,
                 cardID: card.id,
-                quantity: 1
+                quantity: 2
             })
 
             if (data.ok) {

@@ -30,24 +30,16 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
     }
 
     const goToNextPage = () => {
-
         const totalPages = getTotalPages();
-
         if (currentPage < totalPages) {
-
             setCurrentPage(currentPage + 1);
-
         }
     }
 
     const goToPage = (pageNumber: number) => {
-
         const totalPages = getTotalPages();
-
         if (pageNumber >= 1 && pageNumber <= totalPages) {
-
             setCurrentPage(pageNumber);
-
         }
     }
 
@@ -62,18 +54,15 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
         const pageNumbers = [];
 
         if (start > 1) {
-
             pageNumbers.push(<div key={1} className="cursor-pointer text-lg hover:bg-blue-600 px-2 hover:text-white" onClick={() => goToPage(1)}>1</div>);
 
             if (start > 2) {
-
                 pageNumbers.push(<div key="ellipsis-prev" className="text-lg"><FontAwesomeIcon icon={faEllipsis} /></div>);
 
             }
         }
 
         for (let i = start; i <= end; i++) {
-
             pageNumbers.push(<div key={i}
                 className={`${i === currentPage && 'text-white bg-blue-600 px-2'} cursor-pointer text-lg hover:text-white hover:bg-blue-600 px-2`}
                 onClick={() => goToPage(i)}>{i}</div>);
@@ -81,17 +70,13 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
         }
 
         if (end < totalPages) {
-
             if (end < totalPages - 1) {
-
                 pageNumbers.push(<div key="ellipsis-next" className="pagination-ellipsis"><FontAwesomeIcon icon={faEllipsis} /></div>);
 
             }
-
             pageNumbers.push(<div key={totalPages} className="text-lg hover:text-white cursor-pointer hover:bg-blue-600 px-2" onClick={() => goToPage(totalPages)}>{totalPages}</div>);
 
         }
-
         return pageNumbers;
 
     };

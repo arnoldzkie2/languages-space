@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 export const GET = async (req: Request) => {
 
@@ -21,10 +21,9 @@ export const GET = async (req: Request) => {
         return okayRes(price.price)
 
     } catch (error) {
-        console.log(error);
+        console.log(error)
         return serverErrorRes(error)
     } finally {
         prisma.$disconnect()
     }
-
 }

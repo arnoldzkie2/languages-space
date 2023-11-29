@@ -17,7 +17,7 @@ const totalCoursesValue = {
 
 const supplierFormDataValue = {
     name: '',
-    user_name: '',
+    username: '',
     payment_info: '',
     password: '',
     email: '',

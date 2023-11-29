@@ -36,7 +36,7 @@ const Page = ({ }) => {
 
     const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewBooking, viewBooking } = useAdminScheduleStore()
 
-    const filterSupplier = supplier.filter(item => item.name.toUpperCase().includes(searchQuery.toUpperCase()))
+    const filterSupplier = supplier.filter(supplier => supplier.name.toUpperCase().includes(searchQuery.toUpperCase()))
 
     const formatDate = (date: any) => {
         const year = date.getFullYear();
@@ -62,11 +62,11 @@ const Page = ({ }) => {
         });
     }
 
-    const events = schedules.map(item => ({
-        start: `${item.date}T${item.time}:00`,
-        end: `${item.date}T${item.time}:01`,
+    const events = schedules.map(supplier => ({
+        start: `${supplier.date}T${supplier.time}:00`,
+        end: `${supplier.date}T${supplier.time}:01`,
         extendedProps: {
-            data: item,
+            data: supplier,
             viewBooking: openViewBooking,
             openBindSchedule: openBindSchedule
         },
@@ -104,10 +104,10 @@ const Page = ({ }) => {
                         <Departments />
                         <input value={searchQuery} onChange={(e: any) => setSearchQuery(e.target.value)} type="text" className='border outline-none py-1.5 px-3' placeholder={t('supplier.search')} />
                         <ul className='flex flex-col pr-2 h-[42rem] gap-3 overflow-y-auto py-2 text-gray-600'>
-                            {filterSupplier.length > 0 ? filterSupplier.map(item => (
-                                <li onClick={() => setSupplierSelectedID(item.id)} className={`${supplierSelectedID === item.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={item.id}>{item.name} ({item.user_name})</li>
-                            )) : skeleton.map(item => (
-                                <li key={item} className='bg-slate-200 animate-pulse min-h-[28px] rounded-xl w-full'></li>
+                            {filterSupplier.length > 0 ? filterSupplier.map(supplier => (
+                                <li onClick={() => setSupplierSelectedID(supplier.id)} className={`${supplierSelectedID === supplier.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={supplier.id}>{supplier.name} ({supplier.username})</li>
+                            )) : skeleton.map(supplier => (
+                                <li key={supplier} className='bg-slate-200 animate-pulse min-h-[28px] rounded-xl w-full'></li>
                             ))}
                         </ul>
                     </div>

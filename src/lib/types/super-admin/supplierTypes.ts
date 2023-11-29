@@ -11,7 +11,7 @@ interface Supplier {
     id: string
     profile?: string
     name: string
-    user_name: string
+    username: string
     organization?: string
     payment_information: string
     phone_number?: string
@@ -41,7 +41,7 @@ interface SupplierFormDataProps {
     password: string
     address: string
     payment_info: string
-    user_name: string
+    username: string
     departments: string[]
     meeting_info: {
         service: string

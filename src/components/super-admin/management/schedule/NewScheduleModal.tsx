@@ -32,7 +32,7 @@ const NewScheduleModal = () => {
 
     const { supplier, supplierSelectedID, setSupplierSelectedID } = useAdminSupplierStore()
 
-    const filterSupplier = supplier.filter(item => item.name.toUpperCase().includes(searchQuery.toUpperCase()))
+    const filterSupplier = supplier.filter(supplier => supplier.name.toUpperCase().includes(searchQuery.toUpperCase()))
 
     const addSchedule = async (e: any) => {
 
@@ -306,18 +306,18 @@ const NewScheduleModal = () => {
                     />
                     <input value={searchQuery} onChange={(e: any) => setSearchQuery(e.target.value)} type="text" className='border outline-none py-1.5 px-3' placeholder={t('supplier.search')} />
                     <ul className='flex flex-col h-full pr-2 gap-3 overflow-y-auto py-2 text-gray-600'>
-                        {filterSupplier.length > 0 ? filterSupplier.map(item => (
-                            <li onClick={() => setSupplierSelectedID(item.id)} className={`${supplierSelectedID === item.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={item.id}>{item.name} ({item.user_name})</li>
-                        )) : skeleton.map(item => (
-                            <li key={item} className='bg-slate-200 animate-pulse h-7 rounded-xl w-full'></li>
+                        {filterSupplier.length > 0 ? filterSupplier.map(supplier => (
+                            <li onClick={() => setSupplierSelectedID(supplier.id)} className={`${supplierSelectedID === supplier.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={supplier.id}>{supplier.name} ({supplier.username})</li>
+                        )) : skeleton.map(supplier => (
+                            <li key={supplier} className='bg-slate-200 animate-pulse h-7 rounded-xl w-full'></li>
                         ))}
                     </ul>
                     <button disabled={isLoading} onClick={(e: any) => addSchedule(e)} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : 'Create'}</button>
                 </div>
                 <div className='w-full'>
                     <ul className='flex items-center gap-5 mb-5'>
-                        {intervals.map(item => (
-                            <li key={item} onClick={() => setSelectedInterval(item)} className={`${selectedInterval === item ? 'bg-blue-600 text-white' : 'bg-white'} border px-5 py-2 rounded-md cursor-pointer`}>{item} Minutes</li>
+                        {intervals.map(supplier => (
+                            <li key={supplier} onClick={() => setSelectedInterval(supplier)} className={`${selectedInterval === supplier ? 'bg-blue-600 text-white' : 'bg-white'} border px-5 py-2 rounded-md cursor-pointer`}>{supplier} Minutes</li>
                         ))}
                     </ul>
                     <div className='flex flex-col w-full gap-6 h-full overflow-y-auto'>

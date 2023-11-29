@@ -1,4 +1,4 @@
-import { notFoundRes, existRes, badRequestRes, createdRes, serverErrorRes, okayRes } from "@/lib/utils/apiResponse"
+import { notFoundRes, badRequestRes, serverErrorRes, okayRes } from "@/utils/apiResponse"
 import prisma from "@/lib/db"
 
 export const POST = async (req: Request) => {
@@ -12,18 +12,18 @@ export const POST = async (req: Request) => {
 
         const { name, price, balance, invoice, validity, repeat_purchases, online_renews } = card.card
 
-        const currentDate = new Date();
-        const expirationDate = new Date(currentDate.getTime() + validity * 24 * 60 * 60 * 1000)
-        const expirationMonth = expirationDate.getMonth() + 1
-        const expirationDay = expirationDate.getDate();
+        const currentDate = new Date()
+        const expirationDate = new Date(currentDate.getTime() + validity * 24 * 60 * 60 * 1000);
         const expirationYear = expirationDate.getFullYear();
+        const expirationMonth = String(expirationDate.getMonth() + 1).padStart(2, '0');
+        const expirationDay = String(expirationDate.getDate()).padStart(2, '0');
         const formattedExpirationDate = `${expirationYear}-${expirationMonth}-${expirationDay}`;
 
         const renewCard = await prisma.clientCard.update({
             where: { id: card.id },
             data: {
                 name, price,
-                balance, invoice,
+                balance: card.balance + balance, invoice,
                 validity: formattedExpirationDate,
                 repeat_purchases, online_renews
             }

@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { OurFileRouter } from '@/app/api/uploadthing/core'
 import SideNav from '@/components/super-admin/SideNav'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { supplierFormDataValue } from '@/lib/state/super-admin/supplierStore'
 import { SupplierFormDataProps } from '@/lib/types/super-admin/supplierTypes'
+import { UploadButton } from '@/utils/uploadthing'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { UploadButton } from '@uploadthing/react'
 import axios from 'axios'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
@@ -47,39 +46,28 @@ const Page = () => {
 
     e.preventDefault()
 
-    const { name, user_name, password } = updatedFormData
-
-    if (!name || !password || !user_name) return setErr('Fill up some inputs')
-
-    if (user_name.length < 3) return setErr('Username minimum length 3')
-
+    const { name, username, password } = updatedFormData
+    if (!name || !password || !username) return setErr('Fill up some inputs')
+    if (username.length < 3) return setErr('Username minimum length 3')
     if (password.length < 3) return setErr('Password minimum length 3')
 
     try {
 
       setIsLoading(true)
-
       const { data } = await axios.post('/api/supplier', updatedFormData)
 
       if (data.ok) {
-
         setIsLoading(false)
-
         router.push('/manage/supplier')
-
       }
 
     } catch (error: any) {
-
       setIsLoading(false)
-
       console.log(error);
-
-      if (error.response.data.msg === 'user_name_exist') {
-        return setErr('Username already exist!')
+      if (error.response.data.msg) {
+        return setErr(error.response.data.msg)
       }
-
-      return setErr('Something went wrong')
+      alert('Something went wrong')
     }
 
   }
@@ -178,7 +166,7 @@ const Page = () => {
 
                 <div className='w-full flex flex-col gap-2'>
                   <label htmlFor="username" className='font-medium'>{tt('username')}</label>
-                  <input required value={formData.user_name} onChange={handleChange} name='user_name' type="text" className='w-full border outline-none py-1 px-3' id='username' />
+                  <input required value={formData.username} onChange={handleChange} name='username' type="text" className='w-full border outline-none py-1 px-3' id='username' />
                 </div>
 
                 <div className='w-full flex flex-col gap-2'>
@@ -203,7 +191,7 @@ const Page = () => {
 
                 <div className='flex flex-col gap-3 items-start'>
                   <span className='block font-medium'>{tt('profile')}</span>
-                  <UploadButton<OurFileRouter>
+                  <UploadButton
                     endpoint="profileUploader"
                     onClientUploadComplete={(res) => {
                       if (res) {

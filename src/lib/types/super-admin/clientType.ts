@@ -1,14 +1,14 @@
 import { ClientCard } from "./clientCardType"
 
 interface Client {
-    length: number
     id: string
     phone_number: string | null
-    profile: string | null
+    profile_key: string | null
+    profile_url: string | null
     email: string | null
     gender: string | null
     name: string
-    user_name: string
+    username: string
     organization: string | null
     password: string
     address: string | null
@@ -23,11 +23,12 @@ interface ClientFormData {
     id?: string
     phone_number: string
     card: ClientCard | null
-    profile: string;
+    profile_url: string;
+    profile_key: string
     email: string
     gender: string;
     name: string
-    user_name: string
+    username: string
     organization: string;
     address: string;
     origin: any;

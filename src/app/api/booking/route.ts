@@ -1,14 +1,41 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
     const bookingID = searchParams.get('bookingID')
     const departmentID = searchParams.get('departmentID')
+    const clientID = searchParams.get('clientID')
 
     try {
+
+        if (clientID) {
+            const client = await prisma.client.findUnique({
+                where: { id: clientID }, select: {
+                    bookings: {
+                        include: {
+                            supplier: {
+                                select: {
+                                    name: true
+                                }
+                            }, schedule: {
+                                select: {
+                                    date: true,
+                                    time: true
+                                }
+                            }, client: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+            if (!client) return notFoundRes('Client')
+        }
 
         if (bookingID) {
 
@@ -189,11 +216,11 @@ export const POST = async (req: Request) => {
             if (!createBooking) return badRequestRes()
 
             //reduce client card balance
-            const reduceClientCardBalance = await prisma.clientCard.update({
+            const reduceCardBalance = await prisma.clientCard.update({
                 where: { id: card.id },
                 data: { balance: card.balance - supplierPrice.price }
             })
-            if (!reduceClientCardBalance) return badRequestRes()
+            if (!reduceCardBalance) return badRequestRes()
 
         }
 
@@ -250,7 +277,6 @@ export const PATCH = async (req: Request) => {
             //check schedule
             const schedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
             if (!schedule) return notFoundRes('Schedule')
-
 
             //check client
             const client = await prisma.client.findUnique({ where: { id: clientID } })

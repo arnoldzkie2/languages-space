@@ -1,16 +1,22 @@
 import prisma from "@/lib/db";
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
-import stripe from "@/lib/utils/getStripe";
+import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import stripe from "@/utils/getStripe";
 
 export const POST = async (req: Request) => {
 
     const { clientID, cardID, quantity } = await req.json()
 
-    if (!clientID) return notFoundRes('clientID')
+    if (!clientID) return notFoundRes('Client')
+    if (!cardID) return notFoundRes('Client Card')
+    if (!quantity) return notFoundRes('Quantity')
+
     try {
 
         const card = await prisma.clientCardList.findUnique({ where: { id: cardID } })
-        if (!card) return notFoundRes('Card')
+        if (!card) return notFoundRes('Client Card')
+
+        const client = await prisma.client.findUnique({ where: { id: clientID } })
+        if(!client) return notFoundRes('Client')
 
         const session = await stripe.checkout.sessions.create({
             line_items: [
@@ -20,13 +26,12 @@ export const POST = async (req: Request) => {
                 },
             ],
             metadata: {
-                clientID, cardID
+                clientID, cardID, quantity
             },
             mode: 'payment',
-            success_url: `http://localhost:3000/client`,
-            cancel_url: `http://localhost:3000/client`,
-        });
-
+            success_url: `http://localhost:3000/client/profile/cards`,
+            cancel_url: `http://localhost:3000/client/buy`,
+        })
         if (!session) return badRequestRes()
 
         return okayRes(session.url)

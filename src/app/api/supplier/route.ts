@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 export const POST = async (req: Request) => {
 
-    const { name, user_name, password, organization, payment_info, phone_number, email, address, gender, card, origin,
+    const { name, username, password, organization, payment_info, phone_number, email, address, gender, card, origin,
         tags, note, employment_status, meeting_info, entry, departure, departments } = await req.json()
 
     try {
 
-        if (!user_name || !password || !name) return badRequestRes()
+        if (!username || !password || !name) return badRequestRes()
 
         const existingUsername =
-            await prisma.client.findUnique({ where: { user_name } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name } }) ||
-            await prisma.admin.findUnique({ where: { user_name } }) ||
-            await prisma.supplier.findUnique({ where: { user_name } }) ||
-            await prisma.agent.findUnique({ where: { user_name } })
+            await prisma.client.findUnique({ where: { username } }) ||
+            await prisma.superAdmin.findUnique({ where: { username } }) ||
+            await prisma.admin.findUnique({ where: { username } }) ||
+            await prisma.supplier.findUnique({ where: { username } }) ||
+            await prisma.agent.findUnique({ where: { username } })
 
-        if (existingUsername) return existRes('user_name')
+        if (existingUsername) return existRes('username')
 
         if (departments && departments.length > 0) {
 
@@ -37,7 +37,7 @@ export const POST = async (req: Request) => {
 
             const newSupplier = await prisma.supplier.create({
                 data: {
-                    name, user_name, password, organization, payment_info, phone_number, email, address, gender, card,
+                    name, username, password, organization, payment_info, phone_number, email, address, gender, card,
                     origin, tags, note, employment_status, entry, departure, departments: {
                         connect: departments.map((id: string) => ({ id }))
                     }
@@ -72,7 +72,7 @@ export const POST = async (req: Request) => {
 
         const newSupplier = await prisma.supplier.create({
             data: {
-                name, user_name, password, organization, payment_info, phone_number, email, address, gender, card,
+                name, username, password, organization, payment_info, phone_number, email, address, gender, card,
                 origin, tags, note, employment_status, entry, departure
             }, include: { meeting_info: true }
         })
@@ -160,7 +160,7 @@ export const GET = async (req: Request) => {
 
 export const PATCH = async (req: Request) => {
 
-    const { name, profile, user_name, password, organization, payment_info, phone_number, email, address, gender,
+    const { name, profile, username, password, organization, payment_info, phone_number, email, address, gender,
         card, origin, tags, note, employment_status, entry, departure, departments, meeting_info } = await req.json()
 
     const { searchParams } = new URL(req.url)
@@ -213,7 +213,7 @@ export const PATCH = async (req: Request) => {
             const updatedSupplier = await prisma.supplier.update({
                 where: { id: supplierID },
                 data: {
-                    name, profile, user_name, password, organization, payment_info, phone_number, email, address, gender,
+                    name, profile, username, password, organization, payment_info, phone_number, email, address, gender,
                     card, origin, tags, note, employment_status, entry, departure,
                     departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
                 },

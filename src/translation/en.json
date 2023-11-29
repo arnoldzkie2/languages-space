@@ -183,14 +183,19 @@
         "username": "Username",
         "meeting": "Meeting Info",
         "address": "Address",
+        "optional": "(optional)",
         "email": "Email Address",
         "select": "Select",
         "quantity": "Quantity",
+        "select-gender": "Select Gender",
         "clientcard": "Client Card",
         "password": "Password",
+        "confirm-password": "Confirm Password",
         "phone": "Phone Number",
         "operator": "Operator",
         "schedule": "Schedule",
+        "language": "language",
+        "select-language": "Select Language",
         "card": "Card",
         "date": "Date",
         "renew": "Renew",
@@ -205,6 +210,8 @@
         "tags": "Tags"
     },
     "auth": {
+        "welcome-back": "Welcome Back!",
+        "fillup": "Fill up the form",
         "username": "Username",
         "password": "Password",
         "signin": "Sign In",
@@ -215,10 +222,28 @@
         "already_signup": "Already signed up?"
     },
     "client": {
+        "header": {
+            "buy-card": "Buy Cards",
+            "book-now": "Book Now",
+            "logout": "Logout"
+        },
         "card": {
             "validity": "Validity",
+            "buy-date": "Buy Date",
             "balance": "Balance",
             "price": "Price"
+        },
+        "profile": {
+            "account": "Account",
+            "profile": "My Profile",
+            "settings": "Settings",
+            "account-info": "Account Info",
+            "info": "Profile Info",
+            "navigate": "Navigate to",
+            "booking": "Booking",
+            "my-cards": "My Cards",
+            "my-bookings": "My Bookings",
+            "my-orders": "My Orders"
         }
     }
 }

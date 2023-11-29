@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/db"
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 export const GET = async (req: Request) => {
 

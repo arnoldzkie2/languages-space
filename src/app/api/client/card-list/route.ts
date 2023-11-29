@@ -1,6 +1,6 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
-import stripe from "@/lib/utils/getStripe";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import stripe from "@/utils/getStripe";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {

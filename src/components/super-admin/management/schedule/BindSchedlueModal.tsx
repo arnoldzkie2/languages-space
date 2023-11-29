@@ -37,7 +37,7 @@ const BindSchedlueModal = () => {
     const { setClientSelectedID, clientSelectedID, clients, getClientsWithCards } = useAdminClientStore()
     const { supplierSelectedID, supplierMeetingInfo, setSupplierMeetingInfo } = useAdminSupplierStore()
 
-    const filterClient = clients.filter(client => client.name.toUpperCase().includes(searchClient.toUpperCase()))
+    const filterClient = clients.filter(client => client.username.toUpperCase().includes(searchClient.toUpperCase()))
 
     const [formData, setFormData] = useState<FormData>({
         note: '',
@@ -217,10 +217,10 @@ const BindSchedlueModal = () => {
                     <Departments />
                     <input value={searchClient} onChange={(e: any) => setSearchClient(e.target.value)} type="text" className='border outline-none py-1.5 px-3' placeholder={t('client.search')} />
                     <ul className='flex flex-col h-4/5 pr-2 gap-3 overflow-y-auto py-2 text-gray-600'>
-                        {filterClient.length > 0 ? filterClient.map(item => (
-                            <li onClick={() => selectClient(item.id, item.cards)} className={`${clientSelectedID === item.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={item.id}>{item.name} ({item.user_name})</li>
-                        )) : skeleton.map(item => (
-                            <li key={item} className='bg-slate-200 animate-pulse h-7 rounded-xl w-full'></li>
+                        {filterClient.length > 0 ? filterClient.map(client => (
+                            <li onClick={() => selectClient(client.id, client.cards)} className={`${clientSelectedID === client.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={client.id}>{client.username}</li>
+                        )) : skeleton.map(client => (
+                            <li key={client} className='bg-slate-200 animate-pulse h-7 rounded-xl w-full'></li>
                         ))}
                     </ul>
                     <select className='py-1.5 mb-2 border outline-none px-2' value={formData.cardSelectedID} onChange={(e) => setFormData(prevData => ({ ...prevData, cardSelectedID: e.target.value }))}>

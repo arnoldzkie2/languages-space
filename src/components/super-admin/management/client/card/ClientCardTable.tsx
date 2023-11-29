@@ -20,9 +20,7 @@ interface Props {
 
 const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID, getClientCards }) => {
 
-
     const { operation, selectedID, skeleton, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
-
     const { openViewClientCard, openDeleteClientCardModal } = useAdminClientCardStore()
 
     const renewCard = async (e: any, clientCardID: string) => {

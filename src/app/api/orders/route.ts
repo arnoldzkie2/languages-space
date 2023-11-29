@@ -1,24 +1,27 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 export const POST = async (req: Request) => {
 
-    const { client_id, card_id, quantity, operator, note, status, invoice_number, express_number } = await req.json()
+    const { clientID, cardID, quantity, operator, note, status, invoice_number, express_number, departmentID } = await req.json()
 
     try {
 
-        const client = await prisma.client.findUnique({ where: { id: client_id }, include: { departments: true } })
+        const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } })
         if (!client) return notFoundRes('Client')
 
-        const card = await prisma.clientCardList.findUnique({ where: { id: card_id } })
+        const card = await prisma.clientCardList.findUnique({ where: { id: cardID } })
         if (!card) return notFoundRes('Card')
+
+        const department = await prisma.department.findUnique({ where: { id: departmentID } })
+        if (!department) return notFoundRes('Department')
 
         const newOrder = await prisma.order.create({
             data: {
-                quantity, price: quantity * card.price, operator, note, status, invoice_number, express_number,
-                card: { connect: { id: card_id } },
-                client: { connect: { id: client_id } },
-                departments: { connect: client.departments.map((dept) => ({ id: dept.id })) }
+                quantity, price: (quantity * card.price), operator, note, status, invoice_number, express_number,
+                card: { connect: { id: card.id } },
+                client: { connect: { id: client.id } },
+                department: { connect: { id: department.id } }
             }
         })
         if (!newOrder) badRequestRes()
@@ -39,15 +42,41 @@ export const GET = async (req: Request) => {
     const { searchParams } = new URL(req.url)
     const orderID = searchParams.get('orderID')
     const departmentID = searchParams.get('departmentID')
+    const clientID = searchParams.get('clientID')
 
     try {
+
+        if (clientID) {
+            const client = await prisma.client.findUnique({
+                where: { id: clientID }, select: {
+                    orders: {
+                        select: {
+                            id: true,
+                            quantity: true,
+                            price: true,
+                            status: true,
+                            created_at: true,
+                            card: {
+                                select: {
+                                    name: true
+                                }
+                            }
+
+                        }
+                    }
+                }
+            })
+            if (!client) return notFoundRes('Client')
+
+            return okayRes(client.orders)
+        }
 
         if (orderID) {
             const order = await prisma.order.findUnique({
                 where: {
                     id: orderID
                 },
-                include: { departments: true, card: true, client: true }
+                include: { department: true, card: true, client: true }
             })
             if (!order) return notFoundRes('Order')
 
@@ -56,22 +85,24 @@ export const GET = async (req: Request) => {
 
         if (departmentID) {
 
-            const allOrder = await prisma.department.findUnique({
+            const departmentOrders = await prisma.department.findUnique({
                 where: { id: departmentID }, select: {
                     orders: {
-                        select: { departments: true }
+                        include: {
+                            card: true, client: true
+                        }
                     }
                 }
             })
-            if (!allOrder) return badRequestRes()
+            if (!departmentOrders) return badRequestRes()
 
-            return okayRes(allOrder.orders)
+            return okayRes(departmentOrders.orders)
         }
 
-        const getAllOrder = await prisma.order.findMany({ include: { departments: true, card: true, client: true } })
-        if (!getAllOrder) return badRequestRes()
+        const orders = await prisma.order.findMany({ include: { department: true, card: true, client: true } })
+        if (!orders) return badRequestRes()
 
-        return okayRes(getAllOrder)
+        return okayRes(orders)
 
     } catch (error) {
         console.log(error);
@@ -87,25 +118,25 @@ export const PATCH = async (req: Request) => {
     const { searchParams } = new URL(req.url)
     const orderID = searchParams.get('orderID')
 
-    const { clientID, cardID, quantity, operator, note, status, invoice_number, express_number } = await req.json()
+    const { clientID, cardID, quantity, operator, note, status, invoice_number, express_number, departmentID } = await req.json()
 
     try {
 
         if (orderID) {
-            const order = await prisma.order.findUnique({ where: { id: orderID }, include: { departments: true, card: true, client: true } })
+            const order = await prisma.order.findUnique({ where: { id: orderID } })
             if (!order) return notFoundRes('Order')
 
-            const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } })
+            const client = await prisma.client.findUnique({ where: { id: clientID } })
             if (!client) return notFoundRes('Client')
 
             const card = await prisma.clientCardList.findUnique({ where: { id: cardID } })
-            if(!card) return notFoundRes('Client Card')
+            if (!card) return notFoundRes('Client Card')
 
             const updatedOrder = await prisma.order.update({
                 where: { id: orderID },
                 data: {
-                    clientID, cardID, quantity, price: quantity * order.card.price,
-                    operator, note, status, invoice_number, express_number
+                    clientID, cardID, quantity, price: (card.price * quantity),
+                    operator, note, status, invoice_number, express_number, departmentID
                 }
             })
             if (!updatedOrder) return badRequestRes()
@@ -126,14 +157,14 @@ export const PATCH = async (req: Request) => {
 export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
-    const ids = searchParams.getAll('orderID');
+    const orderIDS = searchParams.getAll('orderID');
 
     try {
 
-        if (ids.length > 0) {
+        if (orderIDS.length > 0) {
 
             const deleteClients = await prisma.order.deleteMany({
-                where: { id: { in: ids } },
+                where: { id: { in: orderIDS } },
             })
             if (!deleteClients) return badRequestRes()
 

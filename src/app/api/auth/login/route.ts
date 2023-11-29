@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { serverErrorRes } from "@/lib/utils/apiResponse";
+import { serverErrorRes } from "@/utils/apiResponse";
 
 export const POST = async (req: Request) => {
 
-    const { user_name, password } = await req.json()
+    const { username, password } = await req.json()
 
     try {
 
         const isSuperAdmin = await prisma.superAdmin.findUnique({
             where: {
-                user_name,
+                username,
                 password
             }
         })
@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
 
         const isAdmin = await prisma.admin.findUnique({
             where: {
-                user_name,
+                username,
                 password
             }
         })
@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
 
         const isAgent = await prisma.agent.findUnique({
             where: {
-                user_name,
+                username,
                 password
             }
         })
@@ -34,7 +34,7 @@ export const POST = async (req: Request) => {
 
         const isClient = await prisma.client.findUnique({
             where: {
-                user_name,
+                username,
                 password
             }
         })
@@ -42,7 +42,7 @@ export const POST = async (req: Request) => {
 
         const isSupplier = await prisma.supplier.findUnique({
             where: {
-                user_name,
+                username,
                 password
             }
         })

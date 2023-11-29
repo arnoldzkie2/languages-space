@@ -1,4 +1,4 @@
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
 
 export const GET = async (req: Request) => {
@@ -23,7 +23,7 @@ export const GET = async (req: Request) => {
       const clientCard = await prisma.client.findUnique({ where: { id: clientID }, include: { cards: true } })
       if (!clientCard) return notFoundRes('Client Card')
 
-      return okayRes(clientCard)
+      return okayRes(clientCard.cards)
     }
 
     // get all client that has cards in specific department

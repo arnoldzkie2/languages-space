@@ -18,6 +18,8 @@ interface AdminGlobalStoreProps {
     eye: boolean
     itemsPerPage: number
     totalDepartment: TotalProps
+    locales: { loc: string, val: string }[]
+    okMsg: string
     skeleton: number[]
     newDepartment: boolean,
     updateDepartment: boolean
@@ -35,9 +37,11 @@ interface AdminGlobalStoreProps {
     deleteDepartment: boolean
     openOperation: (ID: string) => void
     closeOperation: () => void
+    setOkMsg: (msg: string) => void
     setTotalDepartments: (total: TotalProps) => void
     toggleNewDepartment: () => void
     closeUpdateDepartment: () => void
+    toggleEye: () => void
     closeDeleteDepartment: () => void
     openUpdateDepartment: (dept: Department) => void
     openDeleteDepartment: (dept: Department) => void
@@ -46,6 +50,28 @@ interface AdminGlobalStoreProps {
 
 const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
     isSideNavOpen: false,
+    okMsg: '',
+    locales: [{
+        loc: 'en',
+        val: 'English'
+    },
+    {
+        loc: 'ja',
+        val: '日本語' // Japanese
+    },
+    {
+        loc: 'zh',
+        val: '中文' // Chinese (Simplified)
+    },
+    {
+        loc: 'vi',
+        val: 'Tiếng Việt' // Vietnamese
+    },
+    {
+        loc: 'kr',
+        val: '한국어' // Korean
+    }],
+    setOkMsg: (msg: string) => set({ okMsg: msg }),
     toggleSideNav: () => set(state => ({ isSideNavOpen: !state.isSideNavOpen })),
     departments: [],
     err: '',

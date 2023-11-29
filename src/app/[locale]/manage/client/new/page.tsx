@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { OurFileRouter } from '@/app/api/uploadthing/core'
 import SideNav from '@/components/super-admin/SideNav'
 import { newClientFormValue } from '@/lib/state/super-admin/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientFormData } from '@/lib/types/super-admin/clientType'
-import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { UploadButton } from '@/utils/uploadthing'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { UploadButton } from '@uploadthing/react'
 import axios from 'axios'
 import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
@@ -30,56 +29,39 @@ const Page = () => {
 
     const [formData, setFormData] = useState<ClientFormData>(newClientFormValue)
 
-    const { isSideNavOpen, departments, getDepartments } = useAdminGlobalStore()
+    const { isSideNavOpen, departments, getDepartments, err, setErr } = useAdminGlobalStore()
 
     const [isLoading, setIsLoading] = useState(false)
-
-    const [err, setErr] = useState('')
 
     const registerUser = async (e: any) => {
 
         e.preventDefault()
-
-        const { name, user_name, password } = formData
-
+        const { username, password } = formData
         if (password.length < 3) return setErr('Password minimum length 3')
+        if (!username) return setErr('Username Cannot Be Empty')
 
         try {
-
             setIsLoading(true)
-
             const { data } = await axios.post('/api/client', formData)
 
             if (data.ok) {
-
                 setIsLoading(false)
-
                 router.push('/manage/client')
-
             }
 
         } catch (error: any) {
-
             setIsLoading(false)
-
             console.log(error);
-
-            if (error.response.data.msg === 'user_name_exist') {
-
-                return setErr('Username already exist!')
-
+            if (error.response.data.msg) {
+                return setErr(error.response.data.msg)
             }
-
-            return setErr('Something went wrong')
-
+            alert('Something went wrong')
         }
 
     }
 
     const handleChange = (e: any) => {
-
         const { name, type, value, checked } = e.target;
-
         let updatedFormData: any = { ...formData }; // Create a copy of the formData
 
         if (type === "checkbox") {
@@ -91,15 +73,11 @@ const Page = () => {
         } else {
             updatedFormData[name] = value; // Use a type assertion for the key
         }
-
         setFormData(updatedFormData)
-
     };
 
     useEffect(() => {
-
         getDepartments()
-
     }, [])
 
     const clientHeaderSkeleton = (
@@ -142,17 +120,17 @@ const Page = () => {
                             <div className='w-full flex flex-col gap-4'>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="name" className='font-medium px-2'>{tt('name')} (optional)</label>
+                                    <label htmlFor="name" className='font-medium px-2'>{tt('name')} {tt('optional')}</label>
                                     <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="username" className='font-medium px-2'>{tt('username')}</label>
-                                    <input required value={formData.user_name} onChange={handleChange} name='user_name' type="text" className='w-full border outline-none py-1 px-3' id='username' />
+                                    <input required value={formData.username} onChange={handleChange} name='username' type="text" className='w-full border outline-none py-1 px-3' id='username' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="email" className='font-medium px-2'>{tt('email')} (optional)</label>
+                                    <label htmlFor="email" className='font-medium px-2'>{tt('email')} {tt('optional')}</label>
                                     <input value={formData.email} onChange={handleChange} name='email' type="text" className='w-full border outline-none py-1 px-3' id='email' />
                                 </div>
 
@@ -162,12 +140,12 @@ const Page = () => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="phone" className='font-medium px-2'>{tt('phone')} (optional)</label>
+                                    <label htmlFor="phone" className='font-medium px-2'>{tt('phone')} {tt('optional')}</label>
                                     <input value={formData.phone_number} onChange={handleChange} name='phone_number' type="text" className='w-full border outline-none py-1 px-3' id='phone' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="organization" className='font-medium px-2'>{tt('organization')} (optional)</label>
+                                    <label htmlFor="organization" className='font-medium px-2'>{tt('organization')} {tt('optional')}</label>
                                     <input value={formData.organization} onChange={handleChange} name='organization' type="text" className='w-full border outline-none py-1 px-3' id='organization' />
                                 </div>
 
@@ -176,9 +154,9 @@ const Page = () => {
                             <div className='w-full flex flex-col gap-4'>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="gender" className='font-medium px-2'>{tt('gender')} (optional)</label>
+                                    <label htmlFor="gender" className='font-medium px-2'>{tt('gender')} {tt('optional')}</label>
                                     <select name="gender" id="gender" onChange={handleChange} value={formData.gender} className='py-1 outline-none px-3 border'>
-                                        <option value="" disabled>Select</option>
+                                        <option value="" disabled>{tt('select-gender')}</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
                                         <option value="others">Others</option>
@@ -186,17 +164,17 @@ const Page = () => {
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="address" className='font-medium px-2'>{tt('address')} (optional)</label>
+                                    <label htmlFor="address" className='font-medium px-2'>{tt('address')} {tt('optional')}</label>
                                     <input value={formData.address} onChange={handleChange} name='address' type="text" className='w-full border outline-none py-1 px-3' id='address' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="origin" className='font-medium px-2'>{tt('origin')} (optional)</label>
+                                    <label htmlFor="origin" className='font-medium px-2'>{tt('origin')} {tt('optional')}</label>
                                     <input value={formData.origin} onChange={handleChange} name='origin' type="text" className='w-full border outline-none py-1 px-3' id='origin' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="note" className='font-medium px-2'>{tt('note')} (optional)</label>
+                                    <label htmlFor="note" className='font-medium px-2'>{tt('note')} {tt('optional')}</label>
                                     <input value={formData.note} onChange={handleChange} name='note' type="text" className='w-full border outline-none py-1 px-3' id='note' />
                                 </div>
 
@@ -219,24 +197,22 @@ const Page = () => {
 
                                 <div className='flex flex-col gap-3 items-start'>
                                     <span className='block font-medium'>{tt('profile')}</span>
-                                    <UploadButton<OurFileRouter>
+                                    <UploadButton
                                         endpoint="profileUploader"
                                         onClientUploadComplete={(res) => {
 
                                             // Do something with the response
                                             if (res) {
 
-                                                setFormData(prevData => ({ ...prevData, profile: res[0].url }))
+                                                setFormData(prevData => ({ ...prevData, profile_url: res[0].url }))
                                                 alert("Upload Completed");
 
                                             }
 
                                         }}
                                         onUploadError={(error: Error) => {
-
                                             alert('Something went wrong.')
 
-                                            // Do something with the error.
                                         }}
                                     />
                                 </div>

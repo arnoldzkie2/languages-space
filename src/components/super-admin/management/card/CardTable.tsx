@@ -16,7 +16,7 @@ interface Props {
 const CardTable: React.FC<Props> = ({ filteredTable }) => {
 
 
-    const { operation, selectedID, skeleton, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { operation, selectedID, skeleton, openOperation, closeOperation } = useAdminGlobalStore()
 
     const { openViewCard, openDeleteCardModal } = useAdminCardStore()
 

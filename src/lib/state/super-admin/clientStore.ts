@@ -8,7 +8,7 @@ import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 const newClientFormValue = {
     name: '',
     card: null,
-    user_name: '',
+    username: '',
     password: '',
     email: '',
     phone_number: '',
@@ -17,7 +17,8 @@ const newClientFormValue = {
     origin: '',
     address: '',
     gender: '',
-    profile: '',
+    profile_key: '',
+    profile_url: '',
     organization: ''
 }
 

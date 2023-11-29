@@ -17,30 +17,22 @@ interface Props {
 
 const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
     const { departmentID } = useAdminGlobalStore()
-
     const { selectedSupplier, setSelectedSupplier, openViewSupplierModal, deleteSupplierWarning } = useAdminSupplierStore()
-
     const { openOperation, closeOperation, operation, selectedID } = useAdminGlobalStore()
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
+    const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
     const handleSelection = (supplier: Supplier) => {
-
         const isSelected = selectedSupplier.some((selectedSupplier) => selectedSupplier.id === supplier.id);
 
         if (isSelected) {
-
             const updatedSelectedSupplier = selectedSupplier.filter((selectedSupplier) => selectedSupplier.id !== supplier.id);
-
             setSelectedSupplier(updatedSelectedSupplier)
 
         } else {
-
             const updatedSelectedSupplier = [...selectedSupplier, supplier];
-
             setSelectedSupplier(updatedSelectedSupplier)
 
         }
@@ -70,9 +62,7 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
                 ),
             ];
         }
-
         setSelectedSupplier(updatedSelectedSupplier);
-
     };
 
     useEffect(() => {

@@ -1,4 +1,4 @@
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 

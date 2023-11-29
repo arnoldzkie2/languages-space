@@ -7,12 +7,14 @@ const handler = NextAuth({
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                user_name: { label: "Username", type: "text", placeholder: "jsmith" },
-                password: { label: "Password", type: "password" }
+                username: { label: "Phone", type: "number", placeholder: "Phone Number" },
+                password: { label: "Password", type: "password", placeholder: "Password" }
             },
 
             async authorize(credentials) {
-                const { data } = await axios.post(`${process.env.NEXTAUTH_URL}/api/login`, credentials)
+
+                const { data } = await axios.post(`${process.env.NEXTAUTH_URL}/api/auth/login`, credentials)
+
                 if (data) {
                     return data
                 } else {

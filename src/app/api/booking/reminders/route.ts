@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 export const GET = async (req: Request) => {
 

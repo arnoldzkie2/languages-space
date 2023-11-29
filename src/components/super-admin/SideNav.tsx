@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 const SideNav: React.FC = () => {
 
-    const { toggleSideNav, isSideNavOpen } = useAdminGlobalStore()
+    const { toggleSideNav, isSideNavOpen, locales } = useAdminGlobalStore()
 
     const t = useTranslations('super-admin')
 
@@ -78,29 +78,6 @@ const SideNav: React.FC = () => {
         },
 
     ])
-
-    const locales = [
-        {
-            loc: 'en',
-            val: 'English'
-        },
-        {
-            loc: 'ja',
-            val: '日本語' // Japanese
-        },
-        {
-            loc: 'zh',
-            val: '中文' // Chinese (Simplified)
-        },
-        {
-            loc: 'vi',
-            val: 'Tiếng Việt' // Vietnamese
-        },
-        {
-            loc: 'kr',
-            val: '한국어' // Korean
-        }
-    ];
 
     const router = useRouter()
 

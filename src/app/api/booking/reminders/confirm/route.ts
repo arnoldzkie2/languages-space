@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, notFoundRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, serverErrorRes } from "@/utils/apiResponse";
 import { NextResponse } from "next/server";
 
 

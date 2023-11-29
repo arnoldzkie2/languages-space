@@ -128,11 +128,11 @@ const Page = () => {
                                                 <li key={client.id} title='Select' className='w-full p-2 cursor-pointer hover:bg-slate-100' onClick={() => {
                                                     setSearchClient('')
                                                     setFormData(prevData => ({ ...prevData, client: client }))
-                                                }}>{client.name} ({client.user_name})</li>
+                                                }}>{client.name} ({client.username})</li>
                                             ))}
                                         </ul>
                                     </div>
-                                    {formData.client && <small>Client: {formData.client.name} ({formData.client.user_name})</small>}
+                                    {formData.client && <small>Client: {formData.client.name} ({formData.client.username})</small>}
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>

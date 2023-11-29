@@ -10,9 +10,10 @@ datasource db {
 
 model Client {
   id           String       @id @default(uuid())
-  profile      String?      @db.Text
+  profile_url  String?      @db.Text
+  profile_key  String?
   name         String?
-  user_name    String       @unique
+  username     String       @unique
   phone_number String?
   email        String?
   gender       String?
@@ -87,7 +88,7 @@ model Supplier {
   id                String                @id @default(uuid())
   profile           String?
   name              String
-  user_name         String                @unique
+  username          String                @unique
   organization      String?
   payment_info      String?
   phone_number      String?
@@ -215,7 +216,7 @@ model Agent {
   id                  String       @id @default(uuid())
   profile             String?
   name                String
-  user_name           String       @unique
+  username            String       @unique
   password            String
   organization        Json?
   payment_information Json?
@@ -253,23 +254,24 @@ model Order {
   note           String?
   invoice_number String?
   express_number String?
-  created        DateTime       @default(now())
   cardID         String
   clientID       String
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
   card           ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
   client         Client         @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  departments    Department[]
+  department     Department     @relation(fields: [departmentID], references: [id], onDelete: Cascade)
+  departmentID   String
 
   @@index([clientID])
   @@index([cardID])
+  @@index([departmentID])
 }
 
 model Admin {
   id          String       @id @default(uuid())
   name        String
-  user_name   String       @unique
+  username    String       @unique
   email       String
   password    String
   created_at  DateTime     @default(now())
@@ -279,7 +281,7 @@ model Admin {
 
 model SuperAdmin {
   id         String   @id @default(uuid())
-  user_name  String   @unique
+  username   String   @unique
   password   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -287,7 +289,7 @@ model SuperAdmin {
 
 model Department {
   id         String           @id @default(uuid())
-  name       String
+  name       String           @unique
   created_at DateTime         @default(now())
   updated_at DateTime         @updatedAt
   clients    Client[]

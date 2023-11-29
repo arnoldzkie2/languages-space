@@ -25,8 +25,8 @@ const Page = () => {
         },
     })
 
-    const [selectedClient, setSelectedClient] = useState<Client>()
-    const [selectedCard, setSelectedCard] = useState<ClientCardList>()
+    const [selectedClient, setSelectedClient] = useState<Client | null>()
+    const [selectedCard, setSelectedCard] = useState<ClientCardList | null>()
 
     const [clientSearchQuery, setClientSearchQuery] = useState('')
     const [cardSearchQuery, setCardSearchQuery] = useState('')
@@ -35,11 +35,13 @@ const Page = () => {
     const { isSideNavOpen, departmentID, isLoading, setIsLoading, setDepartmentID } = useAdminGlobalStore()
     const { cards, getCards } = useAdminCardStore()
 
-    const filteredClient = clients.filter(client => client.name.toUpperCase().includes(clientSearchQuery.toUpperCase())).splice(0, 40)
+    const filteredClient = clients.filter(client => client.username.toUpperCase().includes(clientSearchQuery.toUpperCase())).splice(0, 40)
     const filteredCard = cards.filter(card => card.name.toUpperCase().includes(cardSearchQuery.toUpperCase())).splice(0, 40)
 
     useEffect(() => {
 
+        setSelectedClient(null)
+        setSelectedCard(null)
         if (cards.length > 0) {
             getClients()
         } else {
@@ -110,7 +112,7 @@ const Page = () => {
                                         <li key={client.id} onClick={() => {
                                             setSelectedClient(client)
                                             setClientSearchQuery('')
-                                        }} className='cursor-pointer text-gray-500 hover:text-black'>{client.name} ({client.user_name})</li>
+                                        }} className='cursor-pointer text-gray-500 hover:text-black'>{client.username}</li>
                                     )) : <li>{t('client.404')}</li>}
                                 </ul>}
                         </div>
@@ -129,7 +131,7 @@ const Page = () => {
                         </div>
 
                         <div className='py-5 w-full flex flex-col gap-4'>
-                            <div>{t('client.client')}: {selectedClient?.name && `${selectedClient?.user_name} (${selectedClient?.name})`}</div>
+                            <div>{t('client.client')}: {selectedClient?.username && `${selectedClient?.username}`}</div>
                             <div>{t('client-card.card')}: {selectedCard?.name && `${selectedCard?.name} (${selectedCard?.price})`}</div>
                         </div>
 

@@ -1,17 +1,23 @@
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/lib/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
 
-    const { user_name, password } = await req.json()
+    const { username, password }: { username: string, password: string } = await req.json()
 
     try {
 
-        const checkUsername = await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } })
-        if (checkUsername) existRes('user_name')
+        const existingUsername =
+            await prisma.client.findUnique({ where: { username } }) ||
+            await prisma.superAdmin.findUnique({ where: { username } }) ||
+            await prisma.admin.findUnique({ where: { username } }) ||
+            await prisma.supplier.findUnique({ where: { username } }) ||
+            await prisma.agent.findUnique({ where: { username } })
+        if (existingUsername) return NextResponse.json({ msg: 'Username already exist' }, { status: 409 })
 
-        const newSuperAdmin = await prisma.superAdmin.create({ data: { user_name, password } })
-        if (!newSuperAdmin) badRequestRes()
+        const createSuperAdmin = await prisma.superAdmin.create({ data: { username, password } })
+        if (!createSuperAdmin) badRequestRes()
 
         return createdRes()
 

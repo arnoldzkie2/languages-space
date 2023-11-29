@@ -15,7 +15,6 @@ const Page = ({ }) => {
         },
     })
 
-
     if (session.status === 'loading') {
         return (
             <div className='w-screen h-screen grid place-content-center'>

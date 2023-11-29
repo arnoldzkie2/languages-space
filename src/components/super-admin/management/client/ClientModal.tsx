@@ -38,7 +38,7 @@ const ClientModal: React.FC = () => {
                 <div className='flex flex-col border p-10 items-center'>
                     <div className='min-w-[220px] min-h-[220px] rounded-full border overflow-hidden'>
                         <Image
-                            src={clientData?.profile ? clientData.profile : '/profile/profile.svg'}
+                            src={clientData?.profile_url || '/profile/profile.svg'}
                             width={220}
                             height={220}
                             alt='Profile'

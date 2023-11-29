@@ -3,22 +3,22 @@ import prisma from "@/lib/db";
 
 export const POST = async (req: Request) => {
 
-    const { name, type, organization, user_name, password, phone_number, email, address, gender, origin, note, departments } = await req.json()
+    const { name, organization, username, password, phone_number, email, address, gender, origin, note, departments } = await req.json()
 
     try {
 
         const existingUsername =
-            await prisma.client.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-            await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+            await prisma.client.findUnique({ where: { username: String(username) } }) ||
+            await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
+            await prisma.admin.findUnique({ where: { username: String(username) } }) ||
+            await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
+            await prisma.agent.findUnique({ where: { username: String(username) } })
 
         if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
 
         const newAgent = await prisma.agent.create({
             data: {
-                departments: { connect: departments.map((id: string) => { id }) }, name, password, user_name, organization, phone_number, email, address, gender, origin, note
+                departments: { connect: departments.map((id: string) => { id }) }, name, password, username, organization, phone_number, email, address, gender, origin, note
             }
         })
 
@@ -108,7 +108,7 @@ export const DELETE = async (req: Request) => {
 
 // export const PATCH = async (req: Request) => {
 
-//     const { name, type, password, organization, user_name, phone_number, email, address, gender, origin, tags, note, departments } = await req.json()
+//     const { name, type, password, organization, username, phone_number, email, address, gender, origin, tags, note, departments } = await req.json()
 
 //     const { searchParams } = new URL(req.url);
 
@@ -121,20 +121,20 @@ export const DELETE = async (req: Request) => {
 //         if (!agent) return NextResponse.json({ success: false, error: true, message: 'No agent found' }, { status: 404 })
 
 //         const existingUsername =
-//             await prisma.agent.findUnique({ where: { user_name: String(user_name) } }) ||
-//             await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-//             await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-//             await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-//             await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+//             await prisma.agent.findUnique({ where: { username: String(username) } }) ||
+//             await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
+//             await prisma.admin.findUnique({ where: { username: String(username) } }) ||
+//             await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
+//             await prisma.agent.findUnique({ where: { username: String(username) } })
 
 //         if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
 
 //         const existingEmail =
 //             await prisma.agent.findUnique({ where: { email: String(email) } }) ||
-//             await prisma.superAdmin.findUnique({ where: { user_name: String(user_name) } }) ||
-//             await prisma.admin.findUnique({ where: { user_name: String(user_name) } }) ||
-//             await prisma.supplier.findUnique({ where: { user_name: String(user_name) } }) ||
-//             await prisma.agent.findUnique({ where: { user_name: String(user_name) } })
+//             await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
+//             await prisma.admin.findUnique({ where: { username: String(username) } }) ||
+//             await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
+//             await prisma.agent.findUnique({ where: { username: String(username) } })
 
 //         if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 409 })
 
@@ -143,7 +143,7 @@ export const DELETE = async (req: Request) => {
 //                 id: String(id)
 //             },
 //             data: {
-//                 name, user_name, password, organization, origin, tags, phone_number, email, address, gender, note, type, departments
+//                 name, username, password, organization, origin, tags, phone_number, email, address, gender, note, type, departments
 //             }
 //         })
 

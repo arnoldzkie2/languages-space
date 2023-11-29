@@ -107,6 +107,7 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                         />
                     </th>
                     <th scope="col" className="px-6 py-3">{tt('name')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('username')}</th>
                     <th scope="col" className="px-6 py-3">{tt('phone')}</th>
                     <th scope="col" className="px-6 py-3">{tt('organization')}</th>
                     <th scope="col" className="px-6 py-3">{tt('origin')}</th>
@@ -128,26 +129,27 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className="px-6 py-3">
                                 <label htmlFor={client.id} className='cursor-pointer h-5 w-36'>{client.name}</label>
                             </td>
+                            <td className="px-6 py-3">
+                                <label htmlFor={client.id} className='cursor-pointer h-5 w-36'>{client.username}</label>
+                            </td>
                             <td className='px-6 py-3'>
                                 <div className='h-5 w-32'>
-
-                                    {client.phone_number ? client.phone_number : 'No Data'}
+                                    {client.phone_number}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-28'>
-
-                                    {client.organization ? client.organization : 'No Data'}
+                                    {client.organization}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-28'>
-                                    {client.origin ? client.origin : 'No Data'}
+                                    {client.origin}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-28'>
-                                    {client.note ? client.note : 'No Data'}
+                                    {client.note}
                                 </div>
                             </td>
                             <td className='py-3 relative px-6'>
@@ -155,7 +157,7 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                 <ul className={`${operation && selectedID === client.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     {client.cards.length > 0 && <Link href={`/manage/client/card/${client.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-orange-500'>{t('client.card.client')} <FontAwesomeIcon icon={faCreditCard} /></Link>}
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => viewClient(client)}>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/client/update/${client.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <Link href={`/manage/client/update?clientID=${client.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => deleteWarning(client)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
