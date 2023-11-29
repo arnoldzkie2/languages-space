@@ -29,8 +29,8 @@ export const POST = async (req: Request) => {
                 clientID, cardID, quantity
             },
             mode: 'payment',
-            success_url: `http://localhost:3000/client/profile/cards`,
-            cancel_url: `http://localhost:3000/client/buy`,
+            success_url: `${process.env.NEXTAUTH_URL}client/profile/cards`,
+            cancel_url: `${process.env.NEXTAUTH_URL}client/buy`,
         })
         if (!session) return badRequestRes()
 
