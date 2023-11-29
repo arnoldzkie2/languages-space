@@ -4,7 +4,7 @@ import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorR
 
 export const POST = async (req: Request) => {
 
-    const { name, username, password, organization, payment_info, phone_number, email, address, gender, card, origin,
+    const { name, username, password, organization, payment_info, phone_number, profile_key, profile_url, email, address, gender, card, origin,
         tags, note, employment_status, meeting_info, entry, departure, departments } = await req.json()
 
     try {
@@ -37,7 +37,7 @@ export const POST = async (req: Request) => {
 
             const newSupplier = await prisma.supplier.create({
                 data: {
-                    name, username, password, organization, payment_info, phone_number, email, address, gender, card,
+                    name, username, password, organization, payment_info, phone_number, email, address, gender, card, profile_key, profile_url,
                     origin, tags, note, employment_status, entry, departure, departments: {
                         connect: departments.map((id: string) => ({ id }))
                     }
@@ -73,7 +73,7 @@ export const POST = async (req: Request) => {
         const newSupplier = await prisma.supplier.create({
             data: {
                 name, username, password, organization, payment_info, phone_number, email, address, gender, card,
-                origin, tags, note, employment_status, entry, departure
+                origin, tags, note, employment_status, entry, departure, profile_key, profile_url
             }, include: { meeting_info: true }
         })
         if (!newSupplier) return badRequestRes()
@@ -160,7 +160,7 @@ export const GET = async (req: Request) => {
 
 export const PATCH = async (req: Request) => {
 
-    const { name, profile, username, password, organization, payment_info, phone_number, email, address, gender,
+    const { name, username, password, organization, payment_info, phone_number, email, address, gender, profile_key, profile_url,
         card, origin, tags, note, employment_status, entry, departure, departments, meeting_info } = await req.json()
 
     const { searchParams } = new URL(req.url)
@@ -213,8 +213,8 @@ export const PATCH = async (req: Request) => {
             const updatedSupplier = await prisma.supplier.update({
                 where: { id: supplierID },
                 data: {
-                    name, profile, username, password, organization, payment_info, phone_number, email, address, gender,
-                    card, origin, tags, note, employment_status, entry, departure,
+                    name, username, password, organization, payment_info, phone_number, email, address, gender,
+                    card, origin, tags, note, employment_status, entry, departure, profile_key, profile_url,
                     departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
                 },
                 include: { departments: true, meeting_info: true }
