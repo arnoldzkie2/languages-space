@@ -31,7 +31,7 @@ const Page = () => {
     const t = useTranslations('client')
     const tt = useTranslations('global')
 
-    const { err, setErr, isLoading, okMsg, setOkMsg, eye, toggleEye, locales } = useAdminGlobalStore()
+    const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales } = useAdminGlobalStore()
 
     const updateClient = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -41,11 +41,13 @@ const Page = () => {
             if (username.length < 6) return setErr('Username is to short minimum 6 characters.')
             if (!password) return setErr('Password is required')
 
+            setIsLoading(true)
             const { data } = await axios.patch('/api/client', {
                 username, password
             }, { params: { clientID: session.data.user.id } })
 
             if (data.ok) {
+                setIsLoading(false)
                 setOkMsg('Success relogin to update changes')
                 setTimeout(() => {
                     setOkMsg('')
@@ -53,6 +55,7 @@ const Page = () => {
             }
 
         } catch (error: any) {
+            setIsLoading(false)
             console.log(error);
             if (error.response.data.msg) {
                 return setErr(error.response.data.msg)
@@ -126,7 +129,6 @@ const Page = () => {
 
                     <button disabled={isLoading} className={`w-1/4 mt-2 text-white py-2 rounded-md ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
                         {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('update')}</button>
-
                 </form>
             </div>
         </>
