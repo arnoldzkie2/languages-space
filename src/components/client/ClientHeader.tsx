@@ -22,9 +22,11 @@ const ClientHeader = () => {
     )
 
     useEffect(() => {
+
         if (session.status === 'authenticated' && session.data.user.id)
             getClient(session.data.user.id)
-    }, [])
+
+    }, [session])
 
     const t = useTranslations('client')
 
@@ -53,8 +55,9 @@ const ClientHeader = () => {
                 </div>
                 <div className={`mt-2 flex items-center gap-5 lg:ml-auto`}>
                     <Link href={'/client/profile'} onClick={() => setPage('profile')} className='flex items-center gap-2 px-3 py-1 border hover:bg-slate-100 rounded-md'>
-                        <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={30} height={30} className='rounded-full border max-h-7 max-w-7' />
-                        {session.status === 'authenticated' ? <h1 className='w-28'>{session?.data?.user.username}</h1> : skeleton}
+                        {client.username ? <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={30} height={30} className='rounded-full border max-h-7 max-w-7' />
+                            : <div className='w-[30px] h-[30px] rounded-full border bg-slate-200 animate-pulse'></div>}
+                        {client.username ? <h1 className='w-28'>{session?.data?.user.username}</h1> : skeleton}
                     </Link>
                     <button onClick={() => signOut({
                         redirect: true,
