@@ -2,14 +2,14 @@
 'use client'
 import useClientStore from '@/lib/state/client/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import { Booking } from '@/lib/types/super-admin/bookingType'
+import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import React, { useEffect } from 'react'
 
 const ClientBookings: React.FC = () => {
 
-    const { bookings, getClientBookings } = useClientStore()
-
+    const { bookings, getClientBookings, client } = useClientStore()
+    const session = useSession()
     const t = useTranslations('client')
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
@@ -47,11 +47,12 @@ const ClientBookings: React.FC = () => {
     }
 
     useEffect(() => {
+
         setPage('bookings')
-        if (!bookings) {
-            getClientBookings()
-        }
-    }, [])
+        if (session.status === 'authenticated' && !bookings && client?.id) getClientBookings()
+
+    }, [session, client?.id])
+
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>

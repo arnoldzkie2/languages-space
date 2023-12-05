@@ -1,23 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import useClientStore from '@/lib/state/client/clientStore'
+import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 
 const ClientCards: React.FC = () => {
 
+    const session = useSession()
+
     const { push } = useRouter()
 
-    const { cards, getClientCards, setBookingFormData, bookingFormData } = useClientStore()
-
-    useEffect(() => {
-
-        if (!cards) {
-            getClientCards()
-        }
-
-    }, [])
+    const { cards, getClientCards, setBookingFormData, bookingFormData, client } = useClientStore()
 
     const { setPage } = useClientStore()
     const t = useTranslations('client')
@@ -25,8 +20,11 @@ const ClientCards: React.FC = () => {
     const skeleton = [1, 2, 3]
 
     useEffect(() => {
+
         setPage('cards')
-    }, [])
+        if (session.status === 'authenticated' && !cards && client?.id) getClientCards()
+
+    }, [session, client?.id])
 
     return (
         <ul className='flex flex-col gap-3 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>

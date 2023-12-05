@@ -1,18 +1,18 @@
 import prisma from "@/lib/db"
-import { getAuth } from "@/lib/nextAuth"
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse"
+import { notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse"
 
 export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
     const clientCardID = searchParams.get('clientCardID')
+    const clientID = searchParams.get('clientID')
 
     try {
 
-        const session = await getAuth()
-        if (!session) return unauthorizedRes()
+        if (clientID) {
 
-        if (session.user.type === 'client') {
+            const client = await prisma.client.findUnique({ where: { id: clientID } })
+            if (!client) return notFoundRes('Client')
 
             const today = new Date();  // Get the current date and time in UTC
 
@@ -24,7 +24,7 @@ export const GET = async (req: Request) => {
                 const clientCard = await prisma.clientCard.findUnique({
                     where: {
                         id: clientCardID,
-                        clientID: session.user.id,
+                        clientID: client.id
                     },
                     select: {
                         card: {
@@ -92,10 +92,9 @@ export const GET = async (req: Request) => {
             }
 
             return notFoundRes('Card')
-
         }
 
-        return badRequestRes()
+        return notFoundRes('Client')
 
     } catch (error) {
         console.log(error);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { BookingFormData } from "@/lib/state/client/clientStore";
 
 export const GET = async (req: Request) => {
 
@@ -127,21 +128,18 @@ export const GET = async (req: Request) => {
 
 export const POST = async (req: Request) => {
 
-    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, quantity, departmentID, settlement } = await req.json()
+    const { scheduleID, supplierID, clientID, note, operator, meeting_info, meetingInfoID, clientCardID, status, name, courseID, quantity, settlement } = await req.json()
 
-    if (!scheduleID) return notFoundRes('Select Schedul')
-    if (!supplierID) return notFoundRes('Select Supplier')
-    if (!clientID) return notFoundRes('Select Client')
-    if (!clientCardID) return notFoundRes('Select Card')
-    if (!departmentID) return notFoundRes('Select Department')
-    if (!settlement) return notFoundRes('Select Settlement Period')
-    if (!operator) return notFoundRes('Select Operator')
-    if (!meeting_info) return notFoundRes('Select Meeting Info')
+    if (!scheduleID) return notFoundRes('Schedule')
+    if (!name) return notFoundRes('Booking name')
+    if (!supplierID) return notFoundRes('Supplier')
+    if (!clientID) return notFoundRes('Client')
+    if (!clientCardID) return notFoundRes('Card')
+    if (!settlement) return notFoundRes('Settlement period')
+    if (!operator) return notFoundRes('Operator')
+    // if (!meeting_info) return notFoundRes('Meeting Info')
 
     try {
-
-        const department = await prisma.department.findUnique({ where: { id: departmentID } })
-        if (!department) return notFoundRes('Department')
 
         //check schedule
         const schedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
@@ -156,7 +154,7 @@ export const POST = async (req: Request) => {
         const supplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
         if (!supplier) return notFoundRes('Supplier')
 
-        const meetingInfo = await prisma.supplierMeetingInfo.findUnique({ where: { id: meeting_info.id } })
+        const meetingInfo = await prisma.supplierMeetingInfo.findUnique({ where: { id: meetingInfoID } })
         if (!meetingInfo) return notFoundRes('Meeting info in supplier')
 
         const card = await prisma.clientCard.findUnique({
@@ -165,6 +163,9 @@ export const POST = async (req: Request) => {
             }
         })
         if (!card) return notFoundRes('Client Card')
+
+        const department = await prisma.department.findUnique({ where: { id: card.card.departmentID } })
+        if (!department) return notFoundRes('Department')
 
         //check supplier price
         const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card.cardID } })
@@ -190,7 +191,7 @@ export const POST = async (req: Request) => {
                     supplier: { connect: { id: supplierID } },
                     client: { connect: { id: clientID } },
                     schedule: { connect: { id: scheduleID } },
-                    meeting_info, clientCardID, scheduleID,
+                    meeting_info: meetingInfo, clientCardID, scheduleID,
                     department: { connect: { id: department.id } },
                     course: { connect: { id: courseID } }
                 },
@@ -208,7 +209,7 @@ export const POST = async (req: Request) => {
                     supplier: { connect: { id: supplierID } },
                     client: { connect: { id: clientID } },
                     schedule: { connect: { id: scheduleID } },
-                    meeting_info, clientCardID, scheduleID,
+                    meeting_info: meetingInfo, clientCardID, scheduleID,
                     department: { connect: { id: department.id } },
                     course: { connect: { id: courseID } }
                 },
@@ -249,7 +250,7 @@ export const PATCH = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
 
-    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, departmentID, quantity, settlement } = await req.json()
+    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, quantity, settlement } = await req.json()
 
     if (!scheduleID) return notFoundRes('scheduleID')
     if (!supplierID) return notFoundRes('supplierID')
@@ -260,9 +261,6 @@ export const PATCH = async (req: Request) => {
     try {
 
         if (bookingID) {
-
-            const department = await prisma.department.findUnique({ where: { id: departmentID } })
-            if (!department) return notFoundRes("Department")
 
             //check booking
             const booking = await prisma.booking.findUnique({ where: { id: bookingID } })
@@ -296,6 +294,9 @@ export const PATCH = async (req: Request) => {
                 }
             })
             if (!card) return notFoundRes('Card')
+
+            const department = await prisma.department.findUnique({ where: { id: card.card.departmentID } })
+            if (!department) return notFoundRes("Department")
 
             //check supplierprice
             const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card.cardID } })

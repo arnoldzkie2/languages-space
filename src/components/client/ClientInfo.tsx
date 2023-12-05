@@ -35,14 +35,15 @@ const ClientInfo = () => {
             setIsLoading(true)
             const { data } = await axios.patch('/api/client', {
                 name, email, phone_number, gender, address
-            })
+            }, { params: { clientID: client?.id } })
 
             if (data.ok) {
-                setIsLoading(false)
                 await signIn('credentials', {
                     username: username, password, redirect: false
                 })
+                setIsLoading(false)
                 setOkMsg('Success')
+              
             }
 
         } catch (error: any) {

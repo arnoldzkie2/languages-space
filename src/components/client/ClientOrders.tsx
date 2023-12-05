@@ -4,15 +4,18 @@ import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { useTranslations } from 'next-intl'
 import React, { useEffect } from 'react'
 import useClientStore from '@/lib/state/client/clientStore'
+import { useSession } from 'next-auth/react'
 
 
 const ClientOrders: React.FC = () => {
+
+    const session = useSession()
 
     const t = useTranslations('client')
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
 
-    const { setPage, orders, getClientOrders } = useClientStore()
+    const { setPage, orders, getClientOrders, client } = useClientStore()
 
     const { skeleton, currentPage, setCurrentPage, itemsPerPage } = useAdminGlobalStore()
     const getTotalPages = () => {
@@ -41,11 +44,11 @@ const ClientOrders: React.FC = () => {
     }
 
     useEffect(() => {
-        if (!orders) {
-            getClientOrders()
-        }
+
         setPage('orders')
-    }, [])
+        if (session.status === 'authenticated' && !orders && client?.id) getClientOrders()
+
+    }, [session, client?.id])
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 xl:w-1/2 order-1 md:order-2'>

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
-import { getAuth } from "@/lib/nextAuth";
 
 interface FormData {
     profile_key: string
@@ -199,21 +198,6 @@ export const PATCH = async (req: NextRequest) => {
     const clientID = getSearchParams(req, 'clientID')
 
     try {
-
-        const session = await getAuth()
-        if (!session) return unauthorizedRes()
-
-        if (session.user.type === 'client') {
-
-            const updateClient = await prisma.client.update({
-                where: { id: session.user.id }, data: {
-                    name, password, username, phone_number, email, address, gender
-                }
-            })
-            if (!updateClient) return badRequestRes()
-
-            return okayRes(updateClient)
-        }
 
         if (clientID) {
 

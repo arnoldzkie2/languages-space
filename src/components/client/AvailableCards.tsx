@@ -6,11 +6,14 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
+import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const AvailableCards = () => {
+
+    const session = useSession()
 
     const router = useRouter()
 
@@ -18,7 +21,7 @@ const AvailableCards = () => {
     const [maxVisibleItems, setMaxVisibleItems] = useState(6);
 
     const { isLoading, setIsLoading } = useAdminGlobalStore()
-    const { availableCards, getAvailableCards } = useClientStore()
+    const { availableCards, getAvailableCards, client } = useClientStore()
 
     const skeleton = [1, 2, 3, 4, 5, 6]
 
@@ -32,7 +35,7 @@ const AvailableCards = () => {
 
             setIsLoading(true)
             const { data } = await axios.post('/api/stripe/checkout', {
-                cardID, quantity: 1
+                cardID, quantity: 1, clientID: session.data?.user.id
             })
 
             if (data.ok) {
@@ -56,9 +59,9 @@ const AvailableCards = () => {
 
     useEffect(() => {
 
-        if (!availableCards) getAvailableCards()
+        if (session.status === 'authenticated' && client?.id && !availableCards) getAvailableCards()
 
-    }, [])
+    }, [session, client?.id])
 
     return (
         <div className='padding py-28 flex flex-col items-center text-slate-600'>

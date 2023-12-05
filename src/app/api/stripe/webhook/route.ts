@@ -83,7 +83,12 @@ export const POST = async (req: Request) => {
 
                 }
 
-
+                const updateCardSold = await prisma.clientCardList.update({
+                    where: { id: card.id }, data: {
+                        sold: card.sold + 1
+                    }
+                })
+                if (!updateCardSold) return badRequestRes()
 
                 //create the order record
                 const createOrder = await prisma.order.create({

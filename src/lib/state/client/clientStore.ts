@@ -5,6 +5,7 @@ import { Booking } from '@/lib/types/super-admin/bookingType';
 import { Session } from 'next-auth';
 import { Order } from '@/lib/types/super-admin/orderType'
 import { SupplierPrice } from '@/lib/types/super-admin/supplierTypes';
+import { useSession } from 'next-auth/react';
 
 interface BookingFormData {
     clientCardID: string
@@ -69,9 +70,12 @@ const useClientStore = create<Props>((set, get) => ({
     openBookingModal: (data: BookingFormData) => set({ bookingFormData: data, isBooking: true }),
     closeBookingModal: () => set({ isBooking: false, bookingFormData: bookingFormDataValue, availableSupplier: null }),
     getClientOrders: async () => {
+
+        const { client } = get()
+
         try {
 
-            const { data } = await axios.get('/api/client/orders')
+            const { data } = await axios.get('/api/client/orders', { params: { clientID: client?.id } })
             if (data.ok) set({ orders: data.data })
 
         } catch (error) {
@@ -81,9 +85,11 @@ const useClientStore = create<Props>((set, get) => ({
     },
     getClientBookings: async () => {
 
+        const { client } = get()
+
         try {
 
-            const { data } = await axios.get('/api/client/booking')
+            const { data } = await axios.get('/api/client/booking', { params: { clientID: client?.id } })
             if (data.ok) set({ bookings: data.data })
 
         } catch (error: any) {
@@ -95,9 +101,12 @@ const useClientStore = create<Props>((set, get) => ({
         }
     },
     getClientCards: async () => {
+
+        const { client } = get()
+
         try {
 
-            const { data } = await axios.get('/api/client/card')
+            const { data } = await axios.get('/api/client/card', { params: { clientID: client?.id } })
             if (data.ok) {
                 set({ cards: data.data })
             }
@@ -112,9 +121,11 @@ const useClientStore = create<Props>((set, get) => ({
     },
     getAvailableCards: async () => {
 
+        const { client } = get()
+
         try {
 
-            const { data } = await axios.get('/api/client/card/available')
+            const { data } = await axios.get('/api/client/card/available', { params: { clientID: client?.id } })
 
             if (data.ok) {
                 set({ availableCards: data.data })
@@ -128,10 +139,12 @@ const useClientStore = create<Props>((set, get) => ({
     },
     getAvailableSupplier: async (clientCardID: string) => {
 
+        const { client } = get()
+
         try {
 
             const { data } = await axios.get('/api/supplier/available', {
-                params: { clientCardID }
+                params: { clientCardID, clientID: client?.id }
             })
 
             if (data.ok) set({ availableSupplier: data.data })

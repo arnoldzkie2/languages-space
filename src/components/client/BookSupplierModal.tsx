@@ -20,7 +20,7 @@ const ClientBookingModal = () => {
 
     const [meetingInfo, setMeetingInfo] = useState<SupplierMeetingInfo[]>([])
     const { isLoading, setIsLoading, err, setErr, okMsg, setOkMsg } = useAdminGlobalStore()
-    const { bookingFormData, setBookingFormData, closeBookingModal, getClientCards, getClientBookings } = useClientStore()
+    const { bookingFormData, setBookingFormData, closeBookingModal, getClientCards, getClientBookings, client } = useClientStore()
     const { cardCourses, supplierSchedule, setSupplierSchedule } = useAdminSupplierStore()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -67,7 +67,7 @@ const ClientBookingModal = () => {
     const bookNow = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        const { courseID, supplierID, clientCardID, meetingInfoID, scheduleID } = bookingFormData
+        const { courseID, supplierID, clientCardID, meetingInfoID, scheduleID, note } = bookingFormData
         if (!courseID) return setErr('Select Course')
         if (!supplierID) return setErr('Select Supplier')
         if (!clientCardID) return setErr('Select Card')
@@ -76,7 +76,11 @@ const ClientBookingModal = () => {
 
         try {
             setIsLoading(true)
-            const { data } = await axios.post('/api/client/booking', bookingFormData)
+            const { data } = await axios.post('/api/booking', {
+                clientID: client?.id, clientCardID, scheduleID, note,
+                courseID, supplierID, meetingInfoID, settlement: '2024-01-20',
+                operator: 'client', status: 'pending', quantity: 1, name: '1v1 Class'
+            })
 
             if (data.ok) {
                 setOkMsg('Success Redirecting...')
@@ -127,9 +131,10 @@ const ClientBookingModal = () => {
                     <label htmlFor="meetingInfo" className='px-1 font-medium'>{tt('meeting')}</label>
                     <select name="meetingInfoID" id="meetingInfo" onChange={handleChange} value={bookingFormData.meetingInfoID} className='px-3 py-1.5 rounded-sm w-full outline-none'>
                         <option value="" disabled>{ttt('supplier.select-meeting')}</option>
-                        {meetingInfo.length > 0 && meetingInfo.map(info => (
+                        {meetingInfo.length > 0 ? meetingInfo.map(info => (
                             <option value={info.id} key={info.id}>{info.service} ({info.meeting_code})</option>
-                        ))}
+                        )) :
+                            <option disabled>{tt('loading')}</option>}
                     </select>
                 </div>
 
@@ -137,9 +142,10 @@ const ClientBookingModal = () => {
                     <label htmlFor="courseID" className='px-1 font-medium'>{tt('course')}</label>
                     <select name="courseID" id="courseID" onChange={handleChange} value={bookingFormData.courseID} className='px-3 py-1.5 rounded-sm w-full outline-none'>
                         <option value="" disabled>{ttt('booking.select-course')}</option>
-                        {cardCourses.length > 0 && cardCourses.map(course => (
+                        {cardCourses.length > 0 ? cardCourses.map(course => (
                             <option value={course.id} key={course.id}>{course.name}</option>
-                        ))}
+                        )) :
+                            <option disabled>{tt('loading')}</option>}
                     </select>
                 </div>
 
@@ -147,9 +153,10 @@ const ClientBookingModal = () => {
                     <label htmlFor="scheduleID" className='px-1 font-medium'>{tt('schedule')}</label>
                     <select name="scheduleID" id="scheduleID" onChange={handleChange} value={bookingFormData.scheduleID} className='px-3 py-1.5 rounded-sm w-full outline-none'>
                         <option value="" disabled>{ttt('booking.select-schedule')}</option>
-                        {supplierSchedule.length > 0 && supplierSchedule.map(schedule => (
+                        {supplierSchedule.length > 0 ? supplierSchedule.map(schedule => (
                             <option value={schedule.id} key={schedule.id}>{schedule.date} ({schedule.time})</option>
-                        ))}
+                        )) :
+                            <option disabled>{tt('loading')}</option>}
                     </select>
                 </div>
                 <div className='flex flex-col gap-2'>

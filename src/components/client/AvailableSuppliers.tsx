@@ -6,6 +6,7 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
+import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -14,7 +15,9 @@ import React, { useEffect, useState } from 'react'
 const AvailableSuppliers = () => {
 
     const router = useRouter()
-    const { cards, getClientCards, availableSupplier, getAvailableSupplier, clearAvailableSuppliers, openBookingModal, bookingFormData, setBookingFormData } = useClientStore()
+
+    const session = useSession()
+    const { cards, getClientCards, availableSupplier, client, getAvailableSupplier, clearAvailableSuppliers, openBookingModal, bookingFormData, setBookingFormData } = useClientStore()
     const { setCardCourses } = useAdminSupplierStore()
     const [searchQuery, setSearchQery] = useState('')
     const skeleton = [1, 2, 3, 4, 5, 6]
@@ -43,12 +46,12 @@ const AvailableSuppliers = () => {
     useEffect(() => {
         setBookingFormData(bookingFormDataValue)
         clearAvailableSuppliers()
-        if (!cards) getClientCards()
-    }, [])
+        if (session.status === 'authenticated' && client?.id && !cards) getClientCards()
+    }, [session, client?.id])
 
     useEffect(() => {
 
-        if (bookingFormData.clientCardID) {
+        if (session.status === 'authenticated' && bookingFormData.clientCardID && client?.id) {
             getAvailableSupplier(bookingFormData.clientCardID)
             getCardCourses()
         }

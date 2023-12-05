@@ -1,16 +1,18 @@
 import prisma from "@/lib/db";
-import { getAuth } from "@/lib/nextAuth";
-import { badRequestRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
 
+    const clientID = getSearchParams(req, 'clientID')
+
     try {
 
-        const session = await getAuth()
-        if (!session) return unauthorizedRes()
+        if (clientID) {
 
-        if (session.user.type === 'client') {
+            const client = await prisma.client.findUnique({ where: { id: clientID } })
+            if (!client) return notFoundRes('Client')
+
             const availableCards = await prisma.clientCardList.findMany({
                 where: { available: true, supported_courses: { some: {} }, supported_suppliers: { some: {} } }, select: {
                     id: true,
@@ -42,7 +44,7 @@ export const GET = async (req: NextRequest) => {
 
         }
 
-        return badRequestRes()
+        return notFoundRes('Client')
 
     } catch (error) {
         console.log(error);

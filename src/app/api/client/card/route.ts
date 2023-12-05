@@ -1,6 +1,5 @@
 import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
-import { getAuth } from "@/lib/nextAuth";
 import { NextRequest } from "next/server";
 export const GET = async (req: NextRequest) => {
 
@@ -9,29 +8,6 @@ export const GET = async (req: NextRequest) => {
   const clientID = getSearchParams(req, 'clientID')
 
   try {
-
-    const session = await getAuth()
-    if (!session) return unauthorizedRes()
-
-    if (session?.user.type === 'client') {
-
-      const clientCards = await prisma.client.findUnique({
-        where: { id: session.user.id }, select: {
-          cards: {
-            select: {
-              id: true,
-              name: true,
-              validity: true,
-              balance: true,
-              created_at: true
-            }
-          }
-        }
-      })
-      if (!clientCards) return badRequestRes()
-
-      return okayRes(clientCards.cards)
-    }
 
     if (clientID) {
       const client = await prisma.client.findUnique({

@@ -200,6 +200,7 @@
         "language": "language",
         "select-language": "Select Language",
         "card": "Card",
+        "loading": "Loading...",
         "date": "Date",
         "renew": "Renew",
         "gender": "Gender",

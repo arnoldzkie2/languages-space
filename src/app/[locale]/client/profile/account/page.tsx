@@ -7,17 +7,18 @@ import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { signIn, useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { useTranslations, useLocale } from 'next-intl'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect } from 'react'
 import { usePathname } from 'next-intl/client';
 import { useRouter } from 'next/navigation';
 import useClientStore from '@/lib/state/client/clientStore'
 
 const Page = () => {
+
     const router = useRouter()
 
-    const { client, setClient } = useClientStore()
+    const { client, setClient, setPage } = useClientStore()
 
     const t = useTranslations('client')
     const tt = useTranslations('global')
@@ -33,7 +34,7 @@ const Page = () => {
             if (!password) return setErr('Password is required')
 
             setIsLoading(true)
-            const { data } = await axios.patch('/api/client', { username, password })
+            const { data } = await axios.patch('/api/client', { username, password }, { params: { clientID: id } })
 
             if (data.ok) {
                 setIsLoading(false)
@@ -77,6 +78,10 @@ const Page = () => {
         router.push(newPath)
     }
     const locale = useLocale()
+
+    useEffect(() => {
+        setPage('account')
+    }, [])
 
     return (
         <>
