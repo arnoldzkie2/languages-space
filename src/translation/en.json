@@ -235,6 +235,8 @@
             "buy-date": "Buy Date",
             "days": "Days",
             "balance": "Balance",
+            "no-card": "You don't have cards",
+            "getting": "Loading cards...",
             "buy": "Buy Now",
             "price": "Price"
         },

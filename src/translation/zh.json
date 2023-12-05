@@ -234,6 +234,8 @@
             "validity": "有效期",
             "buy-date": "购买日期",
             "days": "天",
+            "no-card": "您没有卡",
+            "getting": "加载中...",
             "balance": "余额",
             "buy": "立即购买",
             "price": "价格"

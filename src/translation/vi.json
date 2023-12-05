@@ -234,6 +234,8 @@
             "validity": "Hiệu lực",
             "buy-date": "Ngày mua",
             "days": "Ngày",
+            "no-card": "Bạn không có thẻ",
+            "getting": "Đang tải thẻ...",
             "balance": "Số dư",
             "buy": "Mua Ngay",
             "price": "Giá"

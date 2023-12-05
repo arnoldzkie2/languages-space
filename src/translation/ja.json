@@ -233,6 +233,8 @@
         "card": {
             "validity": "有効期限",
             "buy-date": "購入日",
+            "no-card": "カードがありません",
+            "getting": "カードを読み込んでいます...",
             "days": "日",
             "balance": "残高",
             "buy": "今すぐ購入",
