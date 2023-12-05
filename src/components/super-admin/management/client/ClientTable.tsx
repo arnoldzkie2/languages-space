@@ -185,6 +185,9 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
                             <td className='py-3.5 px-6'>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                            </td>
+                            <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
                             </td>
                         </tr>

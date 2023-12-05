@@ -67,7 +67,7 @@ const useClientStore = create<Props>((set, get) => ({
     clearAvailableSuppliers: () => set({ availableSupplier: null }),
     setBookingFormData: (data: BookingFormData) => set({ bookingFormData: data }),
     openBookingModal: (data: BookingFormData) => set({ bookingFormData: data, isBooking: true }),
-    closeBookingModal: () => set({ isBooking: false, bookingFormData: bookingFormDataValue }),
+    closeBookingModal: () => set({ isBooking: false, bookingFormData: bookingFormDataValue, availableSupplier: null }),
     getClientOrders: async () => {
         try {
 

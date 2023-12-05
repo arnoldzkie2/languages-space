@@ -1,8 +1,9 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { NextRequest } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
     try {
 
@@ -46,5 +47,7 @@ export const GET = async (req: Request) => {
     } catch (error) {
         console.log(error);
         return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
     }
 }

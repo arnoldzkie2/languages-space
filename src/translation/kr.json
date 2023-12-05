@@ -20,30 +20,30 @@
             "h1": "뉴스 관리",
             "title": "제목",
             "update": "뉴스 업데이트",
-            "author": "작성자",
+            "author": "저자",
             "keywords": "키워드",
             "add-keyword": "키워드 추가",
             "create": "뉴스 생성",
             "search": "뉴스 검색"
         },
         "client": {
-            "client": "고객",
-            "h1": "고객 관리",
-            "select-first": "먼저 고객 선택",
-            "create": "고객 생성",
-            "with-cards": "카드 포함",
-            "phone": "전화 번호",
+            "client": "클라이언트",
+            "h1": "클라이언트 관리",
+            "select-first": "먼저 클라이언트 선택",
+            "create": "클라이언트 생성",
+            "with-cards": "카드 함께",
+            "phone": "전화번호",
             "organization": "조직",
             "card": {
                 "client": "카드",
                 "bind": "카드 바인딩"
             },
-            "search": "고객 검색",
-            "select": "고객 선택",
-            "404": "고객을 찾을 수 없음"
+            "search": "클라이언트 검색",
+            "select": "클라이언트 선택",
+            "404": "클라이언트를 찾을 수 없음"
         },
         "client-card": {
-            "manage": "고객 카드 관리",
+            "manage": "클라이언트 카드 관리",
             "h1": "카드 관리",
             "create": "카드 생성",
             "select-all": "모두 선택",
@@ -51,7 +51,7 @@
             "update": "카드 업데이트",
             "max": "최대",
             "balance": "잔액",
-            "validity": "유효 기간",
+            "validity": "유효기간",
             "sold": "판매됨",
             "invoice": "송장",
             "available": "사용 가능",
@@ -65,33 +65,33 @@
             "description": "설명",
             "courses": "지원되는 코스",
             "suppliers": "지원되는 공급자",
-            "client": "고객"
+            "client": "클라이언트"
         },
         "global": {
             "department": {
                 "select": "부서",
                 "all": "모든 부서"
             },
-            "operation": "작업",
+            "operation": "운영",
             "download": "다운로드",
             "result": "결과",
-            "selected": "선택한 항목",
+            "selected": "선택됨",
             "cancel": "취소",
-            "total": "총계",
-            "delete-confirm": "예, 확인합니다",
+            "total": "총",
+            "delete-confirm": "예, 확실합니다",
             "confirm-cancel": "취소하지 않음"
         },
         "pagination": {
             "prev": "이전 페이지",
             "next": "다음 페이지",
-            "goto": "페이지로 이동",
+            "goto": "페이지 이동",
             "page": "페이지"
         },
         "side-nav": {
             "department": "부서",
             "menu": "메뉴",
-            "dashboard": "대시 보드",
-            "client": "고객",
+            "dashboard": "대시보드",
+            "client": "클라이언트",
             "schedule": "일정",
             "agent": "에이전트",
             "supplier": "공급자",
@@ -101,12 +101,12 @@
             "news": "웹 뉴스",
             "settings": "설정",
             "statistics": "통계",
-            "logout": "로그 아웃"
+            "logout": "로그아웃"
         },
         "schedule": {
             "h1": "일정 관리",
             "create": "일정 생성",
-            "no-schedule": "일정이 설정되지 않음",
+            "no-schedule": "일정 없음",
             "meeting": "회의 서비스 선택",
             "delete": "일정 삭제"
         },
@@ -115,9 +115,9 @@
             "create": "주문 생성",
             "update": "주문 업데이트",
             "card": "카드",
-            "client_name": "고객",
+            "client_name": "클라이언트",
             "quantity": "수량",
-            "operator": "운영자",
+            "operator": "작업자",
             "invoice_number": "송장 번호",
             "express_number": "익스프레스 번호",
             "departments": "부서",
@@ -157,7 +157,7 @@
         "cancel": "취소",
         "confirm": "확인",
         "create": "생성",
-        "client": "고객",
+        "client": "클라이언트",
         "supplier": "공급자",
         "agent": "에이전트",
         "course": "코스",
@@ -165,6 +165,8 @@
         "delete": "삭제",
         "employment": "고용 상태",
         "update": "업데이트",
+        "courses": "코스",
+        "suppliers": "공급자",
         "view": "보기",
         "price": "가격",
         "time": "시간",
@@ -174,7 +176,7 @@
         "settlement": "결제 기간",
         "payment": "결제 정보",
         "remove": "제거",
-        "add-more": "추가",
+        "add-more": "더 추가",
         "status": "상태",
         "close": "닫기",
         "search": "검색",
@@ -183,17 +185,17 @@
         "username": "사용자 이름",
         "meeting": "회의 정보",
         "address": "주소",
-        "show-more": "자세히 보기",
+        "show-more": "더 보기",
         "optional": "(선택 사항)",
         "email": "이메일 주소",
         "select": "선택",
         "quantity": "수량",
         "select-gender": "성별 선택",
-        "clientcard": "고객 카드",
+        "clientcard": "클라이언트 카드",
         "password": "비밀번호",
         "confirm-password": "비밀번호 확인",
-        "phone": "전화 번호",
-        "operator": "운영자",
+        "phone": "전화번호",
+        "operator": "작업자",
         "schedule": "일정",
         "language": "언어",
         "select-language": "언어 선택",
@@ -205,7 +207,7 @@
         "organization": "조직",
         "profile": "프로필 이미지",
         "origin": "출신지",
-        "note": "참고",
+        "note": "노트",
         "invoice": "송장 번호",
         "express": "익스프레스 번호",
         "tags": "태그"
@@ -219,7 +221,7 @@
         "signup": "가입",
         "name": "전체 이름",
         "confirm_password": "비밀번호 확인",
-        "not_signup": "아직 계정이 없으신가요?",
+        "not_signup": "아직 계정이 없으신가요? ",
         "already_signup": "이미 가입하셨나요?"
     },
     "client": {
@@ -247,6 +249,11 @@
             "my-cards": "내 카드",
             "my-bookings": "내 예약",
             "my-orders": "내 주문"
+        },
+        "booking": {
+            "select-card": "예약할 카드 선택",
+            "fillup": "예약 정보 작성",
+            "no-supplier": "이 카드에는 이용 가능한 공급자가 없습니다"
         }
     }
 }

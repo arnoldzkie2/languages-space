@@ -24,7 +24,6 @@ const ClientOrders: React.FC = () => {
     const goToPreviousPage = () => {
 
         if (currentPage > 1) {
-
             setCurrentPage(currentPage - 1);
         }
     }
@@ -149,7 +148,6 @@ const ClientOrders: React.FC = () => {
                         {ttt('pagination.next')}
                     </button>
                 </div>
-
             </footer>
         </ul>
     )

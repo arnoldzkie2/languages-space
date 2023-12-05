@@ -23,7 +23,7 @@ const ClientHeader = () => {
 
     const [isOpen, setIsOpen] = useState(false)
 
-    const { setPage, client, setClient } = useClientStore()
+    const { setPage, setClient } = useClientStore()
 
     const skeleton = (
         <li className='bg-slate-200 animate-pulse h-5 w-28 rounded-3xl'></li>
@@ -31,12 +31,11 @@ const ClientHeader = () => {
 
     useEffect(() => {
 
-        if (session.status === 'authenticated' && session.data.user.type === 'client') {
-            setClient(session.data.user)
-        }
-
         if (session.status === 'authenticated' && session.data.user.type !== 'client') router.push('/login')
 
+        if (session.data?.user.type === 'client') {
+            setClient(session.data.user)
+        }
     }, [session])
 
     const t = useTranslations('client')
@@ -66,9 +65,9 @@ const ClientHeader = () => {
                 </div>
                 <div className={`mt-2 flex items-center gap-5 lg:ml-auto`}>
                     <Link href={'/client/profile'} onClick={() => setPage('profile')} className='flex items-center gap-2 px-3 py-1 border hover:bg-slate-100 rounded-md'>
-                        {client ? <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={30} height={30} className='rounded-full border max-h-7 max-w-7' />
+                        {session.data ? <Image src={session.data?.user.profile_url || '/profile/profile.svg'} alt='Profile' width={25} height={25} className='rounded-full min-w-[25px] min-h-[25px] object-cover border max-h-7 max-w-7' />
                             : <div className='w-[30px] h-[30px] rounded-full border bg-slate-200 animate-pulse'></div>}
-                        {client ? <h1 className='w-28'>{session?.data?.user.username}</h1> : skeleton}
+                        {session.data ? <h1 className='w-28'>{session?.data?.user.username}</h1> : skeleton}
                     </Link>
                     <button onClick={() => signOut({
                         redirect: true,

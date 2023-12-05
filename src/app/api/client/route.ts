@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { getAuth } from "@/lib/nextAuth";
 
 interface FormData {
     profile_key: string
@@ -18,7 +19,7 @@ interface FormData {
     departments: string[]
 }
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
 
     const { profile_key, profile_url, name, organization, username, password, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
 
@@ -79,11 +80,10 @@ export const POST = async (req: Request) => {
     }
 }
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-    const clientID = searchParams.get('clientID')
-    const departmentID = searchParams.get('departmentID')
+    const clientID = getSearchParams(req, 'clientID')
+    const departmentID = getSearchParams(req, 'departmentID')
 
     try {
 
@@ -193,13 +193,27 @@ export const DELETE = async (req: Request) => {
     }
 }
 
-export const PATCH = async (req: Request) => {
+export const PATCH = async (req: NextRequest) => {
 
     const { name, password, organization, username, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
-    const { searchParams } = new URL(req.url)
-    const clientID = searchParams.get('clientID')
+    const clientID = getSearchParams(req, 'clientID')
 
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        if (session.user.type === 'client') {
+
+            const updateClient = await prisma.client.update({
+                where: { id: session.user.id }, data: {
+                    name, password, username, phone_number, email, address, gender
+                }
+            })
+            if (!updateClient) return badRequestRes()
+
+            return okayRes(updateClient)
+        }
 
         if (clientID) {
 

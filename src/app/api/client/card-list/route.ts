@@ -1,7 +1,7 @@
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import stripe from "@/utils/getStripe";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { SupplierPrice } from '@prisma/client'
 export const POST = async (req: Request) => {
 
@@ -101,10 +101,10 @@ export const POST = async (req: Request) => {
 
 }
 
-export const GET = async ({ url }: Request) => {
+export const GET = async (req: NextRequest) => {
 
-    const clientCardID = getSearchParams(url, 'clientCardID')
-    const departmentID = getSearchParams(url, 'departmentID')
+    const clientCardID = getSearchParams(req, 'clientCardID')
+    const departmentID = getSearchParams(req, 'departmentID')
 
     try {
 
@@ -160,12 +160,12 @@ export const GET = async ({ url }: Request) => {
     }
 }
 
-export const PATCH = async ({ url, json }: Request) => {
+export const PATCH = async (req: NextRequest) => {
 
-    const clientCardID = getSearchParams(url, 'clientCardID')
+    const clientCardID = getSearchParams(req, 'clientCardID')
 
     const { name, price, balance, validity, invoice, repeat_purchases, available, departmentID,
-        online_renews, courses, suppliers } = await json()
+        online_renews, courses, suppliers } = await req.json()
 
     try {
 

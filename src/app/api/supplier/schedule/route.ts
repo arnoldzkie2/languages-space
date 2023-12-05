@@ -1,10 +1,11 @@
 import prisma from "@/lib/db";
 import { getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse"
+import { NextRequest } from "next/server";
 
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
-    const supplierID = getSearchParams(req.url, 'supplierID')
+    const supplierID = getSearchParams(req, 'supplierID')
 
     try {
 
@@ -22,22 +23,15 @@ export const GET = async (req: Request) => {
                             status: 'available',
                             date: { gte: formattedToday },
                             time: { gte: formattedCurrentTime }  // Schedule time is later than or equal to the current time
-                        }
+                        },
+                        orderBy: [
+                            { date: 'asc' },
+                            { time: 'asc' }
+                        ]
                     }
                 }
             })
             if (!supplier) return notFoundRes('Supplier')
-
-            supplier.schedule.sort((a, b) => {
-                // Compare dates first
-                const dateComparison = a.date.localeCompare(b.date);
-                if (dateComparison !== 0) {
-                    return dateComparison;
-                }
-
-                // If dates are equal, compare times
-                return a.time.localeCompare(b.time);
-            });
 
             return okayRes(supplier.schedule)
 

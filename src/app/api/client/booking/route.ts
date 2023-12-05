@@ -2,9 +2,9 @@ import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { BookingFormData } from "@/lib/state/client/clientStore";
 import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
     try {
 
@@ -33,7 +33,8 @@ export const GET = async (req: Request) => {
                             status: true,
                             note: true,
                             created_at: true
-                        }
+                        },
+                        orderBy: { created_at: 'desc' }
                     }
                 }
             })
@@ -114,7 +115,7 @@ export const POST = async ({ json }: Request) => {
                 //create booking for fingerpower
                 const createBooking = await prisma.booking.create({
                     data: {
-                        note, status: 'pending', operator: 'client', name: 'Fingerpower Booking', price: bookingPrice, card_name: card.name, quantity, settlement,
+                        note, status: 'pending', operator: 'client', name: 'Transcription', price: bookingPrice, card_name: card.name, quantity, settlement,
                         supplier: { connect: { id: supplierID } },
                         client: { connect: { id: session.user.id } },
                         schedule: { connect: { id: scheduleID } },

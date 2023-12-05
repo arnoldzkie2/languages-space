@@ -29,9 +29,7 @@ const Page = ({ params }: Props) => {
         },
     })
 
-    const [client, setClient] = useState<Client>()
-
-    const { viewClientCard, deleteClientCardModal, clientCardData, closeDeleteClientCardModal } = useAdminClientCardStore()
+    const { viewClientCard, deleteClientCardModal, clientCardData, closeDeleteClientCardModal, clientCards, getClientCards } = useAdminClientCardStore()
 
     const { isSideNavOpen, currentPage, itemsPerPage, setIsLoading } = useAdminGlobalStore()
 
@@ -42,7 +40,7 @@ const Page = ({ params }: Props) => {
         price: '',
     })
 
-    const filteredCard = client?.cards.filter((card) => {
+    const filteredCard = clientCards.filter((card) => {
 
         const searchName = searchQuery.name.toUpperCase();
         const searchPrice = searchQuery.price.toUpperCase();
@@ -71,32 +69,14 @@ const Page = ({ params }: Props) => {
         setSearchQuery(prevData => ({ ...prevData, [name]: value }))
     }
 
-    const getClientCards = async () => {
-
-        try {
-            const { data } = await axios.get('/api/client', {
-                params: {
-                    clientID: params.clientID
-                }
-            })
-            if (data.ok) {
-                setClient(data.data)
-            }
-
-        } catch (error) {
-            console.log(error);
-            alert('Something went wrong')
-        }
-    }
-
     const unbindCard = async () => {
 
         try {
             setIsLoading(true)
-            const { data } = await axios.delete(`/api/client/card/?cardID=${clientCardData?.id}`)
+            const { data } = await axios.delete(`/api/client/card`, { params: { clientCardID: clientCardData?.id } })
 
             if (data.ok) {
-                getClientCards()
+                getClientCards(params.clientID)
                 setIsLoading(false)
                 closeDeleteClientCardModal()
                 alert('Success')
@@ -110,7 +90,7 @@ const Page = ({ params }: Props) => {
     }
 
     useEffect(() => {
-        getClientCards()
+        getClientCards(params.clientID)
     }, [])
 
     return (
@@ -122,7 +102,7 @@ const Page = ({ params }: Props) => {
                     <div className='border py-4 px-6 flex flex-col shadow bg-white w-1/6'>
                         <SearchClientCard handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
-                    <ClientCardTable getClientCards={getClientCards} filteredTable={currentCards} clientID={params.clientID} />
+                    <ClientCardTable filteredTable={currentCards} clientID={params.clientID} />
                 </div>
             </div>
             {viewClientCard && <ViewClientCardModal />}

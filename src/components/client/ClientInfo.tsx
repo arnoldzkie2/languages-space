@@ -6,14 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image';
 import axios from 'axios'
-import { signOut, useSession } from 'next-auth/react'
+import { signIn, signOut } from 'next-auth/react'
 import { UploadButton } from '@/utils/uploadthing'
 import { useEffect } from 'react'
 import useClientStore from '@/lib/state/client/clientStore'
 
 const ClientInfo = () => {
 
-    const session = useSession()
     const { setIsLoading, setOkMsg, setErr, okMsg, err, isLoading } = useAdminGlobalStore()
     const { client, setClient, setPage } = useClientStore()
 
@@ -25,27 +24,25 @@ const ClientInfo = () => {
         } else {
             signOut()
         }
-
     }
 
     const updateClient = async (e: any) => {
+
         e.preventDefault()
         try {
 
-            const { name, email, phone_number, gender, address } = client!
-
+            const { name, email, phone_number, gender, address, username, password } = client!
             setIsLoading(true)
             const { data } = await axios.patch('/api/client', {
                 name, email, phone_number, gender, address
             })
 
             if (data.ok) {
-                session.update()
                 setIsLoading(false)
+                await signIn('credentials', {
+                    username: username, password, redirect: false
+                })
                 setOkMsg('Success')
-                setTimeout(() => {
-                    setOkMsg('')
-                }, 3000);
             }
 
         } catch (error: any) {
@@ -95,12 +92,13 @@ const ClientInfo = () => {
                                 if (res) {
 
                                     const { data } = await axios.post('/api/uploadthing/profile/change/client', {
-                                        profile: res[0], clientID: session?.data?.user.id
+                                        profile: res[0], clientID: client.id
                                     })
 
                                     if (data.ok) {
-
-                                        session.update()
+                                        await signIn('credentials', {
+                                            username: client.username, password: client.password, redirect: false
+                                        })
                                         setOkMsg('Profile Changed')
                                         setTimeout(() => {
                                             setOkMsg('')

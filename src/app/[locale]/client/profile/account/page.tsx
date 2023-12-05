@@ -12,21 +12,12 @@ import { useTranslations, useLocale } from 'next-intl'
 import { FormEvent, useEffect, useState } from 'react'
 import { usePathname } from 'next-intl/client';
 import { useRouter } from 'next/navigation';
+import useClientStore from '@/lib/state/client/clientStore'
 
 const Page = () => {
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
     const router = useRouter()
 
-    const [client, setClient] = useState({
-        username: '',
-        password: ''
-    })
+    const { client, setClient } = useClientStore()
 
     const t = useTranslations('client')
     const tt = useTranslations('global')
@@ -36,19 +27,17 @@ const Page = () => {
     const updateClient = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
-            const { username, password } = client
+            const { username, password, id } = client!
             if (!username) return setErr('Username is required')
             if (username.length < 6) return setErr('Username is to short minimum 6 characters.')
             if (!password) return setErr('Password is required')
 
             setIsLoading(true)
-            const { data } = await axios.patch('/api/client', {
-                username, password
-            }, { params: { clientID: session?.data?.user.id } })
+            const { data } = await axios.patch('/api/client', { username, password })
 
             if (data.ok) {
                 setIsLoading(false)
-                session.update()
+                await signIn('credentials', { username, password, redirect: false })
                 setOkMsg('Success')
                 setTimeout(() => {
                     setOkMsg('')
@@ -70,14 +59,8 @@ const Page = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        setClient(prevClient => ({ ...prevClient, [name]: value }))
+        setClient({ ...client!, [name]: value })
     }
-
-    useEffect(() => {
-        if (session.status === 'authenticated') {
-            setClient(session.data.user)
-        }
-    }, [session])
 
     const skeleton = (
         <div className='flex flex-col gap-1.5 w-full'>
@@ -119,12 +102,12 @@ const Page = () => {
                         </select>
                     </div>
 
-                    {client.username ? <div className='flex flex-col w-full gap-1'>
+                    {client?.username ? <div className='flex flex-col w-full gap-1'>
                         <label htmlFor="username" className='px-2 h-6 text-lg font-medium'>{tt('username')}</label>
                         <input type="text" id='name' name='username' className='w-full border outline-none px-3 h-8' value={client.username} onChange={handleChange} />
                     </div> : skeleton}
 
-                    {client.username ? <div className='flex flex-col w-full gap-1 relative'>
+                    {client?.password ? <div className='flex flex-col w-full gap-1 relative'>
                         <label htmlFor="password" className='px-2 h-6 text-lg font-medium'>{tt('password')}</label>
                         <input type={eye ? 'text' : 'password'} id='password' name='password' className='w-full border outline-none px-3 pr-8 h-8' value={client.password} onChange={handleChange} />
                         <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-black' onClick={toggleEye} />

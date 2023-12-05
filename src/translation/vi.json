@@ -54,16 +54,16 @@
             "validity": "Hiệu lực",
             "sold": "Đã bán",
             "invoice": "Hóa đơn",
-            "available": "Có sẵn",
+            "available": "Còn lại",
             "online_renews": "Gia hạn Trực tuyến",
             "repeat_purchases": "Mua lại",
             "settlement_period": "Kỳ thanh toán",
             "select": "Chọn Thẻ",
             "search": "Tìm kiếm Thẻ",
             "card": "Thẻ",
-            "404": "Thẻ Không Tìm thấy",
+            "404": "Không Tìm thấy Thẻ",
             "description": "Mô tả",
-            "courses": "Các Khóa học được Hỗ trợ",
+            "courses": "Khóa học được Hỗ trợ",
             "suppliers": "Nhà cung cấp được Hỗ trợ",
             "client": "Khách hàng"
         },
@@ -78,7 +78,7 @@
             "selected": "Đã chọn",
             "cancel": "Hủy",
             "total": "Tổng cộng",
-            "delete-confirm": "Vâng, Tôi Chắc Chắn",
+            "delete-confirm": "Có, Tôi chắc chắn",
             "confirm-cancel": "Không Hủy"
         },
         "pagination": {
@@ -96,7 +96,7 @@
             "agent": "Đại lý",
             "supplier": "Nhà cung cấp",
             "admin": "Quản trị viên",
-            "orders": "Đơn hàng",
+            "orders": "Đơn đặt hàng",
             "booking": "Đặt chỗ",
             "news": "Tin tức Web",
             "settings": "Cài đặt",
@@ -111,17 +111,17 @@
             "delete": "Xóa Lịch trình"
         },
         "order": {
-            "h1": "Quản lý Đơn hàng",
-            "create": "Tạo Đơn hàng",
-            "update": "Cập nhật Đơn hàng",
+            "h1": "Quản lý Đơn đặt hàng",
+            "create": "Tạo Đơn đặt hàng",
+            "update": "Cập nhật Đơn đặt hàng",
             "card": "Thẻ",
             "client_name": "Khách hàng",
             "quantity": "Số lượng",
             "operator": "Người vận hành",
-            "invoice_number": "Số hóa đơn",
-            "express_number": "Số chuyển phát",
+            "invoice_number": "Số Hóa đơn",
+            "express_number": "Số Express",
             "departments": "Bộ phận",
-            "search": "Tìm kiếm Đơn hàng"
+            "search": "Tìm kiếm Đơn đặt hàng"
         },
         "department": {
             "h1": "Quản lý Bộ phận",
@@ -136,7 +136,7 @@
             "course": "Khóa học",
             "select-course": "Chọn Khóa học",
             "select-schedule": "Chọn Lịch trình",
-            "delete": "Bạn có chắc chắn muốn xóa đặt chỗ này?",
+            "delete": "Bạn có chắc muốn xóa đặt chỗ này không?",
             "clientcard-select": "Chọn Thẻ",
             "search": "Tìm kiếm Đặt chỗ",
             "create": "Tạo Đặt chỗ",
@@ -145,8 +145,8 @@
             "reminders": {
                 "h1": "Quản lý Nhắc nhở Đặt chỗ",
                 "h2": "Nhắc nhở",
-                "delete": "Bạn có chắc chắn muốn xóa nhắc nhở này?",
-                "confirmation": "Bạn có chắc chắn muốn đặt chỗ nhắc nhở này?",
+                "delete": "Bạn có chắc muốn xóa nhắc nhở này không?",
+                "confirmation": "Bạn có chắc muốn đặt nhắc nhở này không?",
                 "create": "Tạo Nhắc nhở",
                 "confirm": "Đặt chỗ!",
                 "update": "Cập nhật Nhắc nhở"
@@ -163,16 +163,18 @@
         "course": "Khóa học",
         "admin": "Quản trị viên",
         "delete": "Xóa",
-        "employment": "Tình trạng Tuyển dụng",
+        "employment": "Trạng thái Việc làm",
         "update": "Cập nhật",
+        "courses": "Khóa học",
+        "suppliers": "Nhà cung cấp",
         "view": "Xem",
         "price": "Giá",
         "time": "Thời gian",
-        "meeting-code": "Mã cuộc họp",
+        "meeting-code": "Mã Cuộc họp",
         "service": "Dịch vụ",
         "departments": "Bộ phận",
         "settlement": "Kỳ thanh toán",
-        "payment": "Thông tin thanh toán",
+        "payment": "Thông tin Thanh toán",
         "remove": "Xóa",
         "add-more": "Thêm",
         "status": "Trạng thái",
@@ -183,7 +185,7 @@
         "username": "Tên người dùng",
         "meeting": "Thông tin Cuộc họp",
         "address": "Địa chỉ",
-        "show-more": "Hiển thị Thêm",
+        "show-more": "Hiển thị thêm",
         "optional": "(tùy chọn)",
         "email": "Địa chỉ Email",
         "select": "Chọn",
@@ -191,7 +193,7 @@
         "select-gender": "Chọn Giới tính",
         "clientcard": "Thẻ Khách hàng",
         "password": "Mật khẩu",
-        "confirm-password": "Xác nhận mật khẩu",
+        "confirm-password": "Xác nhận Mật khẩu",
         "phone": "Số điện thoại",
         "operator": "Người vận hành",
         "schedule": "Lịch trình",
@@ -201,14 +203,14 @@
         "date": "Ngày",
         "renew": "Gia hạn",
         "gender": "Giới tính",
-        "employment-status": "Tình trạng Tuyển dụng",
+        "employment-status": "Trạng thái Việc làm",
         "organization": "Tổ chức",
-        "profile": "Hình ảnh Hồ sơ",
+        "profile": "Ảnh hồ sơ",
         "origin": "Xuất xứ",
-        "note": "Chú ý",
-        "invoice": "Số hóa đơn",
-        "express": "Số chuyển phát",
-        "tags": "Thẻ"
+        "note": "Ghi chú",
+        "invoice": "Số Hóa đơn",
+        "express": "Số Express",
+        "tags": "Nhãn"
     },
     "auth": {
         "welcome-back": "Chào mừng trở lại!",
@@ -218,14 +220,14 @@
         "signin": "Đăng nhập",
         "signup": "Đăng ký",
         "name": "Họ và tên",
-        "confirm_password": "Xác nhận mật khẩu",
+        "confirm_password": "Xác nhận Mật khẩu",
         "not_signup": "Chưa có tài khoản? ",
         "already_signup": "Đã đăng ký?"
     },
     "client": {
         "header": {
             "buy-card": "Mua Thẻ",
-            "book-now": "Đặt ngay",
+            "book-now": "Đặt Ngay",
             "logout": "Đăng xuất"
         },
         "card": {
@@ -233,7 +235,7 @@
             "buy-date": "Ngày mua",
             "days": "Ngày",
             "balance": "Số dư",
-            "buy": "Mua ngay",
+            "buy": "Mua Ngay",
             "price": "Giá"
         },
         "profile": {
@@ -242,11 +244,16 @@
             "settings": "Cài đặt",
             "account-info": "Thông tin Tài khoản",
             "info": "Thông tin Hồ sơ",
-            "navigate": "Chuyển đến",
+            "navigate": "Chuyển hướng đến",
             "booking": "Đặt chỗ",
             "my-cards": "Thẻ của tôi",
             "my-bookings": "Đặt chỗ của tôi",
-            "my-orders": "Đơn hàng của tôi"
+            "my-orders": "Đơn đặt hàng của tôi"
+        },
+        "booking": {
+            "select-card": "Chọn thẻ để đặt chỗ",
+            "fillup": "Điền thông tin đặt chỗ",
+            "no-supplier": "Không có nhà cung cấp nào cho thẻ này"
         }
     }
 }

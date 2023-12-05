@@ -14,9 +14,18 @@ export const GET = async (req: Request) => {
 
         if (session.user.type === 'client') {
 
+            const today = new Date();  // Get the current date and time in UTC
+
+            const formattedToday = today.toISOString().split('T')[0];  // Format the date as "YYYY-MM-DD"
+            const formattedCurrentTime = `${today.getHours().toString().padStart(2, '0')}:${today.getUTCMinutes().toString().padStart(2, '0')}`;  // Format the time as "HH:mm"
+
             if (clientCardID) {
+
                 const clientCard = await prisma.clientCard.findUnique({
-                    where: { id: clientCardID, clientID: session.user.id },
+                    where: {
+                        id: clientCardID,
+                        clientID: session.user.id,
+                    },
                     select: {
                         card: {
                             select: {
@@ -28,30 +37,58 @@ export const GET = async (req: Request) => {
                                                 id: true,
                                                 tags: true,
                                                 name: true,
+                                                profile_url: true,
                                                 meeting_info: {
                                                     select: {
                                                         id: true
                                                     }
                                                 },
-                                                profile_url: true
+                                                schedule: {
+                                                    select: {
+                                                        id: true
+                                                    },
+                                                    where: {
+                                                        status: 'available',
+                                                        date: { gte: formattedToday },
+                                                        time: { gte: formattedCurrentTime },
+                                                        NOT: {
+                                                            AND: [
+                                                                { date: formattedToday },
+                                                                { time: formattedCurrentTime }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             },
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                })
+                    },
+                });
+
 
                 if (!clientCard) return notFoundRes('Card');
 
                 const supportedSuppliers = clientCard.card.supported_suppliers;
 
-                const suppliersWithMeetingInfo = supportedSuppliers.filter(
-                    (supplier) => supplier.supplier.meeting_info && supplier.supplier.meeting_info.length > 0
-                );
+                //filter the supplier
+                const filterSupplier = supportedSuppliers
+                    .filter((supplier) => supplier.supplier.meeting_info && supplier.supplier.meeting_info.length > 0 &&
+                        supplier.supplier.schedule.length > 0)
+                    .map((supplier) => ({
+                        // Copy all properties from the original supplier except the 'schedule' property
+                        ...supplier,
+                        supplier: {
+                            ...supplier.supplier,
+                            meeting_info: undefined,
+                            schedule: undefined, // Remove the 'schedule' property
+                        },
+                    }));
 
-                return okayRes(suppliersWithMeetingInfo);
+
+                return okayRes(filterSupplier);
             }
 
             return notFoundRes('Card')

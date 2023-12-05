@@ -2,10 +2,7 @@
 import ClientHeader from '@/components/client/ClientHeader'
 import ClientOrders from '@/components/client/ClientOrders'
 import ClientProfile from '@/components/client/ClientProfile'
-import { Order } from '@/lib/types/super-admin/orderType'
-import axios from 'axios'
-import { signIn, useSession } from 'next-auth/react'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 const Page = () => {
 

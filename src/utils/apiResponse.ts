@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
 const notFoundRes = (name: string) => {
     return NextResponse.json({ msg: `${name} not found` }, { status: 404 })
@@ -36,7 +36,7 @@ const unauthorizedRes = async () => {
     return NextResponse.json({ msg: 'Sign in First' }, { status: 401 })
 }
 
-const getSearchParams = (url: string, key: string) => {
+const getSearchParams = ({ url }: NextRequest, key: string) => {
     const { searchParams } = new URL(url)
     return searchParams.get(key)
 }
