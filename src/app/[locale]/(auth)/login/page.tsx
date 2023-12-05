@@ -13,17 +13,11 @@ import { useState } from 'react';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { useTranslations } from 'next-intl';
 
-interface SessionProps {
-    status: string
-    data: any
-    update: any;
-}
-
 const Page = () => {
 
     const department = useSearchParams().get('department')
 
-    const session: SessionProps = useSession()
+    const session = useSession()
 
     const { isLoading, setIsLoading, err, setErr } = useAdminGlobalStore()
 
@@ -39,6 +33,7 @@ const Page = () => {
     }
 
     const loginUser = async (event: any) => {
+
         event.preventDefault()
 
         const { username, password } = formData
@@ -62,9 +57,6 @@ const Page = () => {
         } catch (error: any) {
             setIsLoading(false)
             console.log(error);
-            if (error.response.data.msg) {
-                return setErr(error.response.data.msg)
-            }
             alert('Something went wrong')
         }
     }
@@ -76,7 +68,7 @@ const Page = () => {
 
         setErr('')
 
-        if (session.status !== 'loading' && session.status === 'authenticated') {
+        if (session.status === 'authenticated') {
             if (session.data.user.type === 'client') {
                 redirect('/client')
             } else if (session.data.user.type === 'agent') {

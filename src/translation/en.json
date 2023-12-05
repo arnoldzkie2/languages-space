@@ -165,6 +165,8 @@
         "delete": "Delete",
         "employment": "Employment Status",
         "update": "Update",
+        "courses": "Courses",
+        "suppliers": "Suppliers",
         "view": "View",
         "price": "Price",
         "time": "Time",
@@ -247,6 +249,11 @@
             "my-cards": "My Cards",
             "my-bookings": "My Bookings",
             "my-orders": "My Orders"
+        },
+        "booking": {
+            "select-card": "Select card to book",
+            "fillup": "Fill up booking info",
+            "no-supplier": "No available supplier for this card"
         }
     }
 }

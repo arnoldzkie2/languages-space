@@ -58,7 +58,7 @@ export const POST = async (req: Request) => {
 
             const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
 
-            const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, clientCardID: card?.cardID } })
+            const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } })
 
             const department = await prisma.department.findUnique({ where: { id: departmentID } })
             if (!department) return notFoundRes('Department')
@@ -130,7 +130,7 @@ export const PATCH = async (req: Request) => {
 
                 const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
 
-                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, clientCardID: card?.cardID } })
+                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } })
 
                 if (department.name.toLocaleLowerCase() === 'fingerpower') {
 

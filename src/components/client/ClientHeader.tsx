@@ -3,19 +3,27 @@
 import useClientStore from '@/lib/state/client/clientStore'
 import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { signOut, useSession } from 'next-auth/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
 const ClientHeader = () => {
 
-    const session: any = useSession()
+    const session = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn()
+        },
+    })
+
+    const router = useRouter()
 
     const [isOpen, setIsOpen] = useState(false)
 
-    const { setPage, client, getClient } = useClientStore()
+    const { setPage, client, setClient } = useClientStore()
 
     const skeleton = (
         <li className='bg-slate-200 animate-pulse h-5 w-28 rounded-3xl'></li>
@@ -23,8 +31,11 @@ const ClientHeader = () => {
 
     useEffect(() => {
 
-        if (session.status === 'authenticated' && session.data.user.id)
-            getClient(session.data.user.id)
+        if (session.status === 'authenticated' && session.data.user.type === 'client') {
+            setClient(session.data.user)
+        }
+
+        if (session.status === 'authenticated' && session.data.user.type !== 'client') router.push('/login')
 
     }, [session])
 
@@ -55,9 +66,9 @@ const ClientHeader = () => {
                 </div>
                 <div className={`mt-2 flex items-center gap-5 lg:ml-auto`}>
                     <Link href={'/client/profile'} onClick={() => setPage('profile')} className='flex items-center gap-2 px-3 py-1 border hover:bg-slate-100 rounded-md'>
-                        {client.username ? <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={30} height={30} className='rounded-full border max-h-7 max-w-7' />
+                        {client ? <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={30} height={30} className='rounded-full border max-h-7 max-w-7' />
                             : <div className='w-[30px] h-[30px] rounded-full border bg-slate-200 animate-pulse'></div>}
-                        {client.username ? <h1 className='w-28'>{session?.data?.user.username}</h1> : skeleton}
+                        {client ? <h1 className='w-28'>{session?.data?.user.username}</h1> : skeleton}
                     </Link>
                     <button onClick={() => signOut({
                         redirect: true,

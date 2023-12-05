@@ -1,5 +1,5 @@
 import { Booking } from "./bookingType"
-import { Supplier, SupplierMeetingInfo } from "./supplierTypes"
+import { Supplier } from "./supplierTypes"
 
 interface SupplierSchedule {
     id: string

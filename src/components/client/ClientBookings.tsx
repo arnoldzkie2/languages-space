@@ -6,20 +6,29 @@ import { Booking } from '@/lib/types/super-admin/bookingType'
 import { useTranslations } from 'next-intl'
 import React, { useEffect } from 'react'
 
-interface Props {
-    bookings: Booking[]
-}
+const ClientBookings: React.FC = () => {
 
-const ClientBookings: React.FC<Props> = ({ bookings }) => {
+    const { bookings, getClientBookings } = useClientStore()
 
     const t = useTranslations('client')
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
 
-
     const { setPage } = useClientStore()
     const { skeleton, currentPage, setCurrentPage, itemsPerPage } = useAdminGlobalStore()
-    const getTotalPages = () => Math.ceil(bookings.length / itemsPerPage)
+    const getTotalPages = () => {
+
+        if (bookings) {
+            return Math.ceil(bookings.length / itemsPerPage)
+        } else {
+            return 1
+        }
+    }
+
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentBookings = bookings && bookings.slice(indexOfFirstItem, indexOfLastItem)
+
 
     const goToPreviousPage = () => {
 
@@ -39,6 +48,9 @@ const ClientBookings: React.FC<Props> = ({ bookings }) => {
 
     useEffect(() => {
         setPage('bookings')
+        if (!bookings) {
+            getClientBookings()
+        }
     }, [])
 
     return (
@@ -57,8 +69,8 @@ const ClientBookings: React.FC<Props> = ({ bookings }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {bookings && bookings.length > 0 ?
-                            bookings.map(booking => (
+                        {currentBookings && currentBookings.length > 0 ?
+                            currentBookings.map(booking => (
                                 <tr className="bg-white border hover:bg-slate-50" key={booking.id}>
                                     <td className='px-3 py-3'>
                                         <div className='h-5 text-xs md:text-sm w-36'>
@@ -76,12 +88,12 @@ const ClientBookings: React.FC<Props> = ({ bookings }) => {
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-24 uppercase'>
+                                        <div className='h-5 text-xs md:text-sm w-24'>
                                             {booking.status}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-36 uppercase'>
+                                        <div className='h-5 text-xs md:text-sm w-36'>
                                             {booking.note}
                                         </div>
                                     </td>
@@ -119,7 +131,7 @@ const ClientBookings: React.FC<Props> = ({ bookings }) => {
                 </table >
             </div>
             <footer className={`flex mt-auto min-h-[80px] items-center justify-between border-t text-xs lg:text-md`}>
-                <div className='flex items-center gap-3 w-44 lg:w-56'>
+                <div className='sm:flex items-center gap-3 w-44 lg:w-56 hidden'>
                     <div className='font-medium'>
                         {ttt('pagination.page')} {currentPage} of {getTotalPages()}
                     </div>
@@ -135,7 +147,7 @@ const ClientBookings: React.FC<Props> = ({ bookings }) => {
                 </div>
 
                 <div className='flex items-center mr-auto'>
-                    <div className='font-medium'>{ttt('global.total')} <span className='font-black text-gray-600'>{bookings.length}</span></div>
+                    <div className='font-medium'>{ttt('global.total')} <span className='font-black text-gray-600'>{bookings && bookings.length}</span></div>
                 </div>
 
                 <div className='flex items-center gap-5 h-full'>

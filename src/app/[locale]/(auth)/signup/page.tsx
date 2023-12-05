@@ -61,12 +61,13 @@ const Page = () => {
 
         const { username, password, confirm_password } = formData
 
-        if (!username || !password) return setErr('Fill up the form!')
-        if (username.length < 6) return setErr('Username is to short minimum 6 characters.')
-        if(username.length > 15) return setErr('Username is to long maximum 15 characters.')
+        if (!username) return setErr('Username is required')
+        if (!password) return setErr('Password is required')
+        if (username.length > 12) return setErr('Username is to long maximum 15 characters.')
         if (password && !confirm_password) return setErr('Confirm your password')
         if (password !== confirm_password) return setErr('Password did not matched!')
-        if (password.length < 6 || confirm_password.length < 6) return setErr('Password is to short minimum 6 characters.')
+        if (password.length < 6) return setErr('Password is to short minimum 6 characters.')
+        if (password.length > 30) return setErr('Password is to long maximum 30 characters.')
 
         try {
             setIsLoading(true)

@@ -1,5 +1,5 @@
 import { Order } from "./orderType"
-import { Courses, Supplier } from "./supplierTypes"
+import { Courses, SupplierPrice } from "./supplierTypes"
 
 interface ClientCard {
     id: string
@@ -36,7 +36,7 @@ interface ClientCardList {
     updated_at: Date
     orders: Order[]
     supported_courses: Courses[]
-    supported_suppliers: Supplier[]
+    supported_suppliers: SupplierPrice[]
     active: ClientCard[]
 }
 

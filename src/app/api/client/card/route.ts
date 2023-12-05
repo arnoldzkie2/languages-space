@@ -1,14 +1,36 @@
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
-
+import { getAuth } from "@/lib/nextAuth";
 export const GET = async (req: Request) => {
 
   const { searchParams } = new URL(req.url)
-  const clientID = searchParams.get('clientID')
   const cardID = searchParams.get('cardID')
   const departmentID = searchParams.get('departmentID')
 
   try {
+
+    const session = await getAuth()
+    if (!session) return unauthorizedRes()
+
+    if (session?.user.type === 'client') {
+
+      const clientCards = await prisma.client.findUnique({
+        where: { id: session.user.id }, select: {
+          cards: {
+            select: {
+              id: true,
+              name: true,
+              validity: true,
+              balance: true,
+              created_at: true
+            }
+          }
+        }
+      })
+      if (!clientCards) return badRequestRes()
+
+      return okayRes(clientCards.cards)
+    }
 
     //retrieve single card
     if (cardID) {
@@ -16,14 +38,6 @@ export const GET = async (req: Request) => {
       if (!card) return notFoundRes('Client Card')
 
       return okayRes(card)
-    }
-
-    // get all client cards
-    if (clientID) {
-      const clientCard = await prisma.client.findUnique({ where: { id: clientID }, include: { cards: true } })
-      if (!clientCard) return notFoundRes('Client Card')
-
-      return okayRes(clientCard.cards)
     }
 
     // get all client that has cards in specific department

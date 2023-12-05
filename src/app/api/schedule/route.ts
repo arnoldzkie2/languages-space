@@ -162,17 +162,17 @@ export const DELETE = async (req: Request) => {
                 const { booking } = schedule
 
                 //retrieve the client's card used in booking
-                const clientCard = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
-                if (!clientCard) return notFoundRes('Client Card')
+                const card = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
+                if (!card) return notFoundRes('Client Card')
 
                 //get the supplier price to refund the client's card
-                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { clientCardID: clientCard.cardID, supplierID: booking.supplierID } })
+                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { cardID: card.cardID, supplierID: booking.supplierID } })
                 if (!supplierPrice) return NextResponse.json({ msg: 'Supplier Is Not Supported' }, { status: 409 })
 
                 //refund the client's card by the supplier price amount
                 const refundClient = await prisma.clientCard.update({
                     where: { id: booking.clientCardID },
-                    data: { balance: clientCard.balance + supplierPrice.price }
+                    data: { balance: card.balance + supplierPrice.price }
                 })
                 if (!refundClient) return badRequestRes()
 
@@ -183,7 +183,7 @@ export const DELETE = async (req: Request) => {
                 const deleteBooking = await prisma.booking.delete({ where: { id: booking.id } })
                 if (!deleteBooking) return badRequestRes()
 
-                //and return a 200 response
+                //and return a ok response
                 return okayRes()
 
             }

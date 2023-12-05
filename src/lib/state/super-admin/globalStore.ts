@@ -84,12 +84,22 @@ const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
         loc: 'kr',
         val: '한국어' // Korean
     }],
-    setOkMsg: (msg: string) => set({ okMsg: msg }),
+    setOkMsg: (msg: string) => {
+        set({ okMsg: msg })
+        setTimeout(() => {
+            set({ okMsg: '' })
+        }, 4000)
+    },
     toggleSideNav: () => set(state => ({ isSideNavOpen: !state.isSideNavOpen })),
     departments: [],
     err: '',
-    setErr: (err: string) => set({ err: err }),
-    setDepartments: (depts: Department[]) => set(state => ({ departments: depts })),
+    setErr: (err: string) => {
+        set({ err: err })
+        setTimeout(() => {
+            set({ err: '' })
+        }, 4000)
+    }
+    , setDepartments: (depts: Department[]) => set(state => ({ departments: depts })),
     getDepartments: async () => {
         try {
 

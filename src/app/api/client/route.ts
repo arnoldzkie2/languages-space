@@ -90,9 +90,8 @@ export const GET = async (req: Request) => {
         if (clientID) {
 
             const client = await prisma.client.findUnique({
-                where: { id: clientID },
-                include: { departments: true, cards: true }
-            });
+                where: { id: clientID }
+            })
 
             if (!client) notFoundRes('Client')
 
@@ -105,7 +104,15 @@ export const GET = async (req: Request) => {
             const clientsInDepartment = await prisma.department.findUnique({
                 where: { id: departmentID }, include: {
                     clients: {
-                        include: { departments: true, cards: true }
+                        include: {
+                            departments: {
+                                select: { id: true, name: true }
+                            }, cards: {
+                                select: {
+                                    validity: true
+                                }
+                            }
+                        }
                     }
                 }
             })
@@ -116,7 +123,20 @@ export const GET = async (req: Request) => {
 
         }
 
-        const allClient = await prisma.client.findMany({ include: { departments: true, cards: true } })
+        const allClient = await prisma.client.findMany({
+            include: {
+                departments: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }, cards: {
+                    select: {
+                        validity: true
+                    }
+                }
+            }
+        })
 
         if (!allClient) return badRequestRes()
 

@@ -206,9 +206,14 @@ const Page = ({ params }: Props) => {
     }
 
     useEffect(() => {
-        retrieveCard()
-        getSupplier()
-        getCourses()
+
+        if (formData.id) {
+            getSupplier()
+        } else {
+            retrieveCard()
+            getSupplier()
+            getCourses()
+        }
     }, [departmentID])
 
     useEffect(() => {

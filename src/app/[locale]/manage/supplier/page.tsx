@@ -27,7 +27,7 @@ const Page: React.FC<PageProps> = ({ }) => {
 
     const { supplier, totalSupplier, selectedSupplier, deleteSupplierModal, getSupplier, setTotalSupplier } = useAdminSupplierStore()
 
-    const { currentPage, departmentID, isSideNavOpen, setCurrentPage,itemsPerPage } = useAdminGlobalStore()
+    const { currentPage, departmentID, isSideNavOpen, setCurrentPage, itemsPerPage, setDepartmentID } = useAdminGlobalStore()
 
     const [searchQuery, setSearchQuery] = useState(ManageClientSearchQueryValue)
 
@@ -71,10 +71,15 @@ const Page: React.FC<PageProps> = ({ }) => {
     useEffect(() => {
 
         getSupplier()
-
         setCurrentPage(1)
 
     }, [departmentID])
+
+    useEffect(() => {
+
+        setDepartmentID('')
+
+    }, [])
 
     useEffect(() => {
 

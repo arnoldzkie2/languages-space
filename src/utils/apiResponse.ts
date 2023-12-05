@@ -36,4 +36,9 @@ const unauthorizedRes = async () => {
     return NextResponse.json({ msg: 'Sign in First' }, { status: 401 })
 }
 
-export { notFoundRes, serverErrorRes, badRequestRes, okayRes, existRes, createdRes, unauthorizedRes }
+const getSearchParams = (url: string, key: string) => {
+    const { searchParams } = new URL(url)
+    return searchParams.get(key)
+}
+
+export { notFoundRes, serverErrorRes, badRequestRes, okayRes, existRes, createdRes, unauthorizedRes, getSearchParams }

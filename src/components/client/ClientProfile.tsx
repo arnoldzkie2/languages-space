@@ -45,7 +45,7 @@ const ClientProfile: React.FC<Props> = () => {
   return (
     <div className='flex flex-col gap-3 w-full lg:w-1/4 order-2 md:order-1'>
       <div className='items-center gap-4 w-full hidden md:flex flex-row'>
-        {session.status === 'authenticated' && client.username ? <Image width={50} height={50}
+        {session.status === 'authenticated' && client ? <Image width={50} height={50}
           src={client.profile_url || '/profile/profile.svg'}
           alt='profile' className='border rounded-full md:w-[50px] md:h-[50px]' /> : <div className='rounded-full bg-slate-200 animate-pulse md:h-[50px] md:w-[50px]'></div>}
         {session.status === 'authenticated' ? <h1 className='text-2xl md:text-xl border-b pb-1 mb-1'>{session.data.user.username || ''}</h1>

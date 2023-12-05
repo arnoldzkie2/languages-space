@@ -1,4 +1,4 @@
-import { ClientCard } from "./clientCardType"
+import { ClientCard, ClientCardList } from "./clientCardType"
 import { Department } from "./globalType"
 import { SupplierSchedule } from "./scheduleType"
 
@@ -23,7 +23,7 @@ interface Supplier {
     gender: string | null
     card: any
     meeting_info: SupplierMeetingInfo[]
-    tags: any
+    tags: string[]
     schedule: SupplierSchedule[]
     origin: string | null
     note: string | null
@@ -81,5 +81,15 @@ interface TotalCourse {
     searched: string
 }
 
-export type { SupplierFormDataProps, Courses, Supplier, TotalSupplier, SupplierMeetingInfo, TotalCourse }
+interface SupplierPrice {
+    id: string
+    supplier: Supplier
+    card: ClientCardList
+    price: number
+    clientCardID: string
+    supplierID: string
+    cardID: string
+}
+
+export type { SupplierFormDataProps, SupplierPrice, Courses, Supplier, TotalSupplier, SupplierMeetingInfo, TotalCourse }
 

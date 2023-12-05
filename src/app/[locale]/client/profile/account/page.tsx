@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 
 const Page = () => {
 
-    const session: any = useSession({
+    const session = useSession({
         required: true,
         onUnauthenticated() {
             signIn()
@@ -44,11 +44,12 @@ const Page = () => {
             setIsLoading(true)
             const { data } = await axios.patch('/api/client', {
                 username, password
-            }, { params: { clientID: session.data.user.id } })
+            }, { params: { clientID: session?.data?.user.id } })
 
             if (data.ok) {
                 setIsLoading(false)
-                setOkMsg('Success relogin to update changes')
+                session.update()
+                setOkMsg('Success')
                 setTimeout(() => {
                     setOkMsg('')
                 }, 3000)
@@ -58,6 +59,9 @@ const Page = () => {
             setIsLoading(false)
             console.log(error);
             if (error.response.data.msg) {
+                setTimeout(() => {
+                    setErr('')
+                }, 5000)
                 return setErr(error.response.data.msg)
             }
             alert('Something went wrong')
@@ -81,7 +85,6 @@ const Page = () => {
             <div className='w-full h-7 bg-slate-200 animate-pulse rounded-md'></div>
         </div>
     )
-
 
     const currentPathname = usePathname()
 

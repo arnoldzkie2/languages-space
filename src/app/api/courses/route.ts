@@ -9,17 +9,24 @@ export const GET = async (req: Request) => {
     try {
 
         if (cardID) {
-            const card = await prisma.clientCard.findUnique({ where: { id: cardID } })
-            if (!card) return notFoundRes('Card')
-
-            const courses = await prisma.clientCardList.findUnique({
-                where: { id: card.cardID }, select: {
-                    supported_courses: true
+            const card = await prisma.clientCard.findUnique({
+                where: { id: cardID }, select: {
+                    card: {
+                        select: {
+                            supported_courses: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    created_at: true
+                                }
+                            }
+                        }
+                    }
                 }
             })
-            if (!courses) return badRequestRes()
+            if (!card) return notFoundRes('Card')
 
-            return okayRes(courses.supported_courses)
+            return okayRes(card.card.supported_courses)
         }
 
         if (courseID) {
@@ -30,7 +37,13 @@ export const GET = async (req: Request) => {
             return okayRes(course)
         }
 
-        const courses = await prisma.courses.findMany()
+        const courses = await prisma.courses.findMany({
+            select: {
+                id: true,
+                name: true,
+                created_at: true
+            }
+        })
         if (!courses) return badRequestRes()
 
         return okayRes(courses)

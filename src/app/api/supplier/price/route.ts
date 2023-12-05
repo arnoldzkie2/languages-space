@@ -15,7 +15,7 @@ export const GET = async (req: Request) => {
         const card = await prisma.clientCard.findUnique({ where: { id: clientCardID } })
         if (!card) return notFoundRes('Client Card')
 
-        const price = await prisma.supplierPrice.findFirst({ where: { clientCardID: card.cardID, supplierID } })
+        const price = await prisma.supplierPrice.findFirst({ where: { cardID: card.cardID, supplierID } })
         if (!price) return badRequestRes('supplier_not_supported')
 
         return okayRes(price.price)

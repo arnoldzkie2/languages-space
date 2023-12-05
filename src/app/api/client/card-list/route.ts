@@ -1,8 +1,8 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import stripe from "@/utils/getStripe";
 import { NextResponse } from "next/server";
-
+import { SupplierPrice } from '@prisma/client'
 export const POST = async (req: Request) => {
 
     const { name, price, balance, validity, invoice, repeat_purchases, available, online_renews, courses, suppliers, departmentID } = await req.json()
@@ -35,8 +35,7 @@ export const POST = async (req: Request) => {
                         supplier: {
                             connect: { id: supplierPrice.supplierID }
                         },
-                        price: supplierPrice.price,
-                        clientCardID: newCard.id
+                        price: supplierPrice.price
                     }))
                 }
             }
@@ -102,11 +101,10 @@ export const POST = async (req: Request) => {
 
 }
 
-export const GET = async (req: Request) => {
+export const GET = async ({ url }: Request) => {
 
-    const { searchParams } = new URL(req.url)
-    const clientCardID = searchParams.get('clientCardID')
-    const departmentID = searchParams.get('departmentID')
+    const clientCardID = getSearchParams(url, 'clientCardID')
+    const departmentID = getSearchParams(url, 'departmentID')
 
     try {
 
@@ -155,20 +153,19 @@ export const GET = async (req: Request) => {
         return okayRes(allCard)
 
     } catch (error) {
-        console.error(error);
+        console.error(error)
         return serverErrorRes(error)
     } finally {
         prisma.$disconnect()
     }
 }
 
-export const PATCH = async (req: Request) => {
+export const PATCH = async ({ url, json }: Request) => {
 
-    const { searchParams } = new URL(req.url)
-    const clientCardID = searchParams.get('clientCardID')
+    const clientCardID = getSearchParams(url, 'clientCardID')
 
     const { name, price, balance, validity, invoice, repeat_purchases, available, departmentID,
-        online_renews, courses, suppliers } = await req.json()
+        online_renews, courses, suppliers } = await json()
 
     try {
 
@@ -220,7 +217,6 @@ export const PATCH = async (req: Request) => {
                                     connect: { id: newSupplierPrice.supplierID }
                                 },
                                 price: newSupplierPrice.price,
-                                clientCardID: card.id
                             }))
                         }
                     }, include: { supported_courses: true, supported_suppliers: true }
@@ -281,7 +277,6 @@ export const PATCH = async (req: Request) => {
                                     connect: { id: newSupplierPrice.supplierID }
                                 },
                                 price: newSupplierPrice.price,
-                                clientCardID: card.id
                             }))
                         }
 
@@ -315,8 +310,7 @@ export const PATCH = async (req: Request) => {
                             supplier: {
                                 connect: { id: newSupplierPrice.supplierID }
                             },
-                            price: newSupplierPrice.price,
-                            clientCardID: card.id
+                            price: newSupplierPrice.price
                         }))
                     }
                 }

@@ -51,7 +51,7 @@ export const POST = async (req: Request) => {
             const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
             if (!card) return notFoundRes('Card')
 
-            const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, clientCardID: card.cardID } })
+            const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card.cardID } })
             if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported in this card' }, { status: 400 })
             if (card.balance < supplierPrice.price) return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 })
 

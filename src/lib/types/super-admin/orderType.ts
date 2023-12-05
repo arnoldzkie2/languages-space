@@ -1,4 +1,4 @@
-import { ClientCard, ClientCardList } from "./clientCardType"
+import { ClientCardList } from "./clientCardType"
 import { Client } from "./clientType"
 import { Department } from "./globalType"
 

@@ -129,14 +129,14 @@ export const POST = async (req: Request) => {
 
     const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, quantity, departmentID, settlement } = await req.json()
 
-    if (!scheduleID) return notFoundRes('Schedule')
-    if (!supplierID) return notFoundRes('Supplier')
-    if (!clientID) return notFoundRes('Client')
-    if (!clientCardID) return notFoundRes('Client Card')
-    if (!departmentID) return notFoundRes('Department')
-    if (!settlement) return notFoundRes('Settlement Period')
-    if (!operator) return notFoundRes('Operator')
-    if (!meeting_info) return notFoundRes('Meeting Info')
+    if (!scheduleID) return notFoundRes('Select Schedul')
+    if (!supplierID) return notFoundRes('Select Supplier')
+    if (!clientID) return notFoundRes('Select Client')
+    if (!clientCardID) return notFoundRes('Select Card')
+    if (!departmentID) return notFoundRes('Select Department')
+    if (!settlement) return notFoundRes('Select Settlement Period')
+    if (!operator) return notFoundRes('Select Operator')
+    if (!meeting_info) return notFoundRes('Select Meeting Info')
 
     try {
 
@@ -167,7 +167,7 @@ export const POST = async (req: Request) => {
         if (!card) return notFoundRes('Client Card')
 
         //check supplier price
-        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, clientCardID: card.cardID } })
+        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card.cardID } })
 
         //check if supplire is supported
         if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported in this card' })
@@ -271,7 +271,7 @@ export const PATCH = async (req: Request) => {
             const prevCard = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
             if (!prevCard) return notFoundRes('Client Card')
 
-            const prevSupplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, clientCardID: prevCard.cardID } })
+            const prevSupplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, cardID: prevCard.cardID } })
             if (!prevSupplierPrice) return notFoundRes('Supplier Price')
 
             //check schedule
@@ -426,7 +426,7 @@ export const DELETE = async (req: Request) => {
                 const clientCard = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
                 if (!clientCard) return notFoundRes('Client Card')
 
-                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, clientCardID: clientCard.cardID } })
+                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, cardID: clientCard.cardID } })
                 if (!supplierPrice) return badRequestRes()
 
                 //refund the client

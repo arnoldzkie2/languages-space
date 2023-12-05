@@ -10,10 +10,11 @@ const totalCards = {
 }
 
 const clientCardValue = {
+    id: '',
     name: '',
-    price: 1,
-    balance: 1,
-    validity: 1,
+    price: 0,
+    balance: 0,
+    validity: 0,
     invoice: false,
     available: false,
     online_renews: false,

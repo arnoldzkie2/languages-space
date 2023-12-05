@@ -12,23 +12,29 @@ export const GET = async (req: Request) => {
 
         if (supplierID) {
 
-            const supplierSchedule = await prisma.supplier.findUnique({
+            const supplier = await prisma.supplier.findUnique({
                 where: { id: supplierID },
                 select: { meeting_info: true }
             })
-            if (!supplierSchedule) return notFoundRes('Supplier')
+            if (!supplier) return notFoundRes('Supplier')
 
-            return okayRes(supplierSchedule.meeting_info)
+            return okayRes(supplier.meeting_info)
         }
 
         if (departmentID) {
 
-            const allSupplier = await prisma.supplier.findMany({
-                where: { departments: { some: { id: departmentID } }, meeting_info: { some: {} } }
+            const department = await prisma.department.findUnique({
+                where: { id: departmentID }, select: {
+                    suppliers: {
+                        where: {
+                            meeting_info: { some: {} }
+                        }
+                    }
+                }
             })
-            if (!allSupplier) return badRequestRes()
+            if (!department) return notFoundRes('Department')
 
-            return okayRes(allSupplier)
+            return okayRes(department.suppliers)
         }
 
         const allSupplier = await prisma.supplier.findMany({

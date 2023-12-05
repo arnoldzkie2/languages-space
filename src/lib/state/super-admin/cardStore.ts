@@ -54,6 +54,7 @@ const useAdminCardStore = create<ClientCardProps>((set) => ({
 
         }
     },
+ 
     totalCards: totalCards,
     viewCard: false,
     viewClientCard: false,
