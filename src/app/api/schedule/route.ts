@@ -133,7 +133,7 @@ export const POST = async (req: Request) => {
             data: newSchedules,
             skipDuplicates: true,
         })
-        if (!createSchedules) return badRequestRes();
+        if (!createSchedules) return badRequestRes()
 
         return createdRes(createSchedules);
 
@@ -157,7 +157,7 @@ export const DELETE = async (req: NextRequest) => {
             const schedule = await prisma.supplierSchedule.findUnique({
                 where: { id: scheduleID }, include: { booking: true }
             })
-            if (!schedule) return badRequestRes()
+            if (!schedule) return notFoundRes('Schedule')
 
             if (schedule.status === 'reserved' && schedule.booking.length > 0) {
 
@@ -179,12 +179,11 @@ export const DELETE = async (req: NextRequest) => {
                 })
                 if (!refundClient) return badRequestRes()
 
-                //and delete the schedule this will also delete the booking
-                const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
-                if (!deleteSchedule) return badRequestRes()
-
-                return okayRes()
             }
+
+            //and delete the schedule this will also delete the booking
+            const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
+            if (!deleteSchedule) return badRequestRes()
 
             return okayRes()
 
