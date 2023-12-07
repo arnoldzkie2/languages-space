@@ -1,6 +1,6 @@
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
 
@@ -85,14 +85,21 @@ export const POST = async (req: Request) => {
 
     try {
 
-        const checkSupplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
+        const currentDate = new Date()
+        const validDates = dates.filter((date: string) => {
+            const scheduleDate = new Date(date); // Parse date without time
 
-        if (!checkSupplier) return notFoundRes('Supplier')
+            // Check if the schedule date is today or in the future
+            return scheduleDate >= currentDate || scheduleDate.toDateString() === currentDate.toDateString();
+        })
+
+        const supplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
+        if (!supplier) return notFoundRes('Supplier')
 
         const existingSchedules = await prisma.supplierSchedule.findMany({
             where: {
                 supplierID,
-                date: { in: dates }, // Use 'in' to check against an array of dates
+                date: { in: validDates }, // Use 'in' to check against an array of validDates
                 time: { in: times },
             },
             select: {
@@ -103,11 +110,11 @@ export const POST = async (req: Request) => {
 
         const existingDateTimeSet = new Set(
             existingSchedules.map((schedule) => `${schedule.date}_${schedule.time}`)
-        );
+        )
 
         const newSchedules: any = []
         // Create new schedules in bulk
-        for (const date of dates) {
+        for (const date of validDates) {
             for (const time of times) {
                 const dateTimeKey = `${date}_${time}`;
                 if (!existingDateTimeSet.has(dateTimeKey)) {
@@ -120,14 +127,12 @@ export const POST = async (req: Request) => {
                 }
             }
         }
-
         if (newSchedules.length === 0) return okayRes()
 
         const createSchedules = await prisma.supplierSchedule.createMany({
             data: newSchedules,
             skipDuplicates: true,
         })
-
         if (!createSchedules) return badRequestRes();
 
         return createdRes(createSchedules);
@@ -141,11 +146,9 @@ export const POST = async (req: Request) => {
     }
 }
 
-export const DELETE = async (req: Request) => {
+export const DELETE = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-
-    const scheduleID = searchParams.get('scheduleID')
+    const scheduleID = getSearchParams(req, 'scheduleID')
 
     try {
 
@@ -156,40 +159,32 @@ export const DELETE = async (req: Request) => {
             })
             if (!schedule) return badRequestRes()
 
-            if (schedule.status === 'reserved' && schedule.booking) {
+            if (schedule.status === 'reserved' && schedule.booking.length > 0) {
 
                 //destruct the booking
                 const { booking } = schedule
 
                 //retrieve the client's card used in booking
-                const card = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
+                const card = await prisma.clientCard.findUnique({ where: { id: booking[0].clientCardID } })
                 if (!card) return notFoundRes('Client Card')
 
                 //get the supplier price to refund the client's card
-                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { cardID: card.cardID, supplierID: booking.supplierID } })
+                const supplierPrice = await prisma.supplierPrice.findFirst({ where: { cardID: card.cardID, supplierID: booking[0].supplierID } })
                 if (!supplierPrice) return NextResponse.json({ msg: 'Supplier Is Not Supported' }, { status: 409 })
 
                 //refund the client's card by the supplier price amount
                 const refundClient = await prisma.clientCard.update({
-                    where: { id: booking.clientCardID },
+                    where: { id: booking[0].clientCardID },
                     data: { balance: card.balance + supplierPrice.price }
                 })
                 if (!refundClient) return badRequestRes()
 
+                //and delete the schedule this will also delete the booking
                 const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
                 if (!deleteSchedule) return badRequestRes()
 
-                //delete the booking as well
-                const deleteBooking = await prisma.booking.delete({ where: { id: booking.id } })
-                if (!deleteBooking) return badRequestRes()
-
-                //and return a ok response
                 return okayRes()
-
             }
-
-            const deleteSchedule = await prisma.supplierSchedule.delete({ where: { id: scheduleID } })
-            if (!deleteSchedule) return badRequestRes()
 
             return okayRes()
 
@@ -198,11 +193,10 @@ export const DELETE = async (req: Request) => {
         return notFoundRes('scheduleID')
 
     } catch (error) {
-
         console.error(error);
-
         return serverErrorRes(error)
-
+    } finally {
+        prisma.$disconnect()
     }
 
 }

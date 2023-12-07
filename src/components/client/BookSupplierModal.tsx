@@ -13,15 +13,17 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { useTranslations } from 'next-intl'
 import { SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
 import Success from '../global/Success'
+import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 
 const ClientBookingModal = () => {
 
     const router = useRouter()
 
-    const [meetingInfo, setMeetingInfo] = useState<SupplierMeetingInfo[]>([])
     const { isLoading, setIsLoading, err, setErr, okMsg, setOkMsg } = useAdminGlobalStore()
-    const { bookingFormData, setBookingFormData, closeBookingModal, getClientCards, getClientBookings, client } = useClientStore()
+    const { closeBookingModal, getClientCards, getClientBookings, client } = useClientStore()
+    const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { cardCourses, supplierSchedule, setSupplierSchedule } = useAdminSupplierStore()
+    const { supplierMeetingInfo, getSupplierMeetingInfo } = useAdminSupplierStore()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -32,7 +34,7 @@ const ClientBookingModal = () => {
 
         try {
 
-            const { data } = await axios.get('/api/supplier/schedule', {
+            const { data } = await axios.get('/api/booking/supplier/schedule', {
                 params: { supplierID: bookingFormData.supplierID }
             })
 
@@ -44,23 +46,6 @@ const ClientBookingModal = () => {
                 return alert(error.response.data.msg)
             }
             alert('Something went wrong')
-        }
-    }
-
-    const getSupplierMeetingInfo = async () => {
-        try {
-
-            const { data } = await axios.get('/api/supplier/meeting', {
-                params: { supplierID: bookingFormData.supplierID }
-            })
-
-            if (data.ok) setMeetingInfo(data.data)
-
-        } catch (error: any) {
-            console.log(error);
-            if (error.response.data.msg) {
-                alert(error.response.data.msg)
-            }
         }
     }
 
@@ -111,7 +96,7 @@ const ClientBookingModal = () => {
         }
 
         if (bookingFormData.supplierID) {
-            getSupplierMeetingInfo()
+            getSupplierMeetingInfo(bookingFormData.supplierID)
             getSupplierSchedule()
         }
 
@@ -131,7 +116,7 @@ const ClientBookingModal = () => {
                     <label htmlFor="meetingInfo" className='px-1 font-medium'>{tt('meeting')}</label>
                     <select name="meetingInfoID" id="meetingInfo" onChange={handleChange} value={bookingFormData.meetingInfoID} className='px-3 py-1.5 rounded-sm w-full outline-none'>
                         <option value="" disabled>{ttt('supplier.select-meeting')}</option>
-                        {meetingInfo.length > 0 ? meetingInfo.map(info => (
+                        {supplierMeetingInfo && supplierMeetingInfo.length > 0 ? supplierMeetingInfo.map(info => (
                             <option value={info.id} key={info.id}>{info.service} ({info.meeting_code})</option>
                         )) :
                             <option disabled>{tt('loading')}</option>}
@@ -142,7 +127,7 @@ const ClientBookingModal = () => {
                     <label htmlFor="courseID" className='px-1 font-medium'>{tt('course')}</label>
                     <select name="courseID" id="courseID" onChange={handleChange} value={bookingFormData.courseID} className='px-3 py-1.5 rounded-sm w-full outline-none'>
                         <option value="" disabled>{ttt('booking.select-course')}</option>
-                        {cardCourses.length > 0 ? cardCourses.map(course => (
+                        {cardCourses && cardCourses.length > 0 ? cardCourses.map(course => (
                             <option value={course.id} key={course.id}>{course.name}</option>
                         )) :
                             <option disabled>{tt('loading')}</option>}

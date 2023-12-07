@@ -1,17 +1,52 @@
 import prisma from "@/lib/db";
-import { getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
 
     const clientID = getSearchParams(req, 'clientID')
+    const clientCardID = getSearchParams(req, 'clientCardID')
 
     try {
+
+        if (clientCardID && clientID) {
+            const client = await prisma.client.findUnique({
+                where: { id: clientID },
+                select: {
+                    bookings: {
+                        where: { clientCardID },
+                        select: {
+                            id: true,
+                            schedule: {
+                                select: {
+                                    date: true,
+                                    time: true
+                                },
+                            },
+                            supplier: {
+                                select: {
+                                    name: true
+                                }
+                            },
+                            card_name: true,
+                            status: true,
+                            note: true,
+                            created_at: true
+                        },
+                        orderBy: { created_at: 'desc' }
+                    }
+                }
+            })
+            if (!client) return notFoundRes('Client')
+
+            return okayRes(client.bookings)
+        }
 
         if (clientID) {
 
             const client = await prisma.client.findUnique({
-                where: { id: clientID }, select: {
+                where: { id: clientID },
+                select: {
                     bookings: {
                         select: {
                             id: true,
@@ -19,7 +54,7 @@ export const GET = async (req: NextRequest) => {
                                 select: {
                                     date: true,
                                     time: true
-                                }
+                                },
                             },
                             supplier: {
                                 select: {

@@ -1,14 +1,12 @@
-import { NextResponse } from "next/server"
 import prisma from "@/lib/db"
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { NextRequest } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-
-    const supplierID = searchParams.get('supplierID')
-    const fromDate = searchParams.get('fromDate')
-    const toDate = searchParams.get('toDate')
+    const supplierID = getSearchParams(req, 'supplierID')
+    const fromDate = getSearchParams(req, 'fromDate')
+    const toDate = getSearchParams(req, 'toDate')
 
     try {
 
@@ -18,6 +16,16 @@ export const GET = async (req: Request) => {
                 where: { id: supplierID },
                 select: {
                     schedule: {
+                        select: {
+                            id: true,
+                            time: true,
+                            booking: {
+                                select: { id: true }
+                            },
+                            date: true,
+                            clientUsername: true,
+                            status: true,
+                        },
                         where: {
                             date: {
                                 gte: fromDate,
@@ -26,19 +34,20 @@ export const GET = async (req: Request) => {
                         },
                     }
                 }
-            });
-
-            if (!supplier) return badRequestRes()
+            })
+            if (!supplier) return notFoundRes('Supplier')
 
             return okayRes(supplier.schedule)
-
         }
 
-        return notFoundRes('supplierID')
+        if (!fromDate || !toDate) return notFoundRes('Date')
+
+        return notFoundRes('Supplier')
 
     } catch (error) {
         console.error('Error fetching schedules:', error);
         return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
     }
-
 }

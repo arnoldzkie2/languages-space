@@ -11,11 +11,18 @@ import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
-const Page = () => {
+interface Props {
+    searchParams: {
+        department: string
+    }
+}
 
-    const department = useSearchParams().get('department')
+
+const Page = ({ searchParams }: Props) => {
+
+    const department = searchParams.department
 
     const session = useSession()
 
@@ -84,6 +91,10 @@ const Page = () => {
 
     }, [session])
 
+    const locale = useLocale()
+
+    console.log(department)
+
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
             <h1 className='pb-10 text-4xl font-bold text-gray-800'>{t('welcome-back')}</h1>
@@ -111,7 +122,7 @@ const Page = () => {
                     className={`border-2 flex items-center justify-center rounded-md h-11 bg-gray-800 text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
                     {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
                         : t('signin')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('not_signup')} <Link href={`/signup/?department=${department}`} className='text-gray-600 font-bold'>{t('signup')}</Link></div>
+                <div className='mt-3 text-slate-500 text-center'>{t('not_signup')} <a href={`/${locale}/signup/?department=${department}`} className='text-gray-600 font-bold'>{t('signup')}</a></div>
             </form>
         </div>
     )

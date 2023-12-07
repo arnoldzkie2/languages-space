@@ -1,33 +1,11 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { NextRequest } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-    const courseID = searchParams.get('courseID')
-    const cardID = searchParams.get('cardID')
+    const courseID = getSearchParams(req, 'courseID')
     try {
-
-        if (cardID) {
-            const card = await prisma.clientCard.findUnique({
-                where: { id: cardID }, select: {
-                    card: {
-                        select: {
-                            supported_courses: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                    created_at: true
-                                }
-                            }
-                        }
-                    }
-                }
-            })
-            if (!card) return notFoundRes('Card')
-
-            return okayRes(card.card.supported_courses)
-        }
 
         if (courseID) {
 

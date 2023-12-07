@@ -40,11 +40,11 @@ model ClientCard {
   invoice          Boolean
   repeat_purchases Boolean
   online_renews    Boolean
+  cardID           String
   created_at       DateTime       @default(now())
   updated_at       DateTime       @updatedAt
   client           Client         @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  card             ClientCardList @relation(fields: [cardID], references: [id])
-  cardID           String
+  card             ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
 
   @@index([clientID])
   @@index([cardID])
@@ -69,7 +69,7 @@ model ClientCardList {
   supported_courses   Courses[]
   supported_suppliers SupplierPrice[]
   active              ClientCard[]
-  department          Department      @relation(fields: [departmentID], references: [id])
+  department          Department      @relation(fields: [departmentID], references: [id], onDelete: Cascade)
   departmentID        String
 
   @@index([departmentID])
@@ -86,8 +86,8 @@ model Courses {
 
 model Supplier {
   id                String                @id @default(uuid())
-  profile_key           String?
-  profile_url           String?
+  profile_key       String?
+  profile_url       String?
   name              String
   username          String                @unique
   organization      String?
@@ -114,12 +114,13 @@ model Supplier {
 }
 
 model SupplierPrice {
-  id           String         @id @default(uuid())
-  price        Int
-  supplierID   String
-  cardID       String
-  supplier     Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  card         ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+  id         String         @id @default(uuid())
+  price      Int
+  supplierID String
+  cardID     String
+  supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+
   @@index([supplierID])
   @@index([cardID])
 }
@@ -137,32 +138,27 @@ model SupplierMeetingInfo {
 }
 
 model SupplierSchedule {
-  id          String   @id @default(uuid())
-  supplierID  String
-  date        String
-  time        String
-  status      String
-  clientName  String?
-  clientID    String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  supplier    Supplier @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  booking     Booking? @relation(fields: [bookingID], references: [id], onDelete: Cascade)
-  bookingID   String?
-  remindersID String?
+  id             String    @id @default(uuid())
+  supplierID     String
+  date           String
+  time           String
+  status         String
+  clientUsername String?
+  clientID       String?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  supplier       Supplier  @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  booking        Booking[]
 
   @@index([supplierID])
-  @@index([bookingID])
-  @@index([remindersID])
 }
 
 model Booking {
-  id           String             @id @default(uuid())
+  id           String           @id @default(uuid())
   name         String
   operator     String
   status       String
   note         String?
-  scheduleID   String
   supplierID   String
   clientID     String
   card_name    String
@@ -171,20 +167,22 @@ model Booking {
   price        Int
   quantity     Decimal
   meeting_info Json
-  created_at   DateTime           @default(now())
-  updated_at   DateTime           @updatedAt
-  course       Courses            @relation(fields: [courseID], references: [id])
-  schedule     SupplierSchedule[]
-  supplier     Supplier           @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  client       Client             @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  department   Department         @relation(fields: [departmentID], references: [id])
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+  course       Courses          @relation(fields: [courseID], references: [id], onDelete: Cascade)
+  schedule     SupplierSchedule @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
+  supplier     Supplier         @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  client       Client           @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  department   Department       @relation(fields: [departmentID], references: [id])
   courseID     String
   departmentID String
+  scheduleID   String
 
   @@index([supplierID])
   @@index([clientID])
   @@index([courseID])
   @@index([departmentID])
+  @@index([scheduleID])
 }
 
 model Reminders {

@@ -19,10 +19,10 @@ interface Booking {
     meeting_info: SupplierMeetingInfo
     created_at: string
     updated_at: string
-    schedule: SupplierSchedule[]
+    schedule: SupplierSchedule
     supplier: Supplier
     client: Client
-    departments: Department[]
+    departments: Department
 }
 
 export type { Booking }

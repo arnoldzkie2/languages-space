@@ -59,8 +59,11 @@ interface SupplierProps {
     supplierSelectedID: string
     supplierSchedule: SupplierSchedule[]
     courses: Courses[]
-    supplierMeetingInfo: SupplierMeetingInfo[]
-    cardCourses: Courses[]
+    supplierMeetingInfo: SupplierMeetingInfo[] | null
+    getSupplierMeetingInfo: (supplierID: string) => Promise<void>
+    cardCourses: Courses[] | null
+    getCardCourses: (clientCardID: string) => Promise<void>
+    clearCardCourses: () => void
     newCourse: boolean
     updateCourse: boolean
     selectedCourse: Courses | null
@@ -76,13 +79,11 @@ interface SupplierProps {
     getSupplier: () => Promise<void>
     getSupplierWithMeeting: () => Promise<void>
     setSupplierSelectedID: (supplierID: string) => void
-    setSupplierMeetingInfo: (meetingInfo: SupplierMeetingInfo[]) => void
     getCourses: () => Promise<void>
     toggleCreateCourse: () => void
     closeSelectedCourse: () => void
     getSingleSupplier: (supplierID: string) => Promise<void>
     openSelectedCourse: (course: Courses) => void
-    setCardCourses: (courses: Courses[]) => void
     setSupplierSchedule: (schedules: SupplierSchedule[]) => void
 
 }
@@ -95,8 +96,34 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     viewSupplierModal: false,
     totalSupplier: totalSupplierValue,
     selectedSupplier: [],
-    cardCourses: [],
-    supplierMeetingInfo: [],
+    cardCourses: null,
+    getCardCourses: async (clientCardID: string) => {
+        try {
+
+            const { data } = await axios.get('/api/booking/courses', { params: { clientCardID } })
+
+            if (data.ok) set({ cardCourses: data.data })
+
+        } catch (error: any) {
+            console.log(error);
+            if (error.response.data.msg) return alert(error.response.data.msg)
+            alert("Something went wrong")
+        }
+    },
+    clearCardCourses: () => set({ cardCourses: null }),
+    supplierMeetingInfo: null,
+    getSupplierMeetingInfo: async (supplierID: string) => {
+        try {
+
+            const { data } = await axios.get('/api/booking/supplier/meeting', { params: { supplierID } })
+            if (data.ok) set({ supplierMeetingInfo: data.data })
+
+        } catch (error: any) {
+            console.log(error);
+            if (error.response.data.msg) return alert(error.response.data.msg)
+            alert('Something went wrong')
+        }
+    },
     singleSupplier: null,
     supplierSchedule: [],
     newCourse: false,
@@ -109,7 +136,6 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     openSelectedCourse: (course: Courses) => set({ selectedCourse: course, updateCourse: true }),
     closeSelectedCourse: () => set({ selectedCourse: null, updateCourse: false }),
     toggleCreateCourse: () => set((state) => ({ newCourse: !state.newCourse })),
-    setSupplierMeetingInfo: (meetingInfo: SupplierMeetingInfo[]) => set({ supplierMeetingInfo: meetingInfo }),
     setSupplierSelectedID: (supplierID: string) => set({ supplierSelectedID: supplierID }),
     setSupplierData: (supplier: Supplier) => set({ supplierData: supplier }),
     setTotalSupplier: (total: TotalSupplier) => set({ totalSupplier: total }),
@@ -118,7 +144,6 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     deleteSupplierWarning: (supplier: Supplier) => set({ deleteSupplierModal: true, supplierData: supplier }),
     closeDeleteSupplierModal: () => set({ deleteSupplierModal: false, supplierData: undefined }),
     setSelectedSupplier: (suppliers: Supplier[]) => set({ selectedSupplier: suppliers }),
-    setCardCourses: (courses: Courses[]) => set({ cardCourses: courses }),
     getSupplier: async () => {
         try {
             const { departmentID } = useAdminGlobalStore.getState()
@@ -150,7 +175,7 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     getSupplierWithMeeting: async () => {
         try {
             const { departmentID } = useAdminGlobalStore.getState()
-            const { data } = await axios.get(`/api/supplier/meeting${departmentID && `?departmentID=${departmentID}`}`)
+            const { data } = await axios.get(`/api/booking/supplier/meeting${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) {
                 set({ supplier: data.data })
             }

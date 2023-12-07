@@ -8,24 +8,21 @@ import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import axios from 'axios'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { Booking } from '@/lib/types/super-admin/bookingType'
+import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 
 const ViewBokingModal = () => {
 
     const { closeViewBooking, getSchedule, currentDate, bookingID } = useAdminScheduleStore()
-
     const { isLoading, setIsLoading } = useAdminGlobalStore()
+    const { bookingFormData } = useAdminBookingStore()
 
-    const [bookingData, setBookingData] = useState<Booking>()
-    const [clientCard, setClientCard] = useState<ClientCard>()
+    const [bookingData, setBookingData] = useState<Booking | null>(null)
+    const [clientCard, setClientCard] = useState<ClientCard | null>()
 
-    const { supplierSelectedID } = useAdminSupplierStore()
-
-    const cancelBooking = async (e: any) => {
+    const cancelBooking = async (e: React.MouseEvent) => {
 
         e.preventDefault()
-
         try {
 
             setIsLoading(true)
@@ -39,7 +36,7 @@ const ViewBokingModal = () => {
             if (data.ok) {
                 setIsLoading(false)
                 closeViewBooking()
-                getSchedule(supplierSelectedID, currentDate.fromDate, currentDate.toDate)
+                getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)
             }
 
         } catch (error) {
@@ -56,9 +53,7 @@ const ViewBokingModal = () => {
                 params: { bookingID }
             })
 
-            if (data.ok) {
-                setBookingData(data.data)
-            }
+            if (data.ok) setBookingData(data.data)
 
         } catch (error) {
             console.log(error);
@@ -73,9 +68,7 @@ const ViewBokingModal = () => {
                 params: { cardID: bookingData?.clientCardID }
             })
 
-            if (data.ok) {
-                setClientCard(data.data)
-            }
+            if (data.ok) setClientCard(data.data)
 
         } catch (error) {
             console.log(error);
@@ -84,7 +77,7 @@ const ViewBokingModal = () => {
         }
     }
 
-    const deleteSchedule = async (e: any, scheduleID: string) => {
+    const deleteSchedule = async (e: React.MouseEvent, scheduleID: string) => {
         e.preventDefault()
         try {
             setIsLoading(true)
@@ -95,7 +88,7 @@ const ViewBokingModal = () => {
 
             if (data.ok) {
                 setIsLoading(false)
-                getSchedule(supplierSelectedID, currentDate.fromDate, currentDate.toDate)
+                getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)
                 alert('Success')
                 closeViewBooking()
             }
@@ -114,17 +107,11 @@ const ViewBokingModal = () => {
     }
 
     useEffect(() => {
-
-        retrieveBooking()
-
+        if (bookingID) retrieveBooking()
     }, [bookingID])
 
     useEffect(() => {
-
-        if (bookingData?.clientCardID) {
-            retrieveClientCard()
-        }
-
+        if (bookingData?.clientCardID) retrieveClientCard()
     }, [bookingData?.clientCardID])
 
     const t = useTranslations('super-admin')
@@ -136,7 +123,7 @@ const ViewBokingModal = () => {
             <div className='bg-white p-10 shadow-lg flex items-start gap-10 overflow-y-auto w-full h-full relative'>
                 <FontAwesomeIcon onClick={closeViewBooking} icon={faXmark} width={16} height={16} className='absolute text-xl top-6 right-6 cursor-pointer' />
                 <div className='flex w-1/2 flex-col gap-3.5 p-5 border'>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('schedule')}:</span>{bookingData?.schedule[0].date} ({bookingData?.schedule[0].time})</div>
+                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('schedule')}:</span>{bookingData?.schedule.date} ({bookingData?.schedule.time})</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('client')}:</span>{bookingData?.client.name}</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('card')}:</span>{clientCard?.name ? clientCard?.name : <span className='w-28 h-5 rounded-3xl bg-slate-200 animate-pulse'></span>}</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('meeting')}:</span>{bookingData?.meeting_info?.service} <span title='Click to Copy' className='cursor-pointer hover:text-blue-600' onClick={() => {
@@ -155,10 +142,10 @@ const ViewBokingModal = () => {
                         <button onClick={closeViewBooking} className='py-2 rounded-md border w-full'>{tt('close')}</button>
                         <div className='flex flex-col w-full gap-5'>
 
-                            <button onClick={(e: any) => cancelBooking(e)} disabled={isLoading}
+                            <button onClick={(e) => cancelBooking(e)} disabled={isLoading}
                                 className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
                                 {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('cancel')}</button>
-                            <button onClick={(e: any) => deleteSchedule(e, bookingData?.scheduleID!)} disabled={isLoading}
+                            <button onClick={(e) => deleteSchedule(e, bookingData?.scheduleID!)} disabled={isLoading}
                                 className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
                                 {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('schedule.delete')}</button>
                         </div>

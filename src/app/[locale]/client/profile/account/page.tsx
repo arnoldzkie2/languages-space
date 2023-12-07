@@ -107,18 +107,18 @@ const Page = () => {
                         </select>
                     </div>
 
-                    {client?.username ? <div className='flex flex-col w-full gap-1'>
+                    {client?.id ? <div className='flex flex-col w-full gap-1'>
                         <label htmlFor="username" className='px-2 h-6 text-lg font-medium'>{tt('username')}</label>
                         <input type="text" id='name' name='username' className='w-full border outline-none px-3 h-8' value={client.username} onChange={handleChange} />
                     </div> : skeleton}
 
-                    {client?.password ? <div className='flex flex-col w-full gap-1 relative'>
+                    {client?.id ? <div className='flex flex-col w-full gap-1 relative'>
                         <label htmlFor="password" className='px-2 h-6 text-lg font-medium'>{tt('password')}</label>
                         <input type={eye ? 'text' : 'password'} id='password' name='password' className='w-full border outline-none px-3 pr-8 h-8' value={client.password} onChange={handleChange} />
                         <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-black' onClick={toggleEye} />
                     </div> : skeleton}
 
-                    <button disabled={isLoading} className={`w-1/4 mt-2 text-white py-2 rounded-md ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
+                    <button disabled={isLoading} className={`self-start px-6 mt-2 text-white py-2 rounded-md ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
                         {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('update')}</button>
                 </form>
             </div>

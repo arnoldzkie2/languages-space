@@ -82,7 +82,7 @@ const ClientInfo = () => {
             {okMsg && <small className='text-green-600 w-1/2 bg-green-200 text-center py-1 rounded-md'>{okMsg}</small>}
 
             {client ?
-                <div className='flex items-center justify-around'>
+                <div className='flex items-center justify-around gap-5'>
                     <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={120} height={120} className='border min-w-[120px] min-h-[120px] object-cover bg-cover rounded-full' />
                     <div className='flex flex-col gap-3 items-start'>
                         <span className='block font-medium'>{tt('profile')}</span>

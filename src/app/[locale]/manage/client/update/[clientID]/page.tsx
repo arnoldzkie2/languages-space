@@ -17,9 +17,15 @@ import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 
-const Page = () => {
+interface Props {
+    params: {
+        clientID: string
+    }
+}
 
-    const clientID = useSearchParams().get('clientID')
+const Page = ({ params }: Props) => {
+
+    const clientID = params.clientID
 
     const session: any = useSession({
         required: true,

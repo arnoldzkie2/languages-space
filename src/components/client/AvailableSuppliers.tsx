@@ -1,11 +1,10 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
-import useClientStore, { bookingFormDataValue } from '@/lib/state/client/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useClientStore from '@/lib/state/client/clientStore'
+import useAdminBookingStore, { bookingFormDataValue } from '@/lib/state/super-admin/bookingStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -17,31 +16,15 @@ const AvailableSuppliers = () => {
     const router = useRouter()
 
     const session = useSession()
-    const { cards, getClientCards, availableSupplier, client, getAvailableSupplier, clearAvailableSuppliers, openBookingModal, bookingFormData, setBookingFormData } = useClientStore()
-    const { setCardCourses } = useAdminSupplierStore()
+    const { cards, getClientCards, availableSupplier, client, getAvailableSupplier, clearAvailableSuppliers, openBookingModal } = useClientStore()
+    const { bookingFormData, setBookingFormData } = useAdminBookingStore()
+    const { getCardCourses } = useAdminSupplierStore()
     const [searchQuery, setSearchQery] = useState('')
     const skeleton = [1, 2, 3, 4, 5, 6]
     const [maxVisibleItems, setMaxVisibleItems] = useState(6)
 
     const ttt = useTranslations('super-admin')
 
-    const getCardCourses = async () => {
-        try {
-
-            const { data } = await axios.get('/api/courses', {
-                params: { cardID: bookingFormData.clientCardID }
-            })
-
-            if (data.ok) setCardCourses(data.data)
-
-        } catch (error: any) {
-            console.log(error)
-            if (error.response.data.msg) {
-                alert(error.response.data.msg)
-            }
-            alert('Something went wrong')
-        }
-    }
 
     useEffect(() => {
         setBookingFormData(bookingFormDataValue)
@@ -53,7 +36,7 @@ const AvailableSuppliers = () => {
 
         if (session.status === 'authenticated' && bookingFormData.clientCardID && client?.id) {
             getAvailableSupplier(bookingFormData.clientCardID)
-            getCardCourses()
+            getCardCourses(bookingFormData.clientCardID)
         }
 
     }, [bookingFormData.clientCardID])
@@ -90,7 +73,10 @@ const AvailableSuppliers = () => {
                 </div>
                 <div className='w-full flex flex-wrap gap-8 justify-evenly'>
                     {availableSupplier && availableSupplier.length > 0 ? availableSupplier.map(supplierPrice => (
-                        <div onClick={() => openBookingModal({ ...bookingFormData, supplierID: supplierPrice.supplier.id })} className='shadow rounded-md relative border hover:shadow-lg cursor-pointer w-full max-h-96 min-h-[384px] sm:w-80 overflow-y-auto bg-white items-center flex flex-col pb-3 p-5 gap-2' key={supplierPrice.supplier.id}>
+                        <div onClick={() => {
+                            setBookingFormData({ ...bookingFormData, supplierID: supplierPrice.supplier.id })
+                            openBookingModal()
+                        }} className='shadow rounded-md relative border hover:shadow-lg cursor-pointer w-full max-h-96 min-h-[384px] sm:w-80 overflow-y-auto bg-white items-center flex flex-col pb-3 p-5 gap-2' key={supplierPrice.supplier.id}>
                             <Image width={125} height={125} className='w-[125px] min-w-[125px] min-h-[125px] border max-w-[125px] max-h-[125px] object-cover h-[125px] rounded-full' src={supplierPrice.supplier.profile_url || '/profile/profile.svg'} alt='Supplier Profile' />
                             <h1 className='text-slate-700 h-7 px-5 text-center font-black uppercase'>{supplierPrice.supplier.name}</h1>
                             <ul className='flex w-full flex-wrap gap-3 justify-center border-t pt-3'>

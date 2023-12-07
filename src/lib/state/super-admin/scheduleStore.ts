@@ -3,6 +3,7 @@ import axios from 'axios';
 import { create } from 'zustand'
 import useAdminClientStore from './clientStore';
 import { Booking } from '@/lib/types/super-admin/bookingType';
+import useAdminBookingStore from './bookingStore';
 
 interface ScheduleProps {
     schedules: SupplierSchedule[]
@@ -18,11 +19,10 @@ interface ScheduleProps {
     }) => void
     getSchedule: (supplierID: string, fromDate: string, toDate: string) => Promise<void>
     bindSchedule: boolean
-    selectedScheduleID: string
     closeBindSchedule: () => void
-    bookingID: string
+    bookingID: string | null
     openViewBooking: (booking: string) => void
-    openBindSchedule: (schedule: SupplierSchedule) => void
+    openBindSchedule: (scheduleID: string) => void
     closeViewBooking: () => void
     viewBooking: boolean
 }
@@ -52,15 +52,18 @@ const useAdminScheduleStore = create<ScheduleProps>((set) => ({
     toggleSchedule: () => set(state => ({ newSchedule: !state.newSchedule })),
     bindSchedule: false,
     viewBooking: false,
-    bookingID: 'null',
-    openViewBooking: (bookingID: string) => set({ viewBooking: true, bookingID: bookingID }),
-    closeViewBooking: () => set({ viewBooking: false, bookingID: 'null' }),
-    selectedScheduleID: '',
-    openBindSchedule: (schedule: SupplierSchedule) => set({ selectedScheduleID: schedule.id, bindSchedule: true }),
+    bookingID: null,
+    openViewBooking: (bookingID: string) => set({ viewBooking: true, bookingID }),
+    closeViewBooking: () => set({ viewBooking: false, bookingID: null }),
+    openBindSchedule: (scheduleID: string) => {
+
+        const { setBookingFormData, bookingFormData } = useAdminBookingStore.getState()
+
+        setBookingFormData({ ...bookingFormData, scheduleID })
+        set({ bindSchedule: true })
+    },
     closeBindSchedule: () => {
-        const { setClientSelectedID } = useAdminClientStore.getState()
-        setClientSelectedID('')
-        set({ selectedScheduleID: '', bindSchedule: false })
+        set({ bindSchedule: false })
     }
 }))
 

@@ -75,15 +75,14 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     selectedClients: [],
     clientCards: [],
     getClientCards: async (clientID: string) => {
-
         try {
 
-            const { data } = await axios.get('/api/client', {
+            const { data } = await axios.get('/api/booking/client/card', {
                 params: { clientID }
             })
 
             if (data.ok) {
-                set({ clientCards: data.data.cards })
+                set({ clientCards: data.data })
             }
 
         } catch (error) {
@@ -117,7 +116,7 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     getClientsWithCards: async () => {
         try {
             const { departmentID } = useAdminGlobalStore.getState()
-            const { data } = await axios.get(`/api/client/card${departmentID && `?departmentID=${departmentID}`}`)
+            const { data } = await axios.get(`/api/booking/client/card${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) set({ clients: data.data })
 
         } catch (error) {

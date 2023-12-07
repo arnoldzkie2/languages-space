@@ -7,11 +7,10 @@ interface SupplierSchedule {
     time: string
     status: string
     supplier: Supplier
-    clientName: string | null
+    clientUsername: string | null
     clientID: string | null
     supplierID: string
-    booking: Booking | null
-    bookingID: string | null
+    booking: Booking[] | null
     created_at: string
     updated_at: string
 }

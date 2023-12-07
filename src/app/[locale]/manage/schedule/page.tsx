@@ -16,9 +16,10 @@ import NewScheduleModal from '@/components/super-admin/management/schedule/NewSc
 import BindSchedlueModal from '@/components/super-admin/management/schedule/BindSchedlueModal';
 import ViewBokingModal from '@/components/super-admin/management/schedule/ViewBokingModal';
 import { signIn, useSession } from 'next-auth/react';
+import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 
 const Page = ({ }) => {
-    
+
     const session = useSession({
         required: true,
         onUnauthenticated() {
@@ -27,13 +28,9 @@ const Page = ({ }) => {
     })
 
     const [searchQuery, setSearchQuery] = useState('')
-
-    const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22])
-
-    const { isSideNavOpen, departmentID } = useAdminGlobalStore()
-
-    const { getSupplierWithMeeting, supplier, supplierSelectedID, setSupplierSelectedID } = useAdminSupplierStore()
-
+    const { isSideNavOpen, departmentID, skeleton } = useAdminGlobalStore()
+    const { getSupplierWithMeeting, supplier } = useAdminSupplierStore()
+    const { setBookingFormData, bookingFormData } = useAdminBookingStore()
     const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewBooking, viewBooking } = useAdminScheduleStore()
 
     const filterSupplier = supplier.filter(supplier => supplier.name.toUpperCase().includes(searchQuery.toUpperCase()))
@@ -68,25 +65,17 @@ const Page = ({ }) => {
         extendedProps: {
             data: supplier,
             viewBooking: openViewBooking,
-            openBindSchedule: openBindSchedule
+            openBindSchedule
         },
     }))
 
     useEffect(() => {
-
         getSupplierWithMeeting()
-
     }, [departmentID])
 
     useEffect(() => {
-
-        if (supplierSelectedID && !newSchedule) {
-
-            getSchedule(supplierSelectedID, currentDate.fromDate, currentDate.toDate)
-
-        }
-
-    }, [currentDate, supplierSelectedID])
+        if (bookingFormData.supplierID && !newSchedule && currentDate.fromDate && currentDate.toDate) getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)
+    }, [currentDate, bookingFormData.supplierID])
 
     const t = useTranslations('super-admin')
 
@@ -105,7 +94,7 @@ const Page = ({ }) => {
                         <input value={searchQuery} onChange={(e: any) => setSearchQuery(e.target.value)} type="text" className='border outline-none py-1.5 px-3' placeholder={t('supplier.search')} />
                         <ul className='flex flex-col pr-2 h-[42rem] gap-3 overflow-y-auto py-2 text-gray-600'>
                             {filterSupplier.length > 0 ? filterSupplier.map(supplier => (
-                                <li onClick={() => setSupplierSelectedID(supplier.id)} className={`${supplierSelectedID === supplier.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={supplier.id}>{supplier.name} ({supplier.username})</li>
+                                <li onClick={() => setBookingFormData({ ...bookingFormData, supplierID: supplier.id })} className={`${bookingFormData.supplierID === supplier.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={supplier.id}>{supplier.name}</li>
                             )) : skeleton.map(supplier => (
                                 <li key={supplier} className='bg-slate-200 animate-pulse min-h-[28px] rounded-xl w-full'></li>
                             ))}

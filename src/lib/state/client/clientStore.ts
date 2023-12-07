@@ -6,6 +6,7 @@ import { Session } from 'next-auth';
 import { Order } from '@/lib/types/super-admin/orderType'
 import { SupplierPrice } from '@/lib/types/super-admin/supplierTypes';
 import { useSession } from 'next-auth/react';
+import { bookingFormDataValue } from '../super-admin/bookingStore';
 
 interface BookingFormData {
     clientCardID: string
@@ -20,17 +21,6 @@ interface BookingFormData {
 
 export type { BookingFormData }
 
-export const bookingFormDataValue = {
-    scheduleID: '',
-    clientCardID: '',
-    quantity: 1,
-    settlement: '',
-    courseID: '',
-    note: '',
-    supplierID: '',
-    meetingInfoID: ''
-}
-
 interface Props {
     page: string
     cards: ClientCard[] | null
@@ -38,7 +28,6 @@ interface Props {
     availableSupplier: SupplierPrice[] | null
     client: Session["user"] | null
     isBooking: boolean
-    bookingFormData: BookingFormData
     setPage: (page: string) => void
     setClient: (client: Session["user"]) => void
     availableCards: ClientCardList[] | null,
@@ -51,14 +40,12 @@ interface Props {
     getAvailableCards: () => Promise<void>
     setSelectedCardID: (cardID: string) => void
     getAvailableSupplier: (clientCardID: string) => Promise<void>
-    setBookingFormData: (data: BookingFormData) => void
-    openBookingModal: (data: BookingFormData) => void
+    openBookingModal: () => void
     closeBookingModal: () => void
 }
 
 const useClientStore = create<Props>((set, get) => ({
     isBooking: false,
-    bookingFormData: bookingFormDataValue,
     cards: null,
     selectedCardID: '',
     availableSupplier: null,
@@ -66,9 +53,8 @@ const useClientStore = create<Props>((set, get) => ({
     bookings: null,
     orders: null,
     clearAvailableSuppliers: () => set({ availableSupplier: null }),
-    setBookingFormData: (data: BookingFormData) => set({ bookingFormData: data }),
-    openBookingModal: (data: BookingFormData) => set({ bookingFormData: data, isBooking: true }),
-    closeBookingModal: () => set({ isBooking: false, bookingFormData: bookingFormDataValue, availableSupplier: null }),
+    openBookingModal: () => set({ isBooking: true }),
+    closeBookingModal: () => set({ isBooking: false }),
     getClientOrders: async () => {
 
         const { client } = get()

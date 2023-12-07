@@ -10,36 +10,34 @@ import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useState } from 'react';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import { useSearchParams } from "next/navigation";
-import { useTranslations } from 'next-intl';
-import Link from "next-intl/link";
+import { useLocale, useTranslations } from 'next-intl';
 
-interface SessionProps {
-    status: string,
-    data: any
-
+interface Props {
+    searchParams: {
+        department: string
+    }
 }
 
-const Page = () => {
+const Page = ({ searchParams }: Props) => {
 
     const router = useRouter()
-    const session: SessionProps = useSession()
-    const department = useSearchParams().get('department')
+    const session = useSession()
+    const department = searchParams.department
 
     useEffect(() => {
 
         setErr('')
 
-        if (session.status !== 'loading') {
-            if (session.status === 'authenticated' && session.data.user.user === 'client') {
+        if (session.status === 'authenticated') {
+            if (session.data.user.type === 'client') {
                 router.push('/client')
-            } else if (session.status === 'authenticated' && session.data.user.user === 'agent') {
+            } else if (session.data.user.type === 'agent') {
                 router.push('/agent')
-            } else if (session.status === 'authenticated' && session.data.user.user === 'supplier') {
+            } else if (session.data.user.type === 'supplier') {
                 router.push('/supplier')
-            } else if (session.status === 'authenticated' && session.data.user.user === 'admin') {
+            } else if (session.data.user.type === 'admin') {
                 router.push('/admin')
-            } else if (session.status === 'authenticated' && session.data.user.user === 'super-admin') {
+            } else if (session.data.user.type === 'super-admin') {
                 router.push('/super-admin')
             }
         }
@@ -58,7 +56,6 @@ const Page = () => {
     const signupUser = async (event: any) => {
 
         event.preventDefault()
-
         const { username, password, confirm_password } = formData
 
         if (!username) return setErr('Username is required')
@@ -71,7 +68,7 @@ const Page = () => {
 
         try {
             setIsLoading(true)
-            const { data } = await axios.post(`/api/auth/signup${department && department !== 'null' ? `?department=${department.toLocaleLowerCase()}` : ''}`, {
+            const { data } = await axios.post(`/api/auth/signup${department && department !== 'null' && department !== 'undefined' ? `?department=${department.toLocaleLowerCase()}` : ''}`, {
                 username, password
             })
 
@@ -97,6 +94,9 @@ const Page = () => {
             ...prevData, [name]: value
         }))
     }
+
+    const locale = useLocale()
+    console.log(department)
 
     const t = useTranslations('auth')
 
@@ -126,6 +126,7 @@ const Page = () => {
 
                 </div>
                 <div className='w-full relative'>
+
                     <input type={isText ? 'text' : 'password'}
                         name='confirm_password'
                         placeholder={t('confirm_password')}
@@ -139,7 +140,7 @@ const Page = () => {
                     className={`border-2 flex items-center justify-center rounded-md text-lg h-11 bg-black text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
                     {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
                         : t('signup')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <Link href={`/login?department=${department}`} className='text-black font-bold'>{t('signin')}</Link></div>
+                <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <a href={`/${locale}/login?department=${department}`} className='text-black font-bold'>{t('signin')}</a></div>
             </form >        </div>
     );
 };

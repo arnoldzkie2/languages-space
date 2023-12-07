@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
             })
             if (!reminder) return notFoundRes('Reminder')
 
-            const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, departmentID, quantity, settlement } = reminder
+            const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, departmentID, quantity, settlement }: any = reminder
 
             if (!scheduleID) return notFoundRes('Schedule')
             if (!supplierID) return notFoundRes('Supplier')
@@ -31,6 +31,9 @@ export const POST = async (req: Request) => {
 
             const department = await prisma.department.findUnique({ where: { id: departmentID } })
             if (!department) return notFoundRes('Department')
+
+            const meetingInfo = await prisma.supplierMeetingInfo.findUnique({ where: { id: meeting_info.id } })
+            if (!meetingInfo) return notFoundRes('Supplier meeting info')
 
             const course = await prisma.courses.findUnique({ where: { id: courseID } })
             if (!course) return notFoundRes('Course')
@@ -66,13 +69,12 @@ export const POST = async (req: Request) => {
                 //create booking
                 const createBooking = await prisma.booking.create({
                     data: {
-                        note, status, operator, name, price: bookingPrice,
-                        card_name: card.name, quantity, settlement,
+                        note, status, operator, name, price: bookingPrice, card_name: card.name, quantity, settlement,
                         supplier: { connect: { id: supplierID } },
                         client: { connect: { id: clientID } },
-                        schedule: { connect: { id: scheduleID } },
-                        meeting_info, clientCardID, scheduleID,
-                        department: { connect: { id: departmentID } },
+                        schedule: { connect: { id: schedule.id } },
+                        meeting_info: meetingInfo, clientCardID,
+                        department: { connect: { id: department.id } },
                         course: { connect: { id: courseID } }
                     },
                 })
@@ -89,7 +91,7 @@ export const POST = async (req: Request) => {
                         supplier: { connect: { id: supplierID } },
                         client: { connect: { id: clientID } },
                         schedule: { connect: { id: scheduleID } },
-                        meeting_info, clientCardID, scheduleID,
+                        meeting_info: meetingInfo, clientCardID, scheduleID,
                         department: { connect: { id: departmentID } },
                         course: { connect: { id: courseID } }
                     },
@@ -111,7 +113,7 @@ export const POST = async (req: Request) => {
                 data: {
                     status: 'reserved',
                     clientID: client.id,
-                    clientName: client.name
+                    clientUsername: client.name
                 }
             })
             if (!updateSchedule) return badRequestRes()

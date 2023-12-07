@@ -162,7 +162,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                             </td>
                             <td className='px-2 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
-                                    {booking.schedule[0].date} ({booking.schedule[0].time})
+                                    {booking.schedule.date} ({booking.schedule.time})
                                 </div>
                             </td>
                             <td className="px-2 overflow-x-auto py-3">

@@ -75,7 +75,7 @@ const ClientBookings: React.FC = () => {
                                 <tr className="bg-white border hover:bg-slate-50" key={booking.id}>
                                     <td className='px-3 py-3'>
                                         <div className='h-5 text-xs md:text-sm w-36'>
-                                            {booking.schedule[0].date} ({booking.schedule[0].time})
+                                            {booking.schedule.date} ({booking.schedule.time})
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">

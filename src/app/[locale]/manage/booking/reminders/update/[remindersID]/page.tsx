@@ -54,7 +54,7 @@ const Page = ({ params }: Props) => {
 
     const { isSideNavOpen, err, setErr, isLoading, setIsLoading, setDepartmentID, departmentID } = useAdminGlobalStore()
     const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
-    const { supplier, getSupplierWithMeeting, cardCourses, setCardCourses, supplierData,
+    const { supplier, getSupplierWithMeeting, cardCourses, getCardCourses, clearCardCourses,
         setSupplierData, supplierSchedule, setSupplierSchedule,
         singleSupplier, getSingleSupplier } = useAdminSupplierStore()
 
@@ -138,23 +138,6 @@ const Page = ({ params }: Props) => {
 
     }
 
-    const getCourses = async () => {
-        try {
-
-            const { data } = await axios.get('/api/courses', {
-                params: { cardID: formData.clientCardID }
-            })
-
-            if (data.ok) {
-                setCardCourses(data.data)
-            }
-
-        } catch (error) {
-            console.log(error);
-            alert('Something went wrong')
-        }
-    }
-
     const bookNow = async (e: any) => {
 
         e.preventDefault()
@@ -234,7 +217,7 @@ const Page = ({ params }: Props) => {
     useEffect(() => {
 
         if (formData.clientCardID) {
-            getCourses()
+            getCardCourses(formData.clientCardID)
             getSupplierPrice()
         }
 
@@ -242,8 +225,8 @@ const Page = ({ params }: Props) => {
 
     useEffect(() => {
         setClientCards([])
-        setCardCourses([])
         getSupplierWithMeeting()
+        clearCardCourses()
         getClientsWithCards()
     }, [departmentID])
 
@@ -368,7 +351,7 @@ const Page = ({ params }: Props) => {
                                     <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{tt('course')}</label>
                                     <select className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
                                         <option value="">{t('booking.select-course')}</option>
-                                        {cardCourses.length > 0 ? cardCourses.map(card => (
+                                        {cardCourses && cardCourses.length > 0 ? cardCourses.map(card => (
                                             <option value={card.id} key={card.id}>{card.name}</option>
                                         )) : <option disabled>{t('client-card.select-first')}</option>}
                                     </select>

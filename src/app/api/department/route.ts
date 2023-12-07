@@ -1,8 +1,11 @@
-import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "next-auth/react";
+import axios from "axios";
 
 export const POST = async (req: Request) => {
+
 
     const { name }: { name: string } = await req.json()
 
@@ -26,10 +29,9 @@ export const POST = async (req: Request) => {
     }
 }
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-    const departmentID = searchParams.get('departmentID')
+    const departmentID = getSearchParams(req, 'departmentID')
 
     try {
 

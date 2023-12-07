@@ -12,21 +12,17 @@ const Departments = () => {
     const { departments, getDepartments, setDepartmentID, departmentID } = useAdminGlobalStore()
 
     const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-
         const selectedId = event.target.value;
-
         setDepartmentID(selectedId)
-
     };
 
     useEffect(() => {
-        
+        setDepartmentID('')
         getDepartments()
-
     }, [])
 
     const t = useTranslations('super-admin')
-    
+
     return (
         <div className="relative">
             <select onChange={handleDepartmentChange} value={departmentID} id="department" className="text-gray-600 w-full border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 pr-7 appearance-none outline-none cursor-pointer">

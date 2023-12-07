@@ -4,7 +4,6 @@ import { NextRequest } from "next/server";
 export const GET = async (req: NextRequest) => {
 
   const cardID = getSearchParams(req, 'cardID')
-  const departmentID = getSearchParams(req, 'departmentID')
   const clientID = getSearchParams(req, 'clientID')
 
   try {
@@ -35,32 +34,6 @@ export const GET = async (req: NextRequest) => {
 
       return okayRes(card)
     }
-
-    // get all client that has cards in specific department
-    if (departmentID) {
-      const allClientCard = await prisma.client.findMany({
-        where: {
-          cards: { some: {} },
-          departments: { some: { id: departmentID } }
-        }, include: { cards: true }
-      })
-      if (!allClientCard) return badRequestRes()
-
-      return okayRes(allClientCard)
-    }
-
-    //get all client that has cards
-    const clientsWithCards = await prisma.client.findMany({
-      where: {
-        cards: {
-          some: {},
-        },
-      },
-      include: { cards: true },
-    })
-    if (!clientsWithCards) return badRequestRes()
-
-    return okayRes(clientsWithCards)
 
   } catch (error) {
     console.log(error);

@@ -10,9 +10,41 @@ const totalBookingValue = {
     total: ''
 }
 
+const bookingFormDataValue: BookingFormData = {
+    name: '',
+    note: '',
+    scheduleID: '',
+    status: 'pending',
+    supplierID: '',
+    settlement: '',
+    quantity: 1,
+    clientID: '',
+    clientCardID: '',
+    meetingInfoID: '',
+    courseID: '',
+}
+
+export { bookingFormDataValue }
+
+interface BookingFormData {
+    name: string
+    note: string
+    scheduleID: string
+    status: string
+    quantity: number
+    supplierID: string
+    settlement: string
+    clientID: string
+    clientCardID: string
+    meetingInfoID: string
+    courseID: string
+}
+
+export type { BookingFormData }
 
 interface BookingProps {
-
+    bookingFormData: BookingFormData
+    setBookingFormData: (data: BookingFormData) => void
     bookings: Booking[]
     selectedBookings: Booking[]
     selectedReminders: Booking[]
@@ -36,6 +68,8 @@ interface BookingProps {
 }
 
 const useAdminBookingStore = create<BookingProps>((set) => ({
+    bookingFormData: bookingFormDataValue,
+    setBookingFormData: (data: BookingFormData) => set({ bookingFormData: data }),
     bookings: [],
     reminders: [],
     selectedReminders: [],

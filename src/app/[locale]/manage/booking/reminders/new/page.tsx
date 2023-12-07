@@ -46,7 +46,7 @@ const Page = () => {
 
   const { isSideNavOpen, err, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useAdminGlobalStore()
   const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
-  const { supplier, getSupplierWithMeeting, cardCourses, setCardCourses,
+  const { supplier, getSupplierWithMeeting, cardCourses, getCardCourses, clearCardCourses,
     supplierSchedule, setSupplierSchedule,
     singleSupplier, getSingleSupplier } = useAdminSupplierStore()
 
@@ -105,23 +105,6 @@ const Page = () => {
     }
   }
 
-  const getCourses = async () => {
-    try {
-
-      const { data } = await axios.get('/api/courses', {
-        params: { cardID: formData.clientCardID }
-      })
-
-      if (data.ok) {
-        setCardCourses(data.data)
-      }
-
-    } catch (error) {
-      console.log(error);
-      alert('Something went wrong')
-    }
-  }
-
   useEffect(() => {
 
     if (formData.clientID) {
@@ -143,15 +126,15 @@ const Page = () => {
   useEffect(() => {
 
     if (formData.clientCardID) {
-      getCourses()
+      getCardCourses(formData.clientCardID)
     }
 
   }, [formData.clientCardID])
 
   useEffect(() => {
     setClientCards([])
-    setCardCourses([])
     getSupplierWithMeeting()
+    clearCardCourses()
     getClientsWithCards()
   }, [departmentID])
 
@@ -275,7 +258,7 @@ const Page = () => {
                   <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{tt('course')}</label>
                   <select className='px-3 py-1.5 w-full outline-none border' name="courseID" value={formData.courseID} onChange={handleChange} id="courseID">
                     <option value="">{t('booking.select-course')}</option>
-                    {cardCourses.length > 0 ? cardCourses.map(card => (
+                    {cardCourses && cardCourses.length > 0 ? cardCourses.map(card => (
                       <option value={card.id} key={card.id}>{card.name}</option>
                     )) : <option disabled>{t('client-card.select-first')}</option>}
                   </select>
