@@ -5,7 +5,6 @@ import useAdminBookingStore, { bookingFormDataValue } from '@/lib/state/super-ad
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -15,7 +14,6 @@ const AvailableSuppliers = () => {
 
     const router = useRouter()
 
-    const session = useSession()
     const { cards, getClientCards, availableSupplier, client, getAvailableSupplier, clearAvailableSuppliers, openBookingModal } = useClientStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { getCardCourses } = useAdminSupplierStore()
@@ -29,12 +27,12 @@ const AvailableSuppliers = () => {
     useEffect(() => {
         setBookingFormData(bookingFormDataValue)
         clearAvailableSuppliers()
-        if (session.status === 'authenticated' && client?.id && !cards) getClientCards()
-    }, [session, client?.id])
+        if (client?.id && !cards) getClientCards()
+    }, [client?.id])
 
     useEffect(() => {
 
-        if (session.status === 'authenticated' && bookingFormData.clientCardID && client?.id) {
+        if (bookingFormData.clientCardID && client?.id) {
             getAvailableSupplier(bookingFormData.clientCardID)
             getCardCourses(bookingFormData.clientCardID)
         }

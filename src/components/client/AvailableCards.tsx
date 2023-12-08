@@ -2,18 +2,14 @@
 'use client'
 import useClientStore from '@/lib/state/client/clientStore'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const AvailableCards = () => {
-
-    const session = useSession()
 
     const router = useRouter()
 
@@ -35,7 +31,7 @@ const AvailableCards = () => {
 
             setIsLoading(true)
             const { data } = await axios.post('/api/stripe/checkout', {
-                cardID, quantity: 1, clientID: session.data?.user.id
+                cardID, quantity: 1, clientID: client?.id
             })
 
             if (data.ok) {
@@ -58,10 +54,8 @@ const AvailableCards = () => {
     const tt = useTranslations('global')
 
     useEffect(() => {
-
-        if (session.status === 'authenticated' && client?.id && !availableCards) getAvailableCards()
-
-    }, [session, client?.id])
+        if (client?.id && !availableCards) getAvailableCards()
+    }, [client?.id])
 
     return (
         <div className='padding py-28 flex flex-col items-center text-slate-600'>

@@ -11,7 +11,6 @@ import React, { useEffect, useState } from 'react'
 import Err from '../global/Err'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { useTranslations } from 'next-intl'
-import { SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
 import Success from '../global/Success'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 
