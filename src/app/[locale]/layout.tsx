@@ -4,7 +4,7 @@ import SessionProviders from '@/components/SessionProvider'
 import { notFound } from 'next/navigation'
 import 'react-quill/dist/quill.snow.css';
 import { NextIntlClientProvider } from 'next-intl'
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata = {
   title: 'Languages Spaces',
@@ -43,6 +43,7 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
         <NextIntlClientProvider locale={locale} messages={translation}>
           <SessionProviders>
             {children}
+            <SpeedInsights />
           </SessionProviders>
         </NextIntlClientProvider>
       </body>

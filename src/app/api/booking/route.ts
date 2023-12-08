@@ -229,8 +229,8 @@ export const POST = async (req: Request) => {
         });
         if (!updateSchedule) return badRequestRes();
 
-        return createdRes();
-        
+        return createdRes()
+
     } catch (error) {
         console.error(error);
         return serverErrorRes(error);
