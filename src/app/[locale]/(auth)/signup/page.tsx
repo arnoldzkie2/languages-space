@@ -96,7 +96,6 @@ const Page = ({ searchParams }: Props) => {
     }
 
     const locale = useLocale()
-    console.log(department)
 
     const t = useTranslations('auth')
 

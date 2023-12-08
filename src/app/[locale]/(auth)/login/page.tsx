@@ -93,8 +93,6 @@ const Page = ({ searchParams }: Props) => {
 
     const locale = useLocale()
 
-    console.log(department)
-
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
             <h1 className='pb-10 text-4xl font-bold text-gray-800'>{t('welcome-back')}</h1>
