@@ -2,16 +2,17 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 import { useSession } from "next-auth/react";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import { signIn } from 'next-auth/react';
-import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { useLocale, useTranslations } from 'next-intl';
+import Err from "@/components/global/Err";
+import Success from "@/components/global/Success";
 
 interface Props {
     searchParams: {
@@ -26,7 +27,7 @@ const Page = ({ searchParams }: Props) => {
 
     const session = useSession()
 
-    const { isLoading, setIsLoading, err, setErr } = useAdminGlobalStore()
+    const { isLoading, setIsLoading, setErr, setOkMsg } = useAdminGlobalStore()
 
     const [isText, setIsText] = useState(false)
     const [formData, setFormData] = useState({
@@ -50,15 +51,17 @@ const Page = ({ searchParams }: Props) => {
 
             setIsLoading(true)
             const result = await signIn('credentials', {
-                username, password, redirect: false,
+                username, password, redirect: false
             })
-
             setIsLoading(false)
+
+            console.log(result)
+
             if (result?.error) {
-                setErr('Invalid credentials')
-                setTimeout(() => {
-                    setErr('')
-                }, 5000)
+                setErr('Invalid Credentials.')
+            } else {
+                setErr('')
+                setOkMsg('Success redirecting...')
             }
 
         } catch (error: any) {
@@ -72,24 +75,29 @@ const Page = ({ searchParams }: Props) => {
     const tt = useTranslations('global')
 
     useEffect(() => {
-
-        setErr('')
-
         if (session.status === 'authenticated') {
-            if (session.data.user.type === 'client') {
-                redirect('/client')
-            } else if (session.data.user.type === 'agent') {
-                redirect('/agent')
-            } else if (session.data.user.type === 'supplier') {
-                redirect('/supplier')
-            } else if (session.data.user.type === 'admin') {
-                redirect('/admin')
-            } else if (session.data.user.type === 'super-admin') {
-                redirect('/super-admin')
+            switch (session.data.user.type) {
+                case 'client':
+                    redirect('/client')
+                    break;
+                case 'super-admin':
+                    redirect('/super-admin')
+                    break;
+                case 'admin':
+                    redirect('/admin')
+                    break;
+                case 'agent':
+                    redirect('/agent')
+                    break;
+                case 'supplier':
+                    redirect('/supplier')
+                    break;
+                default:
+                    signIn()
             }
-        }
 
-    }, [session])
+        }
+    }, [session.status])
 
     const locale = useLocale()
 
@@ -97,9 +105,8 @@ const Page = ({ searchParams }: Props) => {
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
             <h1 className='pb-10 text-4xl font-bold text-gray-800'>{t('welcome-back')}</h1>
             <form className='flex flex-col gap-3 w-96 border p-10' onSubmit={loginUser}>
-
-                {err && <small className="text-red-600 w-full text-center mb-2 py-0.5 bg-red-200 rounded-md">{err}</small>
-                }
+                <Err />
+                <Success />
                 <input type="text"
                     required
                     placeholder={tt('username')}

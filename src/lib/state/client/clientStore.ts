@@ -89,14 +89,12 @@ const useClientStore = create<Props>((set, get) => ({
     getClientCards: async () => {
 
         const { client } = get()
-
         try {
 
             const { data } = await axios.get('/api/client/card', { params: { clientID: client?.id } })
             if (data.ok) {
                 set({ cards: data.data })
             }
-
         } catch (error: any) {
             console.log(error);
             if (error.response.data.msg) {

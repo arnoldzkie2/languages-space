@@ -84,6 +84,7 @@ const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
         loc: 'kr',
         val: '한국어' // Korean
     }],
+    
     setOkMsg: (msg: string) => {
         set({ okMsg: msg })
         setTimeout(() => {

@@ -222,6 +222,8 @@
         "signup": "Sign Up",
         "name": "Full name",
         "confirm_password": "Confirm Password",
+        "auth-verify": "Verifying user...",
+        "success": "Success!",
         "not_signup": "Don't have account yet? ",
         "already_signup": "Already signed up?"
     },

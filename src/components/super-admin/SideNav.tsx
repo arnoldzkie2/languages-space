@@ -23,69 +23,70 @@ const SideNav: React.FC = () => {
 
     const t = useTranslations('super-admin')
 
-    const [navArray, setNavArray] = useState([
-        {
-            translate: 'side-nav.dashboard',
-            icon: faHouse,
-            link: '/super-admin'
-        },
-        {
-            translate: 'side-nav.booking',
-            icon: faBook,
-            link: '/manage/booking'
-        },
-        {
-            translate: 'side-nav.department',
-            icon: faBuilding,
-            link: '/manage/department'
-        },
-        {
-            translate: 'side-nav.client',
-            icon: faUser,
-            link: '/manage/client'
-        },
-        {
-            translate: 'side-nav.supplier',
-            icon: faUsers,
-            link: '/manage/supplier'
-        },
-        {
-            translate: 'side-nav.schedule',
-            icon: faCalendarDays,
-            link: '/manage/schedule'
-        },
-        {
-            translate: 'side-nav.news',
-            icon: faDisplay,
-            link: '/manage/news'
-        },
-        {
-            translate: 'side-nav.agent',
-            icon: faUserSecret,
-            link: '/manage/agent'
-        },
-        {
-            translate: 'side-nav.admin',
-            icon: faUserShield,
-            link: '/manage/admin'
-        },
-        {
-            translate: 'side-nav.statistics',
-            icon: faChartLine,
-            link: '/manage/statistics'
-        },
-        {
-            translate: 'side-nav.orders',
-            icon: faNewspaper,
-            link: '/manage/orders'
-        },
-        {
-            translate: 'side-nav.settings',
-            icon: faGear,
-            link: '/super-admin/settings'
-        },
+    const [navArray, setNavArray] = useState(
+        [
+            {
+                translate: 'side-nav.dashboard',
+                icon: faHouse,
+                link: '/super-admin'
+            },
+            {
+                translate: 'side-nav.booking',
+                icon: faBook,
+                link: '/manage/booking'
+            },
+            {
+                translate: 'side-nav.department',
+                icon: faBuilding,
+                link: '/manage/department'
+            },
+            {
+                translate: 'side-nav.client',
+                icon: faUser,
+                link: '/manage/client'
+            },
+            {
+                translate: 'side-nav.supplier',
+                icon: faUsers,
+                link: '/manage/supplier'
+            },
+            {
+                translate: 'side-nav.schedule',
+                icon: faCalendarDays,
+                link: '/manage/schedule'
+            },
+            {
+                translate: 'side-nav.news',
+                icon: faDisplay,
+                link: '/manage/news'
+            },
+            {
+                translate: 'side-nav.agent',
+                icon: faUserSecret,
+                link: '/manage/agent'
+            },
+            {
+                translate: 'side-nav.admin',
+                icon: faUserShield,
+                link: '/manage/admin'
+            },
+            {
+                translate: 'side-nav.statistics',
+                icon: faChartLine,
+                link: '/manage/statistics'
+            },
+            {
+                translate: 'side-nav.orders',
+                icon: faNewspaper,
+                link: '/manage/orders'
+            },
+            {
+                translate: 'side-nav.settings',
+                icon: faGear,
+                link: '/super-admin/settings'
+            },
 
-    ])
+        ])
 
     const router = useRouter()
 
@@ -100,7 +101,7 @@ const SideNav: React.FC = () => {
 
     useEffect(() => {
 
-        if (session.status === 'authenticated' && session.data.user.type !== 'super-admin') {
+        if (session.status === 'authenticated' && session.data?.user.type !== 'super-admin') {
             signOut()
         }
 
@@ -146,7 +147,7 @@ const SideNav: React.FC = () => {
     } else {
         return (
             <div className='h-screen w-screen grid place-content-center'>
-                <FontAwesomeIcon icon={faSpinner} width={30} height={30} className='animate-spin' />
+                <FontAwesomeIcon icon={faSpinner} width={30} height={30} className='animate-spin w-[30px] h-[30px]' />
             </div>
         )
     }

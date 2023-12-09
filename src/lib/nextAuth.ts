@@ -62,7 +62,7 @@ const nextAuthOptions = {
         }
     },
     pages: {
-        signIn: '/login'
+        signIn: '/login',
     },
 } satisfies NextAuthOptions
 
