@@ -18,7 +18,6 @@ const ViewBokingModal = () => {
     const { bookingFormData } = useAdminBookingStore()
 
     const [bookingData, setBookingData] = useState<Booking | null>(null)
-    const [clientCard, setClientCard] = useState<ClientCard | null>()
 
     const cancelBooking = async (e: React.MouseEvent) => {
 
@@ -61,22 +60,6 @@ const ViewBokingModal = () => {
         }
     }
 
-    const retrieveClientCard = async () => {
-        try {
-
-            const { data } = await axios.get('/api/client/card', {
-                params: { cardID: bookingData?.clientCardID }
-            })
-
-            if (data.ok) setClientCard(data.data)
-
-        } catch (error) {
-            console.log(error);
-            alert('Something went wrontg')
-
-        }
-    }
-
     const deleteSchedule = async (e: React.MouseEvent, scheduleID: string) => {
         e.preventDefault()
         try {
@@ -110,10 +93,6 @@ const ViewBokingModal = () => {
         if (bookingID) retrieveBooking()
     }, [bookingID])
 
-    useEffect(() => {
-        if (bookingData?.clientCardID) retrieveClientCard()
-    }, [bookingData?.clientCardID])
-
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
@@ -125,7 +104,7 @@ const ViewBokingModal = () => {
                 <div className='flex w-1/2 flex-col gap-3.5 p-5 border'>
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('schedule')}:</span>{bookingData?.schedule.date} ({bookingData?.schedule.time})</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('client')}:</span>{bookingData?.client.name}</div>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('card')}:</span>{clientCard?.name ? clientCard?.name : <span className='w-28 h-5 rounded-3xl bg-slate-200 animate-pulse'></span>}</div>
+                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('card')}:</span>{bookingData?.card_name}</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('meeting')}:</span>{bookingData?.meeting_info?.service} <span title='Click to Copy' className='cursor-pointer hover:text-blue-600' onClick={() => {
                         const meetingCode = bookingData?.meeting_info?.meeting_code
                         if (meetingCode) {
@@ -139,9 +118,8 @@ const ViewBokingModal = () => {
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('note')}:</span>{bookingData?.note}</div>
                     <div className='flex items-center gap-2'><span className='font-medium'>{tt('status')}:</span>{bookingData?.status}</div>
                     <div className='flex items-center w-full gap-5'>
-                        <button onClick={closeViewBooking} className='py-2 rounded-md border w-full'>{tt('close')}</button>
+                        <button onClick={closeViewBooking} className='py-2 rounded-md border w-full hover:bg-slate-50'>{tt('close')}</button>
                         <div className='flex flex-col w-full gap-5'>
-
                             <button onClick={(e) => cancelBooking(e)} disabled={isLoading}
                                 className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
                                 {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('cancel')}</button>

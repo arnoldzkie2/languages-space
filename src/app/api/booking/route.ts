@@ -4,6 +4,7 @@ import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serve
 
 
 export const GET = async (req: NextRequest) => {
+
     const bookingID = getSearchParams(req, 'bookingID')
     const departmentID = getSearchParams(req, 'departmentID')
     const clientID = getSearchParams(req, 'clientID')
@@ -65,9 +66,10 @@ export const GET = async (req: NextRequest) => {
         if (departmentID) {
 
             //get all bookings in department
-            const departmentBookings = await prisma.department.findUnique({
+            const department = await prisma.department.findUnique({
                 where: { id: departmentID }, select: {
                     bookings: {
+                        orderBy: { created_at: 'desc' },
                         include: {
                             supplier: {
                                 select: {
@@ -80,16 +82,16 @@ export const GET = async (req: NextRequest) => {
                                 }
                             }, client: {
                                 select: {
-                                    name: true
+                                    username: true
                                 }
                             }
                         }
                     }
                 }
             })
-            if (!departmentBookings) return notFoundRes('Department')
+            if (!department) return notFoundRes('Department')
 
-            return okayRes(departmentBookings.bookings)
+            return okayRes(department.bookings)
         }
 
         //get all bookings
@@ -107,7 +109,7 @@ export const GET = async (req: NextRequest) => {
                     }
                 }, client: {
                     select: {
-                        name: true
+                        username: true
                     }
                 }
             }
@@ -126,29 +128,18 @@ export const GET = async (req: NextRequest) => {
 
 export const POST = async (req: NextRequest) => {
     try {
-        const {
-            scheduleID,
-            supplierID,
-            clientID,
-            note,
-            operator,
-            meetingInfoID,
-            clientCardID,
-            status,
-            name,
-            courseID,
-            quantity,
-            settlement,
-        } = await req.json();
+
+        const { scheduleID, supplierID, clientID, note, operator, meetingInfoID, clientCardID, status, name, courseID, quantity, settlement } = await req.json();
 
         const checkNotFound = (entity: string, value: any) => {
             if (!value) return notFoundRes(entity);
         };
 
-        const params = [scheduleID, name, supplierID, clientID, clientCardID, settlement, operator, meetingInfoID];
+        const params = [scheduleID, name, supplierID, clientID, clientCardID, settlement, operator, meetingInfoID, status, quantity];
+
         params.forEach((param, index) =>
-            checkNotFound(['Schedule', 'Booking name', 'Supplier', 'Client', 'Card', 'Settlement period', 'Operator', 'Meeting info'][index], param)
-        );
+            checkNotFound(['Schedule', 'Booking name', 'Supplier', 'Client', 'Card', 'Settlement period', 'Operator', 'Meeting info', 'Status', 'quantity'][index], param)
+        )
 
         const schedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } });
         if (!schedule || schedule.status === 'reserved') return notFoundRes('Schedule');

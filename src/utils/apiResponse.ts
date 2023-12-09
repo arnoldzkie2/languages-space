@@ -41,4 +41,7 @@ const getSearchParams = ({ url }: NextRequest, key: string) => {
     return searchParams.get(key)
 }
 
-export { notFoundRes, serverErrorRes, badRequestRes, okayRes, existRes, createdRes, unauthorizedRes, getSearchParams }
+const checkNotFoundParams = (entity: string, value: any) => {
+    if (!value) return notFoundRes(entity);
+};
+export { notFoundRes, serverErrorRes, badRequestRes, okayRes, existRes, createdRes, unauthorizedRes, getSearchParams, checkNotFoundParams }
