@@ -147,7 +147,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                             </td>
                             <td className='px-2 overflow-x-auto py-3'>
                                 <div className='h-5 whitespace-nowrap w-36'>
-                                    {booking.client.name}
+                                    {booking.client.username}
                                 </div>
                             </td>
                             <td className='px-2 overflow-x-auto py-3'>

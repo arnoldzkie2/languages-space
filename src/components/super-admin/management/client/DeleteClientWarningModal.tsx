@@ -3,6 +3,7 @@ import React from 'react';
 import axios from 'axios';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import { useTranslations } from 'next-intl';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 
 interface Props {
 
@@ -10,40 +11,34 @@ interface Props {
 
 const DeleteClientWarningModal: React.FC<Props> = () => {
 
+    const { isLoading, setIsLoading } = useAdminGlobalStore()
+
     const { clientData, selectedClients, closeDeleteModal, setSelectedClients, getClients } = useAdminClientStore()
 
     const deleteClient = async () => {
 
         try {
 
+            setIsLoading(true)
             if (selectedClients.length > 0) {
-
                 const newsIds = selectedClients.map((newsItem) => newsItem.id);
-
                 const queryString = newsIds.map((id) => `clientID=${encodeURIComponent(id)}`).join('&');
-
                 var { data } = await axios.delete(`/api/client?${queryString}`);
-
             } else {
-
                 var { data } = await axios.delete(`/api/client?clientID=${clientData?.id}`)
-
             }
 
-            if (data) {
-
+            if (data.ok) {
+                setIsLoading(false)
                 closeDeleteModal()
                 getClients()
                 setSelectedClients([])
-
             }
 
         } catch (error) {
-
+            setIsLoading(true)
             alert('Something went wrong')
-
             console.log(error);
-
         }
     }
 
@@ -56,13 +51,13 @@ const DeleteClientWarningModal: React.FC<Props> = () => {
                 {selectedClients.length > 0 ?
                     selectedClients.map(client => (
                         <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={client.id}>
-                        <div>USER ID: <span className='font-normal text-gray-700'>{client.id}</span></div>
+                            <div>USER ID: <span className='font-normal text-gray-700'>{client.id}</span></div>
                             <div>NAME: <span className='font-normal text-gray-700'>{client.name}</span></div>
                         </div>
                     ))
                     :
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={clientData?.id}>
-                    <div>USER ID: <span className='font-normal text-gray-700'>{clientData?.id}</span></div>
+                        <div>USER ID: <span className='font-normal text-gray-700'>{clientData?.id}</span></div>
                         <div>NAME: <span className='font-normal text-gray-700'>{clientData?.name}</span></div>
                     </div>
                 }
