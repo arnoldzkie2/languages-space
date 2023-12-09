@@ -180,7 +180,7 @@ export const POST = async (req: NextRequest) => {
         if (!department) return notFoundRes('Department');
 
         const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } });
-        if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported in this card' });
+        if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported in this card' }, { status: 400 });
 
         if (card?.balance! < supplierPrice.price) {
             return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 });
