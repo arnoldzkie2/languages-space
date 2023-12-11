@@ -6,10 +6,11 @@ import { faArrowLeft, faArrowRight, faCalendarDays, faChartLine, faBuilding, faD
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import { useRouter, usePathname } from 'next/navigation';
 import { signIn, signOut, useSession } from 'next-auth/react';
-
+import { useRouter, usePathname } from '@/lib/navigation';
 const SideNav: React.FC = () => {
+
+    const router = useRouter()
 
     const session = useSession({
         required: true,
@@ -87,15 +88,11 @@ const SideNav: React.FC = () => {
 
         ])
 
-    const router = useRouter()
-
-    const currentPathname = usePathname()
-
+    const pathname = usePathname()
     const handleTranslation = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedLocale = event.target.value;
-        const newPath = `/${selectedLocale}${currentPathname}`
-        router.push(newPath)
+        router.replace(pathname, { locale: event.target.value })
     }
+
     const locale = useLocale()
 
     useEffect(() => {

@@ -29,6 +29,8 @@ const authMiddleware = withAuth(
   }
 );
 
+
+
 export default function middleware(req: NextRequest) {
   const publicPathnameRegex = RegExp(
     `^(/(${locales.join('|')}))?(${publicPages

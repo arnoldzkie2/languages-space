@@ -10,15 +10,14 @@ import axios from 'axios'
 import { signIn } from 'next-auth/react'
 import { useTranslations, useLocale } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
-import { usePathname, useRouter } from 'next/navigation';
 import useClientStore from '@/lib/state/client/clientStore'
+import { usePathname, useRouter } from '@/lib/navigation'
 
 const Page = () => {
 
     const router = useRouter()
-
+    const pathname = usePathname()
     const { client, setClient, setPage } = useClientStore()
-
     const t = useTranslations('client')
     const tt = useTranslations('global')
 
@@ -69,12 +68,8 @@ const Page = () => {
         </div>
     )
 
-    const currentPathname = usePathname()
-
     const handleTranslation = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedLocale = event.target.value;
-        const newPath = `/${selectedLocale}${currentPathname}`
-        router.push(newPath)
+        router.replace(pathname, { locale: event.target.value })
     }
     const locale = useLocale()
 
