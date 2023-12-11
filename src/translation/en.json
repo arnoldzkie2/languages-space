@@ -217,6 +217,7 @@
         "welcome-back": "Welcome Back!",
         "fillup": "Fill up the form",
         "username": "Username",
+        "error": "Something went wrong please try again.",
         "password": "Password",
         "signin": "Sign In",
         "signup": "Sign Up",
