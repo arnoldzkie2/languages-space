@@ -10,8 +10,7 @@ import axios from 'axios'
 import { signIn } from 'next-auth/react'
 import { useTranslations, useLocale } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
-import { usePathname } from 'next-intl/client';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useClientStore from '@/lib/state/client/clientStore'
 
 const Page = () => {

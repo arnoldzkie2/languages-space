@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next-intl/link';
+import Link from 'next/link';
 import React from 'react';
 import DownloadTable from '../DownloadTable';
 import { useTranslations } from 'next-intl';

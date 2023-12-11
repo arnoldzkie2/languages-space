@@ -3,11 +3,7 @@
 import ClientHeader from '@/components/client/ClientHeader'
 import ClientInfo from '@/components/client/ClientInfo'
 import ClientProfile from '@/components/client/ClientProfile'
-import useClientStore from '@/lib/state/client/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import axios from 'axios'
-import { signIn, signOut, useSession } from 'next-auth/react'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 const Page = () => {
 

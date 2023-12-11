@@ -3,7 +3,7 @@
 import useClientStore from '@/lib/state/client/clientStore'
 import { signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import Link from 'next-intl/link'
+import Link from 'next/link'
 import React, { useEffect } from 'react'
 
 const ClientCards: React.FC = () => {

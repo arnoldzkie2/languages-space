@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import React from 'react';
 
@@ -6,6 +7,9 @@ interface MainProps {
 }
 
 const Main: React.FC<MainProps> = ({ }) => {
+
+    const t = useTranslations('global')
+
     return (
         <div className='px-24 w-full flex justify-between items-center'>
             <div className='flex flex-col gap-6 w-1/2'>

@@ -3,11 +3,10 @@ import React, { useEffect, useState } from 'react';
 import Logout from './Logout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faCalendarDays, faChartLine, faBuilding, faDisplay, faGear, faHouse, faNewspaper, faUser, faUserSecret, faUserShield, faUsers, faBook, faGlobe, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next-intl/link';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import { usePathname } from 'next-intl/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { signIn, signOut, useSession } from 'next-auth/react';
 
 const SideNav: React.FC = () => {

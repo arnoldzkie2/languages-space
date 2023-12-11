@@ -5,10 +5,9 @@ import { faEllipsis, faRotateRight, faSpinner, faXmark } from '@fortawesome/free
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import Link from 'next-intl/link'
+import Link from 'next/link'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType';
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
-import axios from 'axios';
 
 interface Props {
 

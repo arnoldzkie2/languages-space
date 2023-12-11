@@ -1,4 +1,4 @@
-import Link from 'next-intl/link'
+import Link from 'next/link'
 import React from 'react'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'

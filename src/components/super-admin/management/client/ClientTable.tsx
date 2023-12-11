@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import { Client } from '@/lib/types/super-admin/clientType';
-import Link from 'next-intl/link'
+import Link from 'next/link'
 
 interface Props {
 

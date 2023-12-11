@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import Link from 'next-intl/link'
+import Link from 'next/link'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { Supplier } from '@/lib/types/super-admin/supplierTypes';

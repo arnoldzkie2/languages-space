@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signIn } from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +22,8 @@ interface Props {
 
 
 const Page = ({ searchParams }: Props) => {
+
+    const router = useRouter()
 
     const department = searchParams.department
 
@@ -78,19 +80,19 @@ const Page = ({ searchParams }: Props) => {
         if (session.status === 'authenticated') {
             switch (session.data.user.type) {
                 case 'client':
-                    redirect('/client')
+                    router.push('/client')
                     break;
                 case 'super-admin':
-                    redirect('/super-admin')
+                    router.push('/super-admin')
                     break;
                 case 'admin':
-                    redirect('/admin')
+                    router.push('/admin')
                     break;
                 case 'agent':
-                    redirect('/agent')
+                    router.push('/agent')
                     break;
                 case 'supplier':
-                    redirect('/supplier')
+                    router.push('/supplier')
                     break;
                 default:
                     signIn()

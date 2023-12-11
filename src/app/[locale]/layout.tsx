@@ -3,8 +3,9 @@ import '@/lib/styles/globals.css'
 import SessionProviders from '@/components/SessionProvider'
 import { notFound } from 'next/navigation'
 import 'react-quill/dist/quill.snow.css';
-import { NextIntlClientProvider } from 'next-intl'
+import { NextIntlClientProvider, useMessages } from 'next-intl'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { unstable_setRequestLocale } from 'next-intl/server';
 
 export const metadata = {
   title: 'Languages Spaces',
@@ -17,30 +18,28 @@ interface Props {
     locale: string
   }
 }
+
+const locales = ['en', 'zh', 'ja', 'kr', 'vi']
+
 export function generateStaticParams() {
-
-  const allTranslation = ['en', 'zh', 'ja', 'kr', 'vi']
-
-  return allTranslation.map((lang) => ({
+  return locales.map((lang) => ({
     locale: lang
   }))
 
 }
 
-export default async function LocaleLayout({ children, params: { locale } }: Props) {
+export default function LocaleLayout({ children, params: { locale } }: Props) {
 
-  let translation;
+  if (!locales.includes(locale as any)) notFound();
 
-  try {
-    translation = (await import(`../../translation/${locale}.json`)).default;
-  } catch (error) {
-    notFound()
-  }
+  unstable_setRequestLocale(locale);
+
+  const messages = useMessages();
 
   return (
     <html lang={locale}>
       <body className='bg-slate-50'>
-        <NextIntlClientProvider locale={locale} messages={translation}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <SessionProviders>
             {children}
             <SpeedInsights />

@@ -5,7 +5,7 @@ import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import Link from 'next-intl/link'
+import Link from 'next/link'
 import { ClientCardList } from '@/lib/types/super-admin/clientCardType';
 import useAdminCardStore from '@/lib/state/super-admin/cardStore';
 

@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-unescaped-entities */
 import { useSession } from "next-auth/react";
-import { useRouter } from "next-intl/client";
 import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
@@ -11,6 +10,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from "next/navigation";
 
 interface Props {
     searchParams: {

@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next-intl/link';
+import Link from 'next/link';
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
