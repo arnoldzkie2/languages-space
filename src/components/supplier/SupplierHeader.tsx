@@ -23,7 +23,7 @@ const SupplierHeader = () => {
     const { setSupplier, getSupplierBookings, bookings, getSupplierMeeting, meetingInfo } = useSupplierStore()
 
     useEffect(() => {
-        if (session?.user.type !== 'supplier') signOut()
+        if (status === 'authenticated' && session?.user.type !== 'supplier') signOut()
         if (status === 'authenticated' && session.user.type === 'supplier') {
             setSupplier(session.user)
             if (!bookings) getSupplierBookings()
