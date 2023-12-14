@@ -15,7 +15,7 @@ import Err from '@/components/global/Err'
 const BindSchedlueModal = () => {
 
     const [searchClient, setSearchClient] = useState('')
-    const { closeBindSchedule, getSchedule, currentDate } = useAdminScheduleStore()
+    const { closeBindSchedule, getSchedule, currentDate, deleteSupplierSchedule } = useAdminScheduleStore()
     const { departmentID, isLoading, setIsLoading, setErr } = useAdminGlobalStore()
     const { clients, getClientsWithCards, clientCards, getClientCards } = useAdminClientStore()
     const { supplierMeetingInfo, getCardCourses, getSupplierMeetingInfo, cardCourses, clearCardCourses } = useAdminSupplierStore()
@@ -65,29 +65,6 @@ const BindSchedlueModal = () => {
             if (error.response.data.msg) {
                 return setErr(error.response.data.msg)
             }
-            alert('Something went wrong')
-        }
-    }
-
-    const deleteSchedule = async (e: React.MouseEvent) => {
-        e.preventDefault()
-        try {
-
-            setIsLoading(true)
-            const { data } = await axios.delete('/api/schedule', {
-                params: {
-                    scheduleID: bookingFormData.scheduleID
-                }
-            })
-            if (data.ok) {
-                setIsLoading(false)
-                closeBindSchedule()
-                getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)
-            }
-
-        } catch (error) {
-            setIsLoading(false)
-            console.log(error);
             alert('Something went wrong')
         }
     }
@@ -208,7 +185,7 @@ const BindSchedlueModal = () => {
 
                     <div className='flex items-center w-full gap-10'>
                         <button type='button'
-                            onClick={(e: React.MouseEvent) => deleteSchedule(e)}
+                            onClick={(e: React.MouseEvent) => deleteSupplierSchedule(e, bookingFormData.scheduleID)}
                             disabled={isLoading}
                             className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
                             {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('schedule.delete')}</button>

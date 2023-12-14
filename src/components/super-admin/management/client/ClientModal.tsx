@@ -50,7 +50,7 @@ const ClientModal: React.FC = () => {
 
                     </div>
                     <div className='font-bold my-3 py-2 border-b text-center'>{clientData?.name}</div>
-                    <div>{clientData?.email || 'noemail@default.com'}</div>
+                    <div>{clientData?.email || 'no email set'}</div>
                     <select className='border py-2 px-2 mt-5 outline-none w-full' read-only="true">
                         <option>{tt('departments')}</option>
                         {departmentOptions}
@@ -61,16 +61,16 @@ const ClientModal: React.FC = () => {
                     <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.id} />
 
                     <label className='font-bold text-sm'>{tt('phone')}:</label>
-                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.phone_number || 'No Data'} />
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.phone_number || ''} />
 
                     <label className='font-bold text-sm'>{tt('address')}:</label>
-                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.address || 'No Data'} />
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.address || ''} />
 
                     <label className='font-bold text-sm'>{tt('email')}:</label>
-                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.email || 'No Data'} />
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.email || ''} />
 
                     <label className='font-bold text-sm'>{tt('gender')}:</label>
-                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.gender || 'No Data'} />
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.gender || ''} />
                 </div>
                 <div className='flex flex-col w-full gap-2 justify-center'>
 
@@ -78,13 +78,16 @@ const ClientModal: React.FC = () => {
                     <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' value={formattedDate} onClick={(e: any) => copy(e.target.value)} />
 
                     <label className='font-bold text-sm'>{tt('origin')}:</label>
-                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.origin || 'No Data'} />
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.origin || ''} />
 
-                    <label className='font-bold text-sm'>{tt('orgnization')}:</label>
-                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.organization || 'No Data'} />
+                    <label className='font-bold text-sm'>{tt('organization')}:</label>
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.organization || ''} />
 
                     <label className='font-bold text-sm'>{tt('note')}:</label>
-                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.note || 'No Data'} />
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.note || ''} />
+
+                    <label className='font-bold text-sm'>{tt('password')}:</label>
+                    <input readOnly type="text" className='text-sm mb-2 outline-none border px-3 py-2 w-2/3 cursor-pointer' onClick={(e: any) => copy(e.target.value)} value={clientData?.password || ''} />
                 </div>
             </form>
         </div>

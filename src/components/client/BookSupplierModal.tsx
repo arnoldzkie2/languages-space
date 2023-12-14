@@ -18,7 +18,7 @@ const ClientBookingModal = () => {
 
     const router = useRouter()
 
-    const { isLoading, setIsLoading, err, setErr, okMsg, setOkMsg } = useAdminGlobalStore()
+    const { isLoading, setIsLoading, setErr, setOkMsg } = useAdminGlobalStore()
     const { closeBookingModal, getClientCards, getClientBookings, client } = useClientStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { cardCourses, supplierSchedule, setSupplierSchedule } = useAdminSupplierStore()
@@ -67,6 +67,7 @@ const ClientBookingModal = () => {
             })
 
             if (data.ok) {
+                axios.post('/api/email/booking/created', { bookingID: data.data })
                 setOkMsg('Success Redirecting...')
                 getClientBookings()
                 getClientCards()

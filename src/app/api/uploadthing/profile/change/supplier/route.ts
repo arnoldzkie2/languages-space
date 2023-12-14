@@ -22,31 +22,20 @@ export const POST = async (req: Request) => {
         if (supplierID) {
 
             const supplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
-            if (!supplier) return notFoundRes('Client')
+            if (!supplier) return notFoundRes('Supplier')
 
-            if (supplier.profile_key && profile.key && profile.url) {
-
+            if (supplier.profile_key) {
                 const deleteProfile = await utapi.deleteFiles(supplier.profile_key)
                 if (!deleteProfile) return badRequestRes()
-
-                const updateClientProfile = await prisma.supplier.update({
-                    where: { id: supplier.id }, data: { profile_key: profile.key, profile_url: profile.url }
-                })
-                if (!updateClientProfile) return badRequestRes()
-
-                return okayRes()
-
-            } else {
-
-                const updateClientProfile = await prisma.supplier.update({
-                    where: { id: supplierID }, data: {
-                        profile_url: profile.url, profile_key: profile.key
-                    }
-                })
-                if (!updateClientProfile) return badRequestRes()
-
-                return okayRes()
             }
+
+            const updateSupplierProfile = await prisma.supplier.update({
+                where: { id: supplier.id }, data: { profile_key: profile.key, profile_url: profile.url }
+            })
+            if (!updateSupplierProfile) return badRequestRes()
+
+            return okayRes()
+
         }
 
         return notFoundRes('Client')

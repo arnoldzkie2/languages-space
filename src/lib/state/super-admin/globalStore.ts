@@ -16,6 +16,8 @@ interface AdminGlobalStoreProps {
     departments: Department[]
     err: string
     eye: boolean
+    page: string
+    setPage: (page: string) => void
     itemsPerPage: number
     totalDepartment: TotalProps
     locales: { loc: string, val: string }[]
@@ -54,6 +56,8 @@ interface AdminGlobalStoreProps {
 const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
     isSideNavOpen: false,
     okMsg: '',
+    page: '',
+    setPage: (page: string) => set({ page }),
     prevProfileKey: '',
     setPrevProfileKey: (profile: string) => set({ prevProfileKey: profile }),
     deleteProfile: async (profileKey: string) => {
@@ -84,7 +88,6 @@ const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
         loc: 'kr',
         val: '한국어' // Korean
     }],
-    
     setOkMsg: (msg: string) => {
         set({ okMsg: msg })
         setTimeout(() => {

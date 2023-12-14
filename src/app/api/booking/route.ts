@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
-
 export const GET = async (req: NextRequest) => {
 
     const bookingID = getSearchParams(req, 'bookingID')
@@ -223,7 +222,8 @@ export const POST = async (req: NextRequest) => {
 
         if (!updateSchedule) return badRequestRes();
 
-        return createdRes();
+        return createdRes(createBooking.id);
+        
     } catch (error) {
         console.error(error);
         return serverErrorRes(error);

@@ -17,9 +17,7 @@ interface Props {
 
 const ClientTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
-    const { departmentID } = useAdminGlobalStore()
+    const { departmentID,skeleton } = useAdminGlobalStore()
 
     const { selectedClients, setSelectedClients, viewClient, deleteWarning } = useAdminClientStore()
 
@@ -112,6 +110,7 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                     <th scope="col" className="px-6 py-3">{tt('organization')}</th>
                     <th scope="col" className="px-6 py-3">{tt('origin')}</th>
                     <th scope="col" className="px-6 py-3">{tt('note')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('date')}</th>
                     <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
                 </tr>
             </thead>
@@ -152,6 +151,11 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                     {client.note}
                                 </div>
                             </td>
+                            <td className="px-6 py-3">
+                                <div className='h-5 w-44'>
+                                    {new Date(client.created_at).toLocaleString()}
+                                </div>
+                            </td>
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(client.id)} />
                                 <ul className={`${operation && selectedID === client.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
@@ -186,6 +190,9 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                             </td>
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                            </td>
+                            <td className='py-3.5 px-6'>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
                             </td>
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>

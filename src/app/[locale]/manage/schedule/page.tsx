@@ -8,24 +8,16 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { useTranslations } from 'next-intl';
 import React, { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import listPlugin from '@fullcalendar/list';
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore';
 import ScheduleComponent from '@/components/super-admin/management/schedule/ScheduleComponent';
 import NewScheduleModal from '@/components/super-admin/management/schedule/NewScheduleModal';
 import BindSchedlueModal from '@/components/super-admin/management/schedule/BindSchedlueModal';
 import ViewBokingModal from '@/components/super-admin/management/schedule/ViewBokingModal';
-import { signIn, useSession } from 'next-auth/react';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
+import dayGridPlugin from '@fullcalendar/daygrid'
+import listPlugin from '@fullcalendar/list';
 
 const Page = ({ }) => {
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
 
     const [searchQuery, setSearchQuery] = useState('')
     const { isSideNavOpen, departmentID, skeleton } = useAdminGlobalStore()
@@ -59,7 +51,7 @@ const Page = ({ }) => {
         });
     }
 
-    const events = schedules.map(supplier => ({
+    const events = schedules && schedules.map(supplier => ({
         start: `${supplier.date}T${supplier.time}:00`,
         end: `${supplier.date}T${supplier.time}:01`,
         extendedProps: {
@@ -105,7 +97,7 @@ const Page = ({ }) => {
                         <FullCalendar
                             plugins={[dayGridPlugin, listPlugin]}
                             eventContent={ScheduleComponent}
-                            events={events}
+                            events={events!}
                             initialView='dayGridWeek'
                             headerToolbar={{
                                 start: 'prev,next today',

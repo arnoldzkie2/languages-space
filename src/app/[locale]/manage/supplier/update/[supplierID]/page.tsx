@@ -17,13 +17,6 @@ import React, { useEffect, useState } from 'react'
 
 const Page = ({ params }: { params: { supplierID: string } }) => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const { supplierID } = params
 
     const router = useRouter()
@@ -333,7 +326,6 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                         </div>
                         <div className='flex flex-col gap-3'>
                             <span className='font-medium'>{t('supplier.tags')}</span>
-
                             <ul className='w-full flex items-center gap-5 flex-wrap'>
                                 {formData.tags.map(item => (
                                     <li key={item} onClick={() => handleRemoveTag(item)} className='border cursor-pointer bg-slate-100 py-1 px-3 flex items-center gap-2'>
@@ -342,7 +334,6 @@ const Page = ({ params }: { params: { supplierID: string } }) => {
                                     </li>
                                 ))}
                             </ul>
-
                         </div>
                         <div className='flex items-center gap-10 w-1/2 self-end'>
                             <Link href={'/manage/supplier'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{tt('cancel')}</Link>

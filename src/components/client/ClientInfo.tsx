@@ -13,8 +13,8 @@ import useClientStore from '@/lib/state/client/clientStore'
 
 const ClientInfo = () => {
 
-    const { setIsLoading, setOkMsg, setErr, okMsg, err, isLoading } = useAdminGlobalStore()
-    const { client, setClient, setPage } = useClientStore()
+    const { setIsLoading, setOkMsg, setErr, okMsg, err, isLoading, setPage } = useAdminGlobalStore()
+    const { client, setClient } = useClientStore()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -43,7 +43,7 @@ const ClientInfo = () => {
                 })
                 setIsLoading(false)
                 setOkMsg('Success')
-              
+
             }
 
         } catch (error: any) {
@@ -101,9 +101,6 @@ const ClientInfo = () => {
                                             username: client.username, password: client.password, redirect: false
                                         })
                                         setOkMsg('Profile Changed')
-                                        setTimeout(() => {
-                                            setOkMsg('')
-                                        }, 4000)
                                     }
                                 }
                             }}

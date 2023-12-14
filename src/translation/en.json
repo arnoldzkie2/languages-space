@@ -7,7 +7,8 @@
             "select-first": "Select Supplier First",
             "select-meeting": "Select Meeting Info",
             "search": "Search Supplier",
-            "tags": "Supplier Tags"
+            "tags": "Supplier Tags",
+            "manage-tags": "Manage Tags"
         },
         "courses": {
             "h1": "Manage Courses",
@@ -166,6 +167,7 @@
         "employment": "Employment Status",
         "update": "Update",
         "courses": "Courses",
+        "no-data": "No Data",
         "suppliers": "Suppliers",
         "view": "View",
         "price": "Price",
@@ -175,6 +177,7 @@
         "departments": "Departments",
         "settlement": "Settlement Period",
         "payment": "Payment Info",
+        "logout": "Logout",
         "remove": "Remove",
         "add-more": "Add More",
         "status": "Status",
@@ -231,8 +234,7 @@
     "client": {
         "header": {
             "buy-card": "Buy Cards",
-            "book-now": "Book Now",
-            "logout": "Logout"
+            "book-now": "Book Now"
         },
         "card": {
             "validity": "Validity",
@@ -252,6 +254,7 @@
             "info": "Profile Info",
             "navigate": "Navigate to",
             "booking": "Booking",
+            "my-meeting": "My Meeting",
             "my-cards": "My Cards",
             "my-bookings": "My Bookings",
             "my-orders": "My Orders"

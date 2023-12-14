@@ -2,11 +2,10 @@ import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serve
 import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-    const supplierID = searchParams.get('supplierID')
-    const date = searchParams.get('date')
+    const supplierID = getSearchParams(req, 'supplierID')
+    const date = getSearchParams(req, 'date')
 
     try {
 
@@ -15,8 +14,13 @@ export const GET = async (req: Request) => {
             const supplier = await prisma.supplier.findUnique({
                 where: { id: supplierID }, include: {
                     schedule: {
+                        select: {
+                            time: true,
+                            date: true,
+                            id: true
+                        },
                         where: {
-                            supplierID, date
+                            date
                         }
                     }
                 }
@@ -75,6 +79,8 @@ export const GET = async (req: Request) => {
     } catch (error) {
         console.log(error);
         return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
     }
 
 }
@@ -159,7 +165,7 @@ export const DELETE = async (req: NextRequest) => {
             })
             if (!schedule) return notFoundRes('Schedule')
 
-            if (schedule.status === 'reserved' && schedule.booking.length > 0) {
+            if (schedule.booking.length > 0) {
 
                 //destruct the booking
                 const { booking } = schedule

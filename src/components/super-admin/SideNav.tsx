@@ -89,6 +89,7 @@ const SideNav: React.FC = () => {
         ])
 
     const pathname = usePathname()
+
     const handleTranslation = (event: React.ChangeEvent<HTMLSelectElement>) => {
         router.replace(pathname, { locale: event.target.value })
     }
@@ -122,8 +123,8 @@ const SideNav: React.FC = () => {
                     {navArray.map(nav => (
                         <Link href={nav.link} className={`flex text-base border-b hover:border-blue-600 pb-2 items-center outline-none hover:text-blue-600 w-full`} key={nav.link}>
                             {isSideNavOpen && <span className='mr-auto'>{t(nav.translate)}</span>}
-                            <FontAwesomeIcon width={20} height={20} icon={nav.icon} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[20px] h-[20px]'}`} />
-                        </Link >
+                            <FontAwesomeIcon width={20} height={20} icon={nav.icon} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[20px] h-[20px]'}`} title={t(nav.translate)} />
+                        </Link>
                     ))}
                     <div className='w-full relative'>
                         <FontAwesomeIcon icon={faGlobe} width={20} height={20} className={`absolute top-2 ${isSideNavOpen ? 'right-0 -z-10' : 'right-3 z-10 cursor-pointer hover:text-blue-600'}`} onClick={toggleSideNav} />

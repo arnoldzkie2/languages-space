@@ -89,21 +89,27 @@ export const GET = async (req: NextRequest) => {
         if (clientID) {
 
             const client = await prisma.client.findUnique({
-                where: { id: clientID }
+                where: { id: clientID }, include: { cards: true, bookings: true, orders: true }
             })
-
             if (!client) notFoundRes('Client')
-
             return okayRes(client)
 
         }
 
         if (departmentID) {
 
-            const clientsInDepartment = await prisma.department.findUnique({
+            const department = await prisma.department.findUnique({
                 where: { id: departmentID }, include: {
                     clients: {
-                        include: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            phone_number: true,
+                            organization: true,
+                            origin: true,
+                            created_at: true,
+                            note: true,
                             departments: {
                                 select: { id: true, name: true }
                             }, cards: {
@@ -111,30 +117,37 @@ export const GET = async (req: NextRequest) => {
                                     validity: true
                                 }
                             }
-                        }
+                        },
+
                     }
                 }
             })
 
-            if (!clientsInDepartment) return notFoundRes('Department')
+            if (!department) return notFoundRes('Department')
 
-            return okayRes(clientsInDepartment.clients)
+            return okayRes(department.clients)
 
         }
 
         const allClient = await prisma.client.findMany({
-            include: {
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                phone_number: true,
+                created_at: true,
+                organization: true,
+                origin: true,
+                note: true,
                 departments: {
-                    select: {
-                        id: true,
-                        name: true
-                    }
+                    select: { id: true, name: true }
                 }, cards: {
                     select: {
                         validity: true
                     }
                 }
-            }
+            },
+
         })
 
         if (!allClient) return badRequestRes()
@@ -142,15 +155,10 @@ export const GET = async (req: NextRequest) => {
         return okayRes(allClient)
 
     } catch (error) {
-
         console.log(error);
-
         return serverErrorRes(error)
-
     } finally {
-
         prisma.$disconnect()
-
     }
 }
 

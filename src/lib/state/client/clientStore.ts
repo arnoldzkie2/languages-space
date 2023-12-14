@@ -5,8 +5,6 @@ import { Booking } from '@/lib/types/super-admin/bookingType';
 import { Session } from 'next-auth';
 import { Order } from '@/lib/types/super-admin/orderType'
 import { SupplierPrice } from '@/lib/types/super-admin/supplierTypes';
-import { useSession } from 'next-auth/react';
-import { bookingFormDataValue } from '../super-admin/bookingStore';
 
 interface BookingFormData {
     clientCardID: string
@@ -81,7 +79,7 @@ const useClientStore = create<Props>((set, get) => ({
         } catch (error: any) {
             console.log(error);
             if (error.response.data.msg) {
-                alert(error.response.data.msg)
+                return alert(error.response.data.msg)
             }
             alert("Something went wrong")
         }

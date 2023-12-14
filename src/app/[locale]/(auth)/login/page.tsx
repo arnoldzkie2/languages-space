@@ -2,7 +2,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signIn } from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,6 +12,7 @@ import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { useLocale, useTranslations } from 'next-intl';
 import Err from "@/components/global/Err";
 import Success from "@/components/global/Success";
+import { useRouter } from "@/lib/navigation";
 
 interface Props {
     searchParams: {
@@ -56,8 +56,6 @@ const Page = ({ searchParams }: Props) => {
                 username, password, redirect: false
             })
             setIsLoading(false)
-
-            console.log(result)
 
             if (result?.error) {
                 setErr('Invalid Credentials.')

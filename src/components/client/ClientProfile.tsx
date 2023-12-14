@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import useClientStore from '@/lib/state/client/clientStore';
+import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 
 interface Props {
 
@@ -38,7 +38,7 @@ const ClientProfile: React.FC<Props> = () => {
     },
   ]
 
-  const { page, setPage } = useClientStore()
+  const { page, setPage } = useAdminGlobalStore()
 
   const t = useTranslations('client')
 

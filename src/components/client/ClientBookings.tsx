@@ -14,8 +14,7 @@ const ClientBookings: React.FC = () => {
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
 
-    const { setPage } = useClientStore()
-    const { skeleton, currentPage, setCurrentPage, itemsPerPage } = useAdminGlobalStore()
+    const { skeleton, currentPage, setCurrentPage, itemsPerPage, setPage } = useAdminGlobalStore()
     const getTotalPages = () => {
 
         if (bookings) {
@@ -104,29 +103,29 @@ const ClientBookings: React.FC = () => {
                                         </div>
                                     </td>
                                 </tr>
-                            )) :
-                            skeleton.map(item => (
-                                <tr key={item}>
-                                    <td className='py-3.5 px-3'>
-                                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
-                                    </td>
-                                    <td className='py-3.5 px-3'>
-                                        <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
-                                    </td>
-                                    <td className='py-3.5 px-3'>
-                                        <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                                    </td>
-                                    <td className='py-3.5 px-3'>
-                                        <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                                    </td>
-                                    <td className='py-3.5 px-3'>
-                                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
-                                    </td>
-                                    <td className='py-3.5 px-3'>
-                                        <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
-                                    </td>
-                                </tr>
-                            ))
+                            )) : currentBookings && currentBookings.length < 1 ? <div className='w-full px-3 py-2'>{tt('no-data')}</div> :
+                                skeleton.map(item => (
+                                    <tr key={item}>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                                        </td>
+                                    </tr>
+                                ))
                         }
                     </tbody >
                 </table >

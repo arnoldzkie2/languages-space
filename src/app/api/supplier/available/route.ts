@@ -5,14 +5,10 @@ export const GET = async (req: Request) => {
 
     const { searchParams } = new URL(req.url)
     const clientCardID = searchParams.get('clientCardID')
-    const clientID = searchParams.get('clientID')
 
     try {
 
-        if (clientID) {
-
-            const client = await prisma.client.findUnique({ where: { id: clientID } })
-            if (!client) return notFoundRes('Client')
+        if (clientCardID) {
 
             const today = new Date();  // Get the current date and time in UTC
 
@@ -24,7 +20,6 @@ export const GET = async (req: Request) => {
                 const clientCard = await prisma.clientCard.findUnique({
                     where: {
                         id: clientCardID,
-                        clientID: client.id
                     },
                     select: {
                         card: {

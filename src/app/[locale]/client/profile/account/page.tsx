@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import ClientHeader from '@/components/client/ClientHeader'
-import ClientProfile from '@/components/client/ClientProfile'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -12,16 +10,18 @@ import { useTranslations, useLocale } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
 import useClientStore from '@/lib/state/client/clientStore'
 import { usePathname, useRouter } from '@/lib/navigation'
+import ClientProfile from '@/components/client/ClientProfile'
+import ClientHeader from '@/components/client/ClientHeader'
 
 const Page = () => {
 
     const router = useRouter()
     const pathname = usePathname()
-    const { client, setClient, setPage } = useClientStore()
+    const { client, setClient } = useClientStore()
     const t = useTranslations('client')
     const tt = useTranslations('global')
 
-    const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales } = useAdminGlobalStore()
+    const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales, setPage } = useAdminGlobalStore()
 
     const updateClient = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -70,7 +70,13 @@ const Page = () => {
 
     const handleTranslation = (event: React.ChangeEvent<HTMLSelectElement>) => {
         router.replace(pathname, { locale: event.target.value })
+        setOkMsg('Please wait')
+        setTimeout(() => {
+            setOkMsg('Success')
+            window.location.reload()
+        }, 1200)
     }
+
     const locale = useLocale()
 
     useEffect(() => {

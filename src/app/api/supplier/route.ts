@@ -43,7 +43,6 @@ export const POST = async (req: Request) => {
                     }
                 }, include: { meeting_info: true }
             })
-
             if (!newSupplier) return badRequestRes()
 
             if (meeting_info.length > 0) {
@@ -61,12 +60,10 @@ export const POST = async (req: Request) => {
                         data: meetingInfoData
                     });
                     if (!createMeetingInfo) return badRequestRes();
-
-                    return createdRes(newSupplier);
                 }
             }
 
-            return createdRes(newSupplier)
+            return createdRes()
 
         }
 
@@ -98,7 +95,7 @@ export const POST = async (req: Request) => {
             }
         }
 
-        return createdRes(newSupplier)
+        return createdRes()
 
     } catch (error) {
         console.log(error);
@@ -176,56 +173,73 @@ export const PATCH = async (req: Request) => {
             })
             if (!supplier) return notFoundRes('Supplier')
 
-            const departmentsToConnect = departments.map((departmentId: string) => ({ id: departmentId }));
+            if (meeting_info && meeting_info.length > 0) {
 
-            const departmentsToRemove = supplier.departments.filter((department) =>
-                !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
-            )
-
-            const meetingInfoToDeleteIDs = supplier.meeting_info
-                .filter(existingInfo =>
-                    !meeting_info.some((newInfo: any) =>
-                        newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
+                const meetingInfoToDeleteIDs = supplier.meeting_info
+                    .filter(existingInfo =>
+                        !meeting_info.some((newInfo: any) =>
+                            newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
+                        )
                     )
+                    .map(existingInfo => existingInfo.id)
+
+                const meetingInfoToCreate = meeting_info
+                    .filter((newInfo: any) =>
+                        !supplier.meeting_info.some(existingInfo =>
+                            newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
+                        )
+                    )
+
+                //delete the unused supplier meeting info
+                await prisma.supplierMeetingInfo.deleteMany({ where: { id: { in: meetingInfoToDeleteIDs } } });
+
+                // create a new supplier meeting info
+                await prisma.supplierMeetingInfo.createMany({
+                    data: meetingInfoToCreate.map((newInfo: any) => ({
+                        supplierID: supplier.id,
+                        service: newInfo.service,
+                        meeting_code: newInfo.meeting_code,
+                    }))
+                });
+            }
+
+            if (departments && departments.length > 0) {
+
+                const departmentsToConnect = departments.map((departmentId: string) => ({ id: departmentId }));
+
+                const departmentsToRemove = supplier.departments.filter((department) =>
+                    !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
                 )
-                .map(existingInfo => existingInfo.id)
 
-            const meetingInfoToCreate = meeting_info
-                .filter((newInfo: any) =>
-                    !supplier.meeting_info.some(existingInfo =>
-                        newInfo.service === existingInfo.service && newInfo.meeting_code === existingInfo.meeting_code
-                    )
-                );
+                //udpate the supplier
+                const updatedSupplier = await prisma.supplier.update({
+                    where: { id: supplierID },
+                    data: {
+                        name, username, password, organization, payment_info, phone_number, email, address, gender,
+                        card, origin, tags, note, employment_status, entry, departure, profile_key, profile_url,
+                        departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
+                    }
+                })
+                if (!updatedSupplier) return badRequestRes()
+                return okayRes()
 
-            //delete the unused supplier meeting info
-            await prisma.supplierMeetingInfo.deleteMany({ where: { id: { in: meetingInfoToDeleteIDs } } });
-
-            // create a new supplier meeting info
-            await prisma.supplierMeetingInfo.createMany({
-                data: meetingInfoToCreate.map((newInfo: any) => ({
-                    supplierID: supplier.id,
-                    service: newInfo.service,
-                    meeting_code: newInfo.meeting_code,
-                }))
-            });
+            }
 
             //udpate the supplier
             const updatedSupplier = await prisma.supplier.update({
                 where: { id: supplierID },
                 data: {
                     name, username, password, organization, payment_info, phone_number, email, address, gender,
-                    card, origin, tags, note, employment_status, entry, departure, profile_key, profile_url,
-                    departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
-                },
-                include: { departments: true, meeting_info: true }
-            });
+                    card, origin, tags, note, employment_status, entry, departure, profile_key, profile_url
+                }
+            })
             if (!updatedSupplier) return badRequestRes()
 
-            return okayRes(updatedSupplier)
+            return okayRes()
 
         }
 
-        return notFoundRes('supplierID')
+        return notFoundRes('Supplier')
 
     } catch (error) {
         console.log(error);
