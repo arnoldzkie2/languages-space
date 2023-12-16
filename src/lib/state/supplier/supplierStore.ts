@@ -13,10 +13,18 @@ interface Props {
     getSupplierMeeting: () => Promise<void>
     getSupplierBookings: () => Promise<void>
     setSupplierMeeting: (data: SupplierMeetingInfo[]) => void
+    bookingModal: boolean
+    bookingID: string
+    viewBooking: (ID: string) => void
+    closeBooking: () => void
 }
 
 const useSupplierStore = create<Props>((set, get) => ({
     supplier: null,
+    bookingModal: false,
+    bookingID: '',
+    viewBooking: (ID: string) => set({ bookingModal: true, bookingID: ID }),
+    closeBooking: () => set({ bookingID: '', bookingModal: false }),
     meetingInfo: null,
     getSupplierMeeting: async () => {
         try {

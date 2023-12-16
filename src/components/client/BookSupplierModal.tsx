@@ -19,7 +19,7 @@ const ClientBookingModal = () => {
     const router = useRouter()
 
     const { isLoading, setIsLoading, setErr, setOkMsg } = useAdminGlobalStore()
-    const { closeBookingModal, getClientCards, getClientBookings, client } = useClientStore()
+    const { closeBookingModal, getClientCards, getClientBookings, client, clearAvailableSuppliers } = useClientStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { cardCourses, supplierSchedule, setSupplierSchedule } = useAdminSupplierStore()
     const { supplierMeetingInfo, getSupplierMeetingInfo } = useAdminSupplierStore()
@@ -92,6 +92,7 @@ const ClientBookingModal = () => {
 
         if (!bookingFormData.clientCardID) {
             closeBookingModal()
+            clearAvailableSuppliers()
             alert('Select Card First')
         }
 

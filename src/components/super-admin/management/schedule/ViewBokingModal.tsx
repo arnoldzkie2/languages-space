@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import axios from 'axios'
-import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { Booking } from '@/lib/types/super-admin/bookingType'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
@@ -27,12 +26,13 @@ const ViewBokingModal = () => {
             setIsLoading(true)
             const { data } = await axios.delete('/api/booking', {
                 params: {
-                    bookingID: bookingID,
+                    bookingID,
                     type: 'cancel'
                 }
             })
 
             if (data.ok) {
+                axios.post('/api/email/booking/cancel', { bookingID: data.data, operator: 'admin' })
                 setIsLoading(false)
                 closeViewBooking()
                 getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)

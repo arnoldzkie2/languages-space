@@ -8,19 +8,21 @@ interface ContactProps {
         date: string;
         time: string;
     };
-    course: string
     meetingInfo: {
         id: string
         service: string
         meeting_code: string
     }
+    course: string
+    operator: string
 }
 
-const BookingSuccessSupplier = ({ clientName, supplierName, schedule, meetingInfo, course }: ContactProps) => {
+export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, operator, meetingInfo, course }: ContactProps) => {
+
     return (
         <Html>
             <Head />
-            <Preview>Hello {supplierName} a client has created a booking in you at www.languages-space.com</Preview>
+            <Preview>Hello {supplierName} your booking is canceled</Preview>
             <Tailwind>
                 <Body className="grid place-items-center bg-center bg-no-repeat bg-cover font-sans bg-slate-100">
                     <Container className="border bg-white border-solid border-[#eaeaea] text-gray-600 rounded-3xl shadow-2xl mt-[150px] mx-auto px-10 w-[1000px]">
@@ -29,14 +31,15 @@ const BookingSuccessSupplier = ({ clientName, supplierName, schedule, meetingInf
                         </Heading>
                         <Text className="text-lg mt-4">
                             Dear {supplierName},<br />
-                            {clientName} created a booking
+                            Booking has been canceled {operator === 'client' ? `by client` : operator === 'admin' && 'by admin'}
                         </Text>
                         <Text className="text-lg mt-4">
                             Client Name: {clientName}<br />
                             Meeting Info: {meetingInfo.service} - {meetingInfo.meeting_code}<br />
+
                             <br />
                             Course: {course}<br />
-                            Schedule: {schedule.date} at {schedule.time}
+                            Schedule: {schedule.date} at {schedule.time} <br />
                         </Text>
                         <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/bookings`} target='_blank'>My Bookings</Link>
                         <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
@@ -47,4 +50,4 @@ const BookingSuccessSupplier = ({ clientName, supplierName, schedule, meetingInf
     );
 };
 
-export default BookingSuccessSupplier;
+export default BookingCanceledSupplier;

@@ -140,6 +140,7 @@
             "delete": "Are you sure you want to delete this booking?",
             "clientcard-select": "Select Card",
             "search": "Search Booking",
+            "cancel": "Are you sure you want to cancel this booking?",
             "create": "Create Booking",
             "update": "Update Booking",
             "confirm": "Confirm Booking",

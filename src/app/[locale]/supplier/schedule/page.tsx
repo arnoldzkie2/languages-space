@@ -12,19 +12,21 @@ import { useTranslations } from 'next-intl'
 import CreateScheduleModal from '@/components/supplier/CreateScheduleModal'
 import Success from '@/components/global/Success'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import BookingModal from '@/components/supplier/BookingModal'
 
 const Page = () => {
 
   const { schedules, setCurrentDate, getSchedule, currentDate, newSchedule, toggleSchedule, deleteSupplierSchedule } = useAdminScheduleStore()
   const { isLoading } = useAdminGlobalStore()
-  const { supplier } = useSupplierStore()
+  const { supplier, bookingModal, viewBooking } = useSupplierStore()
 
   const events = schedules.map(supplier => ({
     start: `${supplier.date}T${supplier.time}:00`,
     end: `${supplier.date}T${supplier.time}:01`,
     extendedProps: {
       data: supplier,
-      deleteSupplierSchedule, isLoading
+      deleteSupplierSchedule,
+      isLoading, viewBooking
     },
   }))
 
@@ -84,6 +86,7 @@ const Page = () => {
         />
       </div>
       {newSchedule && <CreateScheduleModal />}
+      {bookingModal && <BookingModal />}
     </>
   )
 }

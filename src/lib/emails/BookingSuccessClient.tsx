@@ -19,7 +19,7 @@ interface ContactProps {
     }
 }
 
-const BookingSuccess = ({ cardBalance, clientName, supplierName, schedule, cardName, meetingInfo, price, course }: ContactProps) => {
+const BookingSuccessClient = ({ cardBalance, clientName, supplierName, schedule, cardName, meetingInfo, price, course }: ContactProps) => {
     return (
         <Html>
             <Head />
@@ -30,12 +30,12 @@ const BookingSuccess = ({ cardBalance, clientName, supplierName, schedule, cardN
                         <Heading className="text-black text-[24px] font-normal text-center">
                             <Img src='https://www.verbalace.com/logo.png' className='w-40 h-auto mx-auto' />
                         </Heading>
-                        <Text className="text-center text-lg mt-4">
+                        <Text className="text-lg mt-4">
                             Dear {clientName},<br />
                             Your booking has been successfully created!
                         </Text>
                         <Text className="text-lg mt-4">
-                            Teacher Name: {supplierName}<br />
+                            Supplier Name: {supplierName}<br />
                             Meeting Info: {meetingInfo.service} - {meetingInfo.meeting_code}<br />
                             <br />
                             Card Used: {cardName}<br />
@@ -55,4 +55,4 @@ const BookingSuccess = ({ cardBalance, clientName, supplierName, schedule, cardN
     );
 };
 
-export default BookingSuccess;
+export default BookingSuccessClient;

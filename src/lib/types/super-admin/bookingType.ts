@@ -1,7 +1,7 @@
 import { Client } from "./clientType"
 import { Department } from "./globalType"
 import { SupplierSchedule } from "./scheduleType"
-import { Supplier, SupplierMeetingInfo } from "./supplierTypes"
+import { Courses, Supplier, SupplierMeetingInfo } from "./supplierTypes"
 
 interface Booking {
     id: string
@@ -13,6 +13,7 @@ interface Booking {
     card_name: string
     supplierID: string
     quantity: number
+    course: Courses
     clientID: string
     clientCardID: string
     price: number

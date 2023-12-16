@@ -52,6 +52,12 @@ export const GET = async (req: NextRequest) => {
                         }
                     }, client: {
                         select: {
+                            username: true,
+                            name: true
+                        }
+                    },
+                    course: {
+                        select: {
                             name: true
                         }
                     }
@@ -83,6 +89,11 @@ export const GET = async (req: NextRequest) => {
                                 select: {
                                     username: true
                                 }
+                            },
+                            course: {
+                                select: {
+                                    name: true
+                                }
                             }
                         }
                     }
@@ -109,6 +120,11 @@ export const GET = async (req: NextRequest) => {
                 }, client: {
                     select: {
                         username: true
+                    }
+                },
+                course: {
+                    select: {
+                        name: true
                     }
                 }
             }
@@ -223,7 +239,7 @@ export const POST = async (req: NextRequest) => {
         if (!updateSchedule) return badRequestRes();
 
         return createdRes(createBooking.id);
-        
+
     } catch (error) {
         console.error(error);
         return serverErrorRes(error);
@@ -392,31 +408,29 @@ export const DELETE = async (req: Request) => {
             const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, cardID: card.cardID } })
             if (!supplierPrice) return badRequestRes()
 
-            //refund the client
-            const refundClient = await prisma.clientCard.update({
-                where: { id: card.id },
-                data: { balance: card.balance + supplierPrice.price }
-            })
-            if (!refundClient) return badRequestRes()
+            //refund the client,update booking status to canceled
+            // update schedule status to available
 
-            // update the booking status to canceled
-            const cancelBooking = await prisma.booking.update({
-                where: {
-                    id: bookingID
-                }, data: { status: 'canceled' }
-            })
-            if (!cancelBooking) return badRequestRes()
+            const [refundClient, cancelBooking, updateSchedule] = await Promise.all([
+                prisma.clientCard.update({
+                    where: { id: card.id },
+                    data: { balance: card.balance + supplierPrice.price }
+                }),
+                prisma.booking.update({
+                    where: {
+                        id: bookingID
+                    }, data: { status: 'canceled' }
+                }),
+                prisma.supplierSchedule.update({
+                    where: {
+                        id: booking.scheduleID
+                    },
+                    data: { status: 'canceled', }
+                })
+            ])
+            if (!refundClient || !cancelBooking || !updateSchedule) return badRequestRes()
 
-            //update the schedule status to available
-            const updateSchedule = await prisma.supplierSchedule.update({
-                where: {
-                    id: booking.scheduleID
-                },
-                data: { status: 'available', clientID: null, clientUsername: null }
-            })
-            if (!updateSchedule) return badRequestRes()
-
-            return okayRes()
+            return okayRes(booking.id)
         }
 
         return badRequestRes()

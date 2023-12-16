@@ -48,6 +48,7 @@ interface AdminGlobalStoreProps {
     closeUpdateDepartment: () => void
     toggleEye: () => void
     closeDeleteDepartment: () => void
+    copy: (value: any) => void
     openUpdateDepartment: (dept: Department) => void
     openDeleteDepartment: (dept: Department) => void
     setErr: (err: string) => void
@@ -88,6 +89,10 @@ const useAdminGlobalStore = create<AdminGlobalStoreProps>((set) => ({
         loc: 'kr',
         val: '한국어' // Korean
     }],
+    copy: (value: any) => {
+        navigator.clipboard.writeText(value)
+        alert(`Copied ${value}`)
+    },
     setOkMsg: (msg: string) => {
         set({ okMsg: msg })
         setTimeout(() => {
