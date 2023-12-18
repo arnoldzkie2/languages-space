@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import AvailableSuppliers from '@/components/client/AvailableSuppliers'
@@ -9,6 +10,7 @@ import React from 'react'
 const Page = () => {
 
     const { isBooking } = useClientStore()
+
 
     return (
         <>

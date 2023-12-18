@@ -13,6 +13,7 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { useTranslations } from 'next-intl'
 import Success from '../global/Success'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
+import DatePicker, { DateObject } from 'react-multi-date-picker'
 
 const ClientBookingModal = () => {
 
@@ -21,8 +22,11 @@ const ClientBookingModal = () => {
     const { isLoading, setIsLoading, setErr, setOkMsg } = useAdminGlobalStore()
     const { closeBookingModal, getClientCards, getClientBookings, client, clearAvailableSuppliers } = useClientStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
-    const { cardCourses, supplierSchedule, setSupplierSchedule } = useAdminSupplierStore()
+    const { cardCourses } = useAdminSupplierStore()
     const { supplierMeetingInfo, getSupplierMeetingInfo } = useAdminSupplierStore()
+
+    const [selectedDate, setSelectedDate] = useState('')
+    const [scheduleTime, setScheduleTime] = useState<{ id: string, time: string }[] | null>(null)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -33,11 +37,11 @@ const ClientBookingModal = () => {
 
         try {
 
-            const { data } = await axios.get('/api/booking/supplier/schedule', {
-                params: { supplierID: bookingFormData.supplierID }
+            const { data } = await axios.get('/api/booking/supplier/schedule/date', {
+                params: { supplierID: bookingFormData.supplierID, date: selectedDate }
             })
 
-            if (data.ok) setSupplierSchedule(data.data)
+            if (data.ok) setScheduleTime(data.data)
 
         } catch (error: any) {
             console.log(error);
@@ -88,6 +92,25 @@ const ClientBookingModal = () => {
         }
     }
 
+    const handleScheduleChange = (newSelectedDate: DateObject | DateObject[] | null) => {
+        if (newSelectedDate) setSelectedDate(newSelectedDate.toString())
+    }
+
+    useEffect(() => {
+
+        if (selectedDate) {
+            getSupplierSchedule()
+        } else {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const defaultDate = `${year}-${month}-${day}`;
+            setSelectedDate(defaultDate)
+        }
+
+    }, [selectedDate])
+
     useEffect(() => {
 
         if (!bookingFormData.clientCardID) {
@@ -98,10 +121,10 @@ const ClientBookingModal = () => {
 
         if (bookingFormData.supplierID) {
             getSupplierMeetingInfo(bookingFormData.supplierID)
-            getSupplierSchedule()
         }
 
     }, [bookingFormData.supplierID])
+
     const t = useTranslations('client')
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
@@ -135,15 +158,32 @@ const ClientBookingModal = () => {
                     </select>
                 </div>
 
-                <div className='flex flex-col gap-2'>
-                    <label htmlFor="scheduleID" className='px-1 font-medium'>{tt('schedule')}</label>
-                    <select name="scheduleID" id="scheduleID" onChange={handleChange} value={bookingFormData.scheduleID} className='px-3 py-1.5 rounded-sm w-full outline-none'>
+                <div className='flex flex-col mt-3 pt-3 border-t gap-2'>
+                    <label htmlFor="" className='px-1 font-medium w-full text-center'>{ttt('schedule.select')}</label>
+                    <div className='flex w-full flex-col gap-2'>
+                        <DatePicker
+                            placeholder='Select Date'
+                            format="YYYY-MM-DD"
+                            value={selectedDate}
+                            onChange={handleScheduleChange}
+                            style={{ height: '40px', width: '100%', paddingLeft: '12px' }}
+                        />
+                        <select value={bookingFormData.scheduleID} name='scheduleID' onChange={handleChange} className='px-2 py-1.5 outline-none border rounded-md'>
+                            <option value="" disabled>{ttt('schedule.select-time')}</option>
+                            {scheduleTime && scheduleTime.length > 0 ? scheduleTime.map(time => (
+                                <option value={time.id} key={time.id}>{time.time}</option>
+                            )) : scheduleTime && scheduleTime.length < 1 ?
+                                <option disabled value='no-schedule'>{ttt('schedule.no-schedule')}</option> :
+                                <option disabled value='date-first'>{ttt('schedule.date-first')}</option>}
+                        </select>
+                    </div>
+                    {/* <select name="scheduleID" id="scheduleID" onChange={handleChange} value={bookingFormData.scheduleID} className='px-3 py-1.5 rounded-sm w-full outline-none'>
                         <option value="" disabled>{ttt('booking.select-schedule')}</option>
                         {supplierSchedule.length > 0 ? supplierSchedule.map(schedule => (
                             <option value={schedule.id} key={schedule.id}>{schedule.date} ({schedule.time})</option>
                         )) :
                             <option disabled>{tt('loading')}</option>}
-                    </select>
+                    </select> */}
                 </div>
                 <div className='flex flex-col gap-2'>
                     <label htmlFor="note" className='px-1 font-medium'>{tt('note')}</label>

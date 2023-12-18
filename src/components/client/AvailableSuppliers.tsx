@@ -14,7 +14,7 @@ const AvailableSuppliers = () => {
 
     const router = useRouter()
 
-    const { cards, getClientCards, availableSupplier, client, getAvailableSupplier, clearAvailableSuppliers, openBookingModal } = useClientStore()
+    const { cards, getClientCards, availableSupplier, client, getAvailableSupplier, openBookingModal } = useClientStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { getCardCourses } = useAdminSupplierStore()
     const [searchQuery, setSearchQery] = useState('')
@@ -23,10 +23,8 @@ const AvailableSuppliers = () => {
 
     const ttt = useTranslations('super-admin')
 
-
     useEffect(() => {
         setBookingFormData(bookingFormDataValue)
-        clearAvailableSuppliers()
         if (client?.id && !cards) getClientCards()
     }, [client?.id])
 
@@ -70,7 +68,7 @@ const AvailableSuppliers = () => {
                     </div>
                 </div>
                 <div className='w-full flex flex-wrap gap-8 justify-evenly'>
-                    {availableSupplier && availableSupplier.length > 0 ? availableSupplier.map(supplierPrice => (
+                    {availableSupplier && availableSupplier.length > 0 && bookingFormData.clientCardID ? availableSupplier.map(supplierPrice => (
                         <div onClick={() => {
                             setBookingFormData({ ...bookingFormData, supplierID: supplierPrice.supplier.id })
                             openBookingModal()

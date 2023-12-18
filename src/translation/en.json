@@ -107,7 +107,10 @@
         "schedule": {
             "h1": "Manage Schedule",
             "create": "Create Schedule",
+            "date-first": "Select Date First",
+            "select-time": "Select Time",
             "no-schedule": "No Schedule Set",
+            "select": "Select Schedule",
             "meeting": "Select Meeting Service",
             "delete": "Delete Schedule"
         },

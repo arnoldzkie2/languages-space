@@ -5,6 +5,8 @@ import { Booking } from '@/lib/types/super-admin/bookingType';
 import { Session } from 'next-auth';
 import { Order } from '@/lib/types/super-admin/orderType'
 import { SupplierPrice } from '@/lib/types/super-admin/supplierTypes';
+import useAdminScheduleStore from '../super-admin/scheduleStore';
+import useAdminBookingStore, { bookingFormDataValue } from '../super-admin/bookingStore';
 
 interface BookingFormData {
     clientCardID: string
@@ -52,7 +54,11 @@ const useClientStore = create<Props>((set, get) => ({
     orders: null,
     clearAvailableSuppliers: () => set({ availableSupplier: null }),
     openBookingModal: () => set({ isBooking: true }),
-    closeBookingModal: () => set({ isBooking: false }),
+    closeBookingModal: () => {
+        const { setBookingFormData, bookingFormData } = useAdminBookingStore.getState()
+        setBookingFormData({ ...bookingFormData, scheduleID: '', meetingInfoID: '', supplierID: '', courseID: '', note: '' })
+        set({ isBooking: false })
+    },
     getClientOrders: async () => {
 
         const { client } = get()

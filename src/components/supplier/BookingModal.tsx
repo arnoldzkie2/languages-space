@@ -57,10 +57,10 @@ const BookingModal = () => {
             })
 
             if (data.ok) {
-                axios.post('/api/email/booking/cancel', { bookingID: data.data, operator: 'supplier' })
                 setIsLoading(false)
                 closeBooking()
                 setOkMsg('Booking Canceled')
+                axios.post('/api/email/booking/cancel', { bookingID: data.data, operator: 'supplier' })
                 getSchedule(supplier?.id!, currentDate.fromDate, currentDate.toDate)
             }
 
