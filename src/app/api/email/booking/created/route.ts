@@ -5,13 +5,13 @@ import { Resend } from "resend";
 import BookingSuccessClient from "@/lib/emails/BookingSuccessClient";
 import BookingSuccessSupplier from "@/lib/emails/BookingSuccessSupplier";
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export const POST = async (req: NextRequest) => {
 
     try {
 
-        const { bookingID } = await req.json()
+        const resend = new Resend(process.env.RESEND_API_KEY)
+
+        const { bookingID, operator } = await req.json()
 
         if (bookingID) {
 
@@ -43,7 +43,7 @@ export const POST = async (req: NextRequest) => {
                     to: client.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
                     react: BookingSuccessClient({
-                        supplierName: supplier.name,
+                        supplierName: supplier.name, operator,
                         clientName: client.name,
                         schedule: {
                             date: booking.schedule.date,
@@ -71,7 +71,7 @@ export const POST = async (req: NextRequest) => {
                     to: supplier.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
                     react: BookingSuccessSupplier({
-                        supplierName: supplier.name,
+                        supplierName: supplier.name, operator,
                         clientName: client.name,
                         schedule: {
                             date: booking.schedule.date,

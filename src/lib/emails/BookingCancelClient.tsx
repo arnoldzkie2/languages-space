@@ -33,7 +33,7 @@ const BookingCanceledClient = ({
 }: ContactProps) => {
 
     return (
-        <Html>
+        <Html key='cancel-client'>
             <Head />
             <Preview>Hello {clientName} your booking is canceled</Preview>
             <Tailwind>

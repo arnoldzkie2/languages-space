@@ -15,16 +15,14 @@ const badRequestRes = (data?: any) => {
 }
 
 const okayRes = (data?: any) => {
-    if (data) {
-        return NextResponse.json({ ok: true, data: data }, { status: 200 })
-    }
+    if (data) return NextResponse.json({ ok: true, data: data }, { status: 200 })
+
     return NextResponse.json({ ok: true }, { status: 200 })
 }
 
 const createdRes = (data?: any) => {
-    if (data) {
-        return NextResponse.json({ ok: true, data: data }, { status: 201 })
-    }
+    if (data) return NextResponse.json({ ok: true, data: data }, { status: 201 })
+
     return NextResponse.json({ ok: true }, { status: 201 })
 }
 
@@ -44,4 +42,9 @@ const getSearchParams = ({ url }: NextRequest, key: string) => {
 const checkNotFoundParams = (entity: string, value: any) => {
     if (!value) return notFoundRes(entity);
 };
-export { notFoundRes, serverErrorRes, badRequestRes, okayRes, existRes, createdRes, unauthorizedRes, getSearchParams, checkNotFoundParams }
+
+
+export {
+    notFoundRes, serverErrorRes, badRequestRes, okayRes,
+    existRes, createdRes, unauthorizedRes, getSearchParams, checkNotFoundParams
+}

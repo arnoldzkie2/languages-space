@@ -18,7 +18,7 @@ export const GET = async (req: NextRequest) => {
                 where: {
                     supplierID, date, time: {
                         gte: formattedCurrentTime
-                    }
+                    }, status: 'available'
                 },
                 select: {
                     id: true,

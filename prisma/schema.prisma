@@ -211,7 +211,8 @@ model Reminders {
 
 model Agent {
   id                  String       @id @default(uuid())
-  profile             String?
+  profile_url             String?
+  profile_key             String?
   name                String
   username            String       @unique
   password            String

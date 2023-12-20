@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
-import { getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse"
+import { getAuth } from "@/lib/nextAuth";
+import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse"
 import { NextRequest } from "next/server";
 
 
@@ -46,3 +47,40 @@ export const GET = async (req: NextRequest) => {
         prisma.$disconnect()
     }
 }
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        if (session.user.type === 'supplier') {
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            const formattedOneYearAgo = oneYearAgo.toISOString().split('T')[0];
+
+            await prisma.supplierSchedule.deleteMany({
+                where: {
+                    supplierID: session.user.id,
+                    date: {
+                        lte: formattedOneYearAgo
+                    },
+                    status: 'available',
+                    booking: {
+                        none: {}
+                    }
+                }
+            });
+
+            return okayRes();
+        }
+
+        return badRequestRes()
+
+    } catch (error) {
+        console.error(error);
+        return serverErrorRes(error);
+    } finally {
+        prisma.$disconnect();
+    }
+};

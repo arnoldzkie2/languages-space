@@ -39,7 +39,7 @@ export const POST = async (req: NextRequest) => {
 
             if (client.email && client.name) {
 
-                const sendEmailToClient = await resend.emails.send({
+                resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
                     to: client.email,
                     subject: `Booking Canceled - Schedule: ${schedule.date} at ${schedule.time}`,
@@ -62,12 +62,11 @@ export const POST = async (req: NextRequest) => {
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })
-                if (!sendEmailToClient) return badRequestRes()
 
             }
 
             if (supplier.email && supplier.name && client.name) {
-                const sendEmailToSupplier = await resend.emails.send({
+                resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
                     to: supplier.email,
                     subject: `Booking Canceled - Schedule: ${schedule.date} at ${schedule.time}`,
@@ -87,7 +86,6 @@ export const POST = async (req: NextRequest) => {
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })
-                if (!sendEmailToSupplier) return badRequestRes()
             }
 
             return okayRes()

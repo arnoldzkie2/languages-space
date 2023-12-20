@@ -57,11 +57,11 @@ const BookingModal = () => {
             })
 
             if (data.ok) {
-                setIsLoading(false)
-                closeBooking()
-                setOkMsg('Booking Canceled')
                 axios.post('/api/email/booking/cancel', { bookingID: data.data, operator: 'supplier' })
                 getSchedule(supplier?.id!, currentDate.fromDate, currentDate.toDate)
+                setIsLoading(false)
+                setOkMsg('Booking Canceled')
+                closeBooking()
             }
 
         } catch (error: any) {
@@ -118,7 +118,7 @@ const BookingModal = () => {
                         </div>
                         :
                         <div className='flex items-center gap-5  w-full'>
-                            {booking.status !== 'canceled' && <div title='Cancel Booking' onClick={() => setCancel(true)}
+                            {booking.status === 'pending' && <div title='Cancel Booking' onClick={() => setCancel(true)}
                                 className='cursor-pointer border border-red-500 w-full flex items-center justify-center rounded-md py-1 hover:bg-red-400 bg-red-500 text-white self-end'>{tt('cancel')}</div>}
                             <div title='Close' onClick={closeBooking} className='cursor-pointer border w-full flex items-center justify-center rounded-md py-1 hover:bg-slate-100'>{tt('close')}</div>
                         </div>

@@ -20,14 +20,19 @@ const SupplierHeader = () => {
         },
     })
 
-    const { setSupplier, getSupplierBookings, bookings, getSupplierMeeting, meetingInfo } = useSupplierStore()
+    const { setSupplier, getSupplierBookings, bookings, getSupplierMeeting, meetingInfo, deleteOldSChedule } = useSupplierStore()
+
+    const getSupplierData = async () => {
+        await Promise.all([
+            getSupplierBookings(), getSupplierMeeting(), deleteOldSChedule()
+        ])
+    }
 
     useEffect(() => {
         if (status === 'authenticated' && session?.user.type !== 'supplier') signOut()
         if (status === 'authenticated' && session.user.type === 'supplier') {
             setSupplier(session.user)
-            if (!bookings) getSupplierBookings()
-            if (!meetingInfo) getSupplierMeeting()
+            if (!bookings || !meetingInfo) getSupplierData()
         }
     }, [session])
 

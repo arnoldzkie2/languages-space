@@ -93,6 +93,7 @@ const ClientBookingModal = () => {
     }
 
     const handleScheduleChange = (newSelectedDate: DateObject | DateObject[] | null) => {
+        setBookingFormData({ ...bookingFormData, scheduleID: '' })
         if (newSelectedDate) setSelectedDate(newSelectedDate.toString())
     }
 

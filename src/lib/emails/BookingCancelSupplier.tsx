@@ -20,7 +20,7 @@ interface ContactProps {
 export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, operator, meetingInfo, course }: ContactProps) => {
 
     return (
-        <Html>
+        <Html key='cancel-supplier'>
             <Head />
             <Preview>Hello {supplierName} your booking is canceled</Preview>
             <Tailwind>
@@ -31,7 +31,10 @@ export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, op
                         </Heading>
                         <Text className="text-lg mt-4">
                             Dear {supplierName},<br />
-                            Booking has been canceled {operator === 'client' ? `by client` : operator === 'admin' && 'by admin'}
+                            {
+                                operator === 'supplier' ? 'Booking is successfully canceled' : operator === 'admin' ?
+                                    'An admin canceled this booking' : operator === 'client' ? 'Client canceled the booking' : 'Booking has been canceled'
+                            }
                         </Text>
                         <Text className="text-lg mt-4">
                             Client Name: {clientName}<br />

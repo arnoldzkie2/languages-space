@@ -114,7 +114,6 @@ const ManageClient: FC = () => {
             </div>
 
             {deleteModal && <DeleteClientWarningModal />}
-
             {viewClientModal && <ClientModal />}
 
         </div>

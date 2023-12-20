@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 
 export const GET = async (req: NextRequest) => {
 
@@ -157,7 +157,7 @@ export const POST = async (req: NextRequest) => {
         )
 
         const schedule = await prisma.supplierSchedule.findUnique({ where: { id: scheduleID } });
-        if (!schedule || schedule.status === 'reserved') return notFoundRes('Schedule');
+        if (!schedule || schedule.status === 'reserved') return NextResponse.json({ msg: 'Schedule is already reserved' }, { status: 409 })
 
         const [client, supplier, meetingInfo, card] = await Promise.all([
             prisma.client.findUnique({ where: { id: clientID } }),
@@ -176,11 +176,12 @@ export const POST = async (req: NextRequest) => {
         if (currentDate > cardValidityDate || currentDate > scheduleDate) {
             return NextResponse.json(
                 {
-                    msg: currentDate > cardValidityDate ? 'Client card expired' : 'This schedule already passed',
+                    msg: currentDate > cardValidityDate ? 'Card is expired' : 'This schedule already passed',
                 },
                 { status: 400 }
             );
         }
+        if (schedule.status === 'reserved') return existRes('Schedule already reserved')
 
         const department = await prisma.department.findUnique({ where: { id: card?.card.departmentID } });
         if (!department) return notFoundRes('Department');
@@ -218,15 +219,16 @@ export const POST = async (req: NextRequest) => {
         });
         if (!createBooking) return badRequestRes();
 
+        //reduce client card balance if it's not in fingerpower department
         if (department.name.toLocaleLowerCase() !== 'fingerpower') {
             const reduceCardBalance = await prisma.clientCard.update({
                 where: { id: card?.id! },
                 data: { balance: card?.balance! - supplierPrice.price },
             });
-
             if (!reduceCardBalance) return badRequestRes();
         }
 
+        //update supplier schedule
         const updateSchedule = await prisma.supplierSchedule.update({
             where: { id: schedule.id },
             data: {
@@ -235,7 +237,6 @@ export const POST = async (req: NextRequest) => {
                 clientUsername: client?.username,
             },
         });
-
         if (!updateSchedule) return badRequestRes();
 
         return createdRes(createBooking.id);
@@ -262,6 +263,7 @@ export const PATCH = async (req: NextRequest) => {
     params.forEach((param, index) =>
         checkNotFound(['Schedule', 'Booking name', 'Supplier', 'Client', 'Card', 'Settlement period', 'Operator', 'Meeting info', 'Booking'][index], param)
     );
+
     try {
 
         if (bookingID) {

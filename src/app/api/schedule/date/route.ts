@@ -1,5 +1,5 @@
 import prisma from "@/lib/db"
-import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -12,32 +12,27 @@ export const GET = async (req: NextRequest) => {
 
         if (fromDate && toDate && supplierID) {
 
-            const supplier = await prisma.supplier.findUnique({
-                where: { id: supplierID },
+            const schedule = await prisma.supplierSchedule.findMany({
                 select: {
-                    schedule: {
-                        select: {
-                            id: true,
-                            time: true,
-                            booking: {
-                                select: { id: true }
-                            },
-                            date: true,
-                            clientUsername: true,
-                            status: true,
-                        },
-                        where: {
-                            date: {
-                                gte: fromDate,
-                                lte: toDate
-                            },
-                        },
+                    id: true,
+                    time: true,
+                    booking: {
+                        select: { id: true }
+                    },
+                    date: true,
+                    clientUsername: true,
+                    status: true,
+                },
+                where: {
+                    supplierID, date: {
+                        gte: fromDate,
+                        lte: toDate
                     }
                 }
             })
-            if (!supplier) return notFoundRes('Supplier')
+            if (!schedule) return notFoundRes('Supplier')
 
-            return okayRes(supplier.schedule)
+            return okayRes(schedule)
         }
 
         if (!fromDate || !toDate) return notFoundRes('Date')

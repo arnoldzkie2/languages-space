@@ -14,11 +14,12 @@ interface ContactProps {
         service: string
         meeting_code: string
     }
+    operator: string
 }
 
-const BookingSuccessSupplier = ({ clientName, supplierName, schedule, meetingInfo, course }: ContactProps) => {
+const BookingSuccessSupplier = ({ clientName, supplierName, schedule, meetingInfo, course, operator }: ContactProps) => {
     return (
-        <Html>
+        <Html key='success-supplier'>
             <Head />
             <Preview>Hello {supplierName} a client has created a booking in you at www.languages-space.com</Preview>
             <Tailwind>
@@ -29,7 +30,7 @@ const BookingSuccessSupplier = ({ clientName, supplierName, schedule, meetingInf
                         </Heading>
                         <Text className="text-lg mt-4">
                             Dear {supplierName},<br />
-                            {clientName} created a booking
+                            {operator === 'admin' ? 'An admin created a booking' : `${clientName} created a booking`}
                         </Text>
                         <Text className="text-lg mt-4">
                             Client Name: {clientName}<br />

@@ -79,14 +79,13 @@ const Page = () => {
 
       if (!name) return setErr('Write Name for this booking reminders')
       if (quantity < 1) return setErr('Quantity Must be positive number')
-      if (!departmentID) return setErr('Select Department')
       if (!clientCardID)
 
         setIsLoading(true)
       const { data } = await axios.post('/api/booking/reminders', {
-        note, clientCardID, clientID, meeting_info, departmentID,
+        note, clientCardID, clientID, meeting_info,
         supplierID, scheduleID, quantity: Number(quantity), courseID,
-        name, operator: 'Admin', status: 'pending'
+        name, operator: 'Admin', status: 'pending', settlement
       })
 
       if (data.ok) {
@@ -116,7 +115,6 @@ const Page = () => {
   useEffect(() => {
 
     if (formData.supplierID) {
-
       getSingleSupplier(formData.supplierID)
       getSupplierSchedule()
     }
@@ -238,7 +236,7 @@ const Page = () => {
                   <select className='px-3 py-1.5 w-full outline-none border' name="clientID" value={formData.clientID} onChange={handleChange} id="clientID">
                     <option value="">{t('client.select')}</option>
                     {clients.length > 0 ? clients.map(client => (
-                      <option value={client.id} key={client.id}>{client.name}</option>
+                      <option value={client.id} key={client.id}>{client.username}</option>
                     )) : ''}
                   </select>
                 </div>

@@ -65,7 +65,7 @@ const useClientStore = create<Props>((set, get) => ({
 
         try {
 
-            const { data } = await axios.get('/api/client/orders', { params: { clientID: client?.id } })
+            const { data } = await axios.get('/api/client/orders')
             if (data.ok) set({ orders: data.data })
 
         } catch (error) {
@@ -79,7 +79,7 @@ const useClientStore = create<Props>((set, get) => ({
 
         try {
 
-            const { data } = await axios.get('/api/client/booking', { params: { clientID: client?.id } })
+            const { data } = await axios.get('/api/client/booking')
             if (data.ok) set({ bookings: data.data })
 
         } catch (error: any) {
@@ -95,7 +95,7 @@ const useClientStore = create<Props>((set, get) => ({
         const { client } = get()
         try {
 
-            const { data } = await axios.get('/api/client/card', { params: { clientID: client?.id } })
+            const { data } = await axios.get('/api/client/card')
             if (data.ok) {
                 set({ cards: data.data })
             }
@@ -113,7 +113,7 @@ const useClientStore = create<Props>((set, get) => ({
 
         try {
 
-            const { data } = await axios.get('/api/client/card/available', { params: { clientID: client?.id } })
+            const { data } = await axios.get('/api/client/card/available')
 
             if (data.ok) {
                 set({ availableCards: data.data })

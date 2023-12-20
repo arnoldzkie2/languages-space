@@ -37,6 +37,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
             })
 
             if (data.ok) {
+                axios.post('/api/email/booking/cancel', { bookingID: data.data, operator: 'admin' })
                 setIsLoading(false)
                 getBookings()
             }

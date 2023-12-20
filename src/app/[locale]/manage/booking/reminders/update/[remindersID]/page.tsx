@@ -55,7 +55,7 @@ const Page = ({ params }: Props) => {
     const { isSideNavOpen, err, setErr, isLoading, setIsLoading, setDepartmentID, departmentID } = useAdminGlobalStore()
     const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
     const { supplier, getSupplierWithMeeting, cardCourses, getCardCourses, clearCardCourses,
-        setSupplierData, supplierSchedule, setSupplierSchedule,
+        supplierSchedule, setSupplierSchedule,
         singleSupplier, getSingleSupplier } = useAdminSupplierStore()
 
     const handleChange = (e: any) => {
@@ -111,13 +111,12 @@ const Page = ({ params }: Props) => {
             const { clientCardID, clientID, meeting_info, supplierID, scheduleID, quantity, note, courseID, name, settlement } = formData
 
             if (!name) return setErr('Write Name for this booking')
-            if (!departmentID) return setErr('Select Department')
 
             setIsLoading(true)
             const { data } = await axios.patch('/api/booking/reminders', {
                 note, clientCardID, clientID, meeting_info, settlement,
                 supplierID, scheduleID, quantity: Number(quantity), courseID,
-                name, operator: 'Admin', status: 'pending', departmentID
+                name, operator: 'Admin', status: 'pending'
             }, { params: { remindersID: params.remindersID } })
 
             if (data.ok) {
@@ -147,16 +146,15 @@ const Page = ({ params }: Props) => {
             const { clientCardID, clientID, meeting_info, supplierID, scheduleID, quantity, note, courseID, name, settlement } = formData
 
             if (!name) return setErr('Write Name for this booking')
-            if (!departmentID) return setErr('Select Department')
 
             setIsLoading(true)
-            const { data } = await axios.patch('/api/booking/reminders', {
+            const res = await axios.patch('/api/booking/reminders', {
                 note, clientCardID, clientID, meeting_info, settlement,
                 supplierID, scheduleID, quantity: Number(quantity), courseID,
-                name, operator: 'Admin', status: 'pending', departmentID
+                name, operator: 'Admin', status: 'pending'
             }, { params: { remindersID: params.remindersID } })
 
-            if (data.ok) {
+            if (res.data.ok) {
 
                 const { data } = await axios.post('/api/booking/reminders/confirm', {
                     remindersID: params.remindersID
@@ -178,6 +176,7 @@ const Page = ({ params }: Props) => {
             alert('Something went wrong')
         }
     }
+
     const getSupplierPrice = async () => {
         try {
 

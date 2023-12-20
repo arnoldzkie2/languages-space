@@ -1,7 +1,8 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, getServerSession } from "next-auth";
 
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
+import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 
 declare module "next-auth" {
     interface Session {
@@ -68,4 +69,8 @@ const nextAuthOptions = {
     },
 } satisfies NextAuthOptions
 
-export { nextAuthOptions }
+const getAuth = (...args: [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]] | [NextApiRequest, NextApiResponse] | []) => {
+    return getServerSession(...args, nextAuthOptions)
+}
+
+export { nextAuthOptions, getAuth }

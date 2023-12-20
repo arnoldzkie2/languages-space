@@ -1,5 +1,10 @@
 {
     "super-admin": {
+        "agent": {
+            "h1": "Manage Agent",
+            "search": "Search Agent",
+            "create": "Create Agent"
+        },
         "supplier": {
             "create": "Create Supplier",
             "h1": "Manage Supplier",

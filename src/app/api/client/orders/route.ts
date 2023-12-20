@@ -1,17 +1,19 @@
 import prisma from "@/lib/db";
-import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { getAuth } from "@/lib/nextAuth";
+import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
 
-    const clientID = getSearchParams(req, 'clientID')
-
     try {
 
-        if (clientID) {
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        if (session.user.type === 'client') {
 
             const client = await prisma.client.findUnique({
-                where: { id: clientID }, select: {
+                where: { id: session.user.id }, select: {
                     orders: {
                         select: {
                             id: true,
@@ -34,7 +36,7 @@ export const GET = async (req: NextRequest) => {
             return okayRes(client.orders)
         }
 
-        return notFoundRes('Client')
+        return badRequestRes()
 
     } catch (error) {
         console.log(error);

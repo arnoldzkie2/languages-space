@@ -2,7 +2,7 @@
 'use client'
 import SupplierHeader from '@/components/supplier/SupplierHeader'
 import FullCalendar from '@fullcalendar/react'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list';
 import ScheduleComponent from '@/components/supplier/ScheduleComponent';
@@ -13,6 +13,8 @@ import CreateScheduleModal from '@/components/supplier/CreateScheduleModal'
 import Success from '@/components/global/Success'
 import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import BookingModal from '@/components/supplier/BookingModal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 const Page = () => {
 
@@ -56,12 +58,6 @@ const Page = () => {
     })
   }
 
-  useEffect(() => {
-    if (supplier && schedules.length < 1) {
-      getSchedule(supplier.id, currentDate.fromDate, currentDate.toDate)
-    }
-  }, [supplier])
-
   const t = useTranslations('super-admin')
 
   return (
@@ -72,18 +68,23 @@ const Page = () => {
           <Success />
           <button onClick={toggleSchedule} className='py-2 px-6 hover:bg-blue-500 bg-blue-600 text-white rounded-md'>{t('schedule.create')}</button>
         </div>
-        <FullCalendar
+        {supplier ? <FullCalendar
           plugins={[dayGridPlugin, listPlugin]}
           eventContent={ScheduleComponent}
           events={events}
+          initialDate={currentDate.fromDate || new Date()}
           initialView='dayGridWeek'
           headerToolbar={{
             start: 'prev,next today',
             center: 'title',
             end: 'dayGridMonth,dayGridWeek,listWeek'
           }}
-          datesSet={(arg) => handleCalendarDateChange(arg)}
-        />
+          datesSet={(arg) => {
+            handleCalendarDateChange(arg)
+          }}
+        /> : <div className='flex w-full h-full items-center justify-center'>
+          <FontAwesomeIcon icon={faSpinner} width={28} height={28} className='animate-spin w-7 h-7' />
+        </div>}
       </div>
       {newSchedule && <CreateScheduleModal />}
       {bookingModal && <BookingModal />}
