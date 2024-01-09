@@ -1,4 +1,6 @@
 'use client'
+import useClientBookingStore from '@/lib/state/client/clientBookingStore'
+import useClientCardStore from '@/lib/state/client/clientCardStore'
 /* eslint-disable react-hooks/exhaustive-deps */
 import useClientStore from '@/lib/state/client/clientStore'
 import useAdminBookingStore, { bookingFormDataValue } from '@/lib/state/super-admin/bookingStore'
@@ -14,7 +16,10 @@ const AvailableSuppliers = () => {
 
     const router = useRouter()
 
-    const { cards, getClientCards, availableSupplier, client, getAvailableSupplier, openBookingModal } = useClientStore()
+    const { availableSupplier, client, getAvailableSupplier } = useClientStore()
+    const cards = useClientCardStore(state => state.cards)
+    const getCards = useClientCardStore(state => state.getCards)
+    const { openBookingModal, closeBookingModal } = useClientBookingStore(state => state)
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { getCardCourses } = useAdminSupplierStore()
     const [searchQuery, setSearchQery] = useState('')
@@ -25,7 +30,7 @@ const AvailableSuppliers = () => {
 
     useEffect(() => {
         setBookingFormData(bookingFormDataValue)
-        if (client?.id && !cards) getClientCards()
+        if (client?.id && !cards) getCards()
     }, [client?.id])
 
     useEffect(() => {
@@ -36,6 +41,10 @@ const AvailableSuppliers = () => {
         }
 
     }, [bookingFormData.clientCardID])
+
+    useEffect(() => {
+        closeBookingModal()
+    }, [])
 
     const t = useTranslations('client')
     const tt = useTranslations('global')

@@ -7,8 +7,8 @@ import SearchBooking from '@/components/super-admin/management/booking/SearchBoo
 import DeleteRemindersWarningModal from '@/components/super-admin/management/booking/reminders/DeleteRemindersWarningModal';
 import RemindersHeader from '@/components/super-admin/management/booking/reminders/RemindersHeader';
 import RemindersTable from '@/components/super-admin/management/booking/reminders/RemindersTable';
+import useGlobalStore from '@/lib/state/globalStore';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
@@ -23,7 +23,7 @@ const Page: React.FC = () => {
         },
     })
 
-    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useAdminGlobalStore()
+    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useGlobalStore()
 
     const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders } = useAdminBookingStore()
 

@@ -8,11 +8,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { useLocale, useTranslations } from 'next-intl';
 import Err from "@/components/global/Err";
 import Success from "@/components/global/Success";
 import { useRouter } from "@/lib/navigation";
+import useGlobalStore from "@/lib/state/globalStore";
 
 interface Props {
     searchParams: {
@@ -29,7 +29,7 @@ const Page = ({ searchParams }: Props) => {
 
     const session = useSession()
 
-    const { isLoading, setIsLoading, setErr, setOkMsg } = useAdminGlobalStore()
+    const { isLoading, setIsLoading, setErr, setOkMsg } = useGlobalStore()
 
     const [isText, setIsText] = useState(false)
     const [formData, setFormData] = useState({
@@ -90,7 +90,7 @@ const Page = ({ searchParams }: Props) => {
                     router.push('/agent')
                     break;
                 case 'supplier':
-                    router.push('/supplier')
+                    router.push('/supplier/schedule')
                     break;
                 default:
                     signIn()

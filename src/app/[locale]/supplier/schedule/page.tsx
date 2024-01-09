@@ -2,7 +2,7 @@
 'use client'
 import SupplierHeader from '@/components/supplier/SupplierHeader'
 import FullCalendar from '@fullcalendar/react'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list';
 import ScheduleComponent from '@/components/supplier/ScheduleComponent';
@@ -11,16 +11,18 @@ import useSupplierStore from '@/lib/state/supplier/supplierStore'
 import { useTranslations } from 'next-intl'
 import CreateScheduleModal from '@/components/supplier/CreateScheduleModal'
 import Success from '@/components/global/Success'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import BookingModal from '@/components/supplier/BookingModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import useSupplierBookingStore from '@/lib/state/supplier/supplierBookingStore'
+import useGlobalStore from '@/lib/state/globalStore'
 
 const Page = () => {
 
   const { schedules, setCurrentDate, getSchedule, currentDate, newSchedule, toggleSchedule, deleteSupplierSchedule } = useAdminScheduleStore()
-  const { isLoading } = useAdminGlobalStore()
-  const { supplier, bookingModal, viewBooking } = useSupplierStore()
+  const { isLoading } = useGlobalStore()
+  const supplier = useSupplierStore(state => state.supplier)
+  const { viewBooking, bookingModal } = useSupplierBookingStore()
 
   const events = schedules.map(supplier => ({
     start: `${supplier.date}T${supplier.time}:00`,

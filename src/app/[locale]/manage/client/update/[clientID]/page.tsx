@@ -2,7 +2,6 @@
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
 import { newClientFormValue } from '@/lib/state/super-admin/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientFormData } from '@/lib/types/super-admin/clientType'
 import { Department } from '@/lib/types/super-admin/globalType'
 import { UploadButton } from '@/utils/uploadthing'
@@ -16,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import useGlobalStore from '@/lib/state/globalStore'
 
 interface Props {
     params: {
@@ -27,13 +27,6 @@ const Page = ({ params }: Props) => {
 
     const clientID = params.clientID
 
-    const session: any = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const router = useRouter()
 
     const t = useTranslations('super-admin')
@@ -41,9 +34,9 @@ const Page = ({ params }: Props) => {
 
     const [formData, setFormData] = useState<ClientFormData>(newClientFormValue)
 
-    const { isSideNavOpen, departments, getDepartments, err, setErr, isLoading, setIsLoading, okMsg, setOkMsg } = useAdminGlobalStore()
+    const { isSideNavOpen, departments, getDepartments, err, setErr, isLoading, setIsLoading, setOkMsg } = useGlobalStore()
 
-    const registerUser = async (e: any) => {
+    const updateClient = async (e: any) => {
 
         e.preventDefault()
 
@@ -96,35 +89,33 @@ const Page = ({ params }: Props) => {
 
     };
 
-    useEffect(() => {
+    const getUser = async () => {
 
-        const getUser = async () => {
+        try {
 
-            try {
+            const { data } = await axios.get(`/api/client?clientID=${clientID}`)
 
-                const { data } = await axios.get(`/api/client?clientID=${clientID}`)
+            if (data.ok) {
 
+                const departmentIDs = data.data.departments.map((department: Department) => department.id)
+                data.data.departments = departmentIDs
+                setFormData(data.data)
 
-                if (data.ok) {
-
-                    const departmentIDs = data.data.departments.map((department: Department) => department.id);
-                    data.data.departments = departmentIDs
-                    setFormData(data.data)
-
-                }
-
-            } catch (error) {
-
-                console.log(error);
+                console.log(data.data)
 
             }
+
+        } catch (error) {
+
+            console.log(error);
+
         }
+    }
 
+    useEffect(() => {
         getDepartments()
-
         getUser()
     }, [])
-
 
     return (
         <div className=''>
@@ -139,7 +130,7 @@ const Page = ({ params }: Props) => {
 
                 <div className='w-full px-8'>
 
-                    <form className='w-1/2 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={registerUser}>
+                    <form className='w-1/2 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={updateClient}>
                         {err && <small className='w-full text-red-400'>{err}</small>
                         }
                         <div className='w-full flex gap-20'>
@@ -148,7 +139,7 @@ const Page = ({ params }: Props) => {
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="name" className='font-medium px-2'>{tt('name')}</label>
-                                    <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
+                                    <input value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>

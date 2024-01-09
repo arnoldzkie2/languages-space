@@ -22,7 +22,7 @@ interface ContactProps {
 
 const BookingSuccessClient = ({ cardBalance, clientName, supplierName, schedule, cardName, meetingInfo, price, course, operator }: ContactProps) => {
     return (
-        <Html key='success-client'>
+        <Html key={meetingInfo.id}>
             <Head />
             <Preview>Hello {clientName} we recieved your booking request</Preview>
             <Tailwind>
@@ -31,11 +31,11 @@ const BookingSuccessClient = ({ cardBalance, clientName, supplierName, schedule,
                         <Heading className="text-black text-[24px] font-normal text-center">
                             <Img src='https://www.verbalace.com/logo.png' className='w-40 h-auto mx-auto' />
                         </Heading>
-                        <Text className="text-lg mt-4">
+                        <Text className="mt-3">
                             Dear {clientName},<br />
                             {operator === 'admin' ? 'An admin created a booking for you' : 'Your booking has been successfully created!'}
                         </Text>
-                        <Text className="text-lg mt-4">
+                        <Text className="mt-3">
                             Supplier Name: {supplierName}<br />
                             Meeting Info: {meetingInfo.service} - {meetingInfo.meeting_code}<br />
                             <br />

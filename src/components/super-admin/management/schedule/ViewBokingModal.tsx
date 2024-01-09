@@ -6,14 +6,14 @@ import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import axios from 'axios'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { Booking } from '@/lib/types/super-admin/bookingType'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
+import useGlobalStore from '@/lib/state/globalStore'
 
 const ViewBokingModal = () => {
 
     const { closeViewBooking, getSchedule, currentDate, bookingID } = useAdminScheduleStore()
-    const { isLoading, setIsLoading } = useAdminGlobalStore()
+    const { isLoading, setIsLoading } = useGlobalStore()
     const { bookingFormData } = useAdminBookingStore()
 
     const [bookingData, setBookingData] = useState<Booking | null>(null)

@@ -7,10 +7,9 @@ import SearchSupplier from '@/components/super-admin/management/supplier/SearchS
 import SupplierDeleteWarningModal from '@/components/super-admin/management/supplier/SupplierDeleteWarningModal';
 import SupplierHeader from '@/components/super-admin/management/supplier/SupplierHeader';
 import SupplierTable from '@/components/super-admin/management/supplier/SupplierTable';
+import useGlobalStore from '@/lib/state/globalStore';
 import { ManageClientSearchQueryValue } from '@/lib/state/super-admin/clientStore';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
-import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 interface PageProps {
@@ -18,16 +17,8 @@ interface PageProps {
 
 const Page: React.FC<PageProps> = ({ }) => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const { supplier, totalSupplier, selectedSupplier, deleteSupplierModal, getSupplier, setTotalSupplier } = useAdminSupplierStore()
-
-    const { currentPage, departmentID, isSideNavOpen, setCurrentPage, itemsPerPage, setDepartmentID } = useAdminGlobalStore()
+    const { currentPage, departmentID, isSideNavOpen, setCurrentPage, itemsPerPage, setDepartmentID } = useGlobalStore()
 
     const [searchQuery, setSearchQuery] = useState(ManageClientSearchQueryValue)
 
@@ -59,9 +50,7 @@ const Page: React.FC<PageProps> = ({ }) => {
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         const { name, value } = event.target
-
         setCurrentPage(1)
-
         setSearchQuery(prevState => ({
             ...prevState, [name]: value
         }))
@@ -69,32 +58,23 @@ const Page: React.FC<PageProps> = ({ }) => {
     }
 
     useEffect(() => {
-
         getSupplier()
         setCurrentPage(1)
-
     }, [departmentID])
 
     useEffect(() => {
-
         setDepartmentID('')
-
     }, [])
 
     useEffect(() => {
 
         setTotalSupplier({
-
             selected: selectedSupplier.length.toString(),
-
             searched: filteredSupplier.length.toString(),
-
             total: supplier.length.toString()
-
         })
 
     }, [supplier.length, filteredSupplier.length, selectedSupplier.length])
-
 
     return (
         <div className='h-screen'>

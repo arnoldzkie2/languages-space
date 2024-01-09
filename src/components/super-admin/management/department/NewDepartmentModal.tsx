@@ -1,5 +1,5 @@
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useGlobalStore from '@/lib/state/globalStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 
 const NewDepartmentModal = () => {
 
-  const { getDepartments, isLoading, setIsLoading, toggleNewDepartment } = useAdminGlobalStore()
+  const { getDepartments, isLoading, setIsLoading, toggleNewDepartment } = useGlobalStore()
 
   const [name, setName] = useState('')
 
@@ -29,7 +29,7 @@ const NewDepartmentModal = () => {
 
     } catch (error) {
       setIsLoading(false)
-      console.log(error);
+      console.log(error)
     }
   }
 
@@ -43,8 +43,8 @@ const NewDepartmentModal = () => {
         <FontAwesomeIcon onClick={toggleNewDepartment} icon={faXmark} width={16} height={16} className='cursor-pointer absolute top-4 right-4 hover:text-blue-600' />
         <input required type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='Department Name' className='outline-none px-3 py-1 border' />
         <div className='flex w-full gap-5 items-center'>
-        <button type='button' onClick={toggleNewDepartment} className='border outline-none py-2 hover:bg-slate-100 text-slate-700 w-full rounded-sm'>{tt('close')}</button>
-        <button disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white w-full rounded-sm py-2`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' /> : tt('create')}</button>
+          <button type='button' onClick={toggleNewDepartment} className='border outline-none py-2 hover:bg-slate-100 text-slate-700 w-full rounded-sm'>{tt('close')}</button>
+          <button disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white w-full rounded-sm py-2`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' /> : tt('create')}</button>
         </div>
       </form>
     </div>

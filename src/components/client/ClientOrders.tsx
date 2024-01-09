@@ -1,54 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { useTranslations } from 'next-intl'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import useClientStore from '@/lib/state/client/clientStore'
-import { useSession } from 'next-auth/react'
+import TablePagination from './TablePagination'
+import { Order } from '@/lib/types/super-admin/orderType'
+import useGlobalStore from '@/lib/state/globalStore'
+import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
 
 
 const ClientOrders: React.FC = () => {
 
-    const session = useSession()
-
     const t = useTranslations('client')
     const tt = useTranslations('global')
-    const ttt = useTranslations('super-admin')
 
-    const { orders, getClientOrders, client } = useClientStore()
+    const [currentOrders, setCurrentOrders] = useState<Order[] | null>(null)
 
-    const { skeleton, currentPage, setCurrentPage, itemsPerPage, setPage } = useAdminGlobalStore()
-    const getTotalPages = () => {
-        if (orders) {
-            return Math.ceil(orders.length / itemsPerPage)
-        } else return 1
-    }
-
-    const goToPreviousPage = () => {
-
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    }
-
-    const indexOfLastItem = currentPage * itemsPerPage
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage
-    const currentOrders = orders && orders.slice(indexOfFirstItem, indexOfLastItem)
-
-
-    const goToNextPage = () => {
-        const totalPages = getTotalPages();
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    }
+    const { orders, getClientOrders, client, setPage } = useClientStore()
+    const skeleton = useGlobalStore(s => s.skeleton)
+    const { getCurrentData, currentPage } = useGlobalPaginationStore()
 
     useEffect(() => {
 
         setPage('orders')
-        if (session.status === 'authenticated' && !orders && client?.id) getClientOrders()
+        if (!orders && client?.id) getClientOrders()
 
-    }, [session, client?.id])
+    }, [client?.id])
+
+    useEffect(() => {
+        setCurrentOrders(getCurrentData(orders))
+    }, [currentPage, orders])
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 xl:w-1/2 order-1 md:order-2'>
@@ -84,7 +65,7 @@ const ClientOrders: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-10 uppercase'>
+                                        <div className='h-5 text-xs md:text-sm w-16 uppercase'>
                                             {order.status}
                                         </div>
                                     </td>
@@ -94,21 +75,25 @@ const ClientOrders: React.FC = () => {
                                         </div>
                                     </td>
                                 </tr>
-                            )) : currentOrders && currentOrders.length < 1 ? <div className='w-full px-3 py-2'>{tt('no-data')}</div> :
+                            )) : currentOrders && currentOrders.length < 1 ?
+                                <tr>
+                                    <td>
+                                        {tt('no-data')}
+                                    </td>
+                                </tr> :
                                 skeleton.map(item => (
                                     <tr key={item}>
-
                                         <td className='py-3.5 px-3'>
                                             <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-8 h-5'></div>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-16 h-5'></div>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-16 h-5'></div>
                                         </td>
                                         <td className='py-3.5 px-3'>
                                             <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
@@ -119,39 +104,7 @@ const ClientOrders: React.FC = () => {
                     </tbody >
                 </table >
             </div>
-            <footer className={`flex mt-auto min-h-[80px] items-center justify-between border-t text-xs lg:text-md`}>
-                <div className='hidden sm:flex items-center gap-3 w-44 lg:w-56'>
-                    <div className='font-medium'>
-                        {ttt('pagination.page')} {currentPage} of {getTotalPages()}
-                    </div>
-                    <input
-                        type='text'
-                        className='outline-none border px-3 py-1 w-1/3 lg:w-2/5'
-                        placeholder={ttt('pagination.goto')}
-                        onChange={(e) => {
-                            const value = parseInt(e.target.value);
-                            setCurrentPage(isNaN(value) ? 1 : value);
-                        }}
-                    />
-                </div>
-
-                <div className='flex items-center mr-auto'>
-                    <div className='font-medium'>{ttt('global.total')} <span className='font-black text-gray-600'>{orders && orders.length}</span></div>
-                </div>
-
-                <div className='flex items-center gap-5 h-full'>
-                    <button onClick={goToPreviousPage}
-                        className={`w-20 lg:w-32 border h-8 rounded-md ${currentPage !== 1 && 'hover:bg-blue-600 hover:text-white'}`}
-                        disabled={currentPage === 1}>
-                        {ttt('pagination.prev')}
-                    </button>
-                    <button onClick={goToNextPage}
-                        className={`w-20 lg:w-32 border h-8 rounded-md ${currentPage !== getTotalPages() && 'hover:bg-blue-600 hover:text-white'}`}
-                        disabled={currentPage === getTotalPages()}>
-                        {ttt('pagination.next')}
-                    </button>
-                </div>
-            </footer>
+            <TablePagination data={orders || []} />
         </ul>
     )
 }

@@ -3,9 +3,9 @@
 import Err from '@/components/global/Err'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminBookingStore, { bookingFormDataValue } from '@/lib/state/super-admin/bookingStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -33,7 +33,7 @@ const Page = ({ params }: Props) => {
 
   const router = useRouter()
 
-  const { isSideNavOpen, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useAdminGlobalStore()
+  const { isSideNavOpen, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useGlobalStore()
   const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
   const { supplier, getSupplierWithMeeting, cardCourses, getCardCourses, clearCardCourses,
     supplierSchedule, setSupplierSchedule, getSupplierMeetingInfo, supplierMeetingInfo } = useAdminSupplierStore()

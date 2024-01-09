@@ -3,8 +3,8 @@
 import { OurFileRouter } from '@/app/api/uploadthing/core'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
+import useGlobalStore from '@/lib/state/globalStore'
 import { clientCardValue } from '@/lib/state/super-admin/clientCardStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { Courses, Supplier } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -39,7 +39,7 @@ const Page = () => {
     const [searchCourse, setSearchCourse] = useState('')
     const [searchSupplier, setSearchSupplier] = useState('')
 
-    const { isSideNavOpen, departmentID, setDepartmentID } = useAdminGlobalStore()
+    const { isSideNavOpen, departmentID, setDepartmentID } = useGlobalStore()
     const { supplier, getSupplier, getCourses, courses } = useAdminSupplierStore()
 
     const filterCourse = courses.filter(course => course.name.toUpperCase().includes(searchCourse.toUpperCase()))

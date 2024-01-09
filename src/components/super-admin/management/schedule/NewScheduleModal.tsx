@@ -7,21 +7,14 @@ import Departments from '../Departments'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { useTranslations } from 'next-intl'
 import MultipleDatePicker from 'react-multi-date-picker'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import Err from '@/components/global/Err'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
-
-interface TimeSlot {
-    [key: string]: string[]
-}
-
-
+import useGlobalStore from '@/lib/state/globalStore'
 
 const NewScheduleModal = () => {
 
     const [searchQuery, setSearchQuery] = useState('')
-
-    const { isLoading, skeleton } = useAdminGlobalStore()
+    const { isLoading, skeleton } = useGlobalStore()
 
     const { handleSelectAllTimeSlot, generateTimeSlots, createSchedule, timeSlots, setTimeSlots,
         minIntervals, handleSelectedDateChange, areAllTimeSlotSelected, selectedInterval, setSelectedInterval,

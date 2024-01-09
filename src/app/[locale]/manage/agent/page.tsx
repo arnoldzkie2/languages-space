@@ -6,13 +6,13 @@ import Pagination from '@/components/super-admin/management/Pagination'
 import AgentHeader from '@/components/super-admin/management/booking/agent/AgentHeader'
 import AgentTable from '@/components/super-admin/management/booking/agent/AgentTable'
 import SearchAgent from '@/components/super-admin/management/booking/agent/SearchAgent'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminAgentStore, { ManageAgentSearchQueryValue } from '@/lib/state/super-admin/agentStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
+    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
     const { agents, selectedAgents, getAgents, setTotalAgent, totalAgent } = useAdminAgentStore()
 
     const [searchQuery, setSearchQuery] = useState(ManageAgentSearchQueryValue)

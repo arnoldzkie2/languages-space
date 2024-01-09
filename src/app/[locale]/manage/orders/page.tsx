@@ -6,23 +6,15 @@ import Pagination from '@/components/super-admin/management/Pagination'
 import OrderHeader from '@/components/super-admin/management/order/OrderHeader'
 import OrderTable from '@/components/super-admin/management/order/OrderTable'
 import SearchOrder from '@/components/super-admin/management/order/SearchOrder'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminOrderStore, { ManageOrderSearchValue } from '@/lib/state/super-admin/orderStore'
-import { signIn, useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const [searchQuery, setSearchQuery] = useState(ManageOrderSearchValue)
     
-    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
+    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
     const { getOrders, setTotalOrders, selectedOrder, orders, totalOrders } = useAdminOrderStore()
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

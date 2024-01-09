@@ -3,7 +3,7 @@ import React from 'react';
 import axios from 'axios';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -11,7 +11,7 @@ interface Props {
 
 const DeleteClientWarningModal: React.FC<Props> = () => {
 
-    const { isLoading, setIsLoading } = useAdminGlobalStore()
+    const { setIsLoading } = useGlobalStore()
 
     const { clientData, selectedClients, closeDeleteModal, setSelectedClients, getClients } = useAdminClientStore()
 

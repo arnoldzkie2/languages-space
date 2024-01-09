@@ -5,24 +5,20 @@ import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { Supplier } from '@/lib/types/super-admin/supplierTypes';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
-
     filteredTable: Supplier[]
-
 }
 
 const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { departmentID } = useAdminGlobalStore()
     const { selectedSupplier, setSelectedSupplier, openViewSupplierModal, deleteSupplierWarning } = useAdminSupplierStore()
-    const { openOperation, closeOperation, operation, selectedID } = useAdminGlobalStore()
+    const { openOperation, closeOperation, operation, selectedID, departmentID } = useGlobalStore()
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
-    const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
     const handleSelection = (supplier: Supplier) => {
         const isSelected = selectedSupplier.some((selectedSupplier) => selectedSupplier.id === supplier.id);
@@ -105,81 +101,90 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
                 </tr>
             </thead>
             <tbody>
-                {filteredTable && filteredTable.length > 0 ?
-                    filteredTable.map(supplier => (
-                        <tr className="bg-white border hover:bg-slate-50" key={supplier.id}>
-                            <td className='px-6 py-3'>
-                                <input type="checkbox" id={supplier.id}
-                                    className='cursor-pointer w-4 h-4 outline-none'
-                                    onChange={() => handleSelection(supplier)}
-                                    checked={selectedSupplier.some(selectedSupplier => selectedSupplier.id === supplier.id)}
-                                />
-                            </td>
-                            <td className="px-6 py-3">
-                                <label htmlFor={supplier.id} className='cursor-pointer h-5 w-36'>{supplier.name}</label>
-                            </td>
-                            <td className='px-6 py-3'>
-                                <div className='h-5 w-32'>
+                {filteredTable.length < 1 ? <Skeleton /> : filteredTable.map(supplier => (
+                    <tr className="bg-white border hover:bg-slate-50" key={supplier.id}>
+                        <td className='px-6 py-3'>
+                            <input type="checkbox" id={supplier.id}
+                                className='cursor-pointer w-4 h-4 outline-none'
+                                onChange={() => handleSelection(supplier)}
+                                checked={selectedSupplier.some(selectedSupplier => selectedSupplier.id === supplier.id)}
+                            />
+                        </td>
+                        <td className="px-6 py-3">
+                            <label htmlFor={supplier.id} className='cursor-pointer h-5 w-36'>{supplier.name}</label>
+                        </td>
+                        <td className='px-6 py-3'>
+                            <div className='h-5 w-32'>
 
-                                    {supplier.phone_number ? supplier.phone_number : 'No Data'}
-                                </div>
-                            </td>
-                            <td className="px-6 py-3">
-                                <div className='h-5 w-28'>
+                                {supplier.phone_number ? supplier.phone_number : 'No Data'}
+                            </div>
+                        </td>
+                        <td className="px-6 py-3">
+                            <div className='h-5 w-28'>
 
-                                    {supplier.organization ? supplier.organization : 'No Data'}
-                                </div>
-                            </td>
-                            <td className="px-6 py-3">
-                                <div className='h-5 w-28'>
-                                    {supplier.origin ? supplier.origin : 'No Data'}
-                                </div>
-                            </td>
-                            <td className="px-6 py-3">
-                                <div className='h-5 w-28'>
-                                    {supplier.note ? supplier.note : 'No Data'}
-                                </div>
-                            </td>
-                            <td className='py-3 relative px-6'>
-                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(supplier.id)} />
-                                <ul className={`${operation && selectedID === supplier.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => openViewSupplierModal(supplier)}>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/supplier/update/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => deleteSupplierWarning(supplier)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
-                                </ul>
-                            </td>
-                        </tr>
-                    )) :
-                    skeleton.map(item => (
-                        <tr key={item}>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-md animate-pulse w-5 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
-                            </td>
-                        </tr>
-                    ))
-                }
+                                {supplier.organization ? supplier.organization : 'No Data'}
+                            </div>
+                        </td>
+                        <td className="px-6 py-3">
+                            <div className='h-5 w-28'>
+                                {supplier.origin ? supplier.origin : 'No Data'}
+                            </div>
+                        </td>
+                        <td className="px-6 py-3">
+                            <div className='h-5 w-28'>
+                                {supplier.note ? supplier.note : 'No Data'}
+                            </div>
+                        </td>
+                        <td className='py-3 relative px-6'>
+                            <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(supplier.id)} />
+                            <ul className={`${operation && selectedID === supplier.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
+                                <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => openViewSupplierModal(supplier)}>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
+                                <Link href={`/manage/supplier/update/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => deleteSupplierWarning(supplier)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                            </ul>
+                        </td>
+                    </tr>
+                ))}
             </tbody >
         </table >
     );
 };
+
+const Skeleton = () => {
+
+    const { skeleton } = useGlobalStore()
+
+    return (
+        <>
+            {skeleton.map(item => (
+                <tr key={item}>
+                    <td className='py-3.5 px-6'>
+                        <div className='bg-slate-200 rounded-md animate-pulse w-5 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-6'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-6'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-6'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-6'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-6'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-6'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
+                    </td>
+                </tr>
+            ))
+            }
+        </>
+    )
+}
 
 export default SupplierTable;

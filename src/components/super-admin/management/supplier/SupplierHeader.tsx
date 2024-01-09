@@ -13,6 +13,7 @@ const SupplierHeader: React.FC = ({ }) => {
     const { supplier, selectedSupplier } = useAdminSupplierStore()
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations('global')
     const skeleton = (
         <li className='bg-slate-200 animate-pulse w-40 h-5 rounded-3xl'></li>
     )
@@ -20,7 +21,16 @@ const SupplierHeader: React.FC = ({ }) => {
     return (
         <nav className={`border-b h-20 flex items-center bg-white px-8 justify-between`}>
             <h1 className='font-black text-gray-600 text-xl uppercase'>{t('supplier.h1')}</h1>
-            <ul className='flex items-center h-full ml-auto gap-5'>
+            <ul className='flex items-center h-full ml-auto gap-4'>
+                {status !== 'loading' ? <Link href='/manage/supplier/payment-request' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
+                    <div>{tt('payment-request')}</div>
+                </Link> : skeleton}
+                {status !== 'loading' ? <Link href='/manage/supplier/earnings' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
+                    <div>{tt('earnings')}</div>
+                </Link> : skeleton}
+                {status !== 'loading' ? <Link href='/manage/supplier/deductions' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
+                    <div>{tt('deductions')}</div>
+                </Link> : skeleton}
                 {status !== 'loading' ? <Link href='/manage/supplier/courses' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
                     <div>{t('courses.h1')}</div>
                 </Link> : skeleton}

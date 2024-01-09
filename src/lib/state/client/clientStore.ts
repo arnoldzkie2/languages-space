@@ -1,67 +1,28 @@
 import { create } from 'zustand'
 import axios from 'axios';
-import { ClientCard, ClientCardList } from '@/lib/types/super-admin/clientCardType';
-import { Booking } from '@/lib/types/super-admin/bookingType';
 import { Session } from 'next-auth';
 import { Order } from '@/lib/types/super-admin/orderType'
 import { SupplierPrice } from '@/lib/types/super-admin/supplierTypes';
-import useAdminScheduleStore from '../super-admin/scheduleStore';
-import useAdminBookingStore, { bookingFormDataValue } from '../super-admin/bookingStore';
-
-interface BookingFormData {
-    clientCardID: string
-    courseID: string
-    note: string
-    supplierID: string
-    settlement: string
-    quantity: number
-    scheduleID: string
-    meetingInfoID: string
-}
-
-export type { BookingFormData }
+import useGlobalStore from '../globalStore';
 
 interface Props {
     page: string
-    cards: ClientCard[] | null
     orders: Order[] | null
     availableSupplier: SupplierPrice[] | null
     client: Session["user"] | null
-    isBooking: boolean
     setPage: (page: string) => void
     setClient: (client: Session["user"]) => void
-    availableCards: ClientCardList[] | null,
-    bookings: Booking[] | null
-    selectedCardID: string
     clearAvailableSuppliers: () => void
-    getClientBookings: () => Promise<void>
     getClientOrders: () => Promise<void>
-    getClientCards: () => Promise<void>
-    getAvailableCards: () => Promise<void>
-    setSelectedCardID: (cardID: string) => void
     getAvailableSupplier: (clientCardID: string) => Promise<void>
-    openBookingModal: () => void
-    closeBookingModal: () => void
+    updateClient: (e: React.FormEvent, signIn: any) => Promise<void>
 }
 
 const useClientStore = create<Props>((set, get) => ({
-    isBooking: false,
-    cards: null,
-    selectedCardID: '',
     availableSupplier: null,
-    availableCards: null,
-    bookings: null,
     orders: null,
     clearAvailableSuppliers: () => set({ availableSupplier: null }),
-    openBookingModal: () => set({ isBooking: true }),
-    closeBookingModal: () => {
-        const { setBookingFormData, bookingFormData } = useAdminBookingStore.getState()
-        setBookingFormData({ ...bookingFormData, scheduleID: '', meetingInfoID: '', supplierID: '', courseID: '', note: '' })
-        set({ isBooking: false })
-    },
     getClientOrders: async () => {
-
-        const { client } = get()
 
         try {
 
@@ -72,58 +33,6 @@ const useClientStore = create<Props>((set, get) => ({
             console.log(error);
             alert('Something went wrong')
         }
-    },
-    getClientBookings: async () => {
-
-        const { client } = get()
-
-        try {
-
-            const { data } = await axios.get('/api/client/booking')
-            if (data.ok) set({ bookings: data.data })
-
-        } catch (error: any) {
-            console.log(error);
-            if (error.response.data.msg) {
-                return alert(error.response.data.msg)
-            }
-            alert("Something went wrong")
-        }
-    },
-    getClientCards: async () => {
-
-        const { client } = get()
-        try {
-
-            const { data } = await axios.get('/api/client/card')
-            if (data.ok) {
-                set({ cards: data.data })
-            }
-        } catch (error: any) {
-            console.log(error);
-            if (error.response.data.msg) {
-                return alert(error.response.data.msg)
-            }
-            alert('Something went wrong')
-        }
-    },
-    getAvailableCards: async () => {
-
-        const { client } = get()
-
-        try {
-
-            const { data } = await axios.get('/api/client/card/available')
-
-            if (data.ok) {
-                set({ availableCards: data.data })
-            }
-
-        } catch (error: any) {
-            console.log(error);
-            alert('Something went wrong')
-        }
-
     },
     getAvailableSupplier: async (clientCardID: string) => {
 
@@ -145,11 +54,45 @@ const useClientStore = create<Props>((set, get) => ({
             alert('Something went wrong')
         }
     },
-    setSelectedCardID: (cardID: string) => { set({ selectedCardID: cardID }) },
     page: 'profile',
     setPage: (page: string) => set({ page }),
     client: null,
-    setClient: (data: Session["user"]) => set({ client: data })
+    setClient: (data: Session["user"]) => set({ client: data }),
+    updateClient: async (e: React.FormEvent, signIn: any) => {
+
+        e.preventDefault()
+        const setIsLoading = useGlobalStore.getState().setIsLoading
+        const setOkMsg = useGlobalStore.getState().setOkMsg
+        const setErr = useGlobalStore.getState().setErr
+        const client = get().client
+        try {
+
+            const { name, email, phone_number, gender, address, username, password } = client!
+            setIsLoading(true)
+            const { data } = await axios.patch('/api/client', {
+                name, email, phone_number, gender, address
+            })
+
+            if (data.ok) {
+                await signIn('credentials', {
+                    username: username, password, redirect: false
+                })
+                setIsLoading(false)
+                setOkMsg('Success')
+            }
+
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log(error);
+            if (error.response.data.msg) {
+                setTimeout(() => {
+                    setErr('')
+                }, 5000)
+                return setErr(error.response.data.msg)
+            }
+            alert('Something went wrong')
+        }
+    }
 }))
 
 export default useClientStore

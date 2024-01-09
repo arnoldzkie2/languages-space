@@ -7,7 +7,7 @@ import DepartmentHeader from '@/components/super-admin/management/department/Dep
 import DepartmentTable from '@/components/super-admin/management/department/DepartmentTable';
 import NewDepartmentModal from '@/components/super-admin/management/department/NewDepartmentModal';
 import UpdateDepartmentModal from '@/components/super-admin/management/department/UpdateDepartmentModal';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 import axios from 'axios';
 import { signIn, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
@@ -15,14 +15,9 @@ import React, { useEffect, useState } from 'react';
 
 const Page = () => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn();
-        },
-    });
 
-    const { isSideNavOpen, currentPage, setIsLoading, itemsPerPage, departments, getDepartments, newDepartment, updateDepartment, totalDepartment, setTotalDepartments, closeDeleteDepartment, deleteDepartment } = useAdminGlobalStore();
+
+    const { isSideNavOpen, currentPage, setIsLoading, itemsPerPage, departments, getDepartments, newDepartment, updateDepartment, totalDepartment, setTotalDepartments, closeDeleteDepartment, deleteDepartment } = useGlobalStore();
 
     const [searchQuery, setSearchQuery] = useState('');
 

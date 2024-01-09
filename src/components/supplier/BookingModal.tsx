@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
 import { Booking } from '@/lib/types/super-admin/bookingType'
@@ -11,14 +10,17 @@ import axios from 'axios'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useState } from 'react'
 import Err from '../global/Err'
+import useSupplierBookingStore from '@/lib/state/supplier/supplierBookingStore'
+import useGlobalStore from '@/lib/state/globalStore'
 
 const BookingModal = () => {
 
     const [booking, setBooking] = useState<Booking | null>(null)
     const [cancel, setCancel] = useState(false)
 
-    const { bookingID, closeBooking, supplier } = useSupplierStore()
-    const { copy, isLoading, setIsLoading, setErr, setOkMsg } = useAdminGlobalStore()
+    const supplier = useSupplierStore(state => state.supplier)
+    const { bookingID, closeBooking } = useSupplierBookingStore()
+    const { copy, isLoading, setIsLoading, setErr, setOkMsg } = useGlobalStore()
     const { currentDate, getSchedule } = useAdminScheduleStore()
 
     const getBooking = async () => {
@@ -39,10 +41,6 @@ const BookingModal = () => {
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
-
-    useEffect(() => {
-        getBooking()
-    }, [bookingID])
 
     const cancelBooking = async (e: React.MouseEvent) => {
         e.preventDefault()
@@ -73,6 +71,10 @@ const BookingModal = () => {
             alert('Something went wrong')
         }
     }
+
+    useEffect(() => {
+        getBooking()
+    }, [bookingID])
 
     return (
         <div className='fixed w-screen h-screen top-0 left-0 flex items-center text-gray-700 justify-center padding z-20 bg-black bg-opacity-25'>

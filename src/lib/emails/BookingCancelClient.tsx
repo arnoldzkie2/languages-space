@@ -33,7 +33,7 @@ const BookingCanceledClient = ({
 }: ContactProps) => {
 
     return (
-        <Html key='cancel-client'>
+        <Html key={meetingInfo.id}>
             <Head />
             <Preview>Hello {clientName} your booking is canceled</Preview>
             <Tailwind>
@@ -42,11 +42,11 @@ const BookingCanceledClient = ({
                         <Heading className="text-black text-[24px] font-normal text-center">
                             <Img src='https://www.verbalace.com/logo.png' className='w-40 h-auto mx-auto' />
                         </Heading>
-                        <Text className="text-lg mt-4">
+                        <Text className="mt-3">
                             Dear {clientName},<br />
                             Your booking has been canceled {operator === 'supplier' ? `by supplier` : operator === 'admin' && 'by admin'}
                         </Text>
-                        <Text className="text-lg mt-4">
+                        <Text className="mt-3">
                             Supplier Name: {supplierName}<br />
                             Meeting Info: {meetingInfo.service} - {meetingInfo.meeting_code}<br />
                             <br />

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use news'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 import useAdminNewsStore from '@/lib/state/super-admin/newsStore';
 import { News } from '@/lib/types/super-admin/newsType';
 import { faEllipsis, faEye, faPenToSquare, faTrashCan, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +19,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
 
     const { selectedNews, setSelectedNews, openNewsDeleteWarning } = useAdminNewsStore()
 
-    const { operation, openOperation, closeOperation, selectedID, skeleton } = useAdminGlobalStore()
+    const { operation, openOperation, closeOperation, selectedID, skeleton } = useGlobalStore()
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 

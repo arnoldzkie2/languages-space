@@ -23,13 +23,13 @@ export const POST = async (req: Request) => {
             if (event.type === 'checkout.session.completed') {
                 const session: any = event.data.object
                 const { clientID, cardID, quantity }: Data = session.metadata
-
-                //retrive client
-                const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } })
-                if (!client) return notFoundRes('User')
-
-                //retrive card
-                const card = await prisma.clientCardList.findUnique({ where: { id: cardID } })
+                
+                //retrive client and card
+                const [client, card] = await Promise.all([
+                    prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } }),
+                    prisma.clientCardList.findUnique({ where: { id: cardID } })
+                ])
+                if (!client) return notFoundRes('Client')
                 if (!card) return notFoundRes('Client Card')
 
                 const existCard = await prisma.clientCard.findFirst({ where: { clientID, cardID } })
@@ -57,54 +57,59 @@ export const POST = async (req: Request) => {
 
                 } else {
 
-                    //bind the card to user
-                    const bindCardToUser = await prisma.clientCard.create({
-                        data: {
-                            name: card.name,
-                            price: card.price,
-                            balance: (card.balance * Number(quantity)),
-                            validity: formattedExpirationDate,
-                            client: { connect: { id: client.id } },
-                            invoice: card.invoice,
-                            repeat_purchases: card.repeat_purchases,
-                            online_renews: card.online_renews,
-                            card: { connect: { id: card.id } }
-                        }
-                    })
-                    if (!bindCardToUser) return badRequestRes()
+                    //bind the card to user and connect the client department to department of the card
+                    const [bindCardToUser, updateClientDepartment] = await Promise.all([
+                        prisma.clientCard.create({
+                            data: {
+                                name: card.name,
+                                price: card.price,
+                                balance: (card.balance * Number(quantity)),
+                                validity: formattedExpirationDate,
+                                client: { connect: { id: client.id } },
+                                invoice: card.invoice,
+                                repeat_purchases: card.repeat_purchases,
+                                online_renews: card.online_renews,
+                                card: { connect: { id: card.id } }
+                            }
+                        }),
+                        prisma.client.update({
+                            where: { id: clientID }, data: {
+                                departments: { connect: { id: card.departmentID } }
+                            }
+                        })
+                    ])
 
-                    //bind the department to client
-                    const updateClientDepartment = await prisma.client.update({
-                        where: { id: clientID }, data: {
-                            departments: { connect: { id: card.departmentID } }
-                        }
-                    })
-                    if (!updateClientDepartment) return badRequestRes()
+                    if (!bindCardToUser || !updateClientDepartment) return badRequestRes()
 
                 }
 
-                const updateCardSold = await prisma.clientCardList.update({
-                    where: { id: card.id }, data: {
-                        sold: card.sold + 1
-                    }
-                })
-                if (!updateCardSold) return badRequestRes()
+                //update the cardsold and create order
+                const [updateCardSold, createOrder] = await Promise.all([
+                    prisma.clientCardList.update({
+                        where: { id: card.id }, data: {
+                            sold: card.sold + 1
+                        }
+                    }),
+                    prisma.order.create({
+                        data: {
+                            client: { connect: { id: client.id } },
+                            card: { connect: { id: card.id } },
+                            price: card.price, quantity: Number(quantity),
+                            operator: 'client',
+                            status: 'paid',
+                            department: { connect: { id: card.departmentID } }
+                        }
+                    })
+                ])
+                if (!updateCardSold || !createOrder) return badRequestRes()
 
-                //create the order record
-                const createOrder = await prisma.order.create({
-                    data: {
-                        client: { connect: { id: client.id } },
-                        card: { connect: { id: card.id } },
-                        price: card.price, quantity: Number(quantity),
-                        operator: 'client',
-                        status: 'paid',
-                        department: { connect: { id: card.departmentID } }
-                    }
-                })
-                if (!createOrder) return badRequestRes()
                 return okayRes()
             }
+
+            return badRequestRes()
         }
+
+        return badRequestRes()
     } catch (error) {
         console.log(error);
         return serverErrorRes(error)

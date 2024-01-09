@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import useAdminGlobalStore from "@/lib/state/super-admin/globalStore";
+import useGlobalStore from "@/lib/state/globalStore";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslations } from "next-intl";
@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 const Departments = () => {
 
-    const { departments, getDepartments, setDepartmentID, departmentID } = useAdminGlobalStore()
+    const { departments, getDepartments, setDepartmentID, departmentID } = useGlobalStore()
 
     const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = event.target.value;

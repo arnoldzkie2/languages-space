@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { getAuth } from "@/lib/nextAuth";
 
 interface FormData {
     profile_key: string
@@ -89,7 +90,11 @@ export const GET = async (req: NextRequest) => {
         if (clientID) {
 
             const client = await prisma.client.findUnique({
-                where: { id: clientID }, include: { cards: true, bookings: true, orders: true }
+                where: { id: clientID }, include: {
+                    cards: true, bookings: true, orders: true, departments: {
+                        select: { id: true }
+                    }
+                }
             })
             if (!client) notFoundRes('Client')
             return okayRes(client)
@@ -206,6 +211,35 @@ export const PATCH = async (req: NextRequest) => {
     const clientID = getSearchParams(req, 'clientID')
 
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        if (session.user.type === 'client') {
+            const client = await prisma.client.findUnique({ where: { id: session.user.id } })
+            if (!client) return notFoundRes("Client")
+
+            const existingUsername =
+                await prisma.client.findUnique({ where: { username: String(username) } }) ||
+                await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
+                await prisma.admin.findUnique({ where: { username: String(username) } }) ||
+                await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
+                await prisma.agent.findUnique({ where: { username: String(username) } })
+            if (existingUsername) return existRes('Username')
+
+            const updatedClient = await prisma.client.update({
+                where: {
+                    id: client.id
+                },
+                data: {
+                    name, username, password, organization, origin, phone_number, email, address, gender, note
+                }
+            })
+            if (!updatedClient) return badRequestRes()
+
+            return okayRes()
+
+        }
 
         if (clientID) {
 

@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
-import {  faPenToSquare, faTrashCan, faEye } from '@fortawesome/free-regular-svg-icons';
+import { faPenToSquare, faTrashCan, faEye } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next/link'
 import useAdminOrderStore from '@/lib/state/super-admin/orderStore';
 import { Order } from '@/lib/types/super-admin/orderType';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
     filteredTable: Order[]
@@ -16,10 +16,8 @@ interface Props {
 const OrderTable: React.FC<Props> = ({ filteredTable }) => {
 
     const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
-    const { departmentID } = useAdminGlobalStore()
     const { selectedOrder, setSelectedOrder, openViewOrder } = useAdminOrderStore()
-    const { operation, openOperation, closeOperation, selectedID } = useAdminGlobalStore()
+    const { operation, openOperation, closeOperation, selectedID, departmentID } = useGlobalStore()
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
@@ -59,7 +57,7 @@ const OrderTable: React.FC<Props> = ({ filteredTable }) => {
                 ...selectedOrder,
                 ...filteredTable.filter
                     ((client) => !selectedOrder.some((selectedClient) => selectedClient.id === client.id)
-                ),
+                    ),
             ];
         }
         setSelectedOrder(updatedselectedOrder);

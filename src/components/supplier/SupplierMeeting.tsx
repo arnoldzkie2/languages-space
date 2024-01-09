@@ -1,80 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useClientStore from '@/lib/state/client/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
-import { SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
-import axios from 'axios'
-import { signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import React, { useEffect } from 'react'
 import Err from '../global/Err'
 import Success from '../global/Success'
+import useSupplierMeetingStore from '@/lib/state/supplier/supplireMeetingStore'
+import SubmitButton from '../global/SubmitButton'
 
 const SupplierMeeting: React.FC = () => {
 
-    const skeleton = [1, 2, 3]
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signOut()
-        },
-    })
-
-    const { meetingInfo, getSupplierMeeting, supplier, setSupplierMeeting } = useSupplierStore()
-    const { setPage, setErr, setIsLoading, isLoading, setOkMsg } = useAdminGlobalStore()
-
-    const addMoreMeetingInfo = () => {
-        const updatedMeetingInfo = [...meetingInfo!, { service: '', meeting_code: '' }] as SupplierMeetingInfo[]
-        setSupplierMeeting(updatedMeetingInfo)
-    }
-
-    const handleMeetinInfoChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        index: number) => {
-        const updatedMeetingInfo = [...meetingInfo!]
-        const propertyName = event.target.name as keyof typeof updatedMeetingInfo[0];
-        updatedMeetingInfo[index][propertyName] = event.target.value;
-        setSupplierMeeting(updatedMeetingInfo)
-    }
-
-    const removeMeetingInfo = (index: number) => {
-        const updatedMeetingInfo = [...meetingInfo!];
-        updatedMeetingInfo.splice(index, 1);
-        setSupplierMeeting(updatedMeetingInfo)
-    };
-
-    const updateMeeting = async (e: React.FormEvent) => {
-        e.preventDefault()
-        try {
-
-            setIsLoading(true)
-            const { data } = await axios.patch('/api/supplier/meeting', { meetingInfo }, { params: { supplierID: supplier?.id } })
-
-            if (data.ok) {
-                getSupplierMeeting()
-                setOkMsg('Success')
-                setIsLoading(false)
-            }
-
-        } catch (error: any) {
-            setIsLoading(false)
-            console.log(error);
-            if (error.response.data.msg) {
-                return setErr(error.response.data.msg)
-            }
-            alert('Something went wrong')
-        }
-    }
+    const supplier = useSupplierStore(state => state.supplier)
+    const setPage = useSupplierStore(state => state.setPage)
+    const {
+        getSupplierMeeting,
+        meetingInfo,
+        addMoreMeetingInfo,
+        removeMeetingInfo,
+        updateMeeting,
+        handleMeetinInfoChange
+    } = useSupplierMeetingStore()
 
     useEffect(() => {
 
         setPage('meeting')
-        if (session.status === 'authenticated' && !meetingInfo && supplier?.id) getSupplierMeeting()
+        if (supplier && !meetingInfo) getSupplierMeeting()
 
-    }, [session, supplier?.id])
+    }, [supplier])
 
     const tt = useTranslations('global')
 
@@ -105,10 +57,11 @@ const SupplierMeeting: React.FC = () => {
                     />
                     <button type='button' onClick={() => removeMeetingInfo(index)} className='bg-red-500 hover:bg-red-600 w-1/2 self-end text-white py-1.5 rounded-md outline-none'>{tt('remove')}</button>
                 </div>
-            )) : <div>{tt('no-data')}</div>}
+            )) : <div>{tt('no-data')}</div>
+            }
             <div className='flex items-center gap-10 py-5'>
                 <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-1/2 text-white'>{tt('add-more')}</button>
-                <button className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-1/2 text-white'>{tt('update')}</button>
+                <SubmitButton msg={tt('update')} style='bg-blue-600 text-white w-1/2 rounded-md py-1.5' />
             </div>
         </form>
     )

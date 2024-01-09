@@ -3,11 +3,11 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 
 const DepartmentHeader: React.FC = ({ }) => {
 
-    const { toggleNewDepartment } = useAdminGlobalStore()
+    const { toggleNewDepartment } = useGlobalStore()
 
     const session = useSession()
 

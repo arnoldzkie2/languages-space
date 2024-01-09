@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -12,6 +11,9 @@ import useClientStore from '@/lib/state/client/clientStore'
 import { usePathname, useRouter } from '@/lib/navigation'
 import ClientProfile from '@/components/client/ClientProfile'
 import ClientHeader from '@/components/client/ClientHeader'
+import useGlobalStore from '@/lib/state/globalStore'
+import Err from '@/components/global/Err'
+import Success from '@/components/global/Success'
 
 const Page = () => {
 
@@ -21,7 +23,7 @@ const Page = () => {
     const t = useTranslations('client')
     const tt = useTranslations('global')
 
-    const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales, setPage } = useAdminGlobalStore()
+    const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales, setPage } = useGlobalStore()
 
     const updateClient = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -92,10 +94,8 @@ const Page = () => {
                 <form onSubmit={(e) => updateClient(e)} className='flex flex-col gap-6 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
 
                     <h1 className='font-bold w-full text-2xl mb-2 pb-2 border-b text-blue-600'>{t('profile.account-info')}</h1>
-
-                    {err && <small className='text-red-600 w-1/2 bg-red-200 text-center py-1 rounded-md'>{err}</small>}
-                    {okMsg && <small className='text-green-600 w-1/2 bg-green-200 text-center py-1 rounded-md'>{okMsg}</small>}
-
+                    <Err />
+                    <Success />
                     <div className='w-full flex flex-col gap-2'>
                         <label htmlFor="locale" className='px-2 h-6 text-lg font-medium'>{tt('select-language')}</label>
                         <select id='locale' className={`py-2 w-full px-1 text-sm border cursor-pointer border-b focus:outline-none focus:ring-0 outline-none`} value={locale} onChange={handleTranslation}>

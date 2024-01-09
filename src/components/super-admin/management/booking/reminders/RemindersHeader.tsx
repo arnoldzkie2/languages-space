@@ -2,7 +2,6 @@ import Link from 'next/link'
 import React from 'react'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 
 const RemindersHeader = () => {
 

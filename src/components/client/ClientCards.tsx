@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import useClientCardStore from '@/lib/state/client/clientCardStore'
 import useClientStore from '@/lib/state/client/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import { signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import React, { useEffect } from 'react'
@@ -10,22 +9,17 @@ import React, { useEffect } from 'react'
 const ClientCards: React.FC = () => {
 
     const skeleton = [1, 2, 3]
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signOut()
-        },
-    })
-    const { cards, getClientCards, client } = useClientStore()
-    const { setPage } = useAdminGlobalStore()
+    const client = useClientStore(s => s.client)
+    const setPage = useClientStore(state => state.setPage)
+    const cards = useClientCardStore(s => s.cards)
+    const getCards = useClientCardStore(s => s.getCards)
 
     useEffect(() => {
 
         setPage('cards')
-        if (session.status === 'authenticated' && !cards && client?.id) getClientCards()
+        if (!cards && client?.id) getCards()
 
-    }, [session, client?.id])
+    }, [client?.id])
 
     const t = useTranslations('client')
     const tt = useTranslations('global')

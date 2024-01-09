@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslations } from 'next-intl'
@@ -10,11 +9,12 @@ import { signIn, signOut } from 'next-auth/react'
 import { UploadButton } from '@/utils/uploadthing'
 import { useEffect } from 'react'
 import useClientStore from '@/lib/state/client/clientStore'
+import useGlobalStore from '@/lib/state/globalStore';
 
 const ClientInfo = () => {
 
-    const { setIsLoading, setOkMsg, setErr, okMsg, err, isLoading, setPage } = useAdminGlobalStore()
-    const { client, setClient } = useClientStore()
+    const { setOkMsg, setErr, okMsg, err, isLoading } = useGlobalStore()
+    const { client, setClient, updateClient, setPage } = useClientStore()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -23,39 +23,6 @@ const ClientInfo = () => {
             setClient({ ...client, [name]: value })
         } else {
             signOut()
-        }
-    }
-
-    const updateClient = async (e: any) => {
-
-        e.preventDefault()
-        try {
-
-            const { name, email, phone_number, gender, address, username, password } = client!
-            setIsLoading(true)
-            const { data } = await axios.patch('/api/client', {
-                name, email, phone_number, gender, address
-            }, { params: { clientID: client?.id } })
-
-            if (data.ok) {
-                await signIn('credentials', {
-                    username: username, password, redirect: false
-                })
-                setIsLoading(false)
-                setOkMsg('Success')
-
-            }
-
-        } catch (error: any) {
-            setIsLoading(false)
-            console.log(error);
-            if (error.response.data.msg) {
-                setTimeout(() => {
-                    setErr('')
-                }, 5000)
-                return setErr(error.response.data.msg)
-            }
-            alert('Something went wrong')
         }
     }
 
@@ -74,7 +41,7 @@ const ClientInfo = () => {
     }, [])
 
     return (
-        <form onSubmit={updateClient} className='flex flex-col gap-5 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
+        <form onSubmit={(e) => updateClient(e, signIn)} className='flex flex-col gap-5 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
 
             <h1 className='font-bold w-full text-2xl mb-2 pb-2 border-b text-blue-600'>{t('profile.info')}</h1>
 

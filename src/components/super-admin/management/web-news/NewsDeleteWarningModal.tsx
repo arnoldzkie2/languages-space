@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 import useAdminNewsStore from '@/lib/state/super-admin/newsStore';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,49 +18,34 @@ const NewsDeleteWarningModal: React.FC<Props> = ({ getAllNews }) => {
 
     const { selectedNews, newsData, closeNewsDeleteWarning, setSelectedNews } = useAdminNewsStore()
 
-    const { isLoading, setIsLoading } = useAdminGlobalStore()
+    const { isLoading, setIsLoading } = useGlobalStore()
 
     const deleteNews = async () => {
 
         try {
 
+            const newsIds = selectedNews.map((newsItem) => newsItem.id);
+            const queryString = newsIds.map((id) => `id=${encodeURIComponent(id)}`).join('&');
+
+            setIsLoading(true)
+
             if (selectedNews.length > 0) {
-
-                const newsIds = selectedNews.map((newsItem) => newsItem.id);
-
-                const queryString = newsIds.map((id) => `id=${encodeURIComponent(id)}`).join('&');
-
-                setIsLoading(true)
-
                 var { data } = await axios.delete(`/api/news?${queryString}`);
-
             } else {
-
-                setIsLoading(true)
-
                 var { data } = await axios.delete(`/api/news?id=${newsData.id}`)
-
             }
 
             if (data.ok) {
-
                 setIsLoading(false)
-
                 closeNewsDeleteWarning()
-
                 getAllNews()
-
                 setSelectedNews([])
-
             }
 
         } catch (error) {
-
             setIsLoading(false)
             alert('Something went wrong')
-
             console.log(error);
-
         }
     }
 

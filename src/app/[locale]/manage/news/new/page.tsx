@@ -9,9 +9,8 @@ import { useQuill } from 'react-quilljs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import Departments from '@/components/super-admin/management/Departments';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import { signIn, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface FormData {
     title: string
@@ -20,13 +19,6 @@ interface FormData {
 }
 
 const CreateNews = () => {
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
 
     const router = useRouter()
 
@@ -40,7 +32,7 @@ const CreateNews = () => {
 
     const [keywords, setKeyWords] = useState<string[]>([]);
 
-    const { departmentID, isSideNavOpen, setDepartmentID, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { departmentID, isSideNavOpen, setDepartmentID, isLoading, setIsLoading } = useGlobalStore()
 
     const createNews = async (e: any) => {
 

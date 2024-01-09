@@ -16,6 +16,8 @@ declare module "next-auth" {
             profile_key: string | null
             username: string
             phone_number: string | null
+            payment_info?: string | null
+            payment_schedule?: string | null
             gender: string | null
             organization: string | null
             password: string

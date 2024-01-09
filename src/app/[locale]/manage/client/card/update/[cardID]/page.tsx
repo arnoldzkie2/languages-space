@@ -3,8 +3,8 @@
 import { OurFileRouter } from '@/app/api/uploadthing/core'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
+import useGlobalStore from '@/lib/state/globalStore'
 import { clientCardValue } from '@/lib/state/super-admin/clientCardStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { Courses, Supplier } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -38,14 +38,12 @@ const Page = ({ params }: Props) => {
     const [formData, setFormData] = useState(clientCardValue)
 
     const [supportedCourses, setSupportedCourses] = useState<string[]>([])
-
     const [supportedSuppliers, setSupportedSuppliers] = useState<{ supplierID: string, price: number }[]>([])
-
 
     const [searchCourse, setSearchCourse] = useState('')
     const [searchSupplier, setSearchSupplier] = useState('')
 
-    const { isSideNavOpen, departmentID, setDepartmentID } = useAdminGlobalStore()
+    const { isSideNavOpen, departmentID, setDepartmentID } = useGlobalStore()
     const { supplier, getSupplier, getCourses, courses } = useAdminSupplierStore()
 
     const filterCourse = courses.filter(course => course.name.toUpperCase().includes(searchCourse.toUpperCase()))
@@ -91,7 +89,7 @@ const Page = ({ params }: Props) => {
 
             const { data } = await axios.patch('/api/client/card-list',
                 {
-                    name, price: Number(price), balance: Number(balance), online_renews, invoice, available, departmentID,
+                    name, price: Number(price).toFixed(2), balance: Number(balance), online_renews, invoice, available, departmentID,
                     validity: Number(validity), repeat_purchases,
                     courses: supportedCourses, suppliers: supportedSuppliers
                 }, {
@@ -116,24 +114,18 @@ const Page = ({ params }: Props) => {
     }
 
     const handleChange = (e: any) => {
-
         const { name, value, type, checked } = e.target;
-
         if (type === 'checkbox') {
-
             setFormData((prevData) => ({
                 ...prevData,
                 [name]: checked
             }))
-
         } else {
-
             setFormData((prevData) => ({
                 ...prevData,
                 [name]: value,
             }));
         }
-
     }
 
     const selectAllCourses = (courses: Courses[]) => {

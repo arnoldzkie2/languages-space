@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,53 +19,38 @@ const SupplierDeleteWarningModal: React.FC<Props> = ({ getSupplierByDepartments 
 
     const { selectedSupplier, supplierData, closeDeleteSupplierModal, setSelectedSupplier } = useAdminSupplierStore()
 
-    const {isLoading, setIsLoading} = useAdminGlobalStore()
+    const { isLoading, setIsLoading } = useGlobalStore()
 
     const deleteSupplier = async () => {
 
         try {
-        
+
             setIsLoading(true)
 
+            const supplierIds = selectedSupplier.map((supplier) => supplier.id);
+            const queryString = supplierIds.map((id) => `supplierID=${encodeURIComponent(id)}`).join('&');
+
             if (selectedSupplier.length > 0) {
-
-                const supplierIds = selectedSupplier.map((supplier) => supplier.id);
-
-                const queryString = supplierIds.map((id) => `supplierID=${encodeURIComponent(id)}`).join('&');
-
                 var { data } = await axios.delete(`/api/supplier?${queryString}`);
-
             } else {
-
                 var { data } = await axios.delete(`/api/supplier`, {
                     params: {
                         supplierID: supplierData?.id
                     }
                 })
-
             }
 
             if (data.ok) {
-
                 setIsLoading(false)
-
                 closeDeleteSupplierModal()
-
                 getSupplierByDepartments()
-
                 setSelectedSupplier([])
-
             }
 
-
         } catch (error) {
-
             setIsLoading(false)
-
             alert('Something went wrong')
-
             console.log(error);
-
         }
     }
 

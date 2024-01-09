@@ -1,8 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import ClientHeader from '@/components/client/ClientHeader'
-import ClientProfile from '@/components/client/ClientProfile'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,32 +7,31 @@ import axios from 'axios'
 import { signIn } from 'next-auth/react'
 import { useTranslations, useLocale } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
-import useClientStore from '@/lib/state/client/clientStore'
 import { usePathname, useRouter } from '@/lib/navigation'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
 import SupplierHeader from '@/components/supplier/SupplierHeader'
 import SupplierProfile from '@/components/supplier/SupplierProfile'
+import useGlobalStore from '@/lib/state/globalStore'
 
 const Page = () => {
 
   const router = useRouter()
   const pathname = usePathname()
+  const locale = useLocale()
   const { supplier, setSupplier } = useSupplierStore()
-  const t = useTranslations('client')
-  const tt = useTranslations('global')
+  const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales } = useGlobalStore()
+  const setPage = useSupplierStore(state => state.setPage)
 
-  const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales, setPage } = useAdminGlobalStore()
-
-  const updateClient = async (e: FormEvent<HTMLFormElement>) => {
+  const updateSupplier = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const { username, password, id } = supplier!
+      const { username, password, payment_info } = supplier!
       if (!username) return setErr('Username is required')
       if (username.length < 6) return setErr('Username is to short minimum 6 characters.')
       if (!password) return setErr('Password is required')
 
       setIsLoading(true)
-      const { data } = await axios.patch('/api/client', { username, password }, { params: { clientID: id } })
+      const { data } = await axios.patch('/api/supplier', { username, password, payment_info })
 
       if (data.ok) {
         setIsLoading(false)
@@ -80,11 +76,12 @@ const Page = () => {
     }, 1200)
   }
 
-  const locale = useLocale()
-
   useEffect(() => {
     setPage('account')
   }, [])
+
+  const t = useTranslations('client')
+  const tt = useTranslations('global')
 
   return (
     <>
@@ -92,7 +89,7 @@ const Page = () => {
       <div className='px-5 md:flex-row lg:justify-center text-gray-700 sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
         <SupplierProfile />
 
-        <form onSubmit={(e) => updateClient(e)} className='flex flex-col gap-6 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
+        <form onSubmit={(e) => updateSupplier(e)} className='flex flex-col gap-6 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
 
           <h1 className='font-bold w-full text-2xl mb-2 pb-2 border-b text-blue-600'>{t('profile.account-info')}</h1>
 
@@ -110,13 +107,15 @@ const Page = () => {
             </select>
           </div>
 
+          <h1 className='text-blue-600 font-bold text-lg border-t pt-2'>{tt('credentials')}</h1>
+
           {supplier?.id ? <div className='flex flex-col w-full gap-1'>
-            <label htmlFor="username" className='px-2 h-6 text-lg font-medium'>{tt('username')}</label>
+            <label htmlFor="username" className='px-1 h-6 text-lg font-medium'>{tt('username')}</label>
             <input type="text" id='name' name='username' className='w-full border outline-none px-3 h-8' value={supplier.username} onChange={handleChange} />
           </div> : skeleton}
 
           {supplier?.id ? <div className='flex flex-col w-full gap-1 relative'>
-            <label htmlFor="password" className='px-2 h-6 text-lg font-medium'>{tt('password')}</label>
+            <label htmlFor="password" className='px-1 h-6 text-lg font-medium'>{tt('password')}</label>
             <input type={eye ? 'text' : 'password'} id='password' name='password' className='w-full border outline-none px-3 pr-8 h-8' value={supplier.password} onChange={handleChange} />
             <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-black' onClick={toggleEye} />
           </div> : skeleton}

@@ -4,8 +4,8 @@
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
 import BookingHeader from '@/components/super-admin/management/booking/BookingHeader'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { Courses, Supplier, SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -52,7 +52,7 @@ const Page = ({ params }: Props) => {
         courseID: '',
     })
 
-    const { isSideNavOpen, err, setErr, isLoading, setIsLoading, setDepartmentID, departmentID } = useAdminGlobalStore()
+    const { isSideNavOpen, err, setErr, isLoading, setIsLoading, setDepartmentID, departmentID } = useGlobalStore()
     const { getClientsWithCards, clients, clientCards, getClientCards, setClientCards } = useAdminClientStore()
     const { supplier, getSupplierWithMeeting, cardCourses, getCardCourses, clearCardCourses,
         supplierSchedule, setSupplierSchedule,

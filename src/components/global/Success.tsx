@@ -1,10 +1,10 @@
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useGlobalStore from '@/lib/state/globalStore'
 import React from 'react'
 
 const Success = () => {
 
-    const { okMsg } = useAdminGlobalStore()
+    const okMsg = useGlobalStore(s => s.okMsg)
 
     return (
         <>

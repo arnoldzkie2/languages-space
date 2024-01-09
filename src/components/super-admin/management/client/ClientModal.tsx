@@ -2,14 +2,14 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import { useTranslations } from 'next-intl';
+import useGlobalStore from '@/lib/state/globalStore';
 
 const ClientModal: React.FC = () => {
 
     const { clientData, closeViewModal } = useAdminClientStore()
-    const { departments } = useAdminGlobalStore()
+    const { departments } = useGlobalStore()
     const availableDepartments = departments.filter((department) =>
         clientData?.departments?.some(dept => dept.id === department.id)
     );

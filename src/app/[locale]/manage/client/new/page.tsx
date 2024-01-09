@@ -2,7 +2,6 @@
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
 import { newClientFormValue } from '@/lib/state/super-admin/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientFormData } from '@/lib/types/super-admin/clientType'
 import { UploadButton } from '@/utils/uploadthing'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -14,6 +13,7 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import useGlobalStore from '@/lib/state/globalStore'
 
 const Page = () => {
 
@@ -30,7 +30,7 @@ const Page = () => {
 
     const [formData, setFormData] = useState<ClientFormData>(newClientFormValue)
 
-    const { isSideNavOpen, departments, getDepartments, err, setErr, setOkMsg, deleteProfile, prevProfileKey, setPrevProfileKey } = useAdminGlobalStore()
+    const { isSideNavOpen, departments, getDepartments, err, setErr, setOkMsg, deleteProfile, prevProfileKey, setPrevProfileKey } = useGlobalStore()
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -138,7 +138,7 @@ const Page = () => {
 
                                 <div className='w-full flex flex-col gap-2'>
                                     <label htmlFor="name" className='font-medium px-2'>{tt('name')} {tt('optional')}</label>
-                                    <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
+                                    <input value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
                                 </div>
 
                                 <div className='w-full flex flex-col gap-2'>

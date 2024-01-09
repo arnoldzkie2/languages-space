@@ -1,61 +1,46 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import useClientBookingStore from '@/lib/state/client/clientBookingStore'
 import useClientStore from '@/lib/state/client/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import { useSession } from 'next-auth/react'
+import { Booking } from '@/lib/types/super-admin/bookingType'
 import { useTranslations } from 'next-intl'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import TablePagination from './TablePagination'
+import Err from '../global/Err'
+import Success from '../global/Success'
+import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
+import useGlobalStore from '@/lib/state/globalStore'
+import SubmitButton from '../global/SubmitButton'
 
 const ClientBookings: React.FC = () => {
 
-    const { bookings, getClientBookings, client } = useClientStore()
-    const session = useSession()
+    const [currentBookings, setCurrentBookings] = useState<Booking[] | null>(null)
+
+    const { bookings, getBookings } = useClientBookingStore()
+    const { client, setPage } = useClientStore()
+    const { getCurrentData, currentPage } = useGlobalPaginationStore()
+    const { returnTruncateText, openTruncateTextModal } = useGlobalStore()
+    useEffect(() => {
+        setPage('bookings')
+        if (!bookings && client?.id) getBookings()
+    }, [client])
+
+    useEffect(() => {
+        setCurrentBookings(getCurrentData(bookings))
+    }, [currentPage, bookings])
+
     const t = useTranslations('client')
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
 
-    const { skeleton, currentPage, setCurrentPage, itemsPerPage, setPage } = useAdminGlobalStore()
-    const getTotalPages = () => {
-
-        if (bookings) {
-            return Math.ceil(bookings.length / itemsPerPage)
-        } else {
-            return 1
-        }
-    }
-
-    const indexOfLastItem = currentPage * itemsPerPage
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage
-    const currentBookings = bookings && bookings.slice(indexOfFirstItem, indexOfLastItem)
-
-
-    const goToPreviousPage = () => {
-
-        if (currentPage > 1) {
-
-            setCurrentPage(currentPage - 1);
-        }
-
-    }
-
-    const goToNextPage = () => {
-        const totalPages = getTotalPages();
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    }
-
-    useEffect(() => {
-
-        setPage('bookings')
-        if (session.status === 'authenticated' && !bookings && client?.id) getClientBookings()
-
-    }, [session, client?.id])
-
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
-            <h1 className='text-blue-600 border-b mb-1 pb-1 text-lg font-bold'>{t('profile.my-bookings')}</h1>
+            <div className='flex w-full pb-1 mb-1 border-b items-center gap-5'>
+                <h1 className='text-blue-600 text-lg font-bold'>{t('profile.my-bookings')}</h1>
+                <Err />
+                <Success />
+            </div>
             <div className='overflow-x-auto'>
                 <table className="text-sm text-left text-gray-800 shadow-md w-full">
                     <thead className="text-xs uppercase bg-slate-100 border">
@@ -66,12 +51,13 @@ const ClientBookings: React.FC = () => {
                             <th scope="col" className="px-3 py-3">{tt('status')}</th>
                             <th scope="col" className="px-3 py-3">{tt('note')}</th>
                             <th scope="col" className="px-3 py-3">{tt('date')}</th>
+                            <th scope="col" className="px-3 py-3">{ttt('global.operation')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentBookings && currentBookings.length > 0 ?
                             currentBookings.map(booking => (
-                                <tr className="bg-white border hover:bg-slate-50" key={booking.id}>
+                                <tr className="bg-white border hover:bg-slate-50 overflow-x-auto" key={booking.id}>
                                     <td className='px-3 py-3'>
                                         <div className='h-5 text-xs md:text-sm w-36'>
                                             {booking.schedule.date} ({booking.schedule.time})
@@ -88,84 +74,102 @@ const ClientBookings: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-24'>
+                                        <div className='h-5 text-xs md:text-sm w-28'>
                                             {booking.status}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-36'>
-                                            {booking.note}
-                                        </div>
+                                        {booking.note &&
+                                            <div className={`h-5 text-xs md:text-sm w-36 cursor-pointer`} onClick={() => openTruncateTextModal(booking.note || 'No Data')}>
+                                                {returnTruncateText(booking.note || '', 15)}
+                                            </div>
+                                        }
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs w-44 md:text-sm'>
                                             {new Date(booking.created_at).toLocaleString()}
                                         </div>
                                     </td>
+                                    <td>
+                                        <ReturnCancelButton booking={booking} />
+                                    </td>
                                 </tr>
-                            )) : currentBookings && currentBookings.length < 1 ? <div className='w-full px-3 py-2'>{tt('no-data')}</div> :
-                                skeleton.map(item => (
-                                    <tr key={item}>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
-                                        </td>
-                                    </tr>
-                                ))
+                            )) : currentBookings && currentBookings.length < 1 ?
+                                <tr>
+                                    <td>
+                                        {tt('no-data')}
+                                    </td>
+                                </tr>
+                                :
+                                <Skeleton />
                         }
                     </tbody >
                 </table >
             </div>
-            <footer className={`flex mt-auto min-h-[80px] items-center justify-between border-t text-xs lg:text-md`}>
-                <div className='sm:flex items-center gap-3 w-44 lg:w-56 hidden'>
-                    <div className='font-medium'>
-                        {ttt('pagination.page')} {currentPage} of {getTotalPages()}
-                    </div>
-                    <input
-                        type='text'
-                        className='outline-none border px-3 py-1 w-1/3 lg:w-2/5'
-                        placeholder={ttt('pagination.goto')}
-                        onChange={(e) => {
-                            const value = parseInt(e.target.value);
-                            setCurrentPage(isNaN(value) ? 1 : value);
-                        }}
-                    />
-                </div>
-
-                <div className='flex items-center mr-auto'>
-                    <div className='font-medium'>{ttt('global.total')} <span className='font-black text-gray-600'>{bookings && bookings.length}</span></div>
-                </div>
-
-                <div className='flex items-center gap-5 h-full'>
-                    <button onClick={goToPreviousPage}
-                        className={`w-20 lg:w-32 border h-8 rounded-md ${currentPage !== 1 && 'hover:bg-blue-600 hover:text-white'}`}
-                        disabled={currentPage === 1}>
-                        {ttt('pagination.prev')}
-                    </button>
-                    <button onClick={goToNextPage}
-                        className={`w-20 lg:w-32 border h-8 rounded-md ${currentPage !== getTotalPages() && 'hover:bg-blue-600 hover:text-white'}`}
-                        disabled={currentPage === getTotalPages()}>
-                        {ttt('pagination.next')}
-                    </button>
-                </div>
-
-            </footer>
+            <TablePagination data={bookings || []} />
         </ul>
     )
 }
+
+const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
+
+    const { openRequestCancelBookingaModal, cancelBooking } = useClientBookingStore()
+    const scheduleDate = booking.schedule.date;
+    const scheduleTime = booking.schedule.time;
+    const today = new Date();
+    const bookingDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
+    const threeHoursAhead = new Date(today.getTime() + 3 * 60 * 60 * 1000);
+
+    const tt = useTranslations('global');
+
+    if (booking.status === 'canceled' || booking.status === 'cancel-request') return null
+
+    if (bookingDateTime >= threeHoursAhead) return (
+        <form onSubmit={(e) => cancelBooking(e, booking.id)}>
+            <SubmitButton msg={tt('cancel')} style='bg-red-500 text-white px-3 py-1 rounded-md' />
+        </form>
+    );
+
+    return (
+        <button onClick={() => openRequestCancelBookingaModal(booking.id)} className='bg-blue-600 hover:bg-opacity-80 text-white px-3 rounded-md py-1' title='Send request admin to cancel this booking'>{tt("cancel")}</button>
+    );
+
+};
+
+const Skeleton = () => {
+
+    const skeleton = useGlobalStore(s => s.skeleton)
+
+    return (
+        <>
+            {skeleton.map(item => (
+                <tr key={item}>
+                    <td className='py-3.5 px-3'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-3'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-3'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-3'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-3'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-3'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                    </td>
+                    <td className='py-3.5 px-3'>
+                        <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                    </td>
+                </tr>
+            ))}
+        </>
+    )
+}
+
 
 export default ClientBookings

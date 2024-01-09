@@ -1,58 +1,39 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useSupplierBookingStore from '@/lib/state/supplier/supplierBookingStore'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
-import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import TablePagination from '../client/TablePagination'
+import useGlobalStore from '@/lib/state/globalStore'
+import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
+import { Booking } from '@/lib/types/super-admin/bookingType'
 
-const SupplierBOoking: React.FC = () => {
+const SupplierBooking: React.FC = () => {
 
-    const { bookings, getSupplierBookings, supplier } = useSupplierStore()
-    const session = useSession()
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
-    const ttt = useTranslations('super-admin')
+    const [currentBookings, setCurrentBookings] = useState<Booking[] | null>(null)
 
-    const { skeleton, currentPage, setCurrentPage, itemsPerPage, setPage } = useAdminGlobalStore()
-    const getTotalPages = () => {
-
-        if (bookings) {
-            return Math.ceil(bookings.length / itemsPerPage)
-        } else {
-            return 1
-        }
-    }
-
-    const indexOfLastItem = currentPage * itemsPerPage
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage
-    const currentBookings = bookings && bookings.slice(indexOfFirstItem, indexOfLastItem)
-
-
-    const goToPreviousPage = () => {
-
-        if (currentPage > 1) {
-
-            setCurrentPage(currentPage - 1);
-        }
-
-    }
-
-    const goToNextPage = () => {
-        const totalPages = getTotalPages();
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    }
+    const supplier = useSupplierStore(s => s.supplier)
+    const getBookings = useSupplierBookingStore(s => s.getBookings)
+    const bookings = useSupplierBookingStore(s => s.bookings)
+    const skeleton = useGlobalStore(s => s.skeleton)
+    const setPage = useSupplierStore(state => state.setPage)
+    const { getCurrentData, currentPage } = useGlobalPaginationStore()
 
     useEffect(() => {
         setPage('bookings')
-        if (session.status === 'authenticated' && !bookings && supplier?.id) getSupplierBookings()
-    }, [session, supplier?.id])
+        if (!bookings && supplier?.id) getBookings()
+    }, [supplier?.id])
 
+    const t = useTranslations('client')
+    const tt = useTranslations('global')
+
+    useEffect(() => {
+        setCurrentBookings(getCurrentData(bookings))
+    }, [currentPage, bookings])
 
     return (
-        <ul className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
+        <div className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <h1 className='text-blue-600 border-b mb-1 pb-1 text-lg font-bold'>{t('profile.my-bookings')}</h1>
             <div className='overflow-x-auto'>
                 <table className="text-sm text-left text-gray-800 shadow-md w-full">
@@ -101,7 +82,13 @@ const SupplierBOoking: React.FC = () => {
                                         </div>
                                     </td>
                                 </tr>
-                            )) : currentBookings && currentBookings.length < 1 ? <div className='w-full px-3 py-2'>{tt('no-data')}</div> :
+                            )) :
+                            currentBookings && currentBookings.length < 1 ?
+                                <tr>
+                                    <td className='w-full px-3 py-2'>
+                                        {tt('no-data')}
+                                    </td>
+                                </tr> :
                                 skeleton.map(item => (
                                     <tr key={item}>
                                         <td className='py-3.5 px-3'>
@@ -128,42 +115,9 @@ const SupplierBOoking: React.FC = () => {
                     </tbody >
                 </table >
             </div>
-            <footer className={`flex mt-auto min-h-[80px] items-center justify-between border-t text-xs lg:text-md`}>
-                <div className='sm:flex items-center gap-3 w-44 lg:w-56 hidden'>
-                    <div className='font-medium'>
-                        {ttt('pagination.page')} {currentPage} of {getTotalPages()}
-                    </div>
-                    <input
-                        type='text'
-                        className='outline-none border px-3 py-1 w-1/3 lg:w-2/5'
-                        placeholder={ttt('pagination.goto')}
-                        onChange={(e) => {
-                            const value = parseInt(e.target.value);
-                            setCurrentPage(isNaN(value) ? 1 : value);
-                        }}
-                    />
-                </div>
-
-                <div className='flex items-center mr-auto'>
-                    <div className='font-medium'>{ttt('global.total')} <span className='font-black text-gray-600'>{bookings && bookings.length}</span></div>
-                </div>
-
-                <div className='flex items-center gap-5 h-full'>
-                    <button onClick={goToPreviousPage}
-                        className={`w-20 lg:w-32 border h-8 rounded-md ${currentPage !== 1 && 'hover:bg-blue-600 hover:text-white'}`}
-                        disabled={currentPage === 1}>
-                        {ttt('pagination.prev')}
-                    </button>
-                    <button onClick={goToNextPage}
-                        className={`w-20 lg:w-32 border h-8 rounded-md ${currentPage !== getTotalPages() && 'hover:bg-blue-600 hover:text-white'}`}
-                        disabled={currentPage === getTotalPages()}>
-                        {ttt('pagination.next')}
-                    </button>
-                </div>
-
-            </footer>
-        </ul>
+            <TablePagination data={bookings || []} />
+        </div>
     )
 }
 
-export default SupplierBOoking
+export default SupplierBooking

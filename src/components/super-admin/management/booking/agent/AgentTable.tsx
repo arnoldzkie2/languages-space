@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faCreditCard, faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next/link'
 import useAdminAgentStore from '@/lib/state/super-admin/agentStore';
 import { Agent } from '@/lib/types/super-admin/agentType';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -17,9 +17,8 @@ interface Props {
 
 const AgentTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { departmentID, skeleton } = useAdminGlobalStore()
     const { selectedAgents, setSelectedAgents } = useAdminAgentStore()
-    const { operation, openOperation, closeOperation, selectedID } = useAdminGlobalStore()
+    const { operation, openOperation, closeOperation, selectedID, departmentID, skeleton } = useGlobalStore()
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
     const handleSelection = (agent: Agent) => {

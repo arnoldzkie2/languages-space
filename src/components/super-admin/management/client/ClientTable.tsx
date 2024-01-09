@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faCreditCard, faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import { Client } from '@/lib/types/super-admin/clientType';
 import Link from 'next/link'
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -17,12 +17,9 @@ interface Props {
 
 const ClientTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { departmentID,skeleton } = useAdminGlobalStore()
 
     const { selectedClients, setSelectedClients, viewClient, deleteWarning } = useAdminClientStore()
-
-    const { operation, openOperation, closeOperation, selectedID } = useAdminGlobalStore()
-
+    const { operation, openOperation, closeOperation, selectedID, skeleton, departmentID } = useGlobalStore()
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
     const handleSelection = (client: Client) => {
@@ -30,17 +27,11 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
         const isSelected = selectedClients.some((selectedClient) => selectedClient.id === client.id);
 
         if (isSelected) {
-
             const updatedSelectedClients = selectedClients.filter((selectedClient) => selectedClient.id !== client.id);
-
             setSelectedClients(updatedSelectedClients);
-
         } else {
-
             const updatedSelectedClients = [...selectedClients, client];
-
             setSelectedClients(updatedSelectedClients);
-
         }
     };
 

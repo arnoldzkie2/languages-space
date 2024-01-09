@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next/link'
 import { ClientCardList } from '@/lib/types/super-admin/clientCardType';
 import useAdminCardStore from '@/lib/state/super-admin/cardStore';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
     filteredTable: ClientCardList[]
@@ -16,7 +16,7 @@ interface Props {
 const CardTable: React.FC<Props> = ({ filteredTable }) => {
 
 
-    const { operation, selectedID, skeleton, openOperation, closeOperation } = useAdminGlobalStore()
+    const { operation, selectedID, skeleton, openOperation, closeOperation } = useGlobalStore()
 
     const { openViewCard, openDeleteCardModal } = useAdminCardStore()
 
@@ -47,7 +47,7 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-20'>
-                                    {card.price}
+                                    ¥{card.price}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
@@ -55,7 +55,7 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
                                     {card.balance}
                                 </div>
                             </td>
-                        
+
                             <td className="px-6 py-3">
                                 <div className='h-5 w-20'>
                                     {card.validity}
@@ -99,7 +99,7 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
                             </td>
-                       
+
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
                             </td>

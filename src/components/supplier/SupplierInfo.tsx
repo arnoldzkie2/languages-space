@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslations } from 'next-intl'
@@ -10,11 +9,13 @@ import { signIn, signOut } from 'next-auth/react'
 import { UploadButton } from '@/utils/uploadthing'
 import { useEffect } from 'react'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
+import useGlobalStore from '@/lib/state/globalStore';
 
 const SupplierInfo = () => {
 
-    const { setIsLoading, setOkMsg, setErr, okMsg, err, isLoading, setPage } = useAdminGlobalStore()
+    const { setIsLoading, setOkMsg, setErr, okMsg, err, isLoading } = useGlobalStore()
     const { supplier, setSupplier } = useSupplierStore()
+    const setPage = useSupplierStore(state => state.setPage)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target

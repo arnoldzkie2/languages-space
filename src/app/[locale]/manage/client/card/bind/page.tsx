@@ -3,27 +3,18 @@
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
 import BindCardHeader from '@/components/super-admin/management/card/BindCardHeader'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminCardStore from '@/lib/state/super-admin/cardStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientCardList } from '@/lib/types/super-admin/clientCardType'
 import { Client } from '@/lib/types/super-admin/clientType'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
 
     const [selectedClient, setSelectedClient] = useState<Client | null>()
     const [selectedCard, setSelectedCard] = useState<ClientCardList | null>()
@@ -32,7 +23,7 @@ const Page = () => {
     const [cardSearchQuery, setCardSearchQuery] = useState('')
 
     const { clients, getClients } = useAdminClientStore()
-    const { isSideNavOpen, departmentID, isLoading, setIsLoading, setDepartmentID } = useAdminGlobalStore()
+    const { isSideNavOpen, departmentID, isLoading, setIsLoading, setDepartmentID } = useGlobalStore()
     const { cards, getCards } = useAdminCardStore()
 
     const filteredClient = clients.filter(client => client.username.toUpperCase().includes(clientSearchQuery.toUpperCase())).splice(0, 40)

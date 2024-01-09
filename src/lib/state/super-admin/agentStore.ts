@@ -1,7 +1,7 @@
 import { Agent } from '@/lib/types/super-admin/agentType'
 import axios from 'axios'
 import { create } from 'zustand'
-import useAdminGlobalStore from './globalStore'
+import useGlobalStore from '../globalStore'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { totalClientsValue } from './clientStore'
 
@@ -33,7 +33,7 @@ const useAdminAgentStore = create<Props>((set, get) => ({
     getAgents: async () => {
         try {
 
-            const { departmentID } = useAdminGlobalStore.getState()
+            const { departmentID } = useGlobalStore.getState()
 
             const { data } = await axios.get(`/api/agent${departmentID && `?departmentID=${departmentID}`}`)
 

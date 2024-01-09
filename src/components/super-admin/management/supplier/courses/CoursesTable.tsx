@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import {  faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { Courses } from '@/lib/types/super-admin/supplierTypes';
 import axios from 'axios';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -19,7 +19,7 @@ const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
 
     const [skeleton, setSkeleton] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
-    const { operation, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { operation, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useGlobalStore()
 
     const { getCourses, openSelectedCourse } = useAdminSupplierStore()
 

@@ -39,12 +39,16 @@ interface SupplierFormDataProps {
     id?: string
     profile_url: string
     profile_key: string
+    payment_schedule: string
+    salary: string
     name: string
     email: string
+    currency: string
     phone_number: string
+    booking_rate: string
     password: string
     address: string
-    payment_info: string
+    payment_address: string
     username: string
     departments: string[]
     meeting_info: {

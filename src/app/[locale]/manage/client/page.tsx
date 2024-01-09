@@ -10,20 +10,13 @@ import Pagination from '@/components/super-admin/management/Pagination';
 import { useEffect, useState, FC, Suspense } from 'react';
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader';
 import SearchClient from '@/components/super-admin/management/client/SearchClient';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminClientStore, { ManageClientSearchQueryValue } from '@/lib/state/super-admin/clientStore';
 import { signIn, useSession } from 'next-auth/react';
+import useGlobalStore from '@/lib/state/globalStore';
 
 const ManageClient: FC = () => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
-    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore()
+    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
 
     const { totalClients, clients, setTotalClients, selectedClients, deleteModal, viewClientModal, getClients } = useAdminClientStore()
 

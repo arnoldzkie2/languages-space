@@ -1,12 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react';
 import axios from 'axios';
-import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -14,7 +13,7 @@ interface Props {
 
 const DeleteRemindersWarningModal: React.FC<Props> = () => {
 
-    const { isLoading, setIsLoading } = useAdminGlobalStore()
+    const { isLoading, setIsLoading } = useGlobalStore()
 
     const { remindersData, selectedReminders, closeDeleteRemindersWarningModal, getReminders, setSelectedReminders } = useAdminBookingStore()
 

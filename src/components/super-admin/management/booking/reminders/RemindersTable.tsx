@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next/link'
 import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -17,7 +17,7 @@ interface Props {
 
 const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { operation, skeleton, selectedID, openOperation, closeOperation } = useGlobalStore()
 
     const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders } = useAdminBookingStore()
 

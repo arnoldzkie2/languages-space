@@ -6,17 +6,17 @@ import Departments from '../Departments'
 import { useTranslations } from 'next-intl'
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import axios from 'axios'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 import Err from '@/components/global/Err'
+import useGlobalStore from '@/lib/state/globalStore'
 
 const BindSchedlueModal = () => {
 
     const [searchClient, setSearchClient] = useState('')
     const { closeBindSchedule, getSchedule, currentDate, deleteSupplierSchedule } = useAdminScheduleStore()
-    const { departmentID, isLoading, setIsLoading, setErr } = useAdminGlobalStore()
+    const { departmentID, isLoading, setIsLoading, setErr } = useGlobalStore()
     const { clients, getClientsWithCards, clientCards, getClientCards } = useAdminClientStore()
     const { supplierMeetingInfo, getCardCourses, getSupplierMeetingInfo, cardCourses, clearCardCourses } = useAdminSupplierStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()

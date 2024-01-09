@@ -5,13 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import MultipleDatePicker from 'react-multi-date-picker'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import Err from '@/components/global/Err'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
+import useGlobalStore from '@/lib/state/globalStore'
 
 const CreateScheduleModal = () => {
 
-    const { isLoading } = useAdminGlobalStore()
+    const { isLoading } = useGlobalStore()
     const { supplier } = useSupplierStore()
     const { generateTimeSlots, selectedDates, setSelectedDates,
         toggleSchedule, minIntervals, selectedInterval, setSelectedInterval, timeSlots,

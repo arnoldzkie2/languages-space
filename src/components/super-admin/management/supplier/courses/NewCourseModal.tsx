@@ -1,5 +1,5 @@
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,7 +9,7 @@ import React, { useState } from 'react'
 
 const NewCourseModal = () => {
 
-  const { isLoading, setIsLoading } = useAdminGlobalStore()
+  const { isLoading, setIsLoading } = useGlobalStore()
   const { toggleCreateCourse, getCourses } = useAdminSupplierStore()
 
   const [course, setCourse] = useState('')

@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
 
         const newOrder = await prisma.order.create({
             data: {
-                quantity, price: (quantity * card.price), operator, note, status, invoice_number, express_number,
+                quantity, price: (quantity * Number(card.price)), operator, note, status, invoice_number, express_number,
                 card: { connect: { id: card.id } },
                 client: { connect: { id: client.id } },
                 department: { connect: { id: department.id } }
@@ -135,7 +135,7 @@ export const PATCH = async (req: Request) => {
             const updatedOrder = await prisma.order.update({
                 where: { id: orderID },
                 data: {
-                    clientID, cardID, quantity, price: (card.price * quantity),
+                    clientID, cardID, quantity, price: (Number(card.price) * quantity),
                     operator, note, status, invoice_number, express_number, departmentID
                 }
             })

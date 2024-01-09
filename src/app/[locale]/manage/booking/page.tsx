@@ -7,23 +7,15 @@ import BookingHeader from '@/components/super-admin/management/booking/BookingHe
 import BookingTable from '@/components/super-admin/management/booking/BookingTable';
 import DeleteBookingWarningModal from '@/components/super-admin/management/booking/DeleteBookingWarningModal';
 import SearchBooking from '@/components/super-admin/management/booking/SearchBooking';
+import useGlobalStore from '@/lib/state/globalStore';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
-import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 
 
 const Page: React.FC = () => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
-    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useAdminGlobalStore()
+    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useGlobalStore()
 
     const { bookings, getBookings, totalBooking, setTotalBooking, deleteBooking } = useAdminBookingStore()
     const [searchQuery, setSearchQuery] = useState({

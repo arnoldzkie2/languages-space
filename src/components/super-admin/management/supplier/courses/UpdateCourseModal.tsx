@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react'
 
 const UpdateCourseModal = () => {
 
-    const { isLoading, setIsLoading } = useAdminGlobalStore()
+    const { isLoading, setIsLoading } = useGlobalStore()
     const { closeSelectedCourse, getCourses, selectedCourse } = useAdminSupplierStore()
 
     const [course, setCourse] = useState('')

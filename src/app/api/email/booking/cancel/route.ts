@@ -19,12 +19,17 @@ export const POST = async (req: NextRequest) => {
             const booking = await prisma.booking.findUnique({
                 where: { id: bookingID }, select: {
                     client: true,
-                    supplier: true,
+                    supplier: {
+                        include: {
+                            balance: true
+                        }
+                    },
                     meeting_info: true,
                     schedule: true,
                     course: true,
                     card_name: true,
-                    clientCardID: true
+                    clientCardID: true,
+                    supplier_rate: true
                 }
             })
             if (!booking) return notFoundRes('Booking')
@@ -82,7 +87,10 @@ export const POST = async (req: NextRequest) => {
                             id: string,
                             service: string,
                             meeting_code: string
-                        }, operator
+                        },
+                        operator,
+                        supplier_rate: booking.supplier_rate,
+                        balance: supplier.balance[0].amount
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })

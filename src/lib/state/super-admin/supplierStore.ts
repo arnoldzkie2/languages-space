@@ -1,7 +1,7 @@
 import { Courses, Supplier, SupplierMeetingInfo, TotalCourse, TotalSupplier } from '@/lib/types/super-admin/supplierTypes'
 import axios from 'axios'
 import { create } from 'zustand'
-import useAdminGlobalStore from './globalStore'
+import useGlobalStore from '../globalStore'
 import { SupplierSchedule } from '@/lib/types/super-admin/scheduleType'
 const totalSupplierValue = {
     total: '',
@@ -17,13 +17,17 @@ const totalCoursesValue = {
 
 const supplierFormDataValue = {
     name: '',
+    payment_schedule: '',
     username: '',
-    payment_info: '',
+    payment_address: '',
+    currency: '',
     password: '',
     email: '',
+    booking_rate: '',
     employment_status: '',
     departments: [],
     address: '',
+    salary: '',
     gender: '',
     note: '',
     organization: '',
@@ -146,7 +150,7 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     setSelectedSupplier: (suppliers: Supplier[]) => set({ selectedSupplier: suppliers }),
     getSupplier: async () => {
         try {
-            const { departmentID } = useAdminGlobalStore.getState()
+            const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/supplier${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) {
                 set({ supplier: data.data })
@@ -174,7 +178,7 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     },
     getSupplierWithMeeting: async () => {
         try {
-            const { departmentID } = useAdminGlobalStore.getState()
+            const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/booking/supplier/meeting${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) {
                 set({ supplier: data.data })

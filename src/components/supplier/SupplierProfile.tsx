@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useSupplierStore from '@/lib/state/supplier/supplierStore';
 
 const SupplierProfile = () => {
 
@@ -16,6 +16,11 @@ const SupplierProfile = () => {
             page: 'profile',
             link: '/supplier/profile',
             translate: 'profile.profile'
+        },
+        {
+            page: 'balance',
+            link: '/supplier/profile/balance',
+            translate: 'profile.balance'
         },
         {
             page: 'bookings',
@@ -29,7 +34,8 @@ const SupplierProfile = () => {
         }
     ]
 
-    const { page, setPage } = useAdminGlobalStore()
+    const page = useSupplierStore(state => state.page)
+    const setPage = useSupplierStore(state => state.setPage)
 
     const t = useTranslations('client')
 

@@ -13,28 +13,30 @@ export const POST = async (req: NextRequest) => {
 
         const { bookingID, operator } = await req.json()
 
-        if (bookingID) {
+        if (!bookingID) return notFoundRes("Booking")
+        if (!operator) return badRequestRes()
 
-            const booking = await prisma.booking.findUnique({
-                where: { id: bookingID }, select: {
-                    client: true,
-                    supplier: true,
-                    meeting_info: true,
-                    schedule: true,
-                    course: true,
-                    card_name: true,
-                    clientCardID: true
-                }
-            })
-            if (!booking) return notFoundRes('Booking')
+        const booking = await prisma.booking.findUnique({
+            where: { id: bookingID }, select: {
+                client: true,
+                supplier: {
+                    include: { balance: true }
+                },
+                meeting_info: true,
+                schedule: true,
+                course: true,
+                card_name: true,
+                supplier_rate: true,
+                clientCardID: true
+            }
+        })
 
-            const { client, supplier, schedule, meeting_info } = booking
+        const card = await prisma.clientCard.findUnique({ where: { id: booking!.clientCardID } })
+        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking!.supplier.id, cardID: card!.cardID } })
 
-            const card = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
-            if (!card) return badRequestRes()
+        if (booking && card && supplierPrice) {
 
-            const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplier.id, cardID: card.cardID } })
-            if (!supplierPrice) return badRequestRes()
+            const { client, supplier, schedule, meeting_info } = booking!
 
             if (client.email && client.name) {
 
@@ -82,20 +84,23 @@ export const POST = async (req: NextRequest) => {
                             id: string,
                             service: string,
                             meeting_code: string
-                        }
+                        },
+                        supplier_rate: booking.supplier_rate,
+                        balance: supplier.balance[0].amount,
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })
                 if (!sendEmailToSupplier) return badRequestRes()
             }
 
-            return okayRes()
         }
 
-        return notFoundRes("Booking")
+        return okayRes()
 
     } catch (error) {
         console.log(error);
         return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
     }
 }

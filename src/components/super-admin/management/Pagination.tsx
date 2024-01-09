@@ -2,31 +2,25 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
-
     getTotalPages: () => number
-
     totals: {
         total: string
         selected: string
         searched: string
     }
-
 }
 
 const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
 
-    const { currentPage, setCurrentPage } = useAdminGlobalStore()
+    const { currentPage, setCurrentPage } = useGlobalStore()
 
     const goToPreviousPage = () => {
-
         if (currentPage > 1) {
-
             setCurrentPage(currentPage - 1);
         }
-
     }
 
     const goToNextPage = () => {
@@ -79,7 +73,7 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
         }
         return pageNumbers;
 
-    };
+    }
 
     const t = useTranslations('super-admin')
 
@@ -99,15 +93,12 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
                     }}
                 />
             </div>
-
             <div className='flex items-center gap-10'>
                 <div className='font-medium'>{t('global.result')} <span className='font-black text-gray-600'>{totals.searched === totals.total ? '' : totals.searched}</span></div>
                 <div className='font-medium'>{t('global.selected')} <span className='font-black text-gray-600'>{totals.selected === '0' ? '' : totals.selected}</span></div>
                 <div className='font-medium'>{t('global.total')} <span className='font-black text-gray-600'>{totals.total}</span></div>
             </div>
-
             <div className='flex gap-4 items-center'>{renderPageNumbers()}</div>
-
             <div className='flex items-center gap-5 h-full'>
                 <button onClick={goToPreviousPage}
                     className={`w-32 border h-10 rounded-md ${currentPage !== 1 && 'hover:bg-blue-600 hover:text-white'}`}

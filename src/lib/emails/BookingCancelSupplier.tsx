@@ -15,12 +15,14 @@ interface ContactProps {
     }
     course: string
     operator: string
+    balance: number
+    supplier_rate: number
 }
 
-export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, operator, meetingInfo, course }: ContactProps) => {
+export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, operator, meetingInfo, course, balance, supplier_rate }: ContactProps) => {
 
     return (
-        <Html key='cancel-supplier'>
+        <Html key={meetingInfo.id}>
             <Head />
             <Preview>Hello {supplierName} your booking is canceled</Preview>
             <Tailwind>
@@ -29,28 +31,33 @@ export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, op
                         <Heading className="text-black text-[24px] font-normal text-center">
                             <Img src='https://www.verbalace.com/logo.png' className='w-40 h-auto mx-auto' />
                         </Heading>
-                        <Text className="text-lg mt-4">
+                        <Text className="mt-3">
                             Dear {supplierName},<br />
                             {
                                 operator === 'supplier' ? 'Booking is successfully canceled' : operator === 'admin' ?
                                     'An admin canceled this booking' : operator === 'client' ? 'Client canceled the booking' : 'Booking has been canceled'
                             }
                         </Text>
-                        <Text className="text-lg mt-4">
+                        <Text className="mt-3">
                             Client Name: {clientName}<br />
                             Meeting Info: {meetingInfo.service} - {meetingInfo.meeting_code}<br />
-
                             <br />
                             Course: {course}<br />
                             Schedule: {schedule.date} at {schedule.time} <br />
                         </Text>
+
+                        {operator === 'client' && <Text className='mt-3'>
+                            Balance: {balance} <br />
+                            Cancellation Fee: {supplier_rate} <br />
+                            Remaining Balance: {balance - supplier_rate}
+                        </Text>}
                         <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/bookings`} target='_blank'>My Bookings</Link>
                         <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
                     </Container>
                 </Body>
             </Tailwind>
         </Html>
-    );
+    )
 };
 
 export default BookingCanceledSupplier;

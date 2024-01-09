@@ -2,7 +2,6 @@ import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import stripe from "@/utils/getStripe";
 import { NextRequest, NextResponse } from "next/server";
-import { SupplierPrice } from '@prisma/client'
 export const POST = async (req: Request) => {
 
     const { name, price, balance, validity, invoice, repeat_purchases, available, online_renews, courses, suppliers, departmentID } = await req.json()
@@ -16,7 +15,7 @@ export const POST = async (req: Request) => {
         //create a new card if the card doesn't exist in database
         const newCard = await prisma.clientCardList.create({
             data: {
-                name, price, balance, validity, invoice, repeat_purchases, available,
+                name, price: Number(price).toFixed(2), balance, validity, invoice, repeat_purchases, available,
                 online_renews, productID: '', productPriceID: '', sold: 0,
                 supported_courses: {
                     connect: courses.map((id: string) => ({ id }))
@@ -59,7 +58,7 @@ export const POST = async (req: Request) => {
         // add a price to the created card product
         const updateCardPrice = await stripe.prices.create({
             product: createCardProduct.id,
-            unit_amount: newCard.price * 100,
+            unit_amount: Number(newCard.price) * 100,
             currency: 'cny',
         });
         if (!updateCardPrice) {
@@ -229,24 +228,21 @@ export const PATCH = async (req: NextRequest) => {
             //if the product price change then update the card product as well as the card
             if (price !== card.price) {
 
-                const updateCardProduct = await stripe.products.update(card.productID, {
-                    name, default_price: ''
-                })
-                if (!updateCardProduct) return badRequestRes()
+                const [updateCardProduct, deletePreviousPrice] = await Promise.all([
+                    stripe.products.update(card.productID, {
+                        name, default_price: ''
+                    }),
+                    stripe.prices.update(card.productPriceID, {
+                        active: false,
+                    }),
+                ])
+                if (!updateCardProduct || !deletePreviousPrice) return badRequestRes()
 
-                //remove the previous price
-                const deletePreviousPrice = await stripe.prices.update(card.productPriceID, {
-                    active: false,
-                })
-                if (!deletePreviousPrice) return badRequestRes()
-
-                //create a new product price
                 const newProductPrice = await stripe.prices.create({
                     product: updateCardProduct.id,
-                    unit_amount: price * 100,
-                    currency: 'usd'
+                    unit_amount: Number(price) * 100,
+                    currency: 'cny'
                 })
-                if (!newProductPrice) return badRequestRes()
 
                 //update the default price of the product
                 const updateCardDefaultPrice = await stripe.products.update(updateCardProduct.id, {
@@ -258,7 +254,7 @@ export const PATCH = async (req: NextRequest) => {
                 const updateCard = await prisma.clientCardList.update({
                     where: { id: clientCardID },
                     data: {
-                        price, balance, validity, invoice, repeat_purchases, departmentID, available,
+                        price: Number(price), balance, validity, invoice, repeat_purchases, departmentID, available,
                         online_renews, productPriceID: newProductPrice.id, name,
                         supported_courses: {
                             connect: courses.map((id: string) => ({ id })),
@@ -279,13 +275,11 @@ export const PATCH = async (req: NextRequest) => {
                                 price: newSupplierPrice.price,
                             }))
                         }
-
                     }
                 })
                 if (!updateCard) return badRequestRes()
 
                 return okayRes()
-
             }
 
             //if the price and name does not change then no need to update the product in stripe just the card in database

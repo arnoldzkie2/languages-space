@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import useClientCardStore from '@/lib/state/client/clientCardStore'
 import useClientStore from '@/lib/state/client/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useGlobalStore from '@/lib/state/globalStore'
 import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import axios from 'axios'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -16,45 +16,20 @@ const AvailableCards = () => {
     const [searchQuery, setSearchQery] = useState('')
     const [maxVisibleItems, setMaxVisibleItems] = useState(6);
 
-    const { isLoading, setIsLoading } = useAdminGlobalStore()
-    const { availableCards, getAvailableCards, client } = useClientStore()
+    const { isLoading } = useGlobalStore()
+    const client = useClientStore(s => s.client)
+    const { availableCards, getAvailableCardsToBuy, checkoutCard } = useClientCardStore()
 
     const skeleton = [1, 2, 3, 4, 5, 6]
 
     const filterCards = availableCards && availableCards.filter(card => card.name.toUpperCase().includes(searchQuery.toUpperCase())).slice(0, maxVisibleItems)
-
-    const checkoutCard = async (e: React.FormEvent<HTMLButtonElement>, cardID: string) => {
-
-        e.preventDefault()
-
-        try {
-
-            setIsLoading(true)
-            const { data } = await axios.post('/api/stripe/checkout', {
-                cardID, quantity: 1, clientID: client?.id
-            })
-
-            if (data.ok) {
-                setIsLoading(false)
-                router.push(data.data)
-            }
-
-        } catch (error: any) {
-            setIsLoading(false)
-            console.log(error)
-            if (error.response.data.msg) {
-                alert(error.response.data.msg)
-            }
-            alert('Something went wrong')
-        }
-    }
 
     const t = useTranslations('client')
     const ttt = useTranslations('super-admin')
     const tt = useTranslations('global')
 
     useEffect(() => {
-        if (client?.id && !availableCards) getAvailableCards()
+        if (client?.id && !availableCards) getAvailableCardsToBuy()
     }, [client?.id])
 
     return (
@@ -92,7 +67,7 @@ const AvailableCards = () => {
                             </div>
                             <div className='w-full flex justify-between mt-3'>
                                 <div className='flex items-center gap-2 text-sm'>{t('card.price')}: <span className='text-blue-600 font-bold'>¥{card.price}</span></div>
-                                <button disabled={isLoading} className={`text-sm w-1/3 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} h-7 text-white rounded-md`} onClick={(e) => checkoutCard(e, card.id)}>{isLoading ?
+                                <button disabled={isLoading} className={`text-sm w-1/3 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} h-7 text-white rounded-md`} onClick={(e) => checkoutCard(e, card.id, router)}>{isLoading ?
                                     <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' />
                                     : t('card.buy')}</button>
                             </div>

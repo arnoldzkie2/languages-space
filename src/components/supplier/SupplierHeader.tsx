@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { Link } from '@/lib/navigation'
-import useClientStore from '@/lib/state/client/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
 import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -19,24 +17,15 @@ const SupplierHeader = () => {
             signIn()
         },
     })
-
-    const { setSupplier, getSupplierBookings, bookings, getSupplierMeeting, meetingInfo, deleteOldSChedule } = useSupplierStore()
-
-    const getSupplierData = async () => {
-        await Promise.all([
-            getSupplierBookings(), getSupplierMeeting(), deleteOldSChedule()
-        ])
-    }
+    const { setSupplier } = useSupplierStore()
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
         if (status === 'authenticated' && session?.user.type !== 'supplier') signOut()
         if (status === 'authenticated' && session.user.type === 'supplier') {
             setSupplier(session.user)
-            if (!bookings || !meetingInfo) getSupplierData()
         }
     }, [session])
-
-    const [isOpen, setIsOpen] = useState(false)
 
     const skeleton = (
         <li className='bg-slate-200 animate-pulse h-5 w-28 rounded-3xl'></li>
@@ -46,7 +35,7 @@ const SupplierHeader = () => {
 
     return (
         <header className={`z-10 px-5 sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 h-16 md:h-20 fixed w-screen flex items-center top-0 left-0 justify-between text-gray-700 bg-white border-b`}>
-            <Link href={'/supplier'} className='text-blue-600 font-black text-xl lg:text-2xl lg:w-96 tracking-tight'>LANGUAGES-SPACE</Link>
+            <Link href={'/supplier/schedule'} className='text-blue-600 font-black text-xl lg:text-2xl lg:w-96 tracking-tight'>LANGUAGES-SPACE</Link>
             <div className='absolute right-6 z-10 cursor-pointer lg:hidden sm:right-10 md:right-16' onClick={() => setIsOpen(prevState => !prevState)}>
                 {isOpen ?
                     <div className='relative w-[20px] h-[16px]'>

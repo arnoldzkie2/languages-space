@@ -2,7 +2,8 @@
 import ClientBookings from '@/components/client/ClientBookings'
 import ClientHeader from '@/components/client/ClientHeader'
 import ClientProfile from '@/components/client/ClientProfile'
-import React, { useEffect, useState } from 'react'
+import RequestCancelBookingModal from '@/components/client/RequestCancelBookingModal'
+import React from 'react'
 
 const Page = () => {
 
@@ -13,6 +14,7 @@ const Page = () => {
                 <ClientProfile />
                 <ClientBookings />
             </div>
+            <RequestCancelBookingModal />
         </>
 
     )

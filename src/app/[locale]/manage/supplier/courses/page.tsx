@@ -7,7 +7,7 @@ import CoursesTable from '@/components/super-admin/management/supplier/courses/C
 import NewCourseModal from '@/components/super-admin/management/supplier/courses/NewCourseModal';
 import SearchCourse from '@/components/super-admin/management/supplier/courses/SearchCourse';
 import UpdateCourseModal from '@/components/super-admin/management/supplier/courses/UpdateCourseModal';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
+import useGlobalStore from '@/lib/state/globalStore';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
@@ -21,7 +21,7 @@ const Page = () => {
         },
     });
 
-    const { currentPage, isSideNavOpen, itemsPerPage } = useAdminGlobalStore();
+    const { currentPage, isSideNavOpen, itemsPerPage } = useGlobalStore();
 
     const { courses, getCourses, newCourse, updateCourse, totalCourse, setTotalCourse } = useAdminSupplierStore();
 

@@ -8,9 +8,9 @@ import { faEye } from '@fortawesome/free-regular-svg-icons';
 import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useState } from 'react';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from "next/navigation";
+import useGlobalStore from "@/lib/state/globalStore";
 
 interface Props {
     searchParams: {
@@ -51,7 +51,7 @@ const Page = ({ searchParams }: Props) => {
         confirm_password: ''
     })
 
-    const { isLoading, setIsLoading, err, setErr } = useAdminGlobalStore()
+    const { isLoading, setIsLoading, err, setErr } = useGlobalStore()
 
     const signupUser = async (event: any) => {
 

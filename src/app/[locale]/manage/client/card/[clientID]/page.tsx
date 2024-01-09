@@ -6,8 +6,8 @@ import SearchClientCard from '@/components/super-admin/management/card/SearchCar
 import ViewClientCardModal from '@/components/super-admin/management/card/ViewClientCardModal'
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader'
 import ClientCardTable from '@/components/super-admin/management/client/card/ClientCardTable'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import { Client } from '@/lib/types/super-admin/clientType'
 import axios from 'axios'
@@ -22,16 +22,9 @@ interface Props {
 
 const Page = ({ params }: Props) => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const { viewClientCard, deleteClientCardModal, clientCardData, closeDeleteClientCardModal, clientCards, getClientCards } = useAdminClientCardStore()
 
-    const { isSideNavOpen, currentPage, itemsPerPage, setIsLoading } = useAdminGlobalStore()
+    const { isSideNavOpen, currentPage, itemsPerPage, setIsLoading } = useGlobalStore()
 
     const [searchQuery, setSearchQuery] = useState({
         name: '',

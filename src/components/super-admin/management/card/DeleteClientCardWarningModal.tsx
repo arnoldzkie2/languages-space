@@ -1,11 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react';
-import axios from 'axios';
-import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
     unbindCard: () => Promise<void>
@@ -14,7 +12,7 @@ interface Props {
 const DeleteClientCardWarningModal: React.FC<Props> = ({ unbindCard }) => {
 
     const { clientCardData, closeDeleteClientCardModal } = useAdminClientCardStore()
-    const { isLoading } = useAdminGlobalStore()
+    const { isLoading } = useGlobalStore()
 
     return (
         <div className='fixed top-0 left-0 w-screen z-20 h-screen grid place-items-center bg-opacity-50 bg-gray-600'>

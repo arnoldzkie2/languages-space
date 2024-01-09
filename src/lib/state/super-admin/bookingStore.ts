@@ -1,7 +1,7 @@
 import { Booking } from '@/lib/types/super-admin/bookingType'
 import axios from 'axios'
 import { create } from 'zustand'
-import useAdminGlobalStore from './globalStore'
+import useGlobalStore from '../globalStore'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 
 const totalBookingValue = {
@@ -76,7 +76,7 @@ const useAdminBookingStore = create<BookingProps>((set) => ({
     totalReminders: totalBookingValue,
     getReminders: async () => {
         try {
-            const { departmentID } = useAdminGlobalStore.getState()
+            const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/booking/reminders${departmentID && `?departmentID=${departmentID}`}`)
 
             if (data.ok) set({ reminders: data.data })
@@ -89,7 +89,7 @@ const useAdminBookingStore = create<BookingProps>((set) => ({
     getBookings: async () => {
         try {
 
-            const { departmentID } = useAdminGlobalStore.getState()
+            const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/booking${departmentID && `?departmentID=${departmentID}`}`)
 
             if (data.ok) set({ bookings: data.data })

@@ -2,11 +2,10 @@
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
+import useGlobalStore from '@/lib/state/globalStore'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -21,16 +20,9 @@ interface Props {
 
 const Page = ({ params }: Props) => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const router = useRouter()
 
-    const { isSideNavOpen, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { isSideNavOpen, isLoading, setIsLoading } = useGlobalStore()
 
     const [formData, setFormData] = useState({
         name: '',

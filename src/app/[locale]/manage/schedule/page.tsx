@@ -3,7 +3,6 @@
 import SideNav from '@/components/super-admin/SideNav';
 import Departments from '@/components/super-admin/management/Departments';
 import ScheduleHeader from '@/components/super-admin/management/schedule/ScheduleHeader';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { useTranslations } from 'next-intl';
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,11 +15,12 @@ import ViewBokingModal from '@/components/super-admin/management/schedule/ViewBo
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list';
+import useGlobalStore from '@/lib/state/globalStore';
 
 const Page = ({ }) => {
 
     const [searchQuery, setSearchQuery] = useState('')
-    const { isSideNavOpen, departmentID, skeleton } = useAdminGlobalStore()
+    const { isSideNavOpen, departmentID, skeleton } = useGlobalStore()
     const { getSupplierWithMeeting, supplier } = useAdminSupplierStore()
     const { setBookingFormData, bookingFormData } = useAdminBookingStore()
     const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewBooking, viewBooking } = useAdminScheduleStore()

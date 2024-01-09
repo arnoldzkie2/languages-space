@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
-import { Department } from '@/lib/types/super-admin/globalType'
+import useGlobalStore from '@/lib/state/globalStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -10,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 
 const UpdateDepartmentModal = () => {
 
-    const { getDepartments,departmentData, isLoading, setIsLoading, closeUpdateDepartment } = useAdminGlobalStore()
+    const { getDepartments, departmentData, isLoading, setIsLoading, closeUpdateDepartment } = useGlobalStore()
 
     const [name, setName] = useState('')
 
@@ -41,7 +40,7 @@ const UpdateDepartmentModal = () => {
         setName(departmentData?.name!)
     }, [departmentData?.id])
 
- 
+
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
     return (

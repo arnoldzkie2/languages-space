@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import Departments from '@/components/super-admin/management/Departments';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { signIn, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface FormData {
     title: string
@@ -28,20 +28,13 @@ interface Props {
 
 const UpdateNews: React.FC<Props> = ({ params }) => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const router = useRouter();
 
     const { newsID } = params
 
     const { quill, quillRef } = useQuill()
 
-    const { departmentID, isSideNavOpen, setDepartmentID, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { departmentID, isSideNavOpen, setDepartmentID, isLoading, setIsLoading } = useGlobalStore()
 
     const [formData, setFormData] = useState<FormData>({
         title: '',

@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
-import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { getAuth } from "@/lib/nextAuth";
+import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -7,6 +8,25 @@ export const GET = async (req: NextRequest) => {
     try {
 
         const supplierID = getSearchParams(req, 'supplierID')
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        if (session.user.type === 'supplier') {
+            const supplier = await prisma.supplier.findUnique({
+                where: { id: session.user.id }, select: {
+                    meeting_info: {
+                        select: {
+                            meeting_code: true,
+                            service: true
+                        }
+                    }
+                }
+            })
+            if (!supplier) return notFoundRes('Supplier')
+
+            return okayRes(supplier.meeting_info)
+        }
 
         if (supplierID) {
 
@@ -38,32 +58,31 @@ export const GET = async (req: NextRequest) => {
 export const PATCH = async (req: NextRequest) => {
     try {
 
-        const supplierID = getSearchParams(req, 'supplierID')
         const { meetingInfo } = await req.json()
 
-        if (supplierID) {
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
 
-            const supplier = await prisma.supplier.findUnique({ where: { id: supplierID } })
-            if (!supplier) return notFoundRes('Supplier')
+        if (session.user.type !== 'supplier') return unauthorizedRes()
 
-            const deleteMeeting = await prisma.supplierMeetingInfo.deleteMany({
-                where: { supplierID: supplierID },
-            });
-            if (!deleteMeeting) return badRequestRes()
+        const supplier = await prisma.supplier.findUnique({ where: { id: session.user.id } })
+        if (!supplier) return notFoundRes('Supplier')
 
-            const createdMeetingInfo = await prisma.supplierMeetingInfo.createMany({
-                data: meetingInfo.map((info: { service: string, meeting_code: string }) => ({
-                    service: info.service,
-                    meeting_code: info.meeting_code,
-                    supplierID: supplierID,
-                })),
-            });
-            if (!createdMeetingInfo) return badRequestRes()
+        const deleteMeeting = await prisma.supplierMeetingInfo.deleteMany({
+            where: { supplierID: session.user.id },
+        });
+        if (!deleteMeeting) return badRequestRes()
 
-            return okayRes()
-        }
+        const createdMeetingInfo = await prisma.supplierMeetingInfo.createMany({
+            data: meetingInfo.map((info: { service: string, meeting_code: string }) => ({
+                service: info.service,
+                meeting_code: info.meeting_code,
+                supplierID: session.user.id,
+            })),
+        });
+        if (!createdMeetingInfo) return badRequestRes()
 
-        return notFoundRes('Supplier')
+        return okayRes()
 
     } catch (error) {
         console.log(error);

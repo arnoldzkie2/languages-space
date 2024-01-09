@@ -31,7 +31,7 @@ const existRes = (name: string) => {
 }
 
 const unauthorizedRes = async () => {
-    return NextResponse.json({ msg: 'Sign in First' }, { status: 401 })
+    return NextResponse.json({ msg: 'Unauthorized try re-login' }, { status: 401 })
 }
 
 const getSearchParams = ({ url }: NextRequest, key: string) => {

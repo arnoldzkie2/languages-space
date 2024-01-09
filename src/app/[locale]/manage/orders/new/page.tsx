@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
+import useGlobalStore from '@/lib/state/globalStore'
 import useAdminCardStore from '@/lib/state/super-admin/cardStore'
-import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore'
 import { newOrderFormValue } from '@/lib/state/super-admin/orderStore'
 import { OrderFormValue } from '@/lib/types/super-admin/orderType'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -33,7 +32,7 @@ const Page = () => {
     const [searchCard, setSearchCard] = useState('')
     const [formData, setFormData] = useState<OrderFormValue>(newOrderFormValue)
 
-    const { isSideNavOpen } = useAdminGlobalStore()
+    const { isSideNavOpen } = useGlobalStore()
     const { cards, getCards } = useAdminCardStore()
     const { getClients, clients } = useAdminClientStore()
 

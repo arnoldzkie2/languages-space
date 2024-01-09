@@ -2,7 +2,7 @@ import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import axios, { AxiosError } from 'axios'
 import { create } from 'zustand'
-import useAdminGlobalStore from './globalStore'
+import useGlobalStore from '../globalStore'
 
 const totalCards = {
     selected: '',
@@ -66,7 +66,7 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
     },
     renewClientCard: async ({ e, clientCardID, clientID }: { e: React.MouseEvent, clientID: string, clientCardID: string }) => {
 
-        const { setIsLoading } = useAdminGlobalStore.getState()
+        const { setIsLoading } = useGlobalStore.getState()
         e.preventDefault()
 
         try {
@@ -96,7 +96,7 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
     },
     unbindClientCard: async ({ e, clientID, clientCardID }: { e: React.MouseEvent, clientCardID: string, clientID: string }) => {
 
-        const { setIsLoading } = useAdminGlobalStore.getState()
+        const { setIsLoading } = useGlobalStore.getState()
         e.preventDefault()
         try {
 

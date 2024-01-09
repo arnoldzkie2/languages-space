@@ -8,6 +8,8 @@ datasource db {
   relationMode = "prisma"
 }
 
+// client area
+
 model Client {
   id           String       @id @default(uuid())
   profile_url  String?      @db.Text
@@ -17,23 +19,23 @@ model Client {
   phone_number String?
   email        String?
   gender       String?
-  cards        ClientCard[]
   organization String?
   password     String
   address      String?
   origin       Json?
   note         String?
-  departments  Department[]
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
+  departments  Department[]
   orders       Order[]
+  cards        ClientCard[]
   bookings     Booking[]
 }
 
 model ClientCard {
   id               String         @id @default(uuid())
   name             String
-  price            Float
+  price            Decimal
   balance          Int
   validity         String
   clientID         String
@@ -54,7 +56,7 @@ model ClientCardList {
   id                  String          @id @default(uuid())
   name                String
   sold                Int
-  price               Int
+  price               Decimal
   balance             Int
   validity            Int
   available           Boolean
@@ -75,14 +77,7 @@ model ClientCardList {
   @@index([departmentID])
 }
 
-model Courses {
-  id              String           @id @default(uuid())
-  name            String
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  supported_cards ClientCardList[]
-  booking         Booking[]
-}
+//supplier area
 
 model Supplier {
   id                String                @id @default(uuid())
@@ -91,7 +86,6 @@ model Supplier {
   name              String
   username          String                @unique
   organization      String?
-  payment_info      String?
   phone_number      String?
   password          String
   email             String?
@@ -111,18 +105,69 @@ model Supplier {
   supplier_price    SupplierPrice[]
   bookings          Booking[]
   departments       Department[]
+  balance           SupplierBalance[]
 }
 
-model SupplierPrice {
-  id         String         @id @default(uuid())
-  price      Int
-  supplierID String
-  cardID     String
-  supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+model SupplierBalance {
+  id               String                        @id @default(uuid())
+  amount           Int
+  currency         String
+  payment_schedule String
+  payment_address  String
+  salary           Int
+  booking_rate     Int
+  supplierID       String
+  created_at       DateTime                      @default(now())
+  updated_at       DateTime                      @updatedAt
+  supplier         Supplier                      @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  earnings         SupplierEarnings[]
+  deductions       SupplierDeductions[]
+  transactions     SupplierBalanceTransactions[]
 
   @@index([supplierID])
-  @@index([cardID])
+}
+
+model SupplierBalanceTransactions {
+  id                String          @id @default(uuid())
+  amount            Int
+  status            String
+  payment_address   String
+  paid_by           String?
+  operator          String
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+  balance           SupplierBalance @relation(fields: [supplierBalanceID], references: [id], onDelete: Cascade)
+  supplierBalanceID String
+
+  @@index([supplierBalanceID])
+}
+
+model SupplierEarnings {
+  id                String          @id @default(uuid())
+  name              String
+  quantity          Int
+  rate              Int
+  amount            Int
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+  balance           SupplierBalance @relation(fields: [supplierBalanceID], references: [id], onDelete: Cascade)
+  supplierBalanceID String
+
+  @@index([supplierBalanceID])
+}
+
+model SupplierDeductions {
+  id                String          @id @default(uuid())
+  name              String
+  quantity          Int
+  rate              Int
+  amount            Int
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+  balance           SupplierBalance @relation(fields: [supplierBalanceID], references: [id], onDelete: Cascade)
+  supplierBalanceID String
+
+  @@index([supplierBalanceID])
 }
 
 model SupplierMeetingInfo {
@@ -153,36 +198,61 @@ model SupplierSchedule {
   @@index([supplierID])
 }
 
+// booking area
+
 model Booking {
-  id           String           @id @default(uuid())
-  name         String
-  operator     String
-  status       String
-  note         String?
-  supplierID   String
-  clientID     String
-  card_name    String
-  clientCardID String
-  settlement   String
-  price        Int
-  quantity     Decimal
-  meeting_info Json
-  created_at   DateTime         @default(now())
-  updated_at   DateTime         @updatedAt
-  course       Courses          @relation(fields: [courseID], references: [id], onDelete: Cascade)
-  schedule     SupplierSchedule @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
-  supplier     Supplier         @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  client       Client           @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  department   Department       @relation(fields: [departmentID], references: [id])
-  courseID     String
-  departmentID String
-  scheduleID   String
+  id                String           @id @default(uuid())
+  name              String
+  operator          String
+  status            String
+  note              String?
+  supplier_rate      Int
+  card_balance_cost Int
+  supplierID        String
+  clientID          String
+  card_name         String
+  clientCardID      String
+  settlement        String
+  price             Decimal
+  quantity          Decimal
+  meeting_info      Json
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  course            Courses          @relation(fields: [courseID], references: [id], onDelete: Cascade)
+  schedule          SupplierSchedule @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
+  supplier          Supplier         @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  client            Client           @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  department        Department       @relation(fields: [departmentID], references: [id])
+  courseID          String
+  departmentID      String
+  scheduleID        String
 
   @@index([supplierID])
   @@index([clientID])
   @@index([courseID])
   @@index([departmentID])
   @@index([scheduleID])
+}
+
+model SupplierPrice {
+  id         String         @id @default(uuid())
+  price      Int
+  supplierID String
+  cardID     String
+  supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+
+  @@index([supplierID])
+  @@index([cardID])
+}
+
+model Courses {
+  id              String           @id @default(uuid())
+  name            String
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  supported_cards ClientCardList[]
+  booking         Booking[]
 }
 
 model Reminders {
@@ -209,10 +279,12 @@ model Reminders {
   @@index([departmentID])
 }
 
+// agent area
+
 model Agent {
   id                  String       @id @default(uuid())
-  profile_url             String?
-  profile_key             String?
+  profile_url         String?
+  profile_key         String?
   name                String
   username            String       @unique
   password            String
@@ -243,10 +315,12 @@ model AgentCard {
   agent      Agent[]
 }
 
+// order area
+
 model Order {
   id             String         @id @unique @default(uuid())
   quantity       Int
-  price          Float
+  price          Decimal
   operator       String
   status         String
   note           String?
@@ -265,6 +339,8 @@ model Order {
   @@index([cardID])
   @@index([departmentID])
 }
+
+// admin area
 
 model Admin {
   id          String       @id @default(uuid())

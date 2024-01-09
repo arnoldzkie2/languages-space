@@ -1,11 +1,8 @@
 import { SupplierSchedule } from '@/lib/types/super-admin/scheduleType';
 import axios from 'axios';
 import { create } from 'zustand'
-import useAdminClientStore from './clientStore';
-import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from './bookingStore';
-import useAdminGlobalStore from './globalStore';
-import useSupplierStore from '../supplier/supplierStore';
+import useGlobalStore from '../globalStore';
 
 interface TimeSlot {
     [key: string]: string[]
@@ -105,7 +102,7 @@ const useAdminScheduleStore = create<ScheduleProps>((set, get) => ({
         e.preventDefault()
 
         const { schedules, setSchedules, closeBindSchedule } = get()
-        const { setOkMsg, setIsLoading } = useAdminGlobalStore.getState()
+        const { setOkMsg, setIsLoading } = useGlobalStore.getState()
 
         try {
 
@@ -188,7 +185,7 @@ const useAdminScheduleStore = create<ScheduleProps>((set, get) => ({
     createSchedule: async (e: React.MouseEvent, supplierID: string) => {
 
         const { selectedDates, getSchedule, toggleSchedule, currentDate } = get()
-        const { setErr, setIsLoading } = useAdminGlobalStore.getState()
+        const { setErr, setIsLoading } = useGlobalStore.getState()
 
         e.preventDefault()
         if (selectedDates.dates.length < 1) return setErr('Select atleast 1 date')

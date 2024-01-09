@@ -5,7 +5,6 @@ import React from 'react';
 import DownloadTable from '../DownloadTable';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
-import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import useAdminOrderStore from '@/lib/state/super-admin/orderStore';
 
 const OrderHeader: React.FC = ({ }) => {

@@ -64,7 +64,7 @@ export const POST = async (req: Request) => {
         const department = await prisma.department.findUnique({ where: { id: card?.card.departmentID } })
         if (!department) return notFoundRes('Department')
 
-        const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * card?.price! : (card?.price! / card?.card.balance!) * supplierPrice?.price!
+        const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * Number(card.price) : (Number(card.price) / card?.card.balance!) * supplierPrice.price
 
         const createReminders = await prisma.reminders.create({
             data: {
@@ -107,7 +107,7 @@ export const PATCH = async (req: NextRequest) => {
             const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } })
             if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported' }, { status: 400 })
 
-            const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * card?.price! : (card?.price! / card?.card.balance!) * supplierPrice?.price!
+            const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * Number(card.price) : (Number(card.price) / card?.card.balance!) * supplierPrice.price
 
             const updateReminder = await prisma.reminders.update({
                 where: { id: remindersID },

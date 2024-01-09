@@ -8,8 +8,8 @@ import ClientCardHeader from '@/components/super-admin/management/card/ClientCar
 import ClientCardModal from '@/components/super-admin/management/card/ClientCardModal';
 import DeleteCardWarningModal from '@/components/super-admin/management/card/DeleteCardWarningModal';
 import SearchClientCard from '@/components/super-admin/management/card/SearchCard';
+import useGlobalStore from '@/lib/state/globalStore';
 import useAdminCardStore from '@/lib/state/super-admin/cardStore';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
@@ -28,7 +28,7 @@ const ClientCard: React.FC<Props> = ({ params }) => {
         },
     })
 
-    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useAdminGlobalStore()
+    const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useGlobalStore()
 
     const { cards, getCards, viewCard, deleteCardModal, totalCards, setTotalCards } = useAdminCardStore()
 

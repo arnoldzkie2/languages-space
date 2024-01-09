@@ -1,13 +1,11 @@
 'use client'
 
 import { useTranslations } from 'next-intl';
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 
 interface Props {
-
     setSearchQuery: React.Dispatch<React.SetStateAction<string>>
     searchQuery: string
-
 }
 
 const SearchCourse: React.FC<Props> = ({ setSearchQuery, searchQuery }) => {

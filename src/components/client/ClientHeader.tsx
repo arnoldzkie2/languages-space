@@ -8,6 +8,7 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
+import TruncateTextModal from '../global/TruncateTextModal'
 
 const ClientHeader = () => {
 
@@ -18,27 +19,14 @@ const ClientHeader = () => {
         },
     })
 
-    const { getClientCards, getClientBookings, getClientOrders, getAvailableCards, setClient, client } = useClientStore()
-
-    const getAllUserData = async () => {
-        try {
-            await Promise.all([
-                getClientCards(), getClientBookings(), getClientOrders(), getAvailableCards()
-            ])
-        } catch (error: any) {
-            console.log(error);
-            if (error.response.data.msg) {
-                alert(error.response.data.msg)
-            }
-        }
-    }
+    const client = useClientStore(state => state.client)
+    const setClient = useClientStore(state => state.setClient)
 
     useEffect(() => {
 
         if (status === 'authenticated' && session?.user.type !== 'client') signOut()
         if (status === 'authenticated' && session.user.type === 'client' && !client) {
             setClient(session.user)
-            getAllUserData()
         }
     }, [session])
 
@@ -87,6 +75,7 @@ const ClientHeader = () => {
                         <FontAwesomeIcon icon={faArrowRightToBracket} width={16} height={16} />{tt('logout')}</button>
                 </div>
             </ul>
+            <TruncateTextModal />
         </header>
     )
 }

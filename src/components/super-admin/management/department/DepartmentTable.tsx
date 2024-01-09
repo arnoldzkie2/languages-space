@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import { Department } from '@/lib/types/super-admin/globalType';
 import axios from 'axios';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
     filteredTable: Department[]
@@ -14,7 +14,7 @@ interface Props {
 
 const DepartmentTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { operation, selectedID, getDepartments, openDeleteDepartment, openUpdateDepartment, skeleton, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { operation, selectedID, openDeleteDepartment, openUpdateDepartment, skeleton, openOperation, closeOperation } = useGlobalStore()
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')

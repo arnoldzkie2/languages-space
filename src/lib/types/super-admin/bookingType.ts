@@ -15,6 +15,7 @@ interface Booking {
     quantity: number
     course: Courses
     clientID: string
+    supplier_rate: number
     clientCardID: string
     price: number
     meeting_info: SupplierMeetingInfo

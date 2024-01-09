@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faRotateRight, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next/link'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType';
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -17,7 +17,7 @@ interface Props {
 
 const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID }) => {
 
-    const { operation, selectedID, skeleton, openOperation, closeOperation, isLoading } = useAdminGlobalStore()
+    const { operation, selectedID, skeleton, openOperation, closeOperation, isLoading } = useGlobalStore()
     const { openViewClientCard, openDeleteClientCardModal, renewClientCard } = useAdminClientCardStore()
 
 

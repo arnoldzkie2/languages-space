@@ -4,11 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faEllipsis, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
-import useAdminGlobalStore from '@/lib/state/super-admin/globalStore';
 import Link from 'next/link'
 import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import axios from 'axios';
+import useGlobalStore from '@/lib/state/globalStore';
 
 interface Props {
 
@@ -18,7 +18,7 @@ interface Props {
 
 const BookingTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useAdminGlobalStore()
+    const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useGlobalStore()
 
     const { openDeleteBookingWarningMOdal, getBookings, selectedBookings, setSelectedBookings } = useAdminBookingStore()
     const t = useTranslations('super-admin')

@@ -1,7 +1,7 @@
-import { Client, ClientFormData } from '@/lib/types/super-admin/clientType'
+import { Client } from '@/lib/types/super-admin/clientType'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { create } from 'zustand'
-import useAdminGlobalStore from './globalStore'
+import useGlobalStore from '../globalStore'
 import axios from 'axios'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 
@@ -105,9 +105,10 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     setSelectedClients: (clients: Client[]) => set(state => ({ selectedClients: clients })),
     getClients: async () => {
         try {
-            const { departmentID } = useAdminGlobalStore.getState()
+            const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/client${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) set({ clients: data.data })
+            
         } catch (error) {
             console.log(error);
             alert('Something went wrong')
@@ -115,7 +116,7 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     },
     getClientsWithCards: async () => {
         try {
-            const { departmentID } = useAdminGlobalStore.getState()
+            const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/booking/client/card${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) set({ clients: data.data })
 
