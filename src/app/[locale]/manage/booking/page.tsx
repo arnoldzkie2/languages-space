@@ -9,7 +9,7 @@ import DeleteBookingWarningModal from '@/components/super-admin/management/booki
 import SearchBooking from '@/components/super-admin/management/booking/SearchBooking';
 import useGlobalStore from '@/lib/state/globalStore';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 
 
@@ -57,7 +57,7 @@ const Page: React.FC = () => {
 
     const getTotalPages = () => Math.ceil(filterBooking.length / itemsPerPage)
 
-    const handleSearch = (e: any) => {
+    const handleSearch = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
         setSearchQuery(prevData => ({ ...prevData, [name]: value }))
     }

@@ -26,7 +26,7 @@ export const GET = async (req: NextRequest) => {
                 },
                 orderBy: { time: 'asc' }
             })
-            if (!schedule) return notFoundRes('Schedule')
+            if (schedule.length === 0) return notFoundRes('Schedule')
 
             return okayRes(schedule)
         }

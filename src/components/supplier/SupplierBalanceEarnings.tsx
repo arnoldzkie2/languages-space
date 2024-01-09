@@ -67,7 +67,7 @@ const SupplierBalanceEarnings = () => {
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs w-44 md:text-sm'>
-                                            {new Date(obj.created_at).toLocaleString()}
+                                            {new Date(obj.created_at).toLocaleString('en-US', { month: 'long', year: 'numeric' })}
                                         </div>
                                     </td>
                                 </tr>

@@ -6,7 +6,7 @@ import { NextRequest } from "next/server"
 export const POST = async (req: NextRequest) => {
     try {
 
-        const { note, status, bookingID } = await req.json()
+        const { note, bookingID } = await req.json()
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
 
         const updateBooking = await prisma.booking.update({
             where: { id: booking.id }, data: {
-                note, status, operator: 'supplier'
+                note, status: 'cancel-request', operator: 'supplier'
             }
         })
         if (!updateBooking) return badRequestRes()

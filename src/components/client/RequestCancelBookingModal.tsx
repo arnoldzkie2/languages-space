@@ -4,9 +4,14 @@ import React from 'react'
 import SubmitButton from '../global/SubmitButton'
 import { useTranslations } from 'next-intl'
 
-const RequestCancelBookingModal = () => {
+interface Props {
+    requestCancelBooking: (e: React.FormEvent<Element>) => Promise<void>
+}
 
-    const { requestCancelBookingModal, requestCancelForm, requestCancelBooking, setRequestCancelForm, closeRequestCancelBookingaModal } = useClientBookingStore()
+
+const RequestCancelBookingModal = ({ requestCancelBooking }: Props) => {
+
+    const { requestCancelBookingModal, requestCancelForm, setRequestCancelForm, closeRequestCancelBookingaModal } = useClientBookingStore()
     const tt = useTranslations('global')
     const t = useTranslations("booking")
 

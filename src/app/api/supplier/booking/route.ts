@@ -5,51 +5,47 @@ import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
 
-    const supplierID = getSearchParams(req, 'supplierID')
+    const bookingID = getSearchParams(req, 'bookingID')
 
     try {
 
         const session = await getAuth()
-        if (!session) return unauthorizedRes()
+        if (!session || session.user.type !== 'supplier') return unauthorizedRes()
 
-        if (session.user.type === 'supplier') {
+        if (bookingID) {
 
-            const supplier = await prisma.supplier.findUnique({
-                where: { id: session.user.id },
-                select: {
-                    bookings: {
+            const booking = await prisma.booking.findUnique({
+                where: { id: bookingID },
+                include: {
+                    supplier: {
                         select: {
-                            id: true,
-                            schedule: {
-                                select: {
-                                    date: true,
-                                    time: true
-                                },
-                            },
-                            supplier: {
-                                select: {
-                                    name: true
-                                }
-                            },
-                            card_name: true,
-                            status: true,
-                            note: true,
-                            created_at: true
-                        },
-                        orderBy: { created_at: 'desc' }
+                            name: true
+                        }
+                    }, schedule: {
+                        select: {
+                            date: true,
+                            time: true
+                        }
+                    }, client: {
+                        select: {
+                            username: true,
+                            name: true
+                        }
+                    },
+                    course: {
+                        select: {
+                            name: true
+                        }
                     }
                 }
             })
-            if (!supplier) return notFoundRes('Client')
+            if (!booking) return notFoundRes('Booking')
 
-            return okayRes(supplier.bookings)
+            return okayRes(booking)
         }
 
-        if (!supplierID) return notFoundRes('Supplier')
-        if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
-
         const supplier = await prisma.supplier.findUnique({
-            where: { id: supplierID },
+            where: { id: session.user.id },
             select: {
                 bookings: {
                     select: {
@@ -74,7 +70,7 @@ export const GET = async (req: NextRequest) => {
                 }
             }
         })
-        if (!supplier) return notFoundRes('Client')
+        if (!supplier) return notFoundRes('Supplier')
 
         return okayRes(supplier.bookings)
 

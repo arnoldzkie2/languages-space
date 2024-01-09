@@ -154,7 +154,7 @@ const Cashout = (props: { balance: SupplierBalance, isCashoutAvailable: (schedul
         // eslint-disable-next-line react-hooks/rules-of-hooks
     }, [props.balance])
 
-    // if (!result) return <button title={returnWaitMessage(props.balance.payment_schedule)} className='bg-slate-400 px-5 py-1.5 text-white rounded-md cursor-default ml-auto'>{tt('cashout')}</button>
+    if (!result) return <button title={returnWaitMessage(props.balance.payment_schedule)} className='bg-slate-400 px-5 py-1.5 text-white rounded-md cursor-default ml-auto'>{tt('cashout')}</button>
 
     return <button onClick={props.toggleCashout} className='bg-blue-600 px-5 py-1.5 text-white rounded-md hover:bg-blue-500 ml-auto'>{tt('cashout')}</button>
 }

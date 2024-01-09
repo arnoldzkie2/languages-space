@@ -206,7 +206,7 @@ model Booking {
   operator          String
   status            String
   note              String?
-  supplier_rate      Int
+  supplier_rate     Int
   card_balance_cost Int
   supplierID        String
   clientID          String

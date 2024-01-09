@@ -9,6 +9,7 @@ import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import axios from 'axios';
 import useGlobalStore from '@/lib/state/globalStore';
+import TruncateTextModal from '@/components/global/TruncateTextModal';
 
 interface Props {
 
@@ -18,7 +19,7 @@ interface Props {
 
 const BookingTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading } = useGlobalStore()
+    const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading, returnTruncateText, openTruncateTextModal } = useGlobalStore()
 
     const { openDeleteBookingWarningMOdal, getBookings, selectedBookings, setSelectedBookings } = useAdminBookingStore()
     const t = useTranslations('super-admin')
@@ -106,11 +107,12 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
 
     return (
         <table className="text-sm text-left text-gray-800 shadow-md w-full">
+            <TruncateTextModal />
             <thead className="text-xs uppercase bg-slate-100 border">
                 <tr>
                     <th scope='col' className='px-2 py-3'>
                         <input type="checkbox"
-                            className='cursor-pointer w-4 h-4 outline-none'
+                            className='cursor-pointer w-3.5 h-3.5 outline-none'
                             title='Select all 10 rows'
                             checked={isRowChecked}
                             onChange={selectAllRows}
@@ -136,7 +138,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                         <tr className="bg-white border hover:bg-slate-50" key={booking.id}>
                             <td className='px-2 py-3'>
                                 <input type="checkbox" id={booking.id}
-                                    className='cursor-pointer w-4 h-4 outline-none'
+                                    className='cursor-pointer w-3.5 h-3.5 outline-none'
                                     onChange={() => handleSelection(booking)}
                                     checked={selectedBookings.some(selectedBooking => selectedBooking.id === booking.id)}
                                 />
@@ -182,14 +184,16 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                                 </div>
                             </td>
                             <td className="px-2 overflow-x-auto py-3">
-                                <div className='h-5 whitespace-nowrap w-28 uppercase'>
+                                <div className='h-5 whitespace-nowrap w-28'>
                                     {booking.status}
                                 </div>
                             </td>
                             <td className="px-2 py-3 overflow-x-auto">
-                                <div className='h-5 w-32 whitespace-nowrap'>
-                                    {booking.note}
-                                </div>
+                                {booking.note &&
+                                    <div className={`h-5 w-36 cursor-pointer hover:text-blue-500`} onClick={() => openTruncateTextModal(booking.note || 'No Data')}>
+                                        {returnTruncateText(booking.note || '', 15)}
+                                    </div>
+                                }
                             </td>
                             <td className="px-2 py-3 overflow-x-auto">
                                 <div className='h-5 w-44 whitespace-nowrap'>
@@ -200,7 +204,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(booking.id)} />
                                 <ul className={`${operation && selectedID === booking.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     <Link href={`/manage/booking/update/${booking.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    {booking.status === 'pending' && <button disabled={isLoading} className='flex mb-1 justify-between items-center cursor-dpointer hover:text-red-600' onClick={(e: any) => cancelBooking(e, booking.id)}>
+                                    {booking.status !== 'canceled' && <button disabled={isLoading} className='flex mb-1 justify-between items-center cursor-dpointer hover:text-red-600' onClick={(e: any) => cancelBooking(e, booking.id)}>
                                         {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : <div className='flex items-center w-full justify-between'>
                                             {tt('cancel')} <FontAwesomeIcon icon={faBan} />
                                         </div>}

@@ -1,11 +1,15 @@
+'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
 import ClientBookings from '@/components/client/ClientBookings'
 import ClientHeader from '@/components/client/ClientHeader'
 import ClientProfile from '@/components/client/ClientProfile'
 import RequestCancelBookingModal from '@/components/client/RequestCancelBookingModal'
+import useClientBookingStore from '@/lib/state/client/clientBookingStore'
 import React from 'react'
 
 const Page = () => {
+
+    const requestCancelBooking = useClientBookingStore(s => s.requestCancelBooking)
 
     return (
         <>
@@ -14,7 +18,7 @@ const Page = () => {
                 <ClientProfile />
                 <ClientBookings />
             </div>
-            <RequestCancelBookingModal />
+            <RequestCancelBookingModal requestCancelBooking={requestCancelBooking} />
         </>
 
     )

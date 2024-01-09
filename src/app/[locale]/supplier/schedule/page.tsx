@@ -16,13 +16,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import useSupplierBookingStore from '@/lib/state/supplier/supplierBookingStore'
 import useGlobalStore from '@/lib/state/globalStore'
+import RequestCancelBookingModal from '@/components/client/RequestCancelBookingModal'
 
 const Page = () => {
 
   const { schedules, setCurrentDate, getSchedule, currentDate, newSchedule, toggleSchedule, deleteSupplierSchedule } = useAdminScheduleStore()
   const { isLoading } = useGlobalStore()
   const supplier = useSupplierStore(state => state.supplier)
-  const { viewBooking, bookingModal } = useSupplierBookingStore()
+  const { viewBooking, bookingModal, requestCancelBooking } = useSupplierBookingStore()
 
   const events = schedules.map(supplier => ({
     start: `${supplier.date}T${supplier.time}:00`,
