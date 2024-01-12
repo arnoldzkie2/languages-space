@@ -20,7 +20,7 @@ const SendPayslipButton = ({ sendPayslip }: Props) => {
     // Conditionally render the SubmitButton only if it's the first day of the month
     const renderSubmitButton = (day: number) => {
         //if today is not the first day of the month return this button
-        // if (day !== 11) return <NotFirstDayOfTheMonthButton msg={tt('send-payslip')} title={tt('payslip-notfirstday')} />
+        if (day !== 11) return <NotFirstDayOfTheMonthButton msg={tt('send-payslip')} title={tt('payslip-notfirstday')} />
         //else return this button
         return <SubmitButton msg={tt('send-payslip')} style='w-full py-1.5 rounded-sm bg-blue-600 text-white' />
     }
