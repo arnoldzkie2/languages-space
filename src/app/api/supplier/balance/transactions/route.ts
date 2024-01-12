@@ -1,18 +1,20 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { ADMIN, DEPARTMENT, DEPARTMENTID, OPERATOR, PENDING, SUPERADMIN, SUPPLIER } from "@/utils/constants";
+import axios from "axios";
 import { NextRequest, NextResponse } from "next/server"
 
 export const GET = async (req: NextRequest) => {
 
     try {
 
-        const departmentID = getSearchParams(req, 'departmentID')
+        const departmentID = getSearchParams(req, DEPARTMENTID)
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        if (session.user.type === 'supplier') {
+        if (session.user.type === SUPPLIER) {
 
             const supplier = await prisma.supplier.findUnique({
                 where: { id: session.user.id },
@@ -26,6 +28,7 @@ export const GET = async (req: NextRequest) => {
                                     status: true,
                                     created_at: true,
                                     amount: true,
+                                    paid_by: true
                                 },
                                 orderBy: { created_at: 'desc' }
                             }
@@ -33,14 +36,12 @@ export const GET = async (req: NextRequest) => {
                     }
                 }
             })
-            if (!supplier) return notFoundRes('Supplier')
+            if (!supplier) return notFoundRes(SUPPLIER)
 
             return okayRes(supplier.balance[0].transactions)
         }
 
-        if (!(session.user.type === 'admin' || session.user.type === 'super-admin')) {
-            return unauthorizedRes();
-        }
+        if (![SUPERADMIN, ADMIN].includes(session.user.type)) return unauthorizedRes()
 
         if (departmentID) {
 
@@ -76,10 +77,9 @@ export const GET = async (req: NextRequest) => {
                     }
                 }
             })
-            if (!department) return notFoundRes('Department')
+            if (!department) return notFoundRes(DEPARTMENT)
 
-            const cashouts = department.suppliers.map(supplier => supplier.balance[0].transactions);
-
+            const cashouts = department.suppliers.flatMap(supplier => supplier.balance[0].transactions);
             return okayRes(cashouts)
 
         }
@@ -120,23 +120,48 @@ export const GET = async (req: NextRequest) => {
 
 export const POST = async (req: NextRequest) => {
 
-
     try {
-
-        const operator = getSearchParams(req, 'operator')
-
+        //authorized user
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        if (session.user.type === 'supplier' && operator) {
+        //get operator to know who made this request 
+        const { operator } = await req.json()
 
+        //check if user is supplier
+        if(!operator) return notFoundRes(OPERATOR)
+        if (session.user.type === SUPPLIER) {
+
+            //retrieve supplier
             const supplier = await prisma.supplier.findUnique({ where: { id: session.user.id }, include: { balance: true } })
-            if (!supplier) return notFoundRes('Supplier')
+            if (!supplier) return notFoundRes(SUPPLIER)
+            //return 404 if supplier not exist
 
+            //destruct the balance
             const balance = supplier.balance[0]
 
+            //check if supplier has enough balance to request a payment
             if (!balance.amount) return NextResponse.json({ msg: "Not enough balance to request a payment" }, { status: 400 })
 
+            //this will return currency symbol
+            const returnCurrency = (currency: string) => {
+                switch (currency) {
+                    case 'USD':
+                        return '$'
+                    case 'PHP':
+                        return '₱'
+                    case 'VND':
+                        return '₫'
+                    case 'RMB':
+                        return '¥'
+                    default:
+                        return 'Unknown Currency'
+                }
+            }
+            //this will return currency followed by transaction amount ex: $100
+            const transactionAmount = `${returnCurrency(balance.currency)}${balance.amount}`
+
+            //update supplier balance and create a transaction
             const [updateSupplierBalance, createTransactions] = await Promise.all([
                 prisma.supplierBalance.update({
                     where:
@@ -144,16 +169,27 @@ export const POST = async (req: NextRequest) => {
                 }),
                 prisma.supplierBalanceTransactions.create({
                     data: {
-                        amount: balance.amount, status: 'pending',
+                        amount: transactionAmount,
+                        status: PENDING,
                         operator,
                         payment_address: balance.payment_address,
                         balance: { connect: { id: balance.id } }
                     }
                 })
             ])
-
             if (!updateSupplierBalance || !createTransactions) return badRequestRes()
 
+            //send email to supplier saying we received the payment request
+            if (supplier.email) {
+                axios.post(`${process.env.NEXTAUTH_URL}/api/email/payment/received`, {
+                    name: supplier.name,
+                    amount: transactionAmount,
+                    transactionID: createTransactions.id,
+                    email: supplier.email
+                })
+            }
+
+            //return 200 response
             return okayRes()
         }
 

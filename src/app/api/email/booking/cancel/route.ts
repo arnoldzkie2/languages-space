@@ -1,11 +1,9 @@
 import prisma from "@/lib/db";
 import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server";
-import { Resend } from "resend";
 import BookingCanceledClient from "@/lib/emails/BookingCancelClient";
 import BookingCanceledSupplier from "@/lib/emails/BookingCancelSupplier";
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import resend from "@/utils/getResend";
 
 export const POST = async (req: NextRequest) => {
 

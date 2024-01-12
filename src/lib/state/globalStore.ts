@@ -65,7 +65,7 @@ const useGlobalStore = create<AdminGlobalStoreProps>((set) => ({
     setPrevProfileKey: (profile: string) => set({ prevProfileKey: profile }),
     deleteProfile: async (profileKey: string) => {
         try {
-            const { data } = await axios.delete('/api/uploadthing', { params: { key: profileKey } })
+            await axios.delete('/api/uploadthing', { params: { key: profileKey } })
         } catch (error) {
             console.log(error);
             alert('Something went wrong')

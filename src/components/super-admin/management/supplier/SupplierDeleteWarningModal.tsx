@@ -18,7 +18,6 @@ interface Props {
 const SupplierDeleteWarningModal: React.FC<Props> = ({ getSupplierByDepartments }) => {
 
     const { selectedSupplier, supplierData, closeDeleteSupplierModal, setSelectedSupplier } = useAdminSupplierStore()
-
     const { isLoading, setIsLoading } = useGlobalStore()
 
     const deleteSupplier = async () => {

@@ -8,45 +8,29 @@ export const POST = async (req: Request) => {
 
     try {
 
-        const isSuperAdmin = await prisma.superAdmin.findUnique({
-            where: {
-                username,
-                password
-            }
-        })
-        if (isSuperAdmin) return NextResponse.json({ ...isSuperAdmin, type: 'super-admin' }, { status: 200 })
+        const [client, supplier, agent, admin, superAdmin] = await Promise.all([
+            prisma.client.findUnique({
+                where: { username, password }
+            }),
+            prisma.supplier.findUnique({
+                where: { username, password }
+            }),
+            prisma.agent.findUnique({
+                where: { username, password }
+            }),
+            prisma.admin.findUnique({
+                where: { username, password }
+            }),
+            prisma.superAdmin.findUnique({
+                where: { username, password }
+            }),
+        ]);
 
-        const isAdmin = await prisma.admin.findUnique({
-            where: {
-                username,
-                password
-            }
-        })
-        if (isAdmin) return NextResponse.json({ ...isAdmin, type: 'admin' }, { status: 200 })
-
-        const isAgent = await prisma.agent.findUnique({
-            where: {
-                username,
-                password
-            }
-        })
-        if (isAgent) return NextResponse.json({ ...isAgent, type: 'agent' }, { status: 200 })
-
-        const isClient = await prisma.client.findUnique({
-            where: {
-                username,
-                password
-            }
-        })
-        if (isClient) return NextResponse.json({ ...isClient, type: 'client' }, { status: 200 })
-
-        const isSupplier = await prisma.supplier.findUnique({
-            where: {
-                username,
-                password
-            }
-        })
-        if (isSupplier) return NextResponse.json({ ...isSupplier, type: 'supplier' }, { status: 200 })
+        if (client) return NextResponse.json({ ...client, type: 'client' }, { status: 200 })
+        if (supplier) return NextResponse.json({ ...supplier, type: 'supplier' }, { status: 200 })
+        if (admin) return NextResponse.json({ ...admin, type: 'admin' }, { status: 200 })
+        if (agent) return NextResponse.json({ ...agent, type: 'agent' }, { status: 200 })
+        if (superAdmin) return NextResponse.json({ ...superAdmin, type: 'super-admin' }, { status: 200 })
 
         return NextResponse.json(null, { status: 404 })
 

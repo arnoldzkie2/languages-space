@@ -6,6 +6,7 @@ import TablePagination from '../client/TablePagination'
 import { SupplierBalanceTransactions } from '@prisma/client'
 import useGlobalStore from '@/lib/state/globalStore'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
+import TruncateTextModal from '../global/TruncateTextModal'
 
 const SupplierBalanceTransactions = () => {
 
@@ -15,6 +16,7 @@ const SupplierBalanceTransactions = () => {
     const { transactions, getTransactions } = useSupplierBalanceStore()
     const { currentPage, getCurrentData } = useGlobalPaginationStore()
     const tt = useTranslations('global')
+    const { returnTruncateText, copy, openTruncateTextModal } = useGlobalStore()
 
     useEffect(() => {
         if (!transactions) getTransactions()
@@ -34,6 +36,7 @@ const SupplierBalanceTransactions = () => {
                 <table className="text-sm text-left text-gray-800 shadow-md w-full">
                     <thead className="text-xs uppercase bg-slate-100 border">
                         <tr>
+                            <th scope="col" className="px-3 py-3">ID</th>
                             <th scope="col" className="px-3 py-3">{tt('amount')}</th>
                             <th scope="col" className="px-3 py-3">{tt('status')}</th>
                             <th scope="col" className="px-3 py-3">{tt('payment')}</th>
@@ -46,28 +49,40 @@ const SupplierBalanceTransactions = () => {
                             currentTransactions.map(transac => (
                                 <tr className="bg-white border hover:bg-slate-50" key={transac.id}>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-32'>
+                                        <div className='h-5 text-xs md:text-sm w-20 cursor-pointer' onClick={() => copy(transac.id)} title={tt('copy')}>
+                                            {returnTruncateText(transac.id, 8)}
+                                        </div>
+                                    </td>
+                                    <td className="px-3 py-3">
+                                        <div className='h-5 text-xs md:text-sm w-20'>
                                             {transac.amount}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-24'>
+                                        <div className='h-5 text-xs md:text-sm w-20'>
                                             {transac.status}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-24'>
-                                            {transac.payment_address}
+                                        <div className='h-5 text-xs md:text-sm w-28 cursor-pointer'
+                                            title={tt("view")}
+                                            onClick={() => openTruncateTextModal(transac.payment_address)}>
+                                            {returnTruncateText(transac.payment_address, 10)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-36'>
-                                            {transac.paid_by}
-                                        </div>
+                                        {transac.paid_by &&
+                                            <div className='h-5 text-xs md:text-sm w-32 cursor-pointer'
+                                                title={tt("view")}
+                                                onClick={() => openTruncateTextModal(transac.paid_by!)}>
+                                                {returnTruncateText(transac.paid_by, 15)}
+                                            </div>}
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs w-44 md:text-sm'>
-                                            {new Date(transac.created_at).toLocaleString()}
+                                        <div className='h-5 text-xs w-36 md:text-sm cursor-pointer'
+                                            onClick={() => openTruncateTextModal(new Date(transac.created_at).toLocaleString())}
+                                            title={tt('view')}>
+                                            {returnTruncateText(new Date(transac.created_at).toLocaleString(), 10)}
                                         </div>
                                     </td>
                                 </tr>
@@ -82,28 +97,32 @@ const SupplierBalanceTransactions = () => {
                                 skeleton.map(item => (
                                     <tr key={item}>
                                         <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
+                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                                        </td>
+                                        <td className='py-3.5 px-3'>
                                             <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
                                             <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
-                                        </td>
-                                        <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
                                         </td>
                                     </tr>
                                 ))
                         }
                     </tbody >
                 </table >
+                <TruncateTextModal />
             </div>
             <TablePagination data={transactions || []} />
-        </div>
+        </div >
     )
 }
 

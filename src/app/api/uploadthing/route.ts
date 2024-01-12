@@ -20,10 +20,9 @@ export const DELETE = async (req: Request) => {
       const utapi = new UTApi()
 
       const deleteProfile = await utapi.deleteFiles(key)
-      if(!deleteProfile) return badRequestRes()
+      if (!deleteProfile) return badRequestRes()
 
       return okayRes()
-
     }
 
     return notFoundRes('Profile Key')

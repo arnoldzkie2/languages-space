@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { getAuth } from "@/lib/nextAuth";
+import { DEPARTMENT, FINGERPOWER } from "@/utils/constants";
+import axios from "axios";
 
 const SCHEDULE_RESERVED = 'reserved'
 
@@ -232,7 +234,7 @@ export const POST = async (req: NextRequest) => {
             prisma.department.findUnique({ where: { id: card?.card.departmentID } }),
             prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } })
         ])
-        if (!department) return notFoundRes('Department');
+        if (!department) return notFoundRes(DEPARTMENT);
         //if supplierprice not found then it means it's not supported in card used
         if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported in this card' }, { status: 400 });
 
@@ -244,7 +246,7 @@ export const POST = async (req: NextRequest) => {
         //calculate the booking price here is the calculation
         // for fingerpower - quantity multiply by card price (quantity * card.card.price)
         // the rest - card price divide by card balance multiply by supplier price (card.card.price / card.card.balance) * supplierPrice.price
-        const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * Number(card.card.price) : (Number(card.card.price) / card.card.balance) * supplierPrice.price
+        const bookingPrice = department.name.toLocaleLowerCase() === FINGERPOWER ? quantity * Number(card.card.price) : (Number(card.card.price) / card.card.balance) * supplierPrice.price
 
         //create booking
         const createBooking = await prisma.booking.create({
@@ -347,8 +349,14 @@ export const POST = async (req: NextRequest) => {
             if (!createEarnings) return badRequestRes()
         }
 
+        //send emails to client and supplier
+        axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/created`, {
+            bookingID: createBooking.id,
+            operator: session.user.type
+        })
+
         //return 201 response and pass bookingID we use this in front-end to send emails synchronously
-        return createdRes(createBooking.id);
+        return createdRes();
 
     } catch (error) {
         console.error(error);

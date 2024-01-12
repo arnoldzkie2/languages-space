@@ -79,7 +79,6 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
             })
 
             if (data.ok) {
-                axios.post('/api/email/booking/created', { bookingID: data.data, operator: 'client' })
                 setOkMsg('Success Redirecting...')
                 getBookings()
                 getCards()

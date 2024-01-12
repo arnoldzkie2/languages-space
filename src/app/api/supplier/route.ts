@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { getAuth } from "@/lib/nextAuth";
+import { checkUsername } from "@/utils/checkUser";
 
 export const POST = async (req: Request) => {
 
     const { name, username, password, organization, payment_address, payment_schedule, phone_number,
-        profile_key, profile_url, currency, email, address, gender, card, origin,
-        tags, note, employment_status, meeting_info, entry, departure, booking_rate,
+        profile_key, profile_url, currency, email, address, gender, origin,
+        tags, note, employment_status, meeting_info, departure, booking_rate,
         departments, salary } = await req.json()
 
     try {
@@ -16,21 +17,15 @@ export const POST = async (req: Request) => {
         if (!session) return unauthorizedRes()
         if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
 
-        if (!username || !password || !name) return badRequestRes()
+        if (!username || !password || !name) return badRequestRes("Missing Inputs")
 
-        const existingUsername =
-            await prisma.client.findUnique({ where: { username } }) ||
-            await prisma.superAdmin.findUnique({ where: { username } }) ||
-            await prisma.admin.findUnique({ where: { username } }) ||
-            await prisma.supplier.findUnique({ where: { username } }) ||
-            await prisma.agent.findUnique({ where: { username } })
-
-        if (existingUsername) return existRes('username')
+        const isUsernameExist = await checkUsername(username)
+        if (isUsernameExist) return existRes("Username")
 
         const newSupplier = await prisma.supplier.create({
             data: {
-                name, username, password, organization, phone_number, email, address, gender, card,
-                origin, tags, note, employment_status, entry, departure, profile_key, profile_url,
+                name, username, password, organization, phone_number, email, address, gender
+                , origin, tags, note, employment_status, departure, profile_key, profile_url,
                 balance: {
                     create: {
                         amount: 0,
@@ -109,7 +104,6 @@ export const GET = async (req: Request) => {
         if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
 
         if (supplierID) {
-
             const supplier = await prisma.supplier.findUnique({
                 where: { id: supplierID },
                 include: { departments: true, meeting_info: true, balance: true }
@@ -117,7 +111,6 @@ export const GET = async (req: Request) => {
             if (!supplier) notFoundRes('Supplier')
 
             return okayRes(supplier)
-
         }
 
         if (departmentID) {
@@ -129,16 +122,33 @@ export const GET = async (req: Request) => {
                             id: departmentID
                         }
                     }
-                }, include: { departments: true },
+                },
+                select: {
+                    id: true,
+                    username: true,
+                    name: true,
+                    origin: true,
+                    organization: true,
+                    note: true
+                },
                 orderBy: { created_at: 'desc' }
             })
             if (!suppliers) return badRequestRes()
 
             return okayRes(suppliers)
-
         }
 
-        const allSupplier = await prisma.supplier.findMany({ include: { departments: true }, orderBy: { created_at: 'desc' } })
+        const allSupplier = await prisma.supplier.findMany({
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                origin: true,
+                organization: true,
+                note: true
+            },
+            orderBy: { created_at: 'desc' }
+        })
         if (!allSupplier) badRequestRes()
 
         return okayRes(allSupplier)
@@ -154,7 +164,7 @@ export const GET = async (req: Request) => {
 export const PATCH = async (req: Request) => {
 
     const { name, username, password, organization, payment_address, payment_schedule, phone_number, email, address, gender, profile_key, profile_url,
-        card, origin, tags, note, employment_status, entry, departure, departments, meeting_info, currency, salary, booking_rate } = await req.json()
+        origin, tags, note, employment_status, departure, departments, meeting_info, currency, salary, booking_rate } = await req.json()
 
     const { searchParams } = new URL(req.url)
     const supplierID = searchParams.get('supplierID')
@@ -168,14 +178,8 @@ export const PATCH = async (req: Request) => {
 
             if (session.user.username !== username && username) {
 
-                const existingUsername =
-                    await prisma.client.findUnique({ where: { username } }) ||
-                    await prisma.superAdmin.findUnique({ where: { username } }) ||
-                    await prisma.admin.findUnique({ where: { username } }) ||
-                    await prisma.supplier.findUnique({ where: { username } }) ||
-                    await prisma.agent.findUnique({ where: { username } })
-                if (existingUsername) return existRes('Username')
-
+                const isUsernameExist = await checkUsername(username)
+                if (isUsernameExist) return existRes("Username")
             }
 
             const supplier = await prisma.supplier.update({
@@ -207,6 +211,11 @@ export const PATCH = async (req: Request) => {
             })
             if (!supplier) return notFoundRes('Supplier')
 
+            //if username changes check username if it exist
+            if (supplier.username !== username) {
+                const isUsernameExist = await checkUsername(username)
+                if (isUsernameExist) return existRes("Username")
+            }
             if (meeting_info && meeting_info.length > 0) {
 
                 const meetingInfoToDeleteIDs = supplier.meeting_info
@@ -249,7 +258,7 @@ export const PATCH = async (req: Request) => {
                     where: { id: supplierID },
                     data: {
                         name, username, password, organization, phone_number, email, address, gender,
-                        card, origin, tags, note, employment_status, entry, departure, profile_key, profile_url,
+                        origin, tags, note, employment_status, departure, profile_key, profile_url,
                         balance: {
                             update: {
                                 where: { id: supplier.balance[0].id },
@@ -268,7 +277,7 @@ export const PATCH = async (req: Request) => {
                 where: { id: supplierID },
                 data: {
                     name, username, password, organization, phone_number, email, address, gender,
-                    card, origin, tags, note, employment_status, entry, departure, profile_key, profile_url,
+                    origin, tags, note, employment_status, departure, profile_key, profile_url,
                     balance: {
                         update: {
                             where: { id: supplier.balance[0].id },

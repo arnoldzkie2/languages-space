@@ -17,16 +17,14 @@ import useGlobalStore from "@/lib/state/globalStore";
 interface Props {
     searchParams: {
         department: string
+        agent: string
     }
 }
-
 
 const Page = ({ searchParams }: Props) => {
 
     const router = useRouter()
-
-    const department = searchParams.department
-
+    const { department, agent } = searchParams
     const session = useSession()
 
     const { isLoading, setIsLoading, setErr, setOkMsg } = useGlobalStore()
@@ -38,7 +36,6 @@ const Page = ({ searchParams }: Props) => {
 
     const handleChange = (e: any) => {
         const { name, value } = e.target
-
         setFormData(prevData => ({ ...prevData, [name]: value }))
     }
 
@@ -66,7 +63,9 @@ const Page = ({ searchParams }: Props) => {
 
         } catch (error: any) {
             setIsLoading(false)
-            console.log(error);
+            if (error.response.data.msg) {
+                return setErr(error.response.data.msg)
+            }
             alert('Something went wrong')
         }
     }
@@ -87,7 +86,7 @@ const Page = ({ searchParams }: Props) => {
                     router.push('/admin')
                     break;
                 case 'agent':
-                    router.push('/agent')
+                    router.push('/agent/invite')
                     break;
                 case 'supplier':
                     router.push('/supplier/schedule')
@@ -127,7 +126,7 @@ const Page = ({ searchParams }: Props) => {
                     className={`border-2 flex items-center justify-center rounded-md h-11 bg-gray-800 text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
                     {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
                         : t('signin')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('not_signup')} <a href={`/${locale}/signup/?department=${department}`} className='text-gray-600 font-bold'>{t('signup')}</a></div>
+                <div className='mt-3 text-slate-500 text-center'>{t('not_signup')} <a href={`/${locale}/signup/?department=${department}&agent=${agent}`} className='text-gray-600 font-bold'>{t('signup')}</a></div>
             </form>
         </div>
     )

@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import { notFoundRes, badRequestRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { SUPPLIER } from "@/utils/constants";
 import { UTApi } from "uploadthing/server";
 
 interface Props {
@@ -38,7 +39,7 @@ export const POST = async (req: Request) => {
 
         }
 
-        return notFoundRes('Client')
+        return notFoundRes(SUPPLIER)
 
     } catch (error) {
         console.log(error);

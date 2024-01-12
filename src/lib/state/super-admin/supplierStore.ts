@@ -89,7 +89,7 @@ interface SupplierProps {
     getSingleSupplier: (supplierID: string) => Promise<void>
     openSelectedCourse: (course: Courses) => void
     setSupplierSchedule: (schedules: SupplierSchedule[]) => void
-
+    sendSupplierPayslips: (e: React.FormEvent) => Promise<void>
 }
 
 const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
@@ -197,7 +197,29 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
         } catch (error) {
             console.log(error);
         }
+    },
+    sendSupplierPayslips: async (e: React.FormEvent) => {
+
+        const { setIsLoading, setOkMsg, setErr } = useGlobalStore.getState()
+
+        try {
+            e.preventDefault()
+            setIsLoading(true);
+            const { data } = await axios.post("/api/email/payslip/supplier");
+            if (data.ok) {
+                setIsLoading(false);
+                setOkMsg("Success");
+            }
+        } catch (error: any) {
+            setIsLoading(false);
+            console.log(error);
+            if (error.response.data.msg) {
+                return setErr(error.response.data.msg);
+            }
+            alert("Something went wrong");
+        }
     }
+
 }))
 
 export default useAdminSupplierStore

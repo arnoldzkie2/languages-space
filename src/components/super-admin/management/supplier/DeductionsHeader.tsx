@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 
-const DeductionsHeader: React.FC = ({ }) => {
+const SupplierDeductionHeader: React.FC = ({ }) => {
 
     const { status } = useSession()
 
@@ -29,4 +29,4 @@ const DeductionsHeader: React.FC = ({ }) => {
     )
 }
 
-export default DeductionsHeader
+export default SupplierDeductionHeader

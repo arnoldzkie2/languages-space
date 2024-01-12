@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { getAuth } from "@/lib/nextAuth";
+import { checkIsAdmin, checkUsername } from "@/utils/checkUser";
+import { CLIENT } from "@/utils/constants";
 
 interface FormData {
     profile_key: string
@@ -21,21 +23,28 @@ interface FormData {
 
 export const POST = async (req: NextRequest) => {
 
-    const { profile_key, profile_url, name, organization, username, password, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
-
     try {
 
-        const existingUsername =
-            await prisma.client.findUnique({ where: { username } }) ||
-            await prisma.superAdmin.findUnique({ where: { username } }) ||
-            await prisma.admin.findUnique({ where: { username } }) ||
-            await prisma.supplier.findUnique({ where: { username } }) ||
-            await prisma.agent.findUnique({ where: { username } })
+        //get all dataw
+        const { profile_key, profile_url, name, organization, username, password, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
 
-        if (existingUsername) return NextResponse.json({ msg: 'user_name_exist' }, { status: 409 })
+        //check if username exist
+        const existingUsername = await checkUsername(username)
+        if (existingUsername) return existRes('Username')
 
+        //create client
+        const createClient = await prisma.client.create({
+            data: {
+                profile_key, profile_url, name, password, username, organization, phone_number, email, address, gender, origin, note
+            }
+        })
+        if (!createClient) return badRequestRes("Failed to create client")
+        //return 400 respone if it fails to create
+
+        //if department is passed
         if (departments && departments.length > 0) {
 
+            //check departments
             const checkDepartments = await prisma.department.findMany({
                 where: {
                     id: {
@@ -47,29 +56,22 @@ export const POST = async (req: NextRequest) => {
             const existingDepartmentIds = checkDepartments.map(department => department.id);
             const nonExistingDepartmentIds = departments.filter((id: string) => !existingDepartmentIds.includes(id));
 
-            if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 400 });
+            //return 404 if some department does not found
+            if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 404 });
 
-            const newUser = await prisma.client.create({
-                data: {
-                    profile_key, profile_url, name, password, username, organization, phone_number, email, address, gender, origin, note, departments: {
+            //update the client departments
+            const updateClientDepartment = await prisma.client.update({
+                where: { id: createClient.id }, data: {
+                    departments: {
                         connect: departments.map((id: string) => ({ id }))
                     }
                 }
             })
-
-            if (!newUser) return badRequestRes()
-
-            return createdRes()
-
+            if (!updateClientDepartment) return badRequestRes("Failed to update client departments")
+            //return 400 response if it fails
         }
 
-        const newUser = await prisma.client.create({
-            data: {
-                profile_key, profile_url, name, password, username, organization, phone_number, email, address, gender, origin, note
-            }
-        })
-        if (!newUser) return badRequestRes()
-
+        //return 201 response
         return createdRes()
 
     } catch (error) {
@@ -82,10 +84,15 @@ export const POST = async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
 
-    const clientID = getSearchParams(req, 'clientID')
-    const departmentID = getSearchParams(req, 'departmentID')
-
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+        //only admin are allowed to proceed
+        const clientID = getSearchParams(req, 'clientID')
+        const departmentID = getSearchParams(req, 'departmentID')
 
         if (clientID) {
 
@@ -98,7 +105,6 @@ export const GET = async (req: NextRequest) => {
             })
             if (!client) notFoundRes('Client')
             return okayRes(client)
-
         }
 
         if (departmentID) {
@@ -115,9 +121,7 @@ export const GET = async (req: NextRequest) => {
                             origin: true,
                             created_at: true,
                             note: true,
-                            departments: {
-                                select: { id: true, name: true }
-                            }, cards: {
+                            cards: {
                                 select: {
                                     validity: true
                                 }
@@ -169,48 +173,49 @@ export const GET = async (req: NextRequest) => {
 
 export const DELETE = async (req: Request) => {
 
-    const { searchParams } = new URL(req.url);
-
-    const clientIDS = searchParams.getAll('clientID');
-
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+        //only allow admin to proceed
+        const { searchParams } = new URL(req.url);
+        const clientIDS = searchParams.getAll('clientID');
+        //get all clientID
 
         if (clientIDS.length > 0) {
 
             const deleteClients = await prisma.client.deleteMany({
-
                 where: { id: { in: clientIDS } },
-
             })
-
-            if (!deleteClients) return badRequestRes()
-
+            if (!deleteClients) return badRequestRes("Failed to delete Client")
+            //return 400 response if it fails to delete
             if (deleteClients.count < 1) return notFoundRes('Client')
 
-            return okayRes(deleteClients)
-
+            //return 200 response
+            return okayRes()
         }
 
-        return notFoundRes('clientID')
+        //return 404 response if clientID not passed
+        return notFoundRes(CLIENT)
 
     } catch (error) {
-
         console.log(error);
-
         return serverErrorRes(error)
-
     } finally {
-
         prisma.$disconnect();
     }
 }
 
 export const PATCH = async (req: NextRequest) => {
 
-    const { name, password, organization, username, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
-    const clientID = getSearchParams(req, 'clientID')
-
     try {
+
+        //get clientID and request body
+        const clientID = getSearchParams(req, 'clientID')
+        const { name, password, organization, username, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
@@ -219,14 +224,13 @@ export const PATCH = async (req: NextRequest) => {
             const client = await prisma.client.findUnique({ where: { id: session.user.id } })
             if (!client) return notFoundRes("Client")
 
-            const existingUsername =
-                await prisma.client.findUnique({ where: { username: String(username) } }) ||
-                await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
-                await prisma.admin.findUnique({ where: { username: String(username) } }) ||
-                await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
-                await prisma.agent.findUnique({ where: { username: String(username) } })
-            if (existingUsername) return existRes('Username')
+            //if username changed check if the new username already exist in all users
+            if (client.username !== username) {
+                const existingUsername = await checkUsername(username)
+                if (existingUsername) return existRes('Username')
+            }
 
+            //update the client
             const updatedClient = await prisma.client.update({
                 where: {
                     id: client.id
@@ -235,11 +239,16 @@ export const PATCH = async (req: NextRequest) => {
                     name, username, password, organization, origin, phone_number, email, address, gender, note
                 }
             })
-            if (!updatedClient) return badRequestRes()
+            if (!updatedClient) return badRequestRes("Failed to update the client")
+            //return 400 reponse if it fails to update the client
 
+            //return 200 response
             return okayRes()
-
         }
+
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+        //only allow admin to proceed
 
         if (clientID) {
 
@@ -248,18 +257,22 @@ export const PATCH = async (req: NextRequest) => {
 
             if (client.username !== username) {
 
-                const existingUsername =
-                    await prisma.client.findUnique({ where: { username: String(username) } }) ||
-                    await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
-                    await prisma.admin.findUnique({ where: { username: String(username) } }) ||
-                    await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
-                    await prisma.agent.findUnique({ where: { username: String(username) } })
-                if (existingUsername) return existRes('Username')
+                const existingUsername = await checkUsername(username)
+                if (existingUsername) return existRes("Username")
 
             }
 
-            if (departments && departments.length > 0) {
+            //update client
+            const updatedClient = await prisma.client.update({
+                where: { id: client.id },
+                data: {
+                    name, username, password, organization, origin, phone_number, email, address, gender, note
+                }
+            })
+            if (!updatedClient) return badRequestRes()
+            //return 400 respone if it fails
 
+            if (departments && departments.length > 0) {
                 const checkDepartments = await prisma.department.findMany({
                     where: {
                         id: {
@@ -270,8 +283,8 @@ export const PATCH = async (req: NextRequest) => {
 
                 const existingDepartmentIds = checkDepartments.map(department => department.id);
                 const nonExistingDepartmentIds = departments.filter((id: string) => !existingDepartmentIds.includes(id));
-
-                if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 400 });
+                //return 404 if some department not found
+                if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 404 });
 
                 const departmentsToConnect = departments.map((departmentId: string) => ({ id: departmentId }));
 
@@ -279,38 +292,25 @@ export const PATCH = async (req: NextRequest) => {
                     !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
                 );
 
+                //update client departments
                 const updatedClient = await prisma.client.update({
-                    where: {
-                        id: String(clientID)
-                    },
+                    where: { id: client.id },
                     data: {
-                        name, username, password, organization, origin, phone_number, email, address, gender, note,
                         departments: {
                             connect: departmentsToConnect,
                             disconnect: departmentsToRemove,
                         },
-                    },
-                    include: { departments: true }
+                    }
                 })
-                if (!updatedClient) return badRequestRes()
-
-                return okayRes()
-
+                if (!updatedClient) return badRequestRes("Failed to update client")
+                //return 400 response if it fails to update the client
             }
 
-            const updatedClient = await prisma.client.update({
-                where: {
-                    id: String(clientID)
-                },
-                data: {
-                    name, username, password, organization, origin, phone_number, email, address, gender, note
-                }
-            })
-            if (!updatedClient) return badRequestRes()
-
+            //return 200 response 
             return okayRes()
         }
 
+        // 404 response if clientID not passed
         return notFoundRes('Client')
 
     } catch (error) {

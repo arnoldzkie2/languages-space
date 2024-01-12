@@ -27,7 +27,7 @@ const BookingSuccessClient = ({ cardBalance, clientName, supplierName, schedule,
             <Preview>Hello {clientName} we recieved your booking request</Preview>
             <Tailwind>
                 <Body className="grid place-items-center bg-center bg-no-repeat bg-cover font-sans bg-slate-100">
-                    <Container className="border bg-white border-solid border-[#eaeaea] text-gray-600 rounded-3xl shadow-2xl mt-[150px] mx-auto px-10 w-[1000px]">
+                    <Container className="border mb-28 bg-white border-solid border-[#eaeaea] text-gray-600 rounded-3xl shadow-2xl mt-[150px] mx-auto px-10 w-[1000px]">
                         <Heading className="text-black text-[24px] font-normal text-center">
                             <Img src='https://www.verbalace.com/logo.png' className='w-40 h-auto mx-auto' />
                         </Heading>

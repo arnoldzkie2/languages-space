@@ -3,6 +3,7 @@ import Err from '@/components/global/Err'
 import Success from '@/components/global/Success'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
+import SupplierDeductionHeader from '@/components/super-admin/management/supplier/DeductionsHeader'
 import DeductionsHeader from '@/components/super-admin/management/supplier/DeductionsHeader'
 import SupplierHeader from '@/components/super-admin/management/supplier/SupplierHeader'
 import { Link } from '@/lib/navigation'
@@ -79,7 +80,7 @@ const Page = () => {
 
             <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-40' : 'pl-16'}`}>
 
-                <DeductionsHeader />
+                <SupplierDeductionHeader />
 
                 <div className='w-full px-8'>
                     <div className='flex p-10 w-1/2 border justify-between'>

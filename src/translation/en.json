@@ -3,7 +3,10 @@
         "agent": {
             "h1": "Manage Agent",
             "search": "Search Agent",
-            "create": "Create Agent"
+            "create": "Create Agent",
+            "update": "Update Agent",
+            "earnings": "Agent Earnings",
+            "deductions": "Agent Deductions"
         },
         "supplier": {
             "create": "Create Supplier",
@@ -188,6 +191,7 @@
         "view": "View",
         "price": "Price",
         "time": "Time",
+        "payslip-notfirstday": "This button is enabled every first day of the month",
         "confirmed": "Confirmed",
         "canceled": "Canceled",
         "cancel-request": "Cancel Request",
@@ -199,6 +203,7 @@
         "settlement": "Settlement Period",
         "request-payment": "Request Payment",
         "payment": "Payment Info",
+        "copy": "Copy",
         "logout": "Logout",
         "currency": "Currency",
         "payment_schedule": "Payment Schedule",
@@ -206,7 +211,10 @@
         "add-more": "Add More",
         "status": "Status",
         "close": "Close",
+        "pending": "Pending",
+        "completed": "Completed",
         "search": "Search",
+        "commission-rate": "Commission Rate",
         "submit": "Submit",
         "name": "Name",
         "balance": "Balance",
@@ -221,6 +229,8 @@
         "email": "Email Address",
         "select": "Select",
         "quantity": "Quantity",
+        "fixed": "Fixed",
+        "percentage": "Percentage",
         "select-gender": "Select Gender",
         "clientcard": "Client Card",
         "total-balance": "Total Balance",
@@ -232,6 +242,7 @@
         "cashout": "Cashout",
         "amount": "Amount",
         "language": "language",
+        "send-payslip": "Send Payslip",
         "select-language": "Select Language",
         "credentials": "Credentials",
         "earnings": "Earnings",
@@ -303,6 +314,11 @@
             "select-card": "Select card to book",
             "fillup": "Fill up booking info",
             "no-supplier": "No available supplier for this card"
+        }
+    },
+    "agent": {
+        "header": {
+            "invite": "Invite"
         }
     },
     "booking": {

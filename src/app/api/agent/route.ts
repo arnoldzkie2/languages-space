@@ -1,163 +1,336 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { getAuth } from "@/lib/nextAuth";
+import { checkIsAdmin, checkUsername } from "@/utils/checkUser";
+import { AGENT } from "@/utils/constants";
 
-export const POST = async (req: Request) => {
-
-    const { name, organization, username, password, phone_number, email, address, gender, origin, note, departments } = await req.json()
-
-    try {
-
-        const existingUsername =
-            await prisma.client.findUnique({ where: { username: String(username) } }) ||
-            await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
-            await prisma.admin.findUnique({ where: { username: String(username) } }) ||
-            await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
-            await prisma.agent.findUnique({ where: { username: String(username) } })
-
-        if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
-
-        const newAgent = await prisma.agent.create({
-            data: {
-                departments: { connect: departments.map((id: string) => { id }) }, name, password, username, organization, phone_number, email, address, gender, origin, note
-            }
-        })
-
-        if (!newAgent) return NextResponse.json({ success: false, message: 'Bad request' }, { status: 400 })
-
-        return NextResponse.json({ success: true, data: newAgent }, { status: 200 })
-
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export const GET = async (req: Request) => {
-
-    const { searchParams } = new URL(req.url);
-
-    const id = searchParams.get('id')
-
-    const departmentID = searchParams.get('departmentID')
+export const GET = async (req: NextRequest) => {
 
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+        //only admin are allowed to proceed
+
+        const departmentID = getSearchParams(req, 'departmentID')
+        const agentID = getSearchParams(req, 'agentID')
 
         if (departmentID) {
 
-            const agentsDepartment = await prisma.department.findUnique({
+            //check department and get all agents in this department
+            const department = await prisma.department.findUnique({
                 where: {
                     id: departmentID
-                }, include: { agents: true }
+                },
+                select: {
+                    agents: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            organization: true,
+                            origin: true,
+                            note: true,
+                            created_at: true
+                        },
+                        orderBy: {
+                            created_at: 'desc'
+                        }
+                    }
+                }
             })
-
-            if (!agentsDepartment) return NextResponse.json({ message: 'Server error' }, { status: 500 })
-
-            return NextResponse.json({ data: agentsDepartment.agents }, { status: 200 })
+            //return 404 if department not found
+            if (!department) return notFoundRes("Department")
+            //return 200 response and pass the agents as data            
+            return okayRes(department.agents)
         }
 
-        const agent = await prisma.agent.findUnique({ where: { id: String(id) } })
+        if (agentID) {
 
-        if (agent) return NextResponse.json({ success: true, data: agent }, { status: 200 })
+            //retrieve agent
+            const agent = await prisma.agent.findUnique({
+                where: { id: agentID },
+                include: {
+                    departments: true,
+                    balance: true
+                }
+            })
 
-        if (id && !agent) return NextResponse.json({ success: false, error: true, message: 'No agent found' }, { status: 404 })
+            //return agent if not found
+            if (!agent) return notFoundRes("Agent")
 
-        const allClient = await prisma.agent.findMany()
+            return okayRes(agent)
+            //return 200 response
+        }
 
-        if (!allClient) return NextResponse.json({ success: false, error: true, message: 'Server error' }, { status: 500 })
+        //get all agents
+        const allAgents = await prisma.agent.findMany({
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                organization: true,
+                origin: true,
+                note: true,
+                created_at: true
+            },
+            orderBy: {
+                created_at: 'desc'
+            }
+        })
+        //return 400 response if it fails
+        if (!allAgents) return badRequestRes("Failed to get all agents")
 
-        return NextResponse.json({ success: true, data: allClient }, { status: 200 })
+        return okayRes(allAgents)
 
     } catch (error) {
-
         console.log(error);
-
+        return serverErrorRes(error)
     } finally {
-
         prisma.$disconnect()
-
     }
 }
+
+
+export const POST = async (req: Request) => {
+
+    const { name, organization, username, password,
+        phone_number, email, address, gender, origin,
+        note, departments, currency, payment_address, commission_rate, commission_type } = await req.json()
+
+    try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+        //only admin and superadmin are allowed here
+
+        //check if username exist in all users
+        const isUsernameExist = await checkUsername(username)
+        if (isUsernameExist) return existRes("Username")
+
+        //create a new agent
+        const newAgent = await prisma.agent.create({
+            data: {
+                name, password, username, organization, phone_number,
+                email, address, gender, origin, note,
+                //we create the agent balance here
+                balance: {
+                    create: {
+                        amount: 0,
+                        currency,
+                        commission_rate: Number(commission_rate),
+                        commission_type,
+                        payment_address
+                    }
+                }
+            }
+        })
+        if (!newAgent) return badRequestRes("Failed to create agent")
+
+        //this will connect the agent to department
+        if (departments && departments.length > 0) {
+
+            const checkDepartments = await prisma.department.findMany({
+                where: {
+                    id: {
+                        in: departments
+                    }
+                }
+            })
+            //check all existing departments
+            const existingDepartmentIds = checkDepartments.map(department => department.id);
+            const nonExistingDepartmentIds = departments.filter((id: string) => !existingDepartmentIds.includes(id));
+            //check if somedepartment does not exist in database
+            if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 404 });
+
+            //update the agent and connect all departments
+            const updateSupplierDepartment = await prisma.agent.update({
+                where: { id: newAgent.id }, data: {
+                    departments: {
+                        connect: departments.map((id: string) => ({ id }))
+                    }
+                }
+            })
+            //return 400 response if it fails to connect
+            if (!updateSupplierDepartment) return badRequestRes("Failed to connect department to agent")
+        }
+
+        //return 201 response 
+        return createdRes()
+
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
+    }
+}
+
+
+export const PATCH = async (req: Request) => {
+
+    try {
+        //get all data
+        const { name, username, password, organization, payment_address, phone_number, email, address, gender, profile_key, profile_url,
+            origin, note, departments, currency, commission_rate, commission_type } = await req.json()
+
+        const { searchParams } = new URL(req.url)
+        const agentID = searchParams.get('agentID')
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        //if user type is agent proceed
+        if (session.user.type === AGENT) {
+
+            if (session.user.username !== username && username) {
+                //check if username exist
+                const isUsernameExist = await checkUsername(username)
+                if (isUsernameExist) return existRes("Username")
+            }
+
+            //check if agent exist
+            const agent = await prisma.agent.findUnique({
+                where: { id: session.user.id },
+                include: { balance: true }
+            })
+            if (!agent) return notFoundRes(AGENT)
+            //return 404 response if agent does not exist
+
+            const updateAgent = await prisma.agent.update({
+                where: { id: session.user.id }, data: {
+                    name, username, password, email, phone_number, address, gender
+                }
+            })
+            if (!updateAgent) return badRequestRes("F")
+
+            //if payment address changed update the agentbalance
+            if (payment_address) {
+                const updatePaymentInfo = await prisma.agentBalance.update({
+                    where: {
+                        id: agent.balance[0].id
+                    }, data: { payment_address }
+                })
+                if (!updatePaymentInfo) return badRequestRes("Failed to update payment address to agent")
+                //return 400 response if it fails
+            }
+
+            return okayRes()
+            //return 200 response
+        }
+
+        //only allow admin to proceed 
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
+        //if agentID exist proceed here
+        if (agentID) {
+
+            //retrieve the agent 
+            const agent = await prisma.agent.findUnique({
+                where: { id: agentID },
+                include: { departments: true, balance: true }
+            })
+            if (!agent) return notFoundRes(AGENT)
+
+
+            if (agent.username !== username) {
+                const isUsernameExist = await checkUsername(username)
+                if (isUsernameExist) return existRes("Username")
+            }
+
+            const updatedSupplier = await prisma.agent.update({
+                where: { id: agentID },
+                data: {
+                    name, username, password, organization, phone_number, email, address, gender,
+                    origin, note, profile_key, profile_url,
+                    balance: {
+                        update: {
+                            where: { id: agent.balance[0].id },
+                            data: {
+                                payment_address,
+                                currency,
+                                commission_type,
+                                commission_rate: Number(commission_rate)
+                            }
+                        }
+                    },
+                }
+            })
+            if (!updatedSupplier) return badRequestRes('Faild to update  supplier')
+            //return 400 response if it fails
+
+            if (departments && departments.length > 0) {
+
+                const departmentsToConnect = departments.map((departmentId: string) => ({ id: departmentId }));
+
+                const departmentsToRemove = agent.departments.filter((department) =>
+                    !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
+                )
+
+                const updateSupplier = await prisma.agent.update({
+                    where: { id: agentID },
+                    data: {
+                        departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
+                    }
+                })
+                if (!updateSupplier) return badRequestRes("Failed to update agent")
+                //return 400 response if it fails to update
+
+            }
+
+            return okayRes()
+            //return 200 response
+        }
+
+        return notFoundRes(AGENT)
+        //return 400 response if agentID not passed
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
+    }
+}
+
 
 export const DELETE = async (req: Request) => {
 
     const { searchParams } = new URL(req.url);
-
-    const id = searchParams.get('id');
+    //get all agentID
+    const agentIDS = searchParams.getAll('agentID');
 
     try {
 
-        const agent = await prisma.agent.findUnique({ where: { id: String(id) } });
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+        //only allow admin to proceed
+        if (agentIDS.length > 0) {
 
-        if (!agent) { return NextResponse.json({ success: false, error: true, message: 'No agent found' }, { status: 404 }); }
+            //delete agents
+            const deleteAgents = await prisma.agent.deleteMany({
+                where: { id: { in: agentIDS } },
+            })
+            if (deleteAgents.count === 0) return notFoundRes('Agent')
 
-        const deletedClient = await prisma.agent.delete({ where: { id: String(id) } });
+            //return 200 response
+            return okayRes()
+        }
 
-        if (!deletedClient) return NextResponse.json({ success: false, error: true, message: 'Server error!' }, { status: 500 })
-
-        return NextResponse.json({ success: true, data: deletedClient, message: 'Client deleted successfully' }, { status: 200 })
+        //return 404 response
+        return notFoundRes('Agent')
 
     } catch (error) {
-
         console.log(error);
-
+        return serverErrorRes(error);
     } finally {
-
-        prisma.$disconnect()
-
+        prisma.$disconnect();
     }
 }
-
-// export const PATCH = async (req: Request) => {
-
-//     const { name, type, password, organization, username, phone_number, email, address, gender, origin, tags, note, departments } = await req.json()
-
-//     const { searchParams } = new URL(req.url);
-
-//     const id = searchParams.get('id');
-
-//     try {
-
-//         const agent = await prisma.agent.findUnique({ where: { id: String(id) } })
-
-//         if (!agent) return NextResponse.json({ success: false, error: true, message: 'No agent found' }, { status: 404 })
-
-//         const existingUsername =
-//             await prisma.agent.findUnique({ where: { username: String(username) } }) ||
-//             await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
-//             await prisma.admin.findUnique({ where: { username: String(username) } }) ||
-//             await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
-//             await prisma.agent.findUnique({ where: { username: String(username) } })
-
-//         if (existingUsername) return NextResponse.json({ success: false, data: { email: email }, message: 'Username already exist!' }, { status: 409 })
-
-//         const existingEmail =
-//             await prisma.agent.findUnique({ where: { email: String(email) } }) ||
-//             await prisma.superAdmin.findUnique({ where: { username: String(username) } }) ||
-//             await prisma.admin.findUnique({ where: { username: String(username) } }) ||
-//             await prisma.supplier.findUnique({ where: { username: String(username) } }) ||
-//             await prisma.agent.findUnique({ where: { username: String(username) } })
-
-//         if (existingEmail) return NextResponse.json({ success: false, data: { email: email }, message: 'Email already exist!' }, { status: 409 })
-
-//         const updatedClient = await prisma.agent.update({
-//             where: {
-//                 id: String(id)
-//             },
-//             data: {
-//                 name, username, password, organization, origin, tags, phone_number, email, address, gender, note, type, departments
-//             }
-//         })
-
-//         if (!updatedClient) return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 })
-
-//         return NextResponse.json({ success: true, data: updatedClient, message: 'Client updated' })
-
-//     } catch (error) {
-
-//         console.log(error);
-
-//     } finally {
-
-//         prisma.$disconnect()
-
-//     }
-// }

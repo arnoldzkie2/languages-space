@@ -11,17 +11,18 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 import Err from '@/components/global/Err'
 import useGlobalStore from '@/lib/state/globalStore'
+import { ADMIN } from '@/utils/constants'
 
-const BindSchedlueModal = () => {
+const ScheduleBookingModal = () => {
 
     const [searchClient, setSearchClient] = useState('')
     const { closeBindSchedule, getSchedule, currentDate, deleteSupplierSchedule } = useAdminScheduleStore()
     const { departmentID, isLoading, setIsLoading, setErr } = useGlobalStore()
-    const { clients, getClientsWithCards, clientCards, getClientCards } = useAdminClientStore()
+    const { clientWithCards, getClientsWithCards, clientCards, getClientCards } = useAdminClientStore()
     const { supplierMeetingInfo, getCardCourses, getSupplierMeetingInfo, cardCourses, clearCardCourses } = useAdminSupplierStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
 
-    const filterClient = clients.filter(client => client.username.toUpperCase().includes(searchClient.toUpperCase())).slice(0, 30)
+    const filterClient = clientWithCards.filter(client => client.username.toUpperCase().includes(searchClient.toUpperCase())).slice(0, 30)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -114,11 +115,11 @@ const BindSchedlueModal = () => {
                         </div>
                         <select className='py-1.5 mb-2 border outline-none px-2' name='clientID' value={bookingFormData.clientID} onChange={handleChange}>
                             <option value="" disabled>{t('client.select')}</option>
-                            {clients.length > 0 && filterClient.length > 0 ? filterClient.map(client => (
+                            {clientWithCards.length > 0 && filterClient.length > 0 ? filterClient.map(client => (
                                 <option value={client.id} key={client.id}>
                                     {client.username}
                                 </option>
-                            )) : searchClient && clients.length < 1 ? <option value="" disabled>{t('client.404')}</option> : <option disabled>{tt('loading')}</option>}
+                            )) : searchClient && clientWithCards.length < 1 ? <option value="" disabled>{t('client.404')}</option> : <option disabled>{tt('loading')}</option>}
                         </select>
                     </div>
 
@@ -199,4 +200,4 @@ const BindSchedlueModal = () => {
         </div>)
 }
 
-export default BindSchedlueModal
+export default ScheduleBookingModal

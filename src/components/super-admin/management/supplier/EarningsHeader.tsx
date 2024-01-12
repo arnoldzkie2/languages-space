@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 
-const EarningsHeader: React.FC = ({ }) => {
+const SupplierEarningsHeader: React.FC = ({ }) => {
 
     const { status } = useSession()
 
@@ -29,4 +29,4 @@ const EarningsHeader: React.FC = ({ }) => {
     )
 }
 
-export default EarningsHeader
+export default SupplierEarningsHeader

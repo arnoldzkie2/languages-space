@@ -30,6 +30,10 @@ model Client {
   orders       Order[]
   cards        ClientCard[]
   bookings     Booking[]
+  agent        Agent?       @relation(fields: [agentID], references: [id], onDelete: Cascade)
+  agentID      String?
+
+  @@index([agentID])
 }
 
 model ClientCard {
@@ -91,7 +95,6 @@ model Supplier {
   email             String?
   address           String?
   gender            String?
-  card              Json?
   tags              Json?
   origin            String?
   note              String?
@@ -129,7 +132,7 @@ model SupplierBalance {
 
 model SupplierBalanceTransactions {
   id                String          @id @default(uuid())
-  amount            Int
+  amount            String
   status            String
   payment_address   String
   paid_by           String?
@@ -282,37 +285,86 @@ model Reminders {
 // agent area
 
 model Agent {
-  id                  String       @id @default(uuid())
-  profile_url         String?
-  profile_key         String?
-  name                String
-  username            String       @unique
-  password            String
-  organization        Json?
-  payment_information Json?
-  phone_number        String?
-  email               String?
-  address             String?
-  gender              String?
-  origin              String
-  note                String?
-  agentCardID         String?
-  created_at          DateTime     @default(now())
-  updated_at          DateTime     @updatedAt
-  card                AgentCard?   @relation(fields: [agentCardID], references: [id], onDelete: Cascade)
-  departments         Department[]
-
-  @@index([agentCardID])
+  id           String         @id @default(uuid())
+  profile_url  String?
+  profile_key  String?
+  name         String
+  username     String         @unique
+  password     String
+  organization String?
+  phone_number String?
+  email        String?
+  address      String?
+  gender       String?
+  origin       String
+  note         String?
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  departments  Department[]
+  balance      AgentBalance[]
+  invites      Client[]
 }
 
-model AgentCard {
-  id         String   @id @default(uuid())
-  type       Json
-  name       String
-  link       String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  agent      Agent[]
+model AgentBalance {
+  id               String                     @id @default(uuid())
+  amount           Int
+  currency         String
+  payment_schedule String                     @default("monthly")
+  payment_address  String
+  commission_rate  Int
+  commission_type  String
+  created_at       DateTime                   @default(now())
+  updated_at       DateTime                   @updatedAt
+  agentID          String
+  agent            Agent                      @relation(fields: [agentID], references: [id], onDelete: Cascade)
+  earnings         AgentEarnings[]
+  deductions       AgentDeductions[]
+  transactions     AgentBalanceTransactions[]
+
+  @@index([agentID])
+}
+
+model AgentEarnings {
+  id             String       @id @default(uuid())
+  name           String
+  quantity       Int
+  rate           Int
+  amount         Int
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  balance        AgentBalance @relation(fields: [agentBalanceID], references: [id], onDelete: Cascade)
+  agentBalanceID String
+
+  @@index([agentBalanceID])
+}
+
+model AgentDeductions {
+  id             String       @id @default(uuid())
+  name           String
+  quantity       Int
+  rate           Int
+  amount         Int
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  balance        AgentBalance @relation(fields: [agentBalanceID], references: [id], onDelete: Cascade)
+  agentBalanceID String
+
+  @@index([agentBalanceID])
+}
+
+model AgentBalanceTransactions {
+  id              String       @id @default(uuid())
+  amount          String
+  status          String
+  payment_address String
+  paid_by         String?
+  operator        String
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  balance         AgentBalance @relation(fields: [agentBalanceID], references: [id], onDelete: Cascade)
+  agentBalanceID  String
+
+  @@index([agentBalanceID])
 }
 
 // order area

@@ -60,6 +60,7 @@ interface ClientProps {
     setSelectedClients: (clients: Client[]) => void
     getClients: () => Promise<void>
     setClientSelectedID: (clientID: string) => void
+    clientWithCards: Client[]
     getClientsWithCards: () => Promise<void>
     setClientCards: (cards: ClientCard[]) => void
     getClientCards: (clientID: string) => Promise<void>
@@ -67,6 +68,7 @@ interface ClientProps {
 
 const useAdminClientStore = create<ClientProps>((set) => ({
     clients: [],
+    clientWithCards: [],
     method: '',
     clientData: undefined,
     deleteModal: false,
@@ -108,7 +110,7 @@ const useAdminClientStore = create<ClientProps>((set) => ({
             const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/client${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) set({ clients: data.data })
-            
+
         } catch (error) {
             console.log(error);
             alert('Something went wrong')
@@ -118,7 +120,7 @@ const useAdminClientStore = create<ClientProps>((set) => ({
         try {
             const { departmentID } = useGlobalStore.getState()
             const { data } = await axios.get(`/api/booking/client/card${departmentID && `?departmentID=${departmentID}`}`)
-            if (data.ok) set({ clients: data.data })
+            if (data.ok) set({ clientWithCards: data.data })
 
         } catch (error) {
             console.log(error);

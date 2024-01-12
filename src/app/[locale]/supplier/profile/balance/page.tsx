@@ -1,6 +1,6 @@
 'use client'
-import CashoutModal from '@/components/supplier/CashoutModal'
 import SupplierBalance from '@/components/supplier/SupplierBalance'
+import SupplierCashoutModal from '@/components/supplier/SupplierCashoutModal'
 import SupplierHeader from '@/components/supplier/SupplierHeader'
 import SupplierProfile from '@/components/supplier/SupplierProfile'
 import useSupplierBalanceStore from '@/lib/state/supplier/supplierBalanceStore'
@@ -18,7 +18,7 @@ const Page = () => {
                 <SupplierBalance />
             </div>
 
-            {cashout && <CashoutModal />}
+            {cashout && <SupplierCashoutModal />}
         </>
     )
 }

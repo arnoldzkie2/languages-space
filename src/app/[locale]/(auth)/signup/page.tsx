@@ -15,6 +15,7 @@ import useGlobalStore from "@/lib/state/globalStore";
 interface Props {
     searchParams: {
         department: string
+        agent: string
     }
 }
 
@@ -22,7 +23,7 @@ const Page = ({ searchParams }: Props) => {
 
     const router = useRouter()
     const session = useSession()
-    const department = searchParams.department
+    const { department, agent } = searchParams
 
     useEffect(() => {
 
@@ -32,9 +33,9 @@ const Page = ({ searchParams }: Props) => {
             if (session.data.user.type === 'client') {
                 router.push('/client')
             } else if (session.data.user.type === 'agent') {
-                router.push('/agent')
+                router.push('/agent/invite')
             } else if (session.data.user.type === 'supplier') {
-                router.push('/supplier')
+                router.push('/supplier/schedule')
             } else if (session.data.user.type === 'admin') {
                 router.push('/admin')
             } else if (session.data.user.type === 'super-admin') {
@@ -68,8 +69,11 @@ const Page = ({ searchParams }: Props) => {
 
         try {
             setIsLoading(true)
-            const { data } = await axios.post(`/api/auth/signup${department && department !== 'null' && department !== 'undefined' ? `?department=${department.toLocaleLowerCase()}` : ''}`, {
-                username, password
+            const { data } = await axios.post('/api/auth/signup', {
+                username,
+                password,
+                departmentID: department || null,
+                agentID: agent || null
             })
 
             if (data.ok) {
@@ -139,7 +143,7 @@ const Page = ({ searchParams }: Props) => {
                     className={`border-2 flex items-center justify-center rounded-md text-lg h-11 bg-black text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
                     {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
                         : t('signup')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <a href={`/${locale}/login?department=${department}`} className='text-black font-bold'>{t('signin')}</a></div>
+                <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <a href={`/${locale}/login?department=${department}&agent=${agent}`} className='text-black font-bold'>{t('signin')}</a></div>
             </form >        </div>
     );
 };

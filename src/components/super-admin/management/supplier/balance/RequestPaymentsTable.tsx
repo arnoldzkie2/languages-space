@@ -4,16 +4,18 @@ import { faCheck, faEllipsis, faSpinner, faXmark } from '@fortawesome/free-solid
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslations } from 'next-intl';
 import React from 'react'
-
+import ConfirmPaymentModal from './ConfirmPaymentModal';
+import useSupplierBalanceStore from '@/lib/state/supplier/supplierBalanceStore';
 
 interface Props {
     filteredTable: SupplierBalanceTransaction[]
 }
 
-
 const RequestPaymentsTable = ({ filteredTable }: Props) => {
 
     const { openOperation, closeOperation, operation, selectedID, isLoading } = useGlobalStore()
+
+    const openConfirmPaymentModal = useSupplierBalanceStore(s => s.openConfirmPaymentModal)
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
@@ -26,6 +28,7 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                     <th scope="col" className="px-6 py-3">{tt('amount')}</th>
                     <th scope="col" className="px-6 py-3">{tt('status')}</th>
                     <th scope="col" className="px-6 py-3">{tt('payment')}</th>
+                    <th scope="col" className="px-6 py-3">{tt('paid-by')}</th>
                     <th scope="col" className="px-6 py-3">{tt('date')}</th>
                     <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
                 </tr>
@@ -54,6 +57,11 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                             </div>
                         </td>
                         <td className="px-6 py-3">
+                            <div className='h-5 w-40'>
+                                {obj.paid_by}
+                            </div>
+                        </td>
+                        <td className="px-6 py-3">
                             <div className='h-5 w-44'>
                                 {new Date(obj.created_at).toLocaleString()}
                             </div>
@@ -61,17 +69,19 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                         <td className='py-3 relative px-6'>
                             <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(obj.id)} />
                             <ul className={`${operation && selectedID === obj.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                <button
+                                {obj.status !== 'completed' && <button
+                                    onClick={() => openConfirmPaymentModal(obj)}
                                     disabled={isLoading}
                                     className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>
-                                    {tt('paid')} <FontAwesomeIcon icon={isLoading ? faSpinner : faCheck} className={`${isLoading && 'animate-spin'}`} />
-                                </button>
+                                    {tt('paid')} <FontAwesomeIcon icon={faCheck} width={16} height={16} />
+                                </button>}
                                 <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                             </ul>
                         </td>
                     </tr>
                 ))}
             </tbody >
+            <ConfirmPaymentModal />
         </table >
     );
 }

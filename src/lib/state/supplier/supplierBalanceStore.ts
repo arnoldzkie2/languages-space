@@ -21,14 +21,26 @@ interface SupplierBalanceStore {
     returnCurrency: (currency: string) => "$" | "₱" | "₫" | "¥" | "Unknown Currency"
     updatePaymentInfo: (e: React.FormEvent) => Promise<void>
     setBalance: (balance: SupplierBalance) => void
+    confirmPaymentModal: boolean
+    singleTransaction: SupplierBalanceTransaction | null
+    openConfirmPaymentModal: (transac: SupplierBalanceTransaction) => void
+    closeConfirmPaymentModal: () => void
+    confirmPaymentRequest: (e: React.FormEvent) => Promise<void>
+    returnWaitMessage: (schedule: string) => string | undefined
 }
 
 const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
     transactions: null,
     getTransactions: async () => {
+
+        const departmentID = useGlobalStore.getState().departmentID
         try {
 
-            const { data } = await axios.get('/api/supplier/balance/transactions')
+            const { data } = await axios.get('/api/supplier/balance/transactions', {
+                params: {
+                    departmentID: departmentID || ''
+                }
+            })
             if (data.ok) set({ transactions: data.data })
 
         } catch (error) {
@@ -150,7 +162,71 @@ const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
             alert("Something went wrong")
         }
     },
-    setBalance: (balance: SupplierBalance) => set({ balance })
+    setBalance: (balance: SupplierBalance) => set({ balance }),
+    confirmPaymentModal: false,
+    singleTransaction: null,
+    openConfirmPaymentModal: (transac: SupplierBalanceTransaction) => set({ confirmPaymentModal: true, singleTransaction: transac }),
+    closeConfirmPaymentModal: () => set({ confirmPaymentModal: false, singleTransaction: null }),
+    confirmPaymentRequest: async (e: React.FormEvent) => {
+        e.preventDefault()
+        const { singleTransaction, closeConfirmPaymentModal, getTransactions } = get()
+        const { setErr, setIsLoading, setOkMsg } = useGlobalStore.getState()
+        try {
+
+            setIsLoading(true)
+
+            if (!singleTransaction) return closeConfirmPaymentModal()
+
+            const { data } = await axios.post('/api/supplier/balance/transactions/completed', {
+                transactionID: singleTransaction.id
+            })
+
+            if (data.ok) {
+                setIsLoading(false)
+                setOkMsg("Success")
+                closeConfirmPaymentModal()
+                getTransactions()
+            }
+
+        } catch (error: any) {
+            setIsLoading(false)
+            if (error.reponse.data.msg) {
+                return setErr(error.response.data.msg)
+            }
+            alert("Something went wrong")
+        }
+    },
+    returnWaitMessage: (schedule: string) => {
+
+        const currentDateTime = new Date()
+
+        const lastDayOfMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 0);
+        const cashoutStart = new Date(lastDayOfMonth);
+        cashoutStart.setHours(21, 0, 0, 0);
+
+        // Set the time for the first day of the next month at 6:00 PM
+        const firstDayOfNextMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1);
+        const cashoutEnd = new Date(firstDayOfNextMonth);
+        cashoutEnd.setHours(18, 0, 0, 0);
+
+        const atDate = cashoutStart.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        });
+        const toDate = cashoutEnd.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        });
+
+        if (schedule === 'weekly') return 'Available again in saturday 9PM to sunday 6PM'
+        if (schedule === 'monthly') return `Available again in ${atDate} to ${toDate}`
+    }
 }))
 
 export default useSupplierBalanceStore

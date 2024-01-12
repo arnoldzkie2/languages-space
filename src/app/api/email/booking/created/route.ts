@@ -4,12 +4,11 @@ import { NextRequest } from "next/server";
 import { Resend } from "resend";
 import BookingSuccessClient from "@/lib/emails/BookingSuccessClient";
 import BookingSuccessSupplier from "@/lib/emails/BookingSuccessSupplier";
+import resend from "@/utils/getResend";
 
 export const POST = async (req: NextRequest) => {
 
     try {
-
-        const resend = new Resend(process.env.RESEND_API_KEY)
 
         const { bookingID, operator } = await req.json()
 
@@ -39,8 +38,7 @@ export const POST = async (req: NextRequest) => {
             const { client, supplier, schedule, meeting_info } = booking!
 
             if (client.email && client.name) {
-
-                const sendEmailToClient = await resend.emails.send({
+                resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
                     to: client.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
@@ -63,12 +61,10 @@ export const POST = async (req: NextRequest) => {
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })
-                if (!sendEmailToClient) return badRequestRes()
-
             }
 
             if (supplier.email && supplier.name && client.name) {
-                const sendEmailToSupplier = await resend.emails.send({
+                resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
                     to: supplier.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
@@ -90,9 +86,7 @@ export const POST = async (req: NextRequest) => {
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })
-                if (!sendEmailToSupplier) return badRequestRes()
             }
-
         }
 
         return okayRes()

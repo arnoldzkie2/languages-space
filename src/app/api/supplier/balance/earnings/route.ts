@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { checkIsAdmin } from "@/utils/checkUser";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -51,7 +52,7 @@ export const GET = async (req: NextRequest) => {
         if (!supplier) return notFoundRes('Supplier')
 
         return okayRes(supplier.balance[0].earnings)
-        
+
     } catch (error) {
         console.log(error);
         return serverErrorRes(error)
@@ -74,7 +75,8 @@ export const POST = async (req: NextRequest) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
         const supplier = await prisma.supplier.findUnique({ where: { id: supplierID }, include: { balance: true } })
         if (!supplier) return notFoundRes('Supplier')

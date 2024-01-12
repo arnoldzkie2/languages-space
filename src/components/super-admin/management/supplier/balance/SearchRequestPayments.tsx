@@ -48,8 +48,9 @@ const SearchRequestPayments = ({ handleSearch, searchQuery }: Props) => {
                             onChange={handleSearch}
                             className='px-2 py-1.5 rounded-md outline-none'
                         >
-                            <option value="pending">Pending</option>
-                            <option value="completed">Completed</option>
+                            <option value="">{tt("select")}</option>
+                            <option value="pending">{tt("pending")}</option>
+                            <option value="completed">{tt('completed')}</option>
                         </select>
                     </div>
 

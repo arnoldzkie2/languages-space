@@ -1,6 +1,10 @@
 'use client'
+import SubmitButton from '@/components/global/SubmitButton';
+import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
+import SupplierPayslip from '../../SendPayslipButton';
+import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 
 interface Props {
 
@@ -20,6 +24,8 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
+
+    const sendSupplierPayslip = useAdminSupplierStore(s => s.sendSupplierPayslips)
 
     return (
         <div className='pt-4 mt-4 border-t border-gray-300'>
@@ -69,6 +75,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.note}
                     />
 
+                    <SupplierPayslip sendPayslip={sendSupplierPayslip} />
                 </div>
             </div>
         </div>

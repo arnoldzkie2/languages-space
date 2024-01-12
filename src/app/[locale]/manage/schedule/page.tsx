@@ -5,17 +5,17 @@ import Departments from '@/components/super-admin/management/Departments';
 import ScheduleHeader from '@/components/super-admin/management/schedule/ScheduleHeader';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import { useTranslations } from 'next-intl';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react'
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore';
 import ScheduleComponent from '@/components/super-admin/management/schedule/ScheduleComponent';
 import NewScheduleModal from '@/components/super-admin/management/schedule/NewScheduleModal';
-import BindSchedlueModal from '@/components/super-admin/management/schedule/BindSchedlueModal';
 import ViewBokingModal from '@/components/super-admin/management/schedule/ViewBokingModal';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list';
 import useGlobalStore from '@/lib/state/globalStore';
+import ScheduleBookingModal from '@/components/super-admin/management/schedule/ScheduleBookingModal';
 
 const Page = ({ }) => {
 
@@ -113,7 +113,7 @@ const Page = ({ }) => {
             </div>
 
             {newSchedule && <NewScheduleModal />}
-            {bindSchedule && <BindSchedlueModal />}
+            {bindSchedule && <ScheduleBookingModal />}
             {viewBooking && <ViewBokingModal />}
         </>
     );

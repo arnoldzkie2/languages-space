@@ -78,7 +78,6 @@ const Page = () => {
       })
 
       if (data.ok) {
-        axios.post('/api/email/booking/created', { bookingID: data.data, operator: 'admin' })
         setErr('')
         setIsLoading(false)
         router.push('/manage/booking')

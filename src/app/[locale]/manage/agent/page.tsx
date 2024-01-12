@@ -3,19 +3,20 @@
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
 import Pagination from '@/components/super-admin/management/Pagination'
-import AgentHeader from '@/components/super-admin/management/booking/agent/AgentHeader'
-import AgentTable from '@/components/super-admin/management/booking/agent/AgentTable'
-import SearchAgent from '@/components/super-admin/management/booking/agent/SearchAgent'
+import AgentHeader from '@/components/super-admin/management/agent/AgentHeader'
+import AgentTable from '@/components/super-admin/management/agent/AgentTable'
+import DeleteAgentModal from '@/components/super-admin/management/agent/DeleteAgentModal'
+import SearchAgent from '@/components/super-admin/management/agent/SearchAgent'
 import useGlobalStore from '@/lib/state/globalStore'
-import useAdminAgentStore, { ManageAgentSearchQueryValue } from '@/lib/state/super-admin/agentStore'
+import useAdminAgentStore, { agentSearchQueryValue } from '@/lib/state/super-admin/agentStore'
 import React, { useEffect, useState } from 'react'
 
 const Page = () => {
 
     const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
-    const { agents, selectedAgents, getAgents, setTotalAgent, totalAgent } = useAdminAgentStore()
+    const { agents, selectedAgents, getAgents, setTotalAgent, totalAgent, deleteAgentModal } = useAdminAgentStore()
 
-    const [searchQuery, setSearchQuery] = useState(ManageAgentSearchQueryValue)
+    const [searchQuery, setSearchQuery] = useState(agentSearchQueryValue)
 
     const filteredAgents = agents.filter((agent) => {
         const searchName = searchQuery.name.toUpperCase();
@@ -49,7 +50,7 @@ const Page = () => {
     useEffect(() => {
         getAgents()
         setCurrentPage(1)
-        setSearchQuery(ManageAgentSearchQueryValue)
+        setSearchQuery(agentSearchQueryValue)
     }, [departmentID])
 
     useEffect(() => {
@@ -58,7 +59,6 @@ const Page = () => {
             searched: filteredAgents.length.toString(),
             total: agents.length.toString()
         })
-
     }, [agents.length, filteredAgents.length, selectedAgents.length])
 
     return (
@@ -82,6 +82,7 @@ const Page = () => {
 
                 <Pagination totals={totalAgent} getTotalPages={getTotalPages} />
             </div>
+            {deleteAgentModal && <DeleteAgentModal />}
         </div>
     )
 }

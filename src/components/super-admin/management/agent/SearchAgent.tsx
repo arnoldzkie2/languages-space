@@ -1,5 +1,7 @@
+import useAdminAgentStore from '@/lib/state/super-admin/agentStore';
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
+import SendPayslipButton from '../../SendPayslipButton';
 
 interface Props {
 
@@ -19,6 +21,8 @@ const SearchAgent: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
+
+    const sendAgentPayslip = useAdminAgentStore(s => s.sendAgentPayslip)
 
     return (
         <div className='pt-4 mt-4 border-t border-gray-300 w-full'>
@@ -67,6 +71,8 @@ const SearchAgent: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         onChange={handleSearch}
                         value={searchQuery.note}
                     />
+
+                    <SendPayslipButton sendPayslip={sendAgentPayslip} />
 
                 </div>
             </div>

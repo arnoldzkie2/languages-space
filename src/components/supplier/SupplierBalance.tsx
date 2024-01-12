@@ -25,7 +25,8 @@ const SupplierBalance = () => {
         getBalance,
         setPaymentAddress,
         payment_address,
-        updatePaymentInfo
+        updatePaymentInfo,
+        returnWaitMessage
     } = useSupplierBalanceStore()
 
     useEffect(() => {
@@ -42,7 +43,11 @@ const SupplierBalance = () => {
         <div className='flex flex-col gap-5 w-full md:w-3/4 lg:w-1/2 order-1 md:order-2'>
             <div className='flex w-full items-center justify-between pb-2 mb-2 border-b'>
                 <h1 className='font-bold w-full text-2xl text-blue-600'>{t('profile.balance')}</h1>
-                <Cashout balance={balance} isCashoutAvailable={isCashoutAvailable} toggleCashout={toggleCashout} />
+                <ReturnCashoutButton
+                    balance={balance}
+                    isCashoutAvailable={isCashoutAvailable}
+                    returnWaitMessage={returnWaitMessage}
+                    toggleCashout={toggleCashout} />
             </div>
             <div className='w-full flex gap-10 flex-col sm:flex-row'>
                 <div className='flex flex-col gap-4 w-full sm:w-1/2 md:w-full xl:w-1/2 bg-blue-600 text-white p-5 rounded-xl'>
@@ -108,43 +113,16 @@ const Skeleton = () => {
     )
 }
 
-const Cashout = (props: { balance: SupplierBalance, isCashoutAvailable: (schedule: string) => boolean, toggleCashout: () => void }) => {
+const ReturnCashoutButton = (props: {
+    balance: SupplierBalance,
+    isCashoutAvailable: (schedule: string) => boolean,
+    toggleCashout: () => void
+    returnWaitMessage: (schedule: string) => string | undefined
+}) => {
 
     const [result, setResult] = useState(false)
 
     const tt = useTranslations('global')
-
-    const returnWaitMessage = (schedule: string) => {
-
-        const currentDateTime = new Date()
-
-        const lastDayOfMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 0);
-        const cashoutStart = new Date(lastDayOfMonth);
-        cashoutStart.setHours(21, 0, 0, 0);
-
-        // Set the time for the first day of the next month at 6:00 PM
-        const firstDayOfNextMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1);
-        const cashoutEnd = new Date(firstDayOfNextMonth);
-        cashoutEnd.setHours(18, 0, 0, 0);
-
-        const atDate = cashoutStart.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-        });
-        const toDate = cashoutEnd.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-        });
-
-        if (schedule === 'weekly') return 'Available again in saturday 9PM to sunday 6PM'
-        if (schedule === 'monthly') return `Available again in ${atDate} to ${toDate}`
-    }
 
     useEffect(() => {
         if (props.balance) {
@@ -154,9 +132,20 @@ const Cashout = (props: { balance: SupplierBalance, isCashoutAvailable: (schedul
         // eslint-disable-next-line react-hooks/rules-of-hooks
     }, [props.balance])
 
-    if (!result) return <button title={returnWaitMessage(props.balance.payment_schedule)} className='bg-slate-400 px-5 py-1.5 text-white rounded-md cursor-default ml-auto'>{tt('cashout')}</button>
+    if (!result) return (
+        <button
+            title={props.returnWaitMessage(props.balance.payment_schedule)}
+            className='bg-slate-400 px-5 py-1.5 text-white rounded-md cursor-default ml-auto'>
+            {tt('cashout')}
+        </button>
+    )
 
-    return <button onClick={props.toggleCashout} className='bg-blue-600 px-5 py-1.5 text-white rounded-md hover:bg-blue-500 ml-auto'>{tt('cashout')}</button>
+    return (
+        <button onClick={props.toggleCashout}
+            className='bg-blue-600 px-5 py-1.5 text-white rounded-md hover:bg-blue-500 ml-auto'>
+            {tt('cashout')}
+        </button>
+    )
 }
 
 const ShowTable = ({ table }: { table: string }) => {

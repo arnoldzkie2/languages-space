@@ -6,8 +6,8 @@ import { faCreditCard, faEye, faPenToSquare, faTrashCan } from '@fortawesome/fre
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
 import useAdminAgentStore from '@/lib/state/super-admin/agentStore';
-import { Agent } from '@/lib/types/super-admin/agentType';
 import useGlobalStore from '@/lib/state/globalStore';
+import { Agent } from '@prisma/client';
 
 interface Props {
 
@@ -17,7 +17,7 @@ interface Props {
 
 const AgentTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { selectedAgents, setSelectedAgents } = useAdminAgentStore()
+    const { selectedAgents, setSelectedAgents, openDeleteAgentModal } = useAdminAgentStore()
     const { operation, openOperation, closeOperation, selectedID, departmentID, skeleton } = useGlobalStore()
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
@@ -155,7 +155,7 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                                 <ul className={`${operation && selectedID === agent.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
                                     {/* <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => viewClient(agent)}>{tt('view')} <FontAwesomeIcon icon={faEye} /></li> */}
                                     <Link href={`/manage/agent/update/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    {/* <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => deleteWarning(agent)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li> */}
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteAgentModal(agent)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>

@@ -8,8 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import Err from '../global/Err'
 import useGlobalStore from '@/lib/state/globalStore'
+import { SUPPLIER } from '@/utils/constants'
 
-const CashoutModal = () => {
+const SupplierCashoutModal = () => {
 
     const [confirm, setConfirm] = useState(false)
     const { toggleCashout, returnCurrency, balance, setBalance, getTransactions } = useSupplierBalanceStore()
@@ -25,7 +26,7 @@ const CashoutModal = () => {
         try {
 
             setIsLoading(true)
-            const { data } = await axios.post('/api/supplier/balance/transactions', {}, { params: { operator: 'supplier' } })
+            const { data } = await axios.post('/api/supplier/balance/transactions', {operator: SUPPLIER})
 
             if (data.ok) {
                 getTransactions()
@@ -79,4 +80,4 @@ const CashoutModal = () => {
     )
 }
 
-export default CashoutModal
+export default SupplierCashoutModal
