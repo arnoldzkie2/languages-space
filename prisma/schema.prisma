@@ -395,14 +395,133 @@ model Order {
 // admin area
 
 model Admin {
-  id          String       @id @default(uuid())
-  name        String
-  username    String       @unique
-  email       String
-  password    String
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
-  departments Department[]
+  id                    String                 @id @default(uuid())
+  name                  String
+  username              String                 @unique
+  email                 String?
+  phone_number          String?
+  password              String
+  origin                String?
+  organization          String?
+  note                  String?
+  gender                String?
+  address               String?
+  profile_key           String?
+  profile_url           String?
+  created_at            DateTime               @default(now())
+  updated_at            DateTime               @updatedAt
+  departments           Department[]
+  department_permission DepartmentPermission[]
+}
+
+model DepartmentPermission {
+  //we make this model so admin can have different permission in each department
+  id                String            @id @default(uuid())
+  admin             Admin             @relation(fields: [adminID], references: [id], onDelete: Cascade)
+  adminID           String
+  department        Department        @relation(fields: [departmentID], references: [id], onDelete: Cascade)
+  departmentID      String
+  admin_permissions AdminPermission[]
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+
+  @@index([adminID])
+  @@index([departmentID])
+}
+
+model AdminPermission {
+  id String @id @default(uuid())
+
+  //client permissions
+  view_client         Boolean @default(false)
+  create_client       Boolean @default(false)
+  update_client       Boolean @default(false)
+  delete_client       Boolean @default(false)
+  view_client_cards   Boolean @default(false)
+  update_client_cards Boolean @default(false)
+  delete_client_cards Boolean @default(false)
+
+  //card permissions
+  view_cards   Boolean @default(false)
+  create_cards Boolean @default(false)
+  update_cards Boolean @default(false)
+  delete_cards Boolean @default(false)
+  bind_cards   Boolean @default(false)
+  renew_cards  Boolean @default(false)
+
+  //supplier permissions
+  view_supplier         Boolean @default(false)
+  create_supplier       Boolean @default(false)
+  update_supplier       Boolean @default(false)
+  delete_supplier       Boolean @default(false)
+  send_supplier_payslip Boolean @default(false)
+
+  //supplier schedule permissions
+  view_supplier_schedule   Boolean @default(false)
+  create_supplier_schedule Boolean @default(false)
+  delete_supplier_schedule Boolean @default(false)
+
+  //courses permissions
+  view_courses   Boolean @default(false)
+  create_courses Boolean @default(false)
+  update_courses Boolean @default(false)
+  delete_courses Boolean @default(false)
+
+  //orders permissions
+  view_orders   Boolean @default(false)
+  create_orders Boolean @default(false)
+  update_orders Boolean @default(false)
+  delete_orders Boolean @default(false)
+
+  //agent permissions
+  view_agent         Boolean @default(false)
+  create_agent       Boolean @default(false)
+  update_agent       Boolean @default(false)
+  delete_agent       Boolean @default(false)
+  send_agent_payslip Boolean @default(false)
+
+  //admin permissions
+  view_admin   Boolean @default(false)
+  create_admin Boolean @default(false)
+  update_admin Boolean @default(false)
+  delete_admin Boolean @default(false)
+
+  //web news permissions
+  view_news   Boolean @default(false)
+  create_news Boolean @default(false)
+  update_news Boolean @default(false)
+  delete_news Boolean @default(false)
+
+  //booking permissions
+  view_booking   Boolean @default(false)
+  create_booking Boolean @default(false)
+  update_booking Boolean @default(false)
+  delete_booking Boolean @default(false)
+
+  //reminders permissions
+  view_reminders    Boolean @default(false)
+  create_reminders  Boolean @default(false)
+  update_reminders  Boolean @default(false)
+  delete_reminders  Boolean @default(false)
+  confirm_reminders Boolean @default(false)
+
+  //department permissions
+  view_department   Boolean @default(false)
+  create_department Boolean @default(false)
+  update_department Boolean @default(false)
+  delete_department Boolean @default(false)
+
+  //other permissions
+  download_table  Boolean @default(false)
+  handle_settings Boolean @default(false)
+  view_statistics Boolean @default(false)
+
+  department_permission  DepartmentPermission @relation(fields: [departmentPermissionID], references: [id], onDelete: Cascade)
+  departmentPermissionID String
+  created_at             DateTime             @default(now())
+  updated_at             DateTime             @updatedAt
+
+  @@index([departmentPermissionID])
 }
 
 model SuperAdmin {
@@ -414,19 +533,20 @@ model SuperAdmin {
 }
 
 model Department {
-  id         String           @id @default(uuid())
-  name       String           @unique
-  created_at DateTime         @default(now())
-  updated_at DateTime         @updatedAt
-  clients    Client[]
-  news       News[]
-  agents     Agent[]
-  suppliers  Supplier[]
-  admins     Admin[]
-  orders     Order[]
-  bookings   Booking[]
-  cards      ClientCardList[]
-  reminders  Reminders[]
+  id                     String                 @id @default(uuid())
+  name                   String                 @unique
+  created_at             DateTime               @default(now())
+  updated_at             DateTime               @updatedAt
+  clients                Client[]
+  news                   News[]
+  agents                 Agent[]
+  suppliers              Supplier[]
+  admins                 Admin[]
+  orders                 Order[]
+  bookings               Booking[]
+  cards                  ClientCardList[]
+  reminders              Reminders[]
+  department_permissions DepartmentPermission[]
 }
 
 model News {

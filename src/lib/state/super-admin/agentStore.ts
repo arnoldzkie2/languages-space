@@ -100,7 +100,6 @@ const useAdminAgentStore = create<Props>((set, get) => ({
             alert("Something went wrong");
         }
     }
-
 }))
 
 export default useAdminAgentStore

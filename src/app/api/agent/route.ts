@@ -11,7 +11,7 @@ export const GET = async (req: NextRequest) => {
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
-        const isAdmin = await checkIsAdmin(session.user.type)
+        const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
         //only admin are allowed to proceed
 
@@ -99,13 +99,14 @@ export const POST = async (req: Request) => {
 
     const { name, organization, username, password,
         phone_number, email, address, gender, origin,
-        note, departments, currency, payment_address, commission_rate, commission_type } = await req.json()
+        note, departments, currency, payment_address, commission_rate,
+        commission_type, profile_key, profile_url } = await req.json()
 
     try {
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
-        const isAdmin = await checkIsAdmin(session.user.type)
+        const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
         //only admin and superadmin are allowed here
 
@@ -117,7 +118,7 @@ export const POST = async (req: Request) => {
         const newAgent = await prisma.agent.create({
             data: {
                 name, password, username, organization, phone_number,
-                email, address, gender, origin, note,
+                email, address, gender, origin, note, profile_key, profile_url,
                 //we create the agent balance here
                 balance: {
                     create: {
@@ -149,7 +150,7 @@ export const POST = async (req: Request) => {
             if (nonExistingDepartmentIds.length > 0) return NextResponse.json({ msg: `Departments with IDs ${nonExistingDepartmentIds.join(',')} not found` }, { status: 404 });
 
             //update the agent and connect all departments
-            const updateSupplierDepartment = await prisma.agent.update({
+            const updateAgentDepartment = await prisma.agent.update({
                 where: { id: newAgent.id }, data: {
                     departments: {
                         connect: departments.map((id: string) => ({ id }))
@@ -157,7 +158,7 @@ export const POST = async (req: Request) => {
                 }
             })
             //return 400 response if it fails to connect
-            if (!updateSupplierDepartment) return badRequestRes("Failed to connect department to agent")
+            if (!updateAgentDepartment) return badRequestRes("Failed to connect department to agent")
         }
 
         //return 201 response 
@@ -225,7 +226,7 @@ export const PATCH = async (req: Request) => {
         }
 
         //only allow admin to proceed 
-        const isAdmin = await checkIsAdmin(session.user.type)
+        const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
 
         //if agentID exist proceed here
@@ -273,13 +274,13 @@ export const PATCH = async (req: Request) => {
                     !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
                 )
 
-                const updateSupplier = await prisma.agent.update({
+                const updateAgentDepartment = await prisma.agent.update({
                     where: { id: agentID },
                     data: {
                         departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
                     }
                 })
-                if (!updateSupplier) return badRequestRes("Failed to update agent")
+                if (!updateAgentDepartment) return badRequestRes("Failed to update agent")
                 //return 400 response if it fails to update
 
             }
@@ -309,7 +310,7 @@ export const DELETE = async (req: Request) => {
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
-        const isAdmin = await checkIsAdmin(session.user.type)
+        const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
         //only allow admin to proceed
         if (agentIDS.length > 0) {

@@ -1,39 +1,39 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faGear, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
-import useAdminAgentStore from '@/lib/state/super-admin/agentStore';
 import useGlobalStore from '@/lib/state/globalStore';
-import { Agent } from '@prisma/client';
+import { Admin } from '@prisma/client';
+import useAdminStore from '@/lib/state/super-admin/adminStore';
 
 interface Props {
 
-    filteredTable: Agent[]
+    filteredTable: Admin[]
 
 }
 
-const AgentTable: React.FC<Props> = ({ filteredTable }) => {
+const AdminTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { selectedAgents, setSelectedAgents, openDeleteAgentModal } = useAdminAgentStore()
+    const { selectedAdmins, setSelectedAdmins, openDeleteAdminModal } = useAdminStore()
     const { operation, openOperation, closeOperation, selectedID, departmentID, skeleton } = useGlobalStore()
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
-    const handleSelection = (agent: Agent) => {
+    const handleSelection = (admin: Admin) => {
 
-        const isSelected = selectedAgents.some((selectedAgent) => selectedAgent.id === agent.id);
+        const isSelected = selectedAdmins.some((selectedAdmins) => selectedAdmins.id === admin.id);
 
         if (isSelected) {
 
-            const updatedSelectedClients = selectedAgents.filter((selectedAgent) => selectedAgent.id !== agent.id);
-            setSelectedAgents(updatedSelectedClients);
+            const updatedSelectedAdmin = selectedAdmins.filter((selectedAdmins) => selectedAdmins.id !== admin.id);
+            setSelectedAdmins(updatedSelectedAdmin);
 
         } else {
 
-            const updatedSelectedClients = [...selectedAgents, agent];
-            setSelectedAgents(updatedSelectedClients);
+            const updatedSelectedAdmin = [...selectedAdmins, admin];
+            setSelectedAdmins(updatedSelectedAdmin);
 
         }
     };
@@ -42,44 +42,44 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
 
         if (filteredTable.length === 0) return;
 
-        let updatedSelectedClients: Agent[]
+        let updatedSelectedAdmin: Admin[]
 
-        const isSelected = filteredTable.every((agent) =>
-            selectedAgents.some((selectedAgent) => selectedAgent.id === agent.id)
+        const isSelected = filteredTable.every((admin) =>
+            selectedAdmins.some((selectedAdmins) => selectedAdmins.id === admin.id)
         );
 
         if (isSelected) {
             // Unselect all rows on the current page
-            updatedSelectedClients = selectedAgents.filter((selectedAgent) =>
-                filteredTable.every((agent) => agent.id !== selectedAgent.id)
+            updatedSelectedAdmin = selectedAdmins.filter((selectedAdmins) =>
+                filteredTable.every((admin) => admin.id !== selectedAdmins.id)
             );
         } else {
             // Select all rows on the current page and keep existing selections
-            updatedSelectedClients = [
-                ...selectedAgents,
+            updatedSelectedAdmin = [
+                ...selectedAdmins,
                 ...filteredTable.filter(
-                    (agent) => !selectedAgents.some((selectedAgent) => selectedAgent.id === agent.id)
+                    (admin) => !selectedAdmins.some((selectedAdmins) => selectedAdmins.id === admin.id)
                 ),
             ];
         }
 
-        setSelectedAgents(updatedSelectedClients);
+        setSelectedAdmins(updatedSelectedAdmin);
 
     };
 
     useEffect(() => {
-        const currentPageIds = filteredTable.map((agent) => agent.id);
+        const currentPageIds = filteredTable.map((admin) => admin.id);
         const areAllClientsSelected =
             currentPageIds.length > 0 &&
             currentPageIds.every((id) =>
-                selectedAgents.some((agent) => agent.id === id)
+                selectedAdmins.some((admin) => admin.id === id)
             );
         setIsRowChecked(areAllClientsSelected);
-    }, [selectedAgents, filteredTable]);
+    }, [selectedAdmins, filteredTable]);
 
     useEffect(() => {
 
-        setSelectedAgents([])
+        setSelectedAdmins([])
 
     }, [departmentID])
 
@@ -109,49 +109,49 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
             </thead>
             <tbody>
                 {filteredTable && filteredTable.length > 0 ?
-                    filteredTable.map(agent => (
-                        <tr className="bg-white border hover:bg-slate-50" key={agent.id}>
+                    filteredTable.map(admin => (
+                        <tr className="bg-white border hover:bg-slate-50" key={admin.id}>
                             <td className='px-6 py-3'>
-                                <input type="checkbox" id={agent.id}
+                                <input type="checkbox" id={admin.id}
                                     className='cursor-pointer w-4 h-4 outline-none'
-                                    onChange={() => handleSelection(agent)}
-                                    checked={selectedAgents.some(selectedAgent => selectedAgent.id === agent.id)}
+                                    onChange={() => handleSelection(admin)}
+                                    checked={selectedAdmins.some(selectedAdmins => selectedAdmins.id === admin.id)}
                                 />
                             </td>
                             <td className="px-6 py-3">
-                                <label htmlFor={agent.id} className='cursor-pointer h-5 w-36'>{agent.name}</label>
+                                <label htmlFor={admin.id} className='cursor-pointer h-5 w-36'>{admin.name}</label>
                             </td>
                             <td className='px-6 py-3'>
                                 <div className='h-5 w-32'>
-                                    {agent.phone_number}
+                                    {admin.phone_number}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-28'>
-                                    {agent.organization}
+                                    {admin.organization}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-28'>
-                                    {agent.origin}
+                                    {admin.origin}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-28'>
-                                    {agent.note}
+                                    {admin.note}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-44'>
-                                    {new Date(agent.created_at).toLocaleString()}
+                                    {new Date(admin.created_at).toLocaleString()}
                                 </div>
                             </td>
                             <td className='py-3 relative px-6'>
-                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(agent.id)} />
-                                <ul className={`${operation && selectedID === agent.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    {/* <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500' onClick={() => viewClient(agent)}>{tt('view')} <FontAwesomeIcon icon={faEye} /></li> */}
-                                    <Link href={`/manage/agent/update/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteAgentModal(agent)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
+                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(admin.id)} />
+                                <ul className={`${operation && selectedID === admin.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-32 shadow-lg border flex flex-col text-gray-600`}>
+                                    <Link href={`/manage/admin/permissions/${admin.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('permissions')} <FontAwesomeIcon icon={faGear} /></Link>
+                                    <Link href={`/manage/admin/update/${admin.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteAdminModal(admin)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
                                     <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
@@ -166,7 +166,7 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                                <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
                             </td>
                             <td className='py-3.5 px-6'>
                                 <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
@@ -191,4 +191,4 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
     );
 };
 
-export default AgentTable;
+export default AdminTable;

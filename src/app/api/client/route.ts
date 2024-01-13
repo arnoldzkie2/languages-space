@@ -171,44 +171,6 @@ export const GET = async (req: NextRequest) => {
     }
 }
 
-export const DELETE = async (req: Request) => {
-
-    try {
-
-        const session = await getAuth()
-        if (!session) return unauthorizedRes()
-
-        const isAdmin = await checkIsAdmin(session.user.type)
-        if (!isAdmin) return unauthorizedRes()
-        //only allow admin to proceed
-        const { searchParams } = new URL(req.url);
-        const clientIDS = searchParams.getAll('clientID');
-        //get all clientID
-
-        if (clientIDS.length > 0) {
-
-            const deleteClients = await prisma.client.deleteMany({
-                where: { id: { in: clientIDS } },
-            })
-            if (!deleteClients) return badRequestRes("Failed to delete Client")
-            //return 400 response if it fails to delete
-            if (deleteClients.count < 1) return notFoundRes('Client')
-
-            //return 200 response
-            return okayRes()
-        }
-
-        //return 404 response if clientID not passed
-        return notFoundRes(CLIENT)
-
-    } catch (error) {
-        console.log(error);
-        return serverErrorRes(error)
-    } finally {
-        prisma.$disconnect();
-    }
-}
-
 export const PATCH = async (req: NextRequest) => {
 
     try {
@@ -318,5 +280,44 @@ export const PATCH = async (req: NextRequest) => {
         return serverErrorRes(error)
     } finally {
         prisma.$disconnect()
+    }
+}
+
+
+export const DELETE = async (req: Request) => {
+
+    try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+
+        const isAdmin = await checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+        //only allow admin to proceed
+        const { searchParams } = new URL(req.url);
+        const clientIDS = searchParams.getAll('clientID');
+        //get all clientID
+
+        if (clientIDS.length > 0) {
+
+            const deleteClients = await prisma.client.deleteMany({
+                where: { id: { in: clientIDS } },
+            })
+            if (!deleteClients) return badRequestRes("Failed to delete Client")
+            //return 400 response if it fails to delete
+            if (deleteClients.count < 1) return notFoundRes('Client')
+
+            //return 200 response
+            return okayRes()
+        }
+
+        //return 404 response if clientID not passed
+        return notFoundRes(CLIENT)
+
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect();
     }
 }

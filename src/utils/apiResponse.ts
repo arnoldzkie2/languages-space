@@ -37,7 +37,7 @@ const existRes = (name: string) => {
 }
 
 //401 response
-const unauthorizedRes = async () => {
+const unauthorizedRes = () => {
     return NextResponse.json({ msg: 'Unauthorized try re-login' }, { status: 401 })
 }
 //check not found

@@ -62,8 +62,4 @@ const AgentHeader = () => {
     )
 }
 
-const RenderBurgerMenu = () => {
-
-}
-
 export default AgentHeader

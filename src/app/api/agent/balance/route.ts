@@ -1,9 +1,9 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
-import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { checkIsAdmin } from "@/utils/checkUser";
 import { AGENT } from "@/utils/constants";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
 
@@ -23,16 +23,16 @@ export const GET = async (req: NextRequest) => {
 
         if (agentID) {
 
-            const isAdmin = await checkIsAdmin(session.user.type)
+            const isAdmin = checkIsAdmin(session.user.type)
             if (!isAdmin) return unauthorizedRes()
 
             const agent = await prisma.agent.findUnique({ where: { id: agentID }, include: { balance: true } })
-            if (!agent) return notFoundRes('Supplier')
+            if (!agent) return notFoundRes(AGENT)
 
             return okayRes(agent.balance[0])
         }
 
-        return notFoundRes('Supplier')
+        return notFoundRes(AGENT)
 
     } catch (error) {
         console.log(error);

@@ -4,6 +4,7 @@ import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okay
 import { getAuth } from "@/lib/nextAuth";
 import { DEPARTMENT, FINGERPOWER } from "@/utils/constants";
 import axios from "axios";
+import { checkIsAdmin } from "@/utils/checkUser";
 
 const SCHEDULE_RESERVED = 'reserved'
 

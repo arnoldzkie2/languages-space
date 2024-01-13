@@ -1,5 +1,4 @@
 import prisma from "@/lib/db"
-import { existRes, unauthorizedRes } from "./apiResponse"
 import { ADMIN, SUPERADMIN } from "./constants"
 
 const checkUsername = async (username: string) => {
@@ -17,7 +16,7 @@ const checkUsername = async (username: string) => {
     if (client || supplier || admin || agent || superAdmin) return true
 }
 
-const checkIsAdmin = async (type: string) => {
+const checkIsAdmin = (type: string) => {
     //check if usertype is admin or superadmin return true else return  false
     if (type === ADMIN || type === SUPERADMIN) return true
     return false

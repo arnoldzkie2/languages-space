@@ -2,21 +2,16 @@ import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, u
 import prisma from "@/lib/db";
 import { NextRequest } from "next/server";
 import { getAuth } from "@/lib/nextAuth";
-export const GET = async (req: NextRequest) => {
+import { checkIsAdmin } from "@/utils/checkUser";
 
-  const cardID = getSearchParams(req, 'cardID')
+export const GET = async (req: NextRequest) => {
 
   try {
 
+    const clientID = getSearchParams(req, 'clientID')
+    const cardID = getSearchParams(req, 'cardID')
     const session = await getAuth()
     if (!session) return unauthorizedRes()
-
-    //retrieve single card
-    if (cardID) {
-      const card = await prisma.clientCard.findUnique({ where: { id: cardID, clientID: session.user.id } })
-      if (!card) return notFoundRes('Client Card')
-      return okayRes(card)
-    }
 
     if (session.user.type === 'client') {
       const client = await prisma.client.findUnique({
@@ -37,7 +32,28 @@ export const GET = async (req: NextRequest) => {
       return okayRes(client.cards)
     }
 
-    return badRequestRes()
+    const isAdmin = checkIsAdmin(session.user.type)
+    if (!isAdmin) return unauthorizedRes()
+
+    //retrieve single card
+    if (cardID) {
+      const card = await prisma.clientCard.findUnique({ where: { id: cardID } })
+      if (!card) return notFoundRes('Client Card')
+      return okayRes(card)
+    }
+
+    //return all cards of the client
+    if (clientID) {
+
+      const client = await prisma.client.findUnique({ where: { id: clientID }, include: { cards: true } })
+      if (!client) return notFoundRes("Client")
+      //return 404 resposne if not found 
+
+      return okayRes(client.cards)
+      //return client cards
+    }
+
+    return badRequestRes("Failed to get card")
 
   } catch (error) {
     console.log(error);
