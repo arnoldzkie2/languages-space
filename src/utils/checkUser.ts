@@ -14,7 +14,9 @@ const checkUsername = async (username: string) => {
 
     //if username already exist in other users return 409 response
     if (client || supplier || admin || agent || superAdmin) return true
+
 }
+
 
 const checkIsAdmin = (type: string) => {
     //check if usertype is admin or superadmin return true else return  false

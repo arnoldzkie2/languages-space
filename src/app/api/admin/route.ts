@@ -149,7 +149,7 @@ export const PATCH = async (req: NextRequest) => {
         if (!admin) return notFoundRes(ADMIN)
         //return 404 respone if admin not found
 
-        if (admin.username !== username) {
+        if (admin.username !== username && username) {
             //if admin username changed check if the new username already exist in all users
             const existingUsername = await checkUsername(username)
             if (existingUsername) return existRes("Username")

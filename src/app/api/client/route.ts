@@ -182,12 +182,12 @@ export const PATCH = async (req: NextRequest) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        if (session.user.type === 'client') {
+        if (session.user.type === CLIENT) {
             const client = await prisma.client.findUnique({ where: { id: session.user.id } })
             if (!client) return notFoundRes("Client")
 
             //if username changed check if the new username already exist in all users
-            if (client.username !== username) {
+            if (client.username !== username && username) {
                 const existingUsername = await checkUsername(username)
                 if (existingUsername) return existRes('Username')
             }
@@ -217,7 +217,7 @@ export const PATCH = async (req: NextRequest) => {
             const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } })
             if (!client) return notFoundRes('Client')
 
-            if (client.username !== username) {
+            if (client.username !== username && username) {
 
                 const existingUsername = await checkUsername(username)
                 if (existingUsername) return existRes("Username")
@@ -273,7 +273,7 @@ export const PATCH = async (req: NextRequest) => {
         }
 
         // 404 response if clientID not passed
-        return notFoundRes('Client')
+        return notFoundRes(CLIENT)
 
     } catch (error) {
         console.log(error);
@@ -291,7 +291,7 @@ export const DELETE = async (req: Request) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        const isAdmin = await checkIsAdmin(session.user.type)
+        const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
         //only allow admin to proceed
         const { searchParams } = new URL(req.url);
@@ -305,7 +305,7 @@ export const DELETE = async (req: Request) => {
             })
             if (!deleteClients) return badRequestRes("Failed to delete Client")
             //return 400 response if it fails to delete
-            if (deleteClients.count < 1) return notFoundRes('Client')
+            if (deleteClients.count < 1) return notFoundRes(CLIENT)
 
             //return 200 response
             return okayRes()

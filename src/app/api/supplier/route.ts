@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { getAuth } from "@/lib/nextAuth";
-import { checkUsername } from "@/utils/checkUser";
+import { checkIsAdmin, checkUsername } from "@/utils/checkUser";
+import { SUPPLIER } from "@/utils/constants";
 
 export const POST = async (req: Request) => {
 
@@ -174,7 +175,7 @@ export const PATCH = async (req: Request) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        if (session.user.type === 'supplier') {
+        if (session.user.type === SUPPLIER) {
 
             if (session.user.username !== username && username) {
 
@@ -203,7 +204,8 @@ export const PATCH = async (req: Request) => {
 
         if (supplierID) {
 
-            if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
+            const isAdmin = checkIsAdmin(session.user.type)
+            if (!isAdmin) return unauthorizedRes()
 
             const supplier = await prisma.supplier.findUnique({
                 where: { id: supplierID },
@@ -216,6 +218,24 @@ export const PATCH = async (req: Request) => {
                 const isUsernameExist = await checkUsername(username)
                 if (isUsernameExist) return existRes("Username")
             }
+
+            //update supplier
+            const updatedSupplier = await prisma.supplier.update({
+                where: { id: supplierID },
+                data: {
+                    name, username, password, organization, phone_number, email, address, gender,
+                    origin, tags, note, employment_status, departure, profile_key, profile_url,
+                    balance: {
+                        update: {
+                            where: { id: supplier.balance[0].id },
+                            data: { payment_address, payment_schedule, currency, salary: Number(salary), booking_rate: Number(booking_rate) }
+                        }
+                    },
+                }
+            })
+            if (!updatedSupplier) return badRequestRes()
+
+            //check if meeting info exist
             if (meeting_info && meeting_info.length > 0) {
 
                 const meetingInfoToDeleteIDs = supplier.meeting_info
@@ -246,6 +266,7 @@ export const PATCH = async (req: Request) => {
                 });
             }
 
+            //check if department exist
             if (departments && departments.length > 0) {
 
                 const departmentsToConnect = departments.map((departmentId: string) => ({ id: departmentId }));
@@ -254,45 +275,22 @@ export const PATCH = async (req: Request) => {
                     !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
                 )
 
+                //update supplier department
                 const updatedSupplier = await prisma.supplier.update({
                     where: { id: supplierID },
                     data: {
-                        name, username, password, organization, phone_number, email, address, gender,
-                        origin, tags, note, employment_status, departure, profile_key, profile_url,
-                        balance: {
-                            update: {
-                                where: { id: supplier.balance[0].id },
-                                data: { payment_address, payment_schedule, currency, salary: Number(salary), booking_rate: Number(booking_rate) }
-                            }
-                        },
                         departments: { connect: departmentsToConnect, disconnect: departmentsToRemove },
                     }
                 })
                 if (!updatedSupplier) return badRequestRes()
 
-                return okayRes()
             }
-
-            const updatedSupplier = await prisma.supplier.update({
-                where: { id: supplierID },
-                data: {
-                    name, username, password, organization, phone_number, email, address, gender,
-                    origin, tags, note, employment_status, departure, profile_key, profile_url,
-                    balance: {
-                        update: {
-                            where: { id: supplier.balance[0].id },
-                            data: { payment_address, payment_schedule, currency, salary: Number(salary), booking_rate: Number(booking_rate) }
-                        }
-                    },
-                }
-            })
-            if (!updatedSupplier) return badRequestRes()
 
             return okayRes()
 
         }
 
-        return notFoundRes('Supplier')
+        return notFoundRes(SUPPLIER)
 
     } catch (error) {
         console.log(error);
