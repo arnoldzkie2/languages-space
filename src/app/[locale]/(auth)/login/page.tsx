@@ -126,7 +126,7 @@ const Page = ({ searchParams }: Props) => {
                     className={`border-2 flex items-center justify-center rounded-md h-11 bg-gray-800 text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
                     {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
                         : t('signin')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('not_signup')} <a href={`/${locale}/signup/?department=${department}&agent=${agent}`} className='text-gray-600 font-bold'>{t('signup')}</a></div>
+                <div className='mt-3 text-slate-500 text-center'>{t('not_signup')} <a href={`/${locale}/signup/?department=${department || ''}&agent=${agent || ''}`} className='text-gray-600 font-bold'>{t('signup')}</a></div>
             </form>
         </div>
     )

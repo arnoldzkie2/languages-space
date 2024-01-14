@@ -79,7 +79,7 @@ const Page = ({ searchParams }: Props) => {
             if (data.ok) {
                 setIsLoading(false)
                 setErr('')
-                router.push(`/login?department=${department}`)
+                router.push(`/login?department=${department || ''}&agent=${agent || ''}`)
             }
 
         } catch (error: any) {
@@ -143,7 +143,7 @@ const Page = ({ searchParams }: Props) => {
                     className={`border-2 flex items-center justify-center rounded-md text-lg h-11 bg-black text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
                     {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
                         : t('signup')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <a href={`/${locale}/login?department=${department}&agent=${agent}`} className='text-black font-bold'>{t('signin')}</a></div>
+                <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <a href={`/${locale}/login?department=${department || ''}&agent=${agent || ''}`} className='text-black font-bold'>{t('signin')}</a></div>
             </form >        </div>
     );
 };
