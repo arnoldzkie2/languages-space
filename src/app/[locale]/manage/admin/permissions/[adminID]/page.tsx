@@ -4,13 +4,11 @@ import SubmitButton from '@/components/global/SubmitButton'
 import Success from '@/components/global/Success'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
-import FormAdminPermission from '@/components/super-admin/management/admin/permissionForm/FormAdminPermission'
 import FormAgentPermission from '@/components/super-admin/management/admin/permissionForm/FormAgentPermission'
 import FormBookingPermission from '@/components/super-admin/management/admin/permissionForm/FormBookingPermission'
 import FormCardsPermission from '@/components/super-admin/management/admin/permissionForm/FormCardPermission'
 import FormClientPermission from '@/components/super-admin/management/admin/permissionForm/FormClientPermission'
 import FormCoursesPermission from '@/components/super-admin/management/admin/permissionForm/FormCoursesPermission'
-import FormDepartmentPermission from '@/components/super-admin/management/admin/permissionForm/FormDepartmentPermission'
 import FormWebNewsPermission from '@/components/super-admin/management/admin/permissionForm/FormNewsPermission'
 import FormOrdersPermission from '@/components/super-admin/management/admin/permissionForm/FormOrderPermission'
 import FormOtherPermission from '@/components/super-admin/management/admin/permissionForm/FormOtherPermission'
@@ -206,7 +204,6 @@ const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props
                     handleChange={handleChange}
                     permissionData={permissionData}
                 />
-
                 <FormSupplierSchedulePermission
                     handleChange={handleChange}
                     permissionData={permissionData}
@@ -219,7 +216,6 @@ const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props
                     handleChange={handleChange}
                     permissionData={permissionData}
                 />
-
                 <FormOrdersPermission
                     handleChange={handleChange}
                     permissionData={permissionData}
@@ -228,27 +224,14 @@ const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props
 
             <div className='flex w-full gap-40'>
 
-                <FormAdminPermission
-                    handleChange={handleChange}
-                    permissionData={permissionData}
-                />
-
-                <FormWebNewsPermission
-                    handleChange={handleChange}
-                    permissionData={permissionData} />
-            </div>
-
-            <div className='flex w-full gap-40'>
-
                 <FormRemindersPermission
                     handleChange={handleChange}
                     permissionData={permissionData}
                 />
-
-                <FormDepartmentPermission
+                <FormWebNewsPermission
                     handleChange={handleChange}
-                    permissionData={permissionData}
-                />
+                    permissionData={permissionData} />
+
             </div>
 
             <div className='flex w-full gap-40'>
@@ -259,6 +242,7 @@ const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props
                 <div className='w-1/2'>
                 </div>
             </div>
+
             <Success />
             <div className='w-full flex items-center gap-10 justify-end'>
                 <button

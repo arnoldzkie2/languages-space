@@ -210,9 +210,9 @@ const Page = () => {
                             <Link href={'/manage/client/card'} className='flex items-center text-gray-600 justify-center w-32 hover:text-blue-600 cursor-pointer gap-1'>
                                 <div>{t('client-card.h1')}</div>
                             </Link> : clientHeaderSkeleton}
-                        {session.status !== 'loading' ? <li className='flex items-center gap-1 text-gray-600 justify-center w-32 hover:text-blue-600 cursor-pointer'>
+                        {session.status !== 'loading' ? <Link href={'/manage/client/card/bind'} className='flex items-center gap-1 text-gray-600 justify-center w-32 hover:text-blue-600 cursor-pointer'>
                             <div>{t('client.card.bind')}</div>
-                        </li> : clientHeaderSkeleton}
+                        </Link> : clientHeaderSkeleton}
                     </ul>
                 </nav>
 

@@ -98,7 +98,7 @@ export const POST = async (req: Request) => {
                 card_balance_cost: supplierPrice.price,
                 supplier_rate: supplier.balance[0].booking_rate,
                 name,
-                price: bookingPrice,
+                price: bookingPrice.toFixed(2),
                 card_name: card?.name!,
                 quantity: Number(quantity),
                 settlement,
@@ -124,7 +124,7 @@ export const POST = async (req: Request) => {
 
         //update supplier schedule and create earnings for supplier as well as updating the supplier balance
 
-        const [updateSchedule, supplierEarnings, updateSupplierBalance] = await Promise.all([
+        const [updateSchedule, supplierEarnings, updateSupplierBalance, updateReminder] = await Promise.all([
             prisma.supplierSchedule.update({
                 where: { id: schedule.id },
                 data: {
@@ -146,9 +146,16 @@ export const POST = async (req: Request) => {
                 where: { id: supplier?.balance[0].id }, data: {
                     amount: supplier?.balance[0].amount! + supplier?.balance[0].booking_rate!
                 }
+            }),
+            prisma.reminders.update({
+                where: {
+                    id: reminder.id
+                }, data: {
+                    status: 'booked'
+                }
             })
         ])
-        if (!updateSchedule || !supplierEarnings || !updateSupplierBalance) return badRequestRes();
+        if (!updateSchedule || !supplierEarnings || !updateSupplierBalance || !updateReminder) return badRequestRes();
 
         return createdRes(createBooking.id);
 

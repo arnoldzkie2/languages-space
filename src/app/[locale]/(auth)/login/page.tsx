@@ -11,8 +11,10 @@ import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import Err from "@/components/global/Err";
 import Success from "@/components/global/Success";
-import { useRouter } from "@/lib/navigation";
+import { Link, useRouter } from "@/lib/navigation";
 import useGlobalStore from "@/lib/state/globalStore";
+import { useSearchParams } from "next/navigation";
+import SubmitButton from "@/components/global/SubmitButton";
 
 interface Props {
     searchParams: {
@@ -23,11 +25,10 @@ interface Props {
 
 const Page = ({ searchParams }: Props) => {
 
+    const { agent, department } = searchParams
     const router = useRouter()
-    const { department, agent } = searchParams
     const session = useSession()
-
-    const { isLoading, setIsLoading, setErr, setOkMsg } = useGlobalStore()
+    const { setIsLoading, setErr, setOkMsg } = useGlobalStore()
 
     const [isText, setIsText] = useState(false)
     const [formData, setFormData] = useState({
@@ -122,11 +123,14 @@ const Page = ({ searchParams }: Props) => {
                         onChange={handleChange}
                     />
                     {formData.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}</div>
-                <button disabled={isLoading}
-                    className={`border-2 flex items-center justify-center rounded-md h-11 bg-gray-800 text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
-                    {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
-                        : t('signin')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('not_signup')} <a href={`/${locale}/signup/?department=${department || ''}&agent=${agent || ''}`} className='text-gray-600 font-bold'>{t('signup')}</a></div>
+                <SubmitButton msg={t('signin')} style="w-full py-2 bg-slate-700 text-white rounded-sm mt-3" />
+
+                <div className='mt-3 text-slate-500 text-center'>
+                    <div>
+                        {t('not_signup')}
+                    </div>
+                    <a href={`/${locale}/signup?department=${department || ''}&agent=${agent || ''}`} className='text-gray-700 hover:text-black font-bold'>{t('signup')}</a>
+                </div>
             </form>
         </div>
     )

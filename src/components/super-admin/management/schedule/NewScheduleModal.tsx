@@ -3,7 +3,6 @@ import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import Departments from '../Departments'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { useTranslations } from 'next-intl'
 import MultipleDatePicker from 'react-multi-date-picker'
@@ -75,7 +74,6 @@ const NewScheduleModal = () => {
                 <FontAwesomeIcon onClick={toggleSchedule} icon={faXmark} width={16} height={16} className='absolute text-xl top-6 right-6 cursor-pointer' />
                 <div className='flex flex-col gap-4'>
                     <Err />
-                    <Departments />
                     <MultipleDatePicker
                         value={selectedDates.dates}
                         onChange={handleSelectedDateChange}

@@ -3,6 +3,8 @@ import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
 import { SupplierBalanceTransaction } from '@/lib/types/super-admin/supplierBalanceType'
+import { TotalProps } from '@/lib/types/super-admin/globalType'
+import { totalClientsValue } from '../super-admin/clientStore'
 
 interface SupplierBalanceStore {
     balance: SupplierBalance | null
@@ -27,10 +29,14 @@ interface SupplierBalanceStore {
     closeConfirmPaymentModal: () => void
     confirmPaymentRequest: (e: React.FormEvent) => Promise<void>
     returnWaitMessage: (schedule: string) => string | undefined
+    totalTransactions: TotalProps
+    setTotalTransactions: (totals: TotalProps) => void
 }
 
 const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
     transactions: null,
+    totalTransactions: totalClientsValue,
+    setTotalTransactions: (totals: TotalProps) => set({ totalTransactions: totals }),
     getTransactions: async () => {
 
         const departmentID = useGlobalStore.getState().departmentID

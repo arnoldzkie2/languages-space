@@ -69,6 +69,53 @@ const FormSupplierPermission = (props: {
                     name='send_supplier_payslip'
                 />
             </div>
+
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="create_supplier_earnings" className={`${permissionData.create_supplier_earnings ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.create-supplier-earnings')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.create_supplier_earnings}
+                    onChange={handleChange}
+                    id='create_supplier_earnings'
+                    className='w-4 h-4'
+                    name='create_supplier_earnings'
+                />
+            </div>
+
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="create_supplier_deductions" className={`${permissionData.create_supplier_deductions ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.create-supplier-deductions')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.create_supplier_deductions}
+                    onChange={handleChange}
+                    id='create_supplier_deductions'
+                    className='w-4 h-4'
+                    name='create_supplier_deductions'
+                />
+            </div>
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="view_supplier_payment_request" className={`${permissionData.view_supplier_payment_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.view-supplier-payment-request')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.view_supplier_payment_request}
+                    onChange={handleChange}
+                    id='view_supplier_payment_request'
+                    className='w-4 h-4'
+                    name='view_supplier_payment_request'
+                />
+            </div>
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="update_supplier_payment_request" className={`${permissionData.update_supplier_payment_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.update-supplier-payment-request')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.update_supplier_payment_request}
+                    onChange={handleChange}
+                    id='update_supplier_payment_request'
+                    className='w-4 h-4'
+                    name='update_supplier_payment_request'
+                />
+            </div>
+
         </div>
     );
 };

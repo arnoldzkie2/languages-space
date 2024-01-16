@@ -36,7 +36,7 @@ const Page = () => {
     const { cards, getCards } = useAdminCardStore()
     const { getClients, clients } = useAdminClientStore()
 
-    const filterClient = clients.filter(client => client.name.toUpperCase().includes(searchClient.toUpperCase()))
+    const filterClient = clients.filter(client => client.username.toUpperCase().includes(searchClient.toUpperCase()))
     const filterCard = cards.filter(card => card.name.toUpperCase().includes(searchCard.toUpperCase()))
 
     const [isLoading, setIsLoading] = useState(false)
@@ -127,7 +127,7 @@ const Page = () => {
                                                 <li key={client.id} title='Select' className='w-full p-2 cursor-pointer hover:bg-slate-100' onClick={() => {
                                                     setSearchClient('')
                                                     setFormData(prevData => ({ ...prevData, client: client }))
-                                                }}>{client.name} ({client.username})</li>
+                                                }}>{client.username}</li>
                                             ))}
                                         </ul>
                                     </div>

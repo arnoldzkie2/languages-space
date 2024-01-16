@@ -645,7 +645,7 @@ export const DELETE = async (req: Request) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        if (bookingIDS.length < 1) return notFoundRes('bookingID')
+        if (bookingIDS.length < 1) return notFoundRes('Booking')
         if (!type) return notFoundRes('Type')
 
         if (type === 'delete') {
@@ -653,20 +653,24 @@ export const DELETE = async (req: Request) => {
             if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
 
             // Fetch the booking IDs
-            const bookingIDs = await prisma.booking.findMany({
-                where: { /* your conditions here */ },
+            const findBookingIds = await prisma.booking.findMany({
+                where: {
+                    id: {
+                        in: bookingIDS.map(id => id)
+                    }
+                },
                 select: { id: true },
             });
 
             // Extract the IDs from the result
-            const bookingIDS = bookingIDs.map((booking) => booking.id);
+            const validBookingIds = findBookingIds.map((booking) => booking.id);
 
             // Update schedules related to the bookings
             const updateSchedule = await prisma.supplierSchedule.updateMany({
                 where: {
                     booking: {
                         some: {
-                            id: { in: bookingIDS },
+                            id: { in: validBookingIds },
                         },
                     },
                 },
@@ -679,7 +683,7 @@ export const DELETE = async (req: Request) => {
             if (!updateSchedule) return badRequestRes()
 
             const deleteBookings = await prisma.booking.deleteMany({
-                where: { id: { in: bookingIDS } }
+                where: { id: { in: validBookingIds } }
             })
             if (!deleteBookings) return badRequestRes()
 

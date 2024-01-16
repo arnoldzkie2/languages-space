@@ -7,13 +7,13 @@ export const POST = async (req: Request) => {
 
     try {
 
-        const client = await prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } })
+        const [client, card, department] = await Promise.all([
+            prisma.client.findUnique({ where: { id: clientID }, include: { departments: true } }),
+            prisma.clientCardList.findUnique({ where: { id: cardID } }),
+            prisma.department.findUnique({ where: { id: departmentID } })
+        ])
         if (!client) return notFoundRes('Client')
-
-        const card = await prisma.clientCardList.findUnique({ where: { id: cardID } })
         if (!card) return notFoundRes('Card')
-
-        const department = await prisma.department.findUnique({ where: { id: departmentID } })
         if (!department) return notFoundRes('Department')
 
         const newOrder = await prisma.order.create({

@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from "next/navigation";
 import useGlobalStore from "@/lib/state/globalStore";
+import SubmitButton from "@/components/global/SubmitButton";
 
 interface Props {
     searchParams: {
@@ -139,12 +140,16 @@ const Page = ({ searchParams }: Props) => {
                     />
                     {formData.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}
                 </div>
-                <button disabled={isLoading}
-                    className={`border-2 flex items-center justify-center rounded-md text-lg h-11 bg-black text-white mt-4 ${isLoading ? 'bg-opacity-70' : 'hover:bg-opacity-80'}`}>
-                    {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
-                        : t('signup')}</button>
-                <div className='mt-3 text-slate-500 text-center'>{t('already_signup')} <a href={`/${locale}/login?department=${department || ''}&agent=${agent || ''}`} className='text-black font-bold'>{t('signin')}</a></div>
-            </form >        </div>
+                <SubmitButton msg={t('signup')} style="w-full py-2 bg-slate-700 text-white rounded-sm mt-3" />
+               
+                <div className='mt-3 text-slate-500 text-center'>
+                    <div>
+                        {t('already_signup')}
+                    </div>
+                    <a href={`/${locale}/login?department=${department || ''}&agent=${agent || ''}`} className='text-slate-700 font-bold'>{t('signin')}</a>
+                </div>
+            </form >
+        </div>
     );
 };
 

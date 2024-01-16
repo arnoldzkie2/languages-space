@@ -7,6 +7,7 @@ import useGlobalStore from '@/lib/state/globalStore'
 import useAdminBookingStore, { bookingFormDataValue } from '@/lib/state/super-admin/bookingStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
+import { ADMIN } from '@/utils/constants'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -29,7 +30,7 @@ const Page = () => {
 
   const { isSideNavOpen, err, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useGlobalStore()
   const { bookingFormData, setBookingFormData } = useAdminBookingStore()
-  const { getClientsWithCards, clients, clientCards, setClientCards, getClientCards } = useAdminClientStore()
+  const { getClientsWithCards, clientWithCards, clientCards, setClientCards, getClientCards } = useAdminClientStore()
   const { supplier, getSupplierWithMeeting, cardCourses, getCardCourses, supplierSchedule, setSupplierSchedule, supplierMeetingInfo, getSupplierMeetingInfo } = useAdminSupplierStore()
 
   const handleChange = (e: any) => {
@@ -74,7 +75,7 @@ const Page = () => {
       const { data } = await axios.post('/api/booking', {
         note, clientCardID, clientID, meetingInfoID, settlement,
         supplierID, scheduleID, courseID, quantity: Number(quantity),
-        name, operator: 'Admin', status
+        name, operator: ADMIN, status
       })
 
       if (data.ok) {
@@ -225,7 +226,7 @@ const Page = () => {
                   <label htmlFor="clientID" className='text-gray-700 font-medium px-3'>{tt('client')}</label>
                   <select required className='px-3 py-1.5 w-full outline-none border' name="clientID" value={bookingFormData.clientID} onChange={handleChange} id="clientID">
                     <option value="">{t('client.select')}</option>
-                    {clients.length > 0 ? clients.map(client => (
+                    {clientWithCards.length > 0 ? clientWithCards.map(client => (
                       <option value={client.id} key={client.id}>{client.username}</option>
                     )) : ''}
                   </select>

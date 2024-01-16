@@ -56,7 +56,7 @@ const DeleteBookingWarningModal: React.FC<Props> = () => {
 
     const t = useTranslations('global')
     const tt = useTranslations('super-admin')
-    
+
     return (
         <div className='fixed top-0 left-0 w-screen z-20 h-screen grid place-items-center bg-opacity-50 bg-gray-600'>
             <div className='bg-white p-10 rounded-lg shadow-lg flex flex-col gap-3 overflow-y-auto h-3/4 w-1/2'>

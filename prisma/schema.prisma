@@ -450,11 +450,17 @@ model AdminPermission {
   renew_cards  Boolean @default(false)
 
   //supplier permissions
-  view_supplier         Boolean @default(false)
-  create_supplier       Boolean @default(false)
-  update_supplier       Boolean @default(false)
-  delete_supplier       Boolean @default(false)
-  send_supplier_payslip Boolean @default(false)
+  view_supplier                   Boolean @default(false)
+  create_supplier                 Boolean @default(false)
+  update_supplier                 Boolean @default(false)
+  delete_supplier                 Boolean @default(false)
+  send_supplier_payslip           Boolean @default(false)
+  view_supplier_payment_request   Boolean @default(false)
+  update_supplier_payment_request Boolean @default(false)
+
+  //supplier earnings
+  create_supplier_earnings   Boolean @default(false)
+  create_supplier_deductions Boolean @default(false)
 
   //supplier schedule permissions
   view_supplier_schedule   Boolean @default(false)
@@ -474,17 +480,17 @@ model AdminPermission {
   delete_orders Boolean @default(false)
 
   //agent permissions
-  view_agent         Boolean @default(false)
-  create_agent       Boolean @default(false)
-  update_agent       Boolean @default(false)
-  delete_agent       Boolean @default(false)
-  send_agent_payslip Boolean @default(false)
+  view_agent                   Boolean @default(false)
+  create_agent                 Boolean @default(false)
+  update_agent                 Boolean @default(false)
+  delete_agent                 Boolean @default(false)
+  send_agent_payslip           Boolean @default(false)
+  view_agent_payment_request   Boolean @default(false)
+  update_agent_payment_request Boolean @default(false)
 
-  //admin permissions
-  view_admin   Boolean @default(false)
-  create_admin Boolean @default(false)
-  update_admin Boolean @default(false)
-  delete_admin Boolean @default(false)
+  //agent earnings
+  create_agent_earnings   Boolean @default(false)
+  create_agent_deductions Boolean @default(false)
 
   //web news permissions
   view_news   Boolean @default(false)
@@ -497,6 +503,7 @@ model AdminPermission {
   create_booking Boolean @default(false)
   update_booking Boolean @default(false)
   delete_booking Boolean @default(false)
+  cancel_booking Boolean @default(false)
 
   //reminders permissions
   view_reminders    Boolean @default(false)
@@ -504,12 +511,6 @@ model AdminPermission {
   update_reminders  Boolean @default(false)
   delete_reminders  Boolean @default(false)
   confirm_reminders Boolean @default(false)
-
-  //department permissions
-  view_department   Boolean @default(false)
-  create_department Boolean @default(false)
-  update_department Boolean @default(false)
-  delete_department Boolean @default(false)
 
   //other permissions
   download_table  Boolean @default(false)

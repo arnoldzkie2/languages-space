@@ -16,13 +16,6 @@ import React, { useEffect, useState } from 'react';
 
 const Page: React.FC = () => {
 
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
-
     const { currentPage, isSideNavOpen, itemsPerPage, departmentID, setDepartmentID } = useGlobalStore()
 
     const { reminders, getReminders, totalReminders, setTotalReminders, deleteReminders } = useAdminBookingStore()

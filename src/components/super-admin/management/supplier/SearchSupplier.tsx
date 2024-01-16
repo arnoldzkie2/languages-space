@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
 import SupplierPayslip from '../../SendPayslipButton';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
+import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 
 interface Props {
 
@@ -24,6 +25,8 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
+
+    const permissions = useAdminPageStore(s => s.permissions)
 
     const sendSupplierPayslip = useAdminSupplierStore(s => s.sendSupplierPayslips)
 
@@ -75,7 +78,8 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.note}
                     />
 
-                    <SupplierPayslip sendPayslip={sendSupplierPayslip} />
+                    {permissions?.send_supplier_payslip && <SupplierPayslip sendPayslip={sendSupplierPayslip} />
+                    }
                 </div>
             </div>
         </div>

@@ -4,12 +4,16 @@ import Link from 'next/link';
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
+import DownloadTable from '../DownloadTable';
+import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 
 const ClientHeader: React.FC = ({ }) => {
 
     const session = useSession()
 
     const t = useTranslations('super-admin')
+
+    const { clients, selectedClients } = useAdminClientStore()
 
     const clientHeaderSkeleton = (
         <li className='bg-slate-200 animate-pulse w-28 h-5 rounded-3xl'></li>
@@ -35,6 +39,9 @@ const ClientHeader: React.FC = ({ }) => {
                 {session.status !== 'loading' ? <li className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
                     <Link href={'/manage/client/card/bind'}>{t('client.card.bind')}</Link>
                 </li> : clientHeaderSkeleton}
+
+                <DownloadTable tables={clients} selectedTable={selectedClients} />
+
             </ul>
         </nav>
     );

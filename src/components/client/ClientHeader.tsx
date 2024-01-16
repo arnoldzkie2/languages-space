@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import TruncateTextModal from '../global/TruncateTextModal'
+import { CLIENT } from '@/utils/constants'
 
 const ClientHeader = () => {
 
@@ -25,7 +26,7 @@ const ClientHeader = () => {
     useEffect(() => {
 
         if (status === 'authenticated' && session?.user.type !== 'client') signOut()
-        if (status === 'authenticated' && session.user.type === 'client' && !client) {
+        if (status === 'authenticated' && session.user.type === CLIENT && !client) {
             setClient(session.user)
         }
     }, [session])

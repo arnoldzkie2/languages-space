@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { checkIsAdmin } from "@/utils/checkUser";
 import { ADMIN, DEPARTMENT, DEPARTMENTID, OPERATOR, PENDING, SUPERADMIN, SUPPLIER } from "@/utils/constants";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server"
@@ -41,47 +42,45 @@ export const GET = async (req: NextRequest) => {
             return okayRes(supplier.balance[0].transactions)
         }
 
-        if (![SUPERADMIN, ADMIN].includes(session.user.type)) return unauthorizedRes()
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
         if (departmentID) {
 
-            const department = await prisma.department.findUnique({
-                where: { id: departmentID }, select: {
-                    suppliers: {
-                        select: {
-                            balance: {
-                                select: {
-                                    transactions: {
-                                        orderBy: { created_at: 'desc' },
-                                        select: {
-                                            id: true,
-                                            payment_address: true,
-                                            status: true,
-                                            created_at: true,
-                                            amount: true,
-                                            paid_by: true,
-                                            balance: {
-                                                select: {
-                                                    supplier: {
-                                                        select: {
-                                                            name: true
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
+            const cashoutTransactions = await prisma.supplierBalanceTransactions.findMany(
+                {
+                    orderBy: { created_at: 'desc' },
+                    select: {
+                        id: true,
+                        payment_address: true,
+                        status: true,
+                        created_at: true,
+                        amount: true,
+                        paid_by: true,
+                        balance: {
+                            select: {
+                                supplier: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    where: {
+                        balance: {
+                            supplier: {
+                                departments: {
+                                    some: {
+                                        id: departmentID
                                     }
                                 }
                             }
                         }
                     }
-                }
-            })
-            if (!department) return notFoundRes(DEPARTMENT)
-
-            const cashouts = department.suppliers.flatMap(supplier => supplier.balance[0].transactions);
-            return okayRes(cashouts)
-
+                },
+            )
+            return okayRes(cashoutTransactions)
         }
 
         const allCashoutTransactions = await prisma.supplierBalanceTransactions.findMany(
@@ -106,7 +105,7 @@ export const GET = async (req: NextRequest) => {
                 },
             },
         )
-        if (!allCashoutTransactions) return badRequestRes()
+        if (!allCashoutTransactions) return badRequestRes("Failed to retrieve transactions")
 
         return okayRes(allCashoutTransactions)
 
@@ -129,7 +128,7 @@ export const POST = async (req: NextRequest) => {
         const { operator } = await req.json()
 
         //check if user is supplier
-        if(!operator) return notFoundRes(OPERATOR)
+        if (!operator) return notFoundRes(OPERATOR)
         if (session.user.type === SUPPLIER) {
 
             //retrieve supplier

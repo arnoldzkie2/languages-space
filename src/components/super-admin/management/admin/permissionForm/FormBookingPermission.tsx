@@ -57,6 +57,17 @@ const FormBookingPermission: React.FC<{
                     name='delete_booking'
                 />
             </div>
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="cancel_booking" className={`cursor-pointer ${permissionData.cancel_booking ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.cancel-booking')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.cancel_booking}
+                    onChange={handleChange}
+                    id='cancel_booking'
+                    className='w-4 h-4'
+                    name='cancel_booking'
+                />
+            </div>
         </div>
     );
 };
