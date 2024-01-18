@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { getAuth } from "@/lib/nextAuth";
-import { DEPARTMENT, FINGERPOWER } from "@/utils/constants";
+import { ADMIN, CLIENT, DEPARTMENT, FINGERPOWER, SUPERADMIN } from "@/utils/constants";
 import axios from "axios";
-import { checkIsAdmin } from "@/utils/checkUser";
 
 const SCHEDULE_RESERVED = 'reserved'
 
@@ -166,7 +165,20 @@ export const POST = async (req: NextRequest) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        const { scheduleID, supplierID, clientID, note, operator, meetingInfoID, clientCardID, status, name, courseID, quantity, settlement } = await req.json();
+        const { scheduleID,
+            supplierID,
+            clientID,
+            note,
+            operator,
+            meetingInfoID,
+            clientCardID,
+            status,
+            name,
+            courseID,
+            quantity,
+            settlement,
+            confirmed
+        } = await req.json();
 
         const checkNotFound = (entity: string, value: any) => {
             if (!value) return notFoundRes(entity)
@@ -661,6 +673,7 @@ export const DELETE = async (req: Request) => {
                 },
                 select: { id: true },
             });
+            if (!findBookingIds) return badRequestRes("Failed to get all bookingIDS")
 
             // Extract the IDs from the result
             const validBookingIds = findBookingIds.map((booking) => booking.id);
@@ -693,7 +706,7 @@ export const DELETE = async (req: Request) => {
         if (type === 'cancel' && bookingID) {
 
             //only super-admin,admin and client can proceed to this code
-            if (!['super-admin', 'admin', 'client'].includes(session.user.type)) return unauthorizedRes()
+            if (![SUPERADMIN, ADMIN, CLIENT].includes(session.user.type)) return unauthorizedRes()
 
             //retrieve booking
             const booking = await prisma.booking.findUnique({ where: { id: bookingID }, include: { schedule: true, supplier: { select: { balance: true } } } })
@@ -703,7 +716,7 @@ export const DELETE = async (req: Request) => {
             const card = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
             if (!card) return notFoundRes('Client Card')
 
-            if (session.user.type === 'client') {
+            if (session.user.type === CLIENT) {
                 const currentDate = new Date();
                 const today = new Date().toISOString().split('T')[0];
                 const schedule = booking.schedule;
@@ -802,9 +815,11 @@ export const DELETE = async (req: Request) => {
             ])
             if (!refundClient || !cancelBooking || !updateSchedule) return badRequestRes()
 
-            //send back the bookingID in front-end we'll use this id
             // to send emails to supplier and clients that the booking is canceled
-            return okayRes(booking.id)
+            axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/cancel`, { bookingID: booking.id, operator: session.user.type })
+
+            //return 200 response
+            return okayRes()
         }
 
         return badRequestRes()

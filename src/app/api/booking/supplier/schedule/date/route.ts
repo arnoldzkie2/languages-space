@@ -1,6 +1,6 @@
 import prisma from "@/lib/db";
 import { getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
 
@@ -26,7 +26,7 @@ export const GET = async (req: NextRequest) => {
                 },
                 orderBy: { time: 'asc' }
             })
-            if (schedule.length === 0) return notFoundRes('Schedule')
+            if (schedule.length === 0) return NextResponse.json({ msg: 'Supplier does not have available schedule in this date' }, { status: 404 })
 
             return okayRes(schedule)
         }

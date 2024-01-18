@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { Button } from '../ui/button'
 
 const AvailableSuppliers = () => {
 
@@ -19,7 +20,7 @@ const AvailableSuppliers = () => {
     const { availableSupplier, client, getAvailableSupplier } = useClientStore()
     const cards = useClientCardStore(state => state.cards)
     const getCards = useClientCardStore(state => state.getCards)
-    const { openBookingModal, closeBookingModal } = useClientBookingStore(state => state)
+    const { openBookingModal, closeBookingModal, openBookingRequestModal, closeBookingRequestModal } = useClientBookingStore(state => state)
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { getCardCourses } = useAdminSupplierStore()
     const [searchQuery, setSearchQery] = useState('')
@@ -44,6 +45,7 @@ const AvailableSuppliers = () => {
 
     useEffect(() => {
         closeBookingModal()
+        closeBookingRequestModal()
     }, [])
 
     const t = useTranslations('client')
@@ -78,10 +80,7 @@ const AvailableSuppliers = () => {
                 </div>
                 <div className='w-full flex flex-wrap gap-8 justify-evenly'>
                     {availableSupplier && availableSupplier.length > 0 && bookingFormData.clientCardID ? availableSupplier.map(supplierPrice => (
-                        <div onClick={() => {
-                            setBookingFormData({ ...bookingFormData, supplierID: supplierPrice.supplier.id })
-                            openBookingModal()
-                        }} className='shadow rounded-md relative border hover:shadow-lg cursor-pointer w-full max-h-96 min-h-[384px] sm:w-80 overflow-y-auto bg-white items-center flex flex-col pb-3 p-5 gap-2' key={supplierPrice.supplier.id}>
+                        <div className='shadow rounded-md relative border hover:shadow-lg w-full max-h-96 min-h-[384px] sm:w-80 overflow-y-auto bg-white items-center flex flex-col pb-3 p-5 gap-2' key={supplierPrice.supplier.id}>
                             <Image width={125} height={125} className='w-[125px] min-w-[125px] min-h-[125px] border max-w-[125px] max-h-[125px] object-cover h-[125px] rounded-full' src={supplierPrice.supplier.profile_url || '/profile/profile.svg'} alt='Supplier Profile' />
                             <h1 className='text-slate-700 h-7 px-5 text-center font-black uppercase'>{supplierPrice.supplier.name}</h1>
                             <ul className='flex w-full flex-wrap gap-3 justify-center border-t pt-3'>
@@ -89,9 +88,19 @@ const AvailableSuppliers = () => {
                                     <li key={tag} className='bg-slate-100 px-2 py-0.5 text-sm'>{tag}</li>
                                 ))}
                             </ul>
+                            <div className='flex items-center gap-2 w-full'>{tt('price')}: <span className='text-blue-600 font-black'>{supplierPrice.price}</span></div>
                             <div className='absolute right-0 bottom-0 w-full flex items-center h-16 px-5 border-t justify-between'>
-                                <div className='flex items-center gap-2'>{tt('price')}: <span className='text-blue-600 font-black'>{supplierPrice.price}</span></div>
-                                <button className='bg-blue-600 hover:bg-blue-500 text-white px-5 py-1 rounded-sm'>{t('header.book-now')}</button>
+                                <Button
+                                    variant={'secondary'}
+                                    onClick={() => {
+                                        setBookingFormData({ ...bookingFormData, supplierID: supplierPrice.supplier.id })
+                                        openBookingRequestModal()
+                                    }}
+                                    className='border text-muted-foreground'>{t('booking.request')}</Button>
+                                {supplierPrice.supplier.schedule.length > 0 && <Button onClick={() => {
+                                    setBookingFormData({ ...bookingFormData, supplierID: supplierPrice.supplier.id })
+                                    openBookingModal()
+                                }}>{t('header.book-now')}</Button>}
                             </div>
                         </div>
                     ))

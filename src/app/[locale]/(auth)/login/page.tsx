@@ -6,14 +6,15 @@ import { useEffect } from "react";
 import { signIn } from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
-import { faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import Err from "@/components/global/Err";
 import Success from "@/components/global/Success";
-import { Link, useRouter } from "@/lib/navigation";
+import { useRouter } from "@/lib/navigation";
 import useGlobalStore from "@/lib/state/globalStore";
-import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import * as z from "zod"
 import SubmitButton from "@/components/global/SubmitButton";
 
 interface Props {
@@ -123,7 +124,7 @@ const Page = ({ searchParams }: Props) => {
                         onChange={handleChange}
                     />
                     {formData.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}</div>
-                <SubmitButton msg={t('signin')} style="w-full py-2 bg-slate-700 text-white rounded-sm mt-3" />
+                <SubmitButton msg={t('signup')} style="w-full py-2 text-white rounded-sm mt-3" />
 
                 <div className='mt-3 text-slate-500 text-center'>
                     <div>

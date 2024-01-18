@@ -140,7 +140,7 @@ const Page = ({ searchParams }: Props) => {
                     />
                     {formData.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}
                 </div>
-                <SubmitButton msg={t('signup')} style="w-full py-2 bg-slate-700 text-white rounded-sm mt-3" />
+                <SubmitButton msg={t('signup')} style="w-full py-2 text-white rounded-sm mt-3" />
                
                 <div className='mt-3 text-slate-500 text-center'>
                     <div>

@@ -87,7 +87,13 @@ interface TotalCourse {
 
 interface SupplierPrice {
     id: string
-    supplier: Supplier
+    supplier: {
+        tags: string[]
+        id: string
+        name: string
+        profile_url: string
+        schedule: SupplierSchedule[]
+    }
     card: ClientCardList
     price: number
     clientCardID: string

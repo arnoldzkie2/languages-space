@@ -70,15 +70,13 @@ export const GET = async (req: Request) => {
 
                 //filter the supplier
                 const filterSupplier = supportedSuppliers
-                    .filter((supplier) => supplier.supplier.meeting_info && supplier.supplier.meeting_info.length > 0 &&
-                        supplier.supplier.schedule.length > 0)
+                    .filter((supplier) => supplier.supplier.meeting_info && supplier.supplier.meeting_info.length > 0)
                     .map((supplier) => ({
                         // Copy all properties from the original supplier except the 'schedule' property
                         ...supplier,
                         supplier: {
                             ...supplier.supplier,
                             meeting_info: undefined,
-                            schedule: undefined, // Remove the 'schedule' property
                         },
                     }));
 

@@ -263,7 +263,7 @@ export const PATCH = async (req: Request) => {
                     },
                 }
             })
-            if (!updatedSupplier) return badRequestRes('Faild to update  supplier')
+            if (!updatedSupplier) return badRequestRes('Faild to update  agent')
             //return 400 response if it fails
 
             if (departments && departments.length > 0) {
@@ -319,14 +319,14 @@ export const DELETE = async (req: Request) => {
             const deleteAgents = await prisma.agent.deleteMany({
                 where: { id: { in: agentIDS } },
             })
-            if (deleteAgents.count === 0) return notFoundRes('Agent')
+            if (deleteAgents.count === 0) return notFoundRes(AGENT)
 
             //return 200 response
             return okayRes()
         }
 
         //return 404 response
-        return notFoundRes('Agent')
+        return notFoundRes(AGENT)
 
     } catch (error) {
         console.log(error);

@@ -1,4 +1,4 @@
-import { Booking } from '@/lib/types/super-admin/bookingType'
+import { Booking, BookingRequest } from '@/lib/types/super-admin/bookingType'
 import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
@@ -17,6 +17,10 @@ interface SupplerBookingStore {
     getSingleBooking: () => Promise<void>
     cancelBooking: (e: React.MouseEvent) => Promise<void>
     requestCancelBooking: (e: React.FormEvent) => Promise<void>
+    bookingRequests: BookingRequest[] | null
+    getBookingRequests: () => Promise<void>
+    cancelBookingRequest: (e: React.FormEvent, bookingRequestID: string) => Promise<void>
+    confirmBookingRequest: (e: React.MouseEvent, bookingRequestID: string) => Promise<void>
 }
 
 const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
@@ -117,6 +121,74 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
                 setErr(error.response.data.msg)
             }
             alert("Something went wrong")
+        }
+    },
+    bookingRequests: null,
+    getBookingRequests: async () => {
+        try {
+            const { data } = await axios.get('/api/booking/request')
+            if (data.ok) set({ bookingRequests: data.data })
+        } catch (error: any) {
+            console.log(error);
+            if (error.response.data.msg) {
+                return alert(error.response.data.msg)
+            }
+            alert("Something went wrong")
+        }
+    },
+    cancelBookingRequest: async (e: React.FormEvent, bookingRequestID: string) => {
+
+        e.preventDefault()
+        const setErr = useGlobalStore.getState().setErr
+        const setIsLoading = useGlobalStore.getState().setIsLoading
+        const setOkMsg = useGlobalStore.getState().setOkMsg
+        const getBookingRequests = get().getBookingRequests
+
+        try {
+
+            setIsLoading(true)
+            const { data } = await axios.post('/api/booking/request/cancel', { bookingRequestID })
+
+            if (data.ok) {
+                getBookingRequests()
+                setIsLoading(false)
+                setOkMsg('Success')
+            }
+
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log(error);
+            if (error.response.data.msg) {
+                return setErr(error.response.data.msg)
+            }
+            alert("Something wentg wrong")
+        }
+    },
+    confirmBookingRequest: async (e: React.MouseEvent, bookingRequestID: string) => {
+        e.preventDefault()
+        const setErr = useGlobalStore.getState().setErr
+        const setIsLoading = useGlobalStore.getState().setIsLoading
+        const setOkMsg = useGlobalStore.getState().setOkMsg
+        const getBookingRequests = get().getBookingRequests
+
+        try {
+
+            setIsLoading(true)
+            const { data } = await axios.post('/api/booking/request/confirm', { bookingRequestID })
+
+            if (data.ok) {
+                getBookingRequests()
+                setIsLoading(false)
+                setOkMsg('Success')
+            }
+
+        } catch (error: any) {
+            setIsLoading(false)
+            console.log(error);
+            if (error.response.data.msg) {
+                return setErr(error.response.data.msg)
+            }
+            alert("Something wentg wrong")
         }
     }
 }))

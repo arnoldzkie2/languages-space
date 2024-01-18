@@ -1,30 +1,36 @@
+import { SupplierMeetingInfo } from '@prisma/client';
 import { Body, Container, Head, Heading, Hr, Html, Img, Link, Preview, Tailwind, Text } from '@react-email/components';
 import * as React from 'react';
 
-interface ContactProps {
+interface ClientBookingRequestConfirmed {
     supplierName: string;
     clientName: string;
     schedule: {
         date: string;
         time: string;
     };
-    meetingInfo: {
-        id: string
-        service: string
-        meeting_code: string
-    }
+    cardName: string
     course: string
+    meetingInfo: SupplierMeetingInfo
     operator: string
-    balance: number
-    supplier_rate: number
+    cardBalance: number
+    price: number
 }
 
-export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, operator, meetingInfo, course, balance, supplier_rate }: ContactProps) => {
-
+const ClientBookingRequestConfirmed = ({
+    clientName,
+    supplierName,
+    schedule,
+    cardName,
+    meetingInfo,
+    course,
+    operator,
+    cardBalance,
+    price }: ClientBookingRequestConfirmed) => {
     return (
         <Html key={meetingInfo.id}>
             <Head />
-            <Preview>Hello {supplierName} your booking is canceled</Preview>
+            <Preview>Hello {clientName} your booking request is confirmed</Preview>
             <Tailwind>
                 <Body className="grid place-items-center bg-center bg-no-repeat bg-cover font-sans bg-slate-100">
                     <Container className="border mb-28 bg-white border-solid border-[#eaeaea] text-gray-600 rounded-3xl shadow-2xl mt-[150px] mx-auto px-10 w-[1000px]">
@@ -32,33 +38,28 @@ export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, op
                             <Img src='https://www.verbalace.com/logo.png' className='w-40 h-auto mx-auto' />
                         </Heading>
                         <Text className="mt-3">
-                            Dear {supplierName},<br />
-                            {
-                                operator === 'supplier' ? 'Booking is successfully canceled' : operator === 'admin' ?
-                                    'An admin canceled this booking' : operator === 'client' ? 'Client canceled the booking' : 'Booking has been canceled'
-                            }
+                            Dear {clientName},<br />
+                            {operator === 'admin' ? 'An admin confirmed your booking reques' : 'Your booking request has been successfully confirmed!'}
                         </Text>
                         <Text className="mt-3">
-                            Client Name: {clientName}<br />
+                            Supplier Name: {supplierName}<br />
                             Meeting Info: {meetingInfo.service} - {meetingInfo.meeting_code}<br />
                             <br />
-
+                            Card Used: {cardName}<br />
+                            Balance: {cardBalance}<br />
+                            Cost: {price}<br />
+                            Remaining Balance: {cardBalance - price}<br />
+                            <br />
                             Course: {course}<br />
-                            Schedule: {schedule.date} at {schedule.time} <br />
+                            Schedule: {schedule.date} at {schedule.time}
                         </Text>
-
-                        {operator === 'client' && <Text className='mt-3'>
-                            Balance: {balance} <br />
-                            Cancellation Fee: {supplier_rate} <br />
-                            Remaining Balance: {balance - supplier_rate}
-                        </Text>}
-                        <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/bookings`} target='_blank'>My Bookings</Link>
+                        <Link href={`${process.env.NEXTAUTH_URL}/client/profile/booking-requests`} target='_blank'>My Booking Requests</Link>
                         <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
                     </Container>
                 </Body>
             </Tailwind>
         </Html>
-    )
+    );
 };
 
-export default BookingCanceledSupplier;
+export default ClientBookingRequestConfirmed;

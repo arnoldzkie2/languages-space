@@ -1,9 +1,9 @@
 import prisma from "@/lib/db";
 import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server";
-import BookingSuccessClient from "@/lib/emails/BookingSuccessClient";
-import BookingSuccessSupplier from "@/lib/emails/BookingSuccessSupplier";
 import resend from "@/utils/getResend";
+import ClientBookingRequestConfirmed from "@/lib/emails/ClientBookingRequestConfirmed";
+import SupplierBookingRequestConfirmed from "@/lib/emails/SupplierBookingRequestConfirmed";
 
 export const POST = async (req: NextRequest) => {
 
@@ -41,7 +41,7 @@ export const POST = async (req: NextRequest) => {
                     from: 'VerbalAce <support@verbalace.com>',
                     to: client.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
-                    react: BookingSuccessClient({
+                    react: ClientBookingRequestConfirmed({
                         supplierName: supplier.name, operator,
                         clientName: client.name,
                         schedule: {
@@ -52,11 +52,7 @@ export const POST = async (req: NextRequest) => {
                         cardBalance: card.balance + supplierPrice.price,
                         price: supplierPrice.price,
                         course: booking.course.name,
-                        meetingInfo: meeting_info as {
-                            id: string,
-                            service: string,
-                            meeting_code: string
-                        }
+                        meetingInfo: meeting_info as any
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })
@@ -67,7 +63,7 @@ export const POST = async (req: NextRequest) => {
                     from: 'VerbalAce <support@verbalace.com>',
                     to: supplier.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
-                    react: BookingSuccessSupplier({
+                    react: SupplierBookingRequestConfirmed({
                         supplierName: supplier.name, operator,
                         clientName: client.name,
                         schedule: {
@@ -75,11 +71,7 @@ export const POST = async (req: NextRequest) => {
                             time: booking.schedule.time
                         },
                         course: booking.course.name,
-                        meetingInfo: meeting_info as {
-                            id: string,
-                            service: string,
-                            meeting_code: string
-                        },
+                        meetingInfo: meeting_info as any,
                         supplier_rate: booking.supplier_rate,
                         balance: supplier.balance[0].amount,
                     }),

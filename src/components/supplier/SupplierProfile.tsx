@@ -28,6 +28,11 @@ const SupplierProfile = () => {
             translate: 'profile.my-bookings'
         },
         {
+            page: 'booking-request',
+            link: '/supplier/profile/booking-requests',
+            translate: 'profile.booking-requests'
+        },
+        {
             page: 'meeting',
             link: '/supplier/profile/meeting',
             translate: 'profile.my-meeting'

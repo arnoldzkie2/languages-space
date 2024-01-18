@@ -32,6 +32,11 @@ const ClientProfile: React.FC<Props> = () => {
       translate: 'profile.my-bookings'
     },
     {
+      page: 'booking-request',
+      link: '/client/profile/booking-requests',
+      translate: 'profile.booking-requests'
+    },
+    {
       page: 'orders',
       link: '/client/profile/orders',
       translate: 'profile.my-orders'

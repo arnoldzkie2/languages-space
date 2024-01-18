@@ -4,7 +4,6 @@
 import useClientStore from '@/lib/state/client/clientStore'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import Err from '../global/Err'
@@ -15,45 +14,24 @@ import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
 import useClientBookingStore from '@/lib/state/client/clientBookingStore'
 import useGlobalStore from '@/lib/state/globalStore'
-
-const ClientBookingModal = () => {
+const ClientBookingRequestModal = () => {
 
     const router = useRouter()
 
-    const { isLoading, setErr } = useGlobalStore()
+    const { isLoading } = useGlobalStore()
     const clearAvailableSuppliers = useClientStore(state => state.clearAvailableSuppliers)
-    const { closeBookingModal, createBooking } = useClientBookingStore()
+    const { closeBookingRequestModal, createBookingRequest } = useClientBookingStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
     const { supplierMeetingInfo, getSupplierMeetingInfo, cardCourses } = useAdminSupplierStore()
-    const bookingModal = useClientBookingStore(state => state.bookingModal)
+    const bookingRequestModal = useClientBookingStore(state => state.bookingRequestModal)
 
     const [selectedDate, setSelectedDate] = useState('')
-    const [scheduleTime, setScheduleTime] = useState<{ id: string, time: string }[] | null>(null)
+    const [selectedTime, setSelectedTime] = useState('')
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
         setBookingFormData({ ...bookingFormData, [name]: value })
     }
-
-    const getSupplierSchedule = async () => {
-
-        try {
-
-            const { data } = await axios.get('/api/booking/supplier/schedule/date', {
-                params: { supplierID: bookingFormData.supplierID, date: selectedDate }
-            })
-
-            if (data.ok) setScheduleTime(data.data)
-
-        } catch (error: any) {
-            console.log(error);
-            if (error.response.data.msg) {
-                return setErr(error.response.data.msg)
-            }
-            alert('Something went wrong')
-        }
-    }
-
     const handleScheduleChange = (newSelectedDate: DateObject | DateObject[] | null) => {
         setBookingFormData({ ...bookingFormData, scheduleID: '' })
         if (newSelectedDate) setSelectedDate(newSelectedDate.toString())
@@ -61,23 +39,8 @@ const ClientBookingModal = () => {
 
     useEffect(() => {
 
-        if (selectedDate && bookingModal && bookingFormData.supplierID) {
-            getSupplierSchedule()
-        } else {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const defaultDate = `${year}-${month}-${day}`;
-            setSelectedDate(defaultDate)
-        }
-
-    }, [selectedDate, bookingModal])
-
-    useEffect(() => {
-
-        if (!bookingFormData.clientCardID && bookingModal) {
-            closeBookingModal()
+        if (!bookingFormData.clientCardID && bookingRequestModal) {
+            closeBookingRequestModal()
             clearAvailableSuppliers()
             alert('Select Card First')
         }
@@ -86,18 +49,20 @@ const ClientBookingModal = () => {
             getSupplierMeetingInfo(bookingFormData.supplierID)
         }
 
-    }, [bookingFormData.supplierID, bookingModal])
+    }, [bookingFormData.supplierID, bookingRequestModal])
 
     const t = useTranslations('client')
     const tt = useTranslations('global')
     const ttt = useTranslations('super-admin')
 
-    if (!bookingModal) return null
+    console.log(selectedTime)
+
+    if (!bookingRequestModal) return null
 
     return (
         <div className='fixed top-0 right-0 h-screen w-screen bg-black z-20 bg-opacity-40 flex items-center justify-center py-20 px-5'>
-            <form onSubmit={(e) => createBooking(e, router)} className='flex flex-col gap-4 p-10 text-gray-700 bg-white rounded-md w-full sm:w-96 shadow relative'>
-                <FontAwesomeIcon icon={faXmark} width={16} height={16} className='absolute right-4 top-4 text-lg cursor-pointer' onClick={closeBookingModal} />
+            <form onSubmit={(e) => createBookingRequest(e, { router, time: selectedTime, date: selectedDate })} className='flex flex-col gap-4 p-10 text-gray-700 bg-white rounded-md w-full sm:w-96 shadow relative'>
+                <FontAwesomeIcon icon={faXmark} width={16} height={16} className='absolute right-4 top-4 text-lg cursor-pointer' onClick={closeBookingRequestModal} />
                 <h1 className='text-xl font-black text-center w-full border-b pb-3 mb-2'>{t('booking.fillup')}</h1>
                 <Success />
                 <Err />
@@ -133,14 +98,11 @@ const ClientBookingModal = () => {
                             onChange={handleScheduleChange}
                             style={{ height: '40px', width: '100%', paddingLeft: '12px' }}
                         />
-                        <select value={bookingFormData.scheduleID} name='scheduleID' onChange={handleChange} className='px-2 py-1.5 outline-none border rounded-md'>
-                            <option value="" disabled>{ttt('schedule.select-time')}</option>
-                            {scheduleTime && scheduleTime.length > 0 ? scheduleTime.map(time => (
-                                <option value={time.id} key={time.id}>{time.time}</option>
-                            )) : scheduleTime && scheduleTime.length < 1 ?
-                                <option disabled value='no-schedule'>{ttt('schedule.no-schedule')}</option> :
-                                <option disabled value='date-first'>{ttt('schedule.date-first')}</option>}
-                        </select>
+                        <input type="time"
+                            value={selectedTime}
+                            onChange={(e) => setSelectedTime(e.target.value)}
+                            className='py-2 outline-none px-3 border rounded-md cursor-pointer'
+                        />
                     </div>
                 </div>
                 <div className='flex flex-col gap-2'>
@@ -149,7 +111,7 @@ const ClientBookingModal = () => {
                 </div>
 
                 <div className='w-full flex items-center gap-5 mt-auto'>
-                    <button type='button' onClick={closeBookingModal} className='w-full py-1.5 border rounded-md hover:bg-slate-50'>{tt('close')}</button>
+                    <button type='button' onClick={closeBookingRequestModal} className='w-full py-1.5 border rounded-md hover:bg-slate-50'>{tt('close')}</button>
                     <button disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white w-full py-1.5 rounded-md`}>
                         {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('confirm')}
                     </button>
@@ -160,4 +122,4 @@ const ClientBookingModal = () => {
     )
 }
 
-export default ClientBookingModal
+export default ClientBookingRequestModal

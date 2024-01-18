@@ -3,6 +3,7 @@
 
 import AvailableSuppliers from '@/components/client/AvailableSuppliers'
 import ClientBookingModal from '@/components/client/ClientBookingModal'
+import ClientBookingRequestModal from '@/components/client/ClientBookingRequestModal'
 import ClientHeader from '@/components/client/ClientHeader'
 import React from 'react'
 
@@ -14,6 +15,7 @@ const Page = () => {
             <ClientHeader />
             <AvailableSuppliers />
             <ClientBookingModal />
+            <ClientBookingRequestModal />
         </>
     )
 

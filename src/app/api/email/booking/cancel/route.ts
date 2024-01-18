@@ -81,11 +81,7 @@ export const POST = async (req: NextRequest) => {
                             time: booking.schedule.time
                         },
                         course: booking.course.name,
-                        meetingInfo: meeting_info as {
-                            id: string,
-                            service: string,
-                            meeting_code: string
-                        },
+                        meetingInfo: meeting_info as any,
                         operator,
                         supplier_rate: booking.supplier_rate,
                         balance: supplier.balance[0].amount

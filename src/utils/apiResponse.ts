@@ -12,7 +12,7 @@ const serverErrorRes = (data: any) => {
 
 //400 response
 const badRequestRes = (data?: any) => {
-    if (data) return NextResponse.json({ msg: 'Something went wrong', error: data }, { status: 400 })
+    if (data) return NextResponse.json({ msg: data, error: "Something went wrong" }, { status: 400 })
 
     return NextResponse.json({ msg: 'Something went wrong' }, { status: 400 })
 }

@@ -27,4 +27,26 @@ interface Booking {
     departments: Department
 }
 
-export type { Booking }
+interface BookingRequest {
+    id: string
+    name: string
+    operator: string
+    status: string
+    date: string
+    time: string
+    note: string | null
+    scheduleID: string
+    card_name: string
+    supplierID: string
+    course: Courses
+    clientID: string
+    clientCardID: string
+    created_at: string
+    updated_at: string
+    supplier: Supplier
+    client: Client
+    meetingInfoID: string
+    departments: Department
+}
+
+export type { Booking, BookingRequest }

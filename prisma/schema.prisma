@@ -11,27 +11,28 @@ datasource db {
 // client area
 
 model Client {
-  id           String       @id @default(uuid())
-  profile_url  String?      @db.Text
-  profile_key  String?
-  name         String?
-  username     String       @unique
-  phone_number String?
-  email        String?
-  gender       String?
-  organization String?
-  password     String
-  address      String?
-  origin       Json?
-  note         String?
-  created_at   DateTime     @default(now())
-  updated_at   DateTime     @updatedAt
-  departments  Department[]
-  orders       Order[]
-  cards        ClientCard[]
-  bookings     Booking[]
-  agent        Agent?       @relation(fields: [agentID], references: [id], onDelete: Cascade)
-  agentID      String?
+  id              String           @id @default(uuid())
+  profile_url     String?          @db.Text
+  profile_key     String?
+  name            String?
+  username        String           @unique
+  phone_number    String?
+  email           String?
+  gender          String?
+  organization    String?
+  password        String
+  address         String?
+  origin          Json?
+  note            String?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  departments     Department[]
+  orders          Order[]
+  cards           ClientCard[]
+  bookings        Booking[]
+  agent           Agent?           @relation(fields: [agentID], references: [id], onDelete: Cascade)
+  agentID         String?
+  booking_request BookingRequest[]
 
   @@index([agentID])
 }
@@ -109,6 +110,7 @@ model Supplier {
   bookings          Booking[]
   departments       Department[]
   balance           SupplierBalance[]
+  booking_request   BookingRequest[]
 }
 
 model SupplierBalance {
@@ -237,25 +239,30 @@ model Booking {
   @@index([scheduleID])
 }
 
-model SupplierPrice {
-  id         String         @id @default(uuid())
-  price      Int
-  supplierID String
-  cardID     String
-  supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+model BookingRequest {
+  id                String     @id @default(uuid())
+  note              String?
+  date              String
+  time              String
+  status            String
+  clientCardID      String
+  meetingInfoID     String
+  card_balance_cost Int
+  card_name         String
+  courseID          String
+  operator          String
+  supplier          Supplier   @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  supplierID        String
+  client            Client     @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  clientID          String
+  department        Department @relation(fields: [departmentID], references: [id], onDelete: Cascade)
+  created_at        DateTime   @default(now())
+  updated_at        DateTime   @updatedAt
+  departmentID      String
 
   @@index([supplierID])
-  @@index([cardID])
-}
-
-model Courses {
-  id              String           @id @default(uuid())
-  name            String
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  supported_cards ClientCardList[]
-  booking         Booking[]
+  @@index([clientID])
+  @@index([departmentID])
 }
 
 model Reminders {
@@ -280,6 +287,27 @@ model Reminders {
   updated_at   DateTime    @updatedAt
 
   @@index([departmentID])
+}
+
+model SupplierPrice {
+  id         String         @id @default(uuid())
+  price      Int
+  supplierID String
+  cardID     String
+  supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
+
+  @@index([supplierID])
+  @@index([cardID])
+}
+
+model Courses {
+  id              String           @id @default(uuid())
+  name            String
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  supported_cards ClientCardList[]
+  booking         Booking[]
 }
 
 // agent area
@@ -548,6 +576,7 @@ model Department {
   cards                  ClientCardList[]
   reminders              Reminders[]
   department_permissions DepartmentPermission[]
+  booking_requests       BookingRequest[]
 }
 
 model News {
