@@ -8,8 +8,7 @@ import SupplierDeleteWarningModal from '@/components/super-admin/management/supp
 import SupplierHeader from '@/components/super-admin/management/supplier/SupplierHeader';
 import SupplierTable from '@/components/super-admin/management/supplier/SupplierTable';
 import useGlobalStore from '@/lib/state/globalStore';
-import { ManageClientSearchQueryValue } from '@/lib/state/super-admin/clientStore';
-import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
+import useAdminSupplierStore, { manageSupplierSearchQueryValue } from '@/lib/state/super-admin/supplierStore';
 import React, { useEffect, useState } from 'react';
 
 interface PageProps {
@@ -20,7 +19,7 @@ const Page: React.FC<PageProps> = ({ }) => {
     const { supplier, totalSupplier, selectedSupplier, deleteSupplierModal, getSupplier, setTotalSupplier } = useAdminSupplierStore()
     const { currentPage, departmentID, isSideNavOpen, setCurrentPage, itemsPerPage, setDepartmentID } = useGlobalStore()
 
-    const [searchQuery, setSearchQuery] = useState(ManageClientSearchQueryValue)
+    const [searchQuery, setSearchQuery] = useState(manageSupplierSearchQueryValue)
 
     const filteredSupplier = supplier.filter((supplier) => {
 

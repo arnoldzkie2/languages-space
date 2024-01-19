@@ -40,11 +40,12 @@ const Page = ({ params }: Props) => {
 
         e.preventDefault()
 
-        const { username, password } = formData
+        const { username, password, departments } = formData
 
         if (!password || !username) return setErr('Fill up some inputs')
         if (username.length < 3) return setErr('Username minimum length 3')
         if (password.length < 3) return setErr('Password minimum length 3')
+        if (departments.length < 1) return setErr("Select Department")
 
         try {
 

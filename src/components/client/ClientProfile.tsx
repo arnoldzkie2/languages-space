@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import React from 'react'
-import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
 import useClientStore from '@/lib/state/client/clientStore';
+import { Link } from '@/lib/navigation';
 
 interface Props {
 
@@ -44,7 +44,6 @@ const ClientProfile: React.FC<Props> = () => {
   ]
 
   const page = useClientStore(state => state.page)
-  const setPage = useClientStore(state => state.setPage)
 
   const t = useTranslations('client')
 
@@ -67,7 +66,10 @@ const ClientProfile: React.FC<Props> = () => {
         <li className='text-blue-600 border-b pb-1 mb-1 text-lg font-bold'>{t('profile.settings')}</li>
         <Link href={'/client/profile/account'}
           className={`${page === 'account' ? 'border-b text-blue-600' : 'hover:border-b hover:text-blue-600'} mb-1 pb-1`}
-          onClick={() => setPage('account')}>{t('profile.account')}</Link>
+        >{t('profile.account')}</Link>
+        <Link href={'/client/profile/support'}
+          className={`${page === 'support' ? 'border-b text-blue-600' : 'hover:border-b hover:text-blue-600'} mb-1 pb-1`}
+        >{t('profile.support')}</Link>
       </ul>
     </div>
   )

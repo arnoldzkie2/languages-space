@@ -17,7 +17,6 @@ const checkUsername = async (username: string) => {
 
 }
 
-
 const checkIsAdmin = (type: string) => {
     //check if usertype is admin or superadmin return true else return  false
     if (type === ADMIN || type === SUPERADMIN) return true

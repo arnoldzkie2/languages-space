@@ -3,11 +3,12 @@ import { saveAs } from 'file-saver';
 import { useTranslations } from "next-intl";
 
 interface Props {
+    msg?: string
     tables: any
     selectedTable: any
 }
 
-const DownloadTable: React.FC<Props> = ({ tables, selectedTable }) => {
+const DownloadTable: React.FC<Props> = ({ tables, selectedTable, msg }) => {
 
     const downloadTable = () => {
 
@@ -24,7 +25,7 @@ const DownloadTable: React.FC<Props> = ({ tables, selectedTable }) => {
 
     return (
         <li className="flex items-center hover:text-blue-600 cursor-pointer justify-center w-28 text-gray-600" onClick={downloadTable}>
-            <div>{t('global.download')}</div>
+            <div>{msg || t('global.download')}</div>
         </li>
     );
 };

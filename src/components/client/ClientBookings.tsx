@@ -126,7 +126,7 @@ const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
 
     if (bookingDateTime >= threeHoursAhead) return (
         <form onSubmit={(e) => cancelBooking(e, booking.id)}>
-            <SubmitButton msg={tt('cancel')} style='bg-red-500 text-white px-3 py-1 rounded-md' />
+            <SubmitButton msg={tt('cancel')} style='bg-red-500 hover:bg-red-400 text-white px-3 py-1 rounded-md' />
         </form>
     );
 

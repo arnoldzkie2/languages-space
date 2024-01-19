@@ -7,23 +7,22 @@ import Departments from '@/components/super-admin/management/Departments';
 import DeleteClientWarningModal from '@/components/super-admin/management/client/DeleteClientWarningModal';
 import ClientModal from '@/components/super-admin/management/client/ClientModal';
 import Pagination from '@/components/super-admin/management/Pagination';
-import { useEffect, useState, FC, Suspense } from 'react';
+import { useEffect, useState, FC } from 'react';
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader';
 import SearchClient from '@/components/super-admin/management/client/SearchClient';
 import useAdminClientStore, { ManageClientSearchQueryValue } from '@/lib/state/super-admin/clientStore';
-import { signIn, useSession } from 'next-auth/react';
 import useGlobalStore from '@/lib/state/globalStore';
 
 const ManageClient: FC = () => {
 
     const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
 
-    const { totalClients, clients, setTotalClients, selectedClients, deleteModal, viewClientModal, getClients } = useAdminClientStore()
+    const { totalClients, clients, setTotalClients, selectedClients, deleteModal, viewClientModal, getClients, setSelectedClients } = useAdminClientStore()
 
     const [searchQuery, setSearchQuery] = useState(ManageClientSearchQueryValue)
 
     const filteredClients = clients.filter((client) => {
-        const searchName = searchQuery.name.toUpperCase();
+        const searchUsername = searchQuery.username.toUpperCase();
         const searchPhone = searchQuery.phone_number.toUpperCase();
         const searchOrganization = searchQuery.organization.toUpperCase();
         const searchOrigin = searchQuery.origin.toUpperCase();
@@ -34,7 +33,7 @@ const ManageClient: FC = () => {
             // If filterCard is true, filter based on client.cards.length
             if (client.cards && client.cards.length > 0) {
                 return (
-                    (searchName === '' || client.name.toUpperCase().includes(searchName)) &&
+                    (searchUsername === '' || client.username.toUpperCase().includes(searchUsername)) &&
                     (searchPhone === '' || client.phone_number?.toUpperCase().includes(searchPhone)) &&
                     (searchOrganization === '' || client.organization?.toUpperCase().includes(searchOrganization)) &&
                     (searchOrigin === '' || client.origin?.toUpperCase().includes(searchOrigin)) &&
@@ -44,7 +43,7 @@ const ManageClient: FC = () => {
         } else {
             // If filterCard is false, apply other filters without checking client.cards.length
             return (
-                (searchName === '' || client.name.toUpperCase().includes(searchName)) &&
+                (searchUsername === '' || client.name.toUpperCase().includes(searchUsername)) &&
                 (searchPhone === '' || client.phone_number?.toUpperCase().includes(searchPhone)) &&
                 (searchOrganization === '' || client.organization?.toUpperCase().includes(searchOrganization)) &&
                 (searchOrigin === '' || client.origin?.toUpperCase().includes(searchOrigin)) &&
@@ -63,6 +62,9 @@ const ManageClient: FC = () => {
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = event.target
         setCurrentPage(1)
+        if (name === 'cards') {
+            setSelectedClients([])
+        }
         setSearchQuery(prevState => ({
             ...prevState, [name]: type === 'checkbox' ? checked : value
         }))

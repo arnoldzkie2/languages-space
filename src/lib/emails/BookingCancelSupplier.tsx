@@ -48,9 +48,9 @@ export const BookingCanceledSupplier = ({ supplierName, clientName, schedule, op
                         </Text>
 
                         {operator === 'client' && <Text className='mt-3'>
-                            Balance: {balance} <br />
+                            Balance: {balance + supplier_rate} <br />
                             Cancellation Fee: {supplier_rate} <br />
-                            Remaining Balance: {balance - supplier_rate}
+                            Remaining Balance: {balance}
                         </Text>}
                         <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/bookings`} target='_blank'>My Bookings</Link>
                         <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />

@@ -38,9 +38,15 @@ export const POST = async (req: NextRequest) => {
         if (!clientCard) return notFoundRes("Client Card")
         //return 404 resposne if card not found
 
-        //create a schedule and update booking request
-        const [createSchedule, card, meetingInfo] = await Promise.all([
-            prisma.supplierSchedule.create({
+        const supplierSchedule = await prisma.supplierSchedule.findFirst({ where: { supplierID, time, date } })
+
+        let scheduleID: string
+
+        if (supplierSchedule) {
+            //set the scheduleID to supplierschedule
+            scheduleID = supplierSchedule.id
+        } else {
+            const createSchedule = await prisma.supplierSchedule.create({
                 data: {
                     supplier: {
                         connect: {
@@ -49,11 +55,18 @@ export const POST = async (req: NextRequest) => {
                     },
                     date,
                     time,
-                    status: 'reserved',
-                    clientID,
-                    clientUsername: client.username
+                    status: 'available'
                 }
-            }),
+            })
+            if (!createSchedule) return badRequestRes("Failed to create schedule")
+            //return 400 response if it fails
+
+            scheduleID = createSchedule.id
+        }
+
+        //get a schedule,card,meetignInfo
+        const [schedule, card, meetingInfo] = await Promise.all([
+            prisma.supplierSchedule.findUnique({ where: { id: scheduleID } }),
             prisma.clientCard.findUnique({
                 where: { id: clientCardID }, include: {
                     card: true
@@ -61,17 +74,16 @@ export const POST = async (req: NextRequest) => {
             }),
             prisma.supplierMeetingInfo.findUnique({ where: { id: meetingInfoID } })
         ])
-        if (!createSchedule) return badRequestRes("Failed to create schedule")
+        if (!schedule) return notFoundRes("Schedule")
         if (!card) return notFoundRes("Client Card")
         if (!meetingInfo) return notFoundRes("Meeting Info")
 
         const today = new Date().toISOString().split('T')[0];
 
-        //make a booking request
         //get the current Date and compare the schedule date
         const currentDate = new Date();
         const cardValidityDate = new Date(card.validity);
-        const scheduleDate = new Date(`${createSchedule.date}T${createSchedule.time}`);
+        const scheduleDate = new Date(`${schedule.date}T${schedule.time}`);
 
         //check if client card is expired or schedule is passed
         if (currentDate > cardValidityDate || currentDate > scheduleDate) {
@@ -83,9 +95,9 @@ export const POST = async (req: NextRequest) => {
             );
         }
 
-        if (createSchedule.date === today) {
+        if (schedule.date === today) {
             // Check if the booking time is at least 3 hours ahead
-            const bookingTime = new Date(`${createSchedule.date}T${createSchedule.time}`);
+            const bookingTime = new Date(`${schedule.date}T${schedule.time}`);
             const minimumBookingTime = new Date(currentDate.getTime() + 3 * 60 * 60 * 1000);
 
             if (bookingTime < minimumBookingTime) {
@@ -121,7 +133,7 @@ export const POST = async (req: NextRequest) => {
                     settlement: today,
                     supplier: { connect: { id: supplierID } },
                     client: { connect: { id: clientID } },
-                    schedule: { connect: { id: createSchedule.id } },
+                    schedule: { connect: { id: schedule.id } },
                     meeting_info: meetingInfo!,
                     clientCardID,
                     department: { connect: { id: department.id } },
@@ -139,14 +151,11 @@ export const POST = async (req: NextRequest) => {
         //if booking fails to create return 400 response
         if (!createBooking || !updateBookingRequest) return badRequestRes()
 
-        //reduce client card balance if it's not in fingerpower department
-        if (department.name.toLocaleLowerCase() !== 'fingerpower') {
-            const reduceCardBalance = await prisma.clientCard.update({
-                where: { id: card?.id! },
-                data: { balance: card?.balance! - card_balance_cost },
-            });
-            if (!reduceCardBalance) return badRequestRes();
-        }
+        const reduceCardBalance = await prisma.clientCard.update({
+            where: { id: card?.id! },
+            data: { balance: card?.balance! - card_balance_cost },
+        });
+        if (!reduceCardBalance) return badRequestRes();
 
         //get the supplier balance
         const balance = supplier.balance[0]
@@ -162,7 +171,7 @@ export const POST = async (req: NextRequest) => {
         const [updateSchedule, updateSupplierBalance, earnings] = await Promise.all([
             //update the schedule to reserved
             prisma.supplierSchedule.update({
-                where: { id: createSchedule.id },
+                where: { id: schedule.id },
                 data: {
                     status: 'reserved',
                     clientID: client.id,

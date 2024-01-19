@@ -171,152 +171,104 @@ export const PATCH = async (req: NextRequest) => {
         const department = await prisma.department.findUnique({ where: { id: departmentID } })
         if (!department) return notFoundRes('Department')
 
-        if (clientCardID) {
+        if (!clientCardID) return notFoundRes("Card")
 
-            //retrieve the card
-            const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID }, include: { supported_courses: true } })
-            if (!card) return notFoundRes('Client Card')
+        //retrieve the card
+        const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID }, include: { supported_courses: true } })
+        if (!card) return notFoundRes('Client Card')
 
-            if (card.name !== name) {
+        if (card.name !== name) {
 
-                const checkExistingCard = await prisma.clientCardList.findFirst({ where: { name } })
-                if (checkExistingCard) return existRes('card_name')
-
-            }
-
-            const coursesToDisconnect = card.supported_courses.filter(course => !courses.includes(course.id));
-
-            //if the name only changes in product then update only the name in product and update the card
-            if (name !== card.name && price === card.price) {
-
-                const updateCardProduct = await stripe.products.update(card.productID, {
-                    name
-                })
-                if (!updateCardProduct) return badRequestRes()
-
-                const updateCard = await prisma.clientCardList.update({
-                    where: { id: clientCardID },
-                    data: {
-                        balance, validity, invoice, repeat_purchases, departmentID, available,
-                        online_renews, name,
-                        supported_courses: {
-                            connect: courses.map((id: string) => ({ id })),
-                            disconnect: coursesToDisconnect.map(course => ({ id: course.id }))
-                        },
-                        supported_suppliers: {
-                            deleteMany: {
-                                id: {
-                                    not: {
-                                        in: suppliers.map((newSupplierPrice: any) => newSupplierPrice.supplierID)
-                                    }
-                                }
-                            },
-                            create: suppliers.map((newSupplierPrice: any) => ({
-                                supplier: {
-                                    connect: { id: newSupplierPrice.supplierID }
-                                },
-                                price: newSupplierPrice.price,
-                            }))
-                        }
-                    }, include: { supported_courses: true, supported_suppliers: true }
-                })
-                if (!updateCard) return badRequestRes()
-
-                return okayRes(updateCard)
-            }
-
-            //if the product price change then update the card product as well as the card
-            if (price !== card.price) {
-
-                const [updateCardProduct, deletePreviousPrice] = await Promise.all([
-                    stripe.products.update(card.productID, {
-                        name, default_price: ''
-                    }),
-                    stripe.prices.update(card.productPriceID, {
-                        active: false,
-                    }),
-                ])
-                if (!updateCardProduct || !deletePreviousPrice) return badRequestRes()
-
-                const newProductPrice = await stripe.prices.create({
-                    product: updateCardProduct.id,
-                    unit_amount: Number(price) * 100,
-                    currency: 'cny'
-                })
-
-                //update the default price of the product
-                const updateCardDefaultPrice = await stripe.products.update(updateCardProduct.id, {
-                    default_price: newProductPrice.id
-                })
-                if (!updateCardDefaultPrice) return badRequestRes()
-
-                //update the card in database
-                const updateCard = await prisma.clientCardList.update({
-                    where: { id: clientCardID },
-                    data: {
-                        price: Number(price), balance, validity, invoice, repeat_purchases, departmentID, available,
-                        online_renews, productPriceID: newProductPrice.id, name,
-                        supported_courses: {
-                            connect: courses.map((id: string) => ({ id })),
-                            disconnect: coursesToDisconnect.map(course => ({ id: course.id }))
-                        },
-                        supported_suppliers: {
-                            deleteMany: {
-                                id: {
-                                    not: {
-                                        in: suppliers.map((newSupplierPrice: any) => newSupplierPrice.supplierID)
-                                    }
-                                }
-                            },
-                            create: suppliers.map((newSupplierPrice: any) => ({
-                                supplier: {
-                                    connect: { id: newSupplierPrice.supplierID }
-                                },
-                                price: newSupplierPrice.price,
-                            }))
-                        }
-                    }
-                })
-                if (!updateCard) return badRequestRes()
-
-                return okayRes()
-            }
-
-            //if the price and name does not change then no need to update the product in stripe just the card in database
-            const updateCard = await prisma.clientCardList.update({
-                where: { id: clientCardID },
-                data: {
-                    balance, validity, invoice, repeat_purchases, departmentID, available,
-                    online_renews,
-                    supported_courses: {
-                        connect: courses.map((id: string) => ({ id })),
-                        disconnect: coursesToDisconnect.map(course => ({ id: course.id }))
-                    },
-                    supported_suppliers: {
-                        deleteMany: {
-                            id: {
-                                not: {
-                                    in: suppliers.map((newSupplierPrice: any) => newSupplierPrice.supplierID)
-                                }
-                            }
-                        },
-                        create: suppliers.map((newSupplierPrice: any) => ({
-                            supplier: {
-                                connect: { id: newSupplierPrice.supplierID }
-                            },
-                            price: newSupplierPrice.price
-                        }))
-                    }
-                }
-            })
-            if (!updateCard) return badRequestRes()
-
-            return okayRes()
+            const checkExistingCard = await prisma.clientCardList.findFirst({ where: { name } })
+            if (checkExistingCard) return existRes('card_name')
 
         }
 
-        //return notfound if clientCardID is not included
-        return notFoundRes('clientCardID')
+        const coursesToDisconnect = card.supported_courses.filter(course => !courses.includes(course.id));
+
+        //if the name only changes in product then update only the name in product and update the card
+        if (name !== card.name && price === card.price) {
+
+            const updateCardProduct = await stripe.products.update(card.productID, {
+                name
+            })
+            if (!updateCardProduct) return badRequestRes()
+
+            const updateCard = await prisma.clientCardList.update({
+                where: { id: clientCardID },
+                data: {
+                    name,
+                }
+            })
+            if (!updateCard) return badRequestRes()
+        }
+
+        //if the product price change then update the card product as well as the card
+        if (price !== card.price) {
+
+            const [updateCardProduct, deletePreviousPrice] = await Promise.all([
+                stripe.products.update(card.productID, {
+                    name, default_price: ''
+                }),
+                stripe.prices.update(card.productPriceID, {
+                    active: false,
+                }),
+            ])
+            if (!updateCardProduct || !deletePreviousPrice) return badRequestRes("Failed to update card product defaultPrice or deactivate product price")
+
+            const newProductPrice = await stripe.prices.create({
+                product: updateCardProduct.id,
+                unit_amount: Number(price) * 100,
+                currency: 'cny'
+            })
+            if (!newProductPrice) return badRequestRes("Failed to create new product price")
+
+            //update the default price of the product
+            const updateCardDefaultPrice = await stripe.products.update(card.productID, {
+                default_price: newProductPrice.id
+            })
+            if (!updateCardDefaultPrice) return badRequestRes()
+
+            //update the card in database
+            const updateCard = await prisma.clientCardList.update({
+                where: { id: clientCardID },
+                data: {
+                    productPriceID: newProductPrice.id, name, price
+                }
+            })
+            if (!updateCard) return badRequestRes()
+        }
+
+        //if the price and name does not change then no need to update the product in stripe just the card in database
+        const updateCard = await prisma.clientCardList.update({
+            where: { id: clientCardID },
+            data: {
+                balance, validity, invoice, repeat_purchases, departmentID, available,
+                online_renews,
+                supported_courses: {
+                    connect: courses.map((id: string) => ({ id })),
+                    disconnect: coursesToDisconnect.map(course => ({ id: course.id }))
+                },
+                supported_suppliers: {
+                    deleteMany: {
+                        id: {
+                            not: {
+                                in: suppliers.map((newSupplierPrice: any) => newSupplierPrice.supplierID)
+                            }
+                        }
+                    },
+                    create: suppliers.map((newSupplierPrice: any) => ({
+                        supplier: {
+                            connect: { id: newSupplierPrice.supplierID }
+                        },
+                        price: newSupplierPrice.price
+                    }))
+                }
+            }
+        })
+        if (!updateCard) return badRequestRes()
+
+        return okayRes()
 
     } catch (error) {
         console.error(error);

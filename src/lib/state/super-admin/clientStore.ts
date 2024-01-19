@@ -29,7 +29,7 @@ const totalClientsValue = {
 }
 
 const ManageClientSearchQueryValue = {
-    name: '',
+    username: '',
     phone_number: '',
     organization: '',
     origin: '',

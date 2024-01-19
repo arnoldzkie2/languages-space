@@ -2,10 +2,10 @@ import Link from 'next/link'
 import React from 'react'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import DownloadTable from '../DownloadTable'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
+import DownloadTable from '../../DownloadTable'
 
-const BookingHeader = () => {
+const BookingRequestHeader = () => {
 
     const session = useSession()
 
@@ -15,7 +15,7 @@ const BookingHeader = () => {
         <li className='bg-slate-200 animate-pulse w-40 h-5 rounded-3xl'></li>
     )
 
-    const { bookings, selectedBookings } = useAdminBookingStore()
+    const { bookingRequests, selectedBookingRequests } = useAdminBookingStore()
 
     return (
         <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between bg-white`}>
@@ -34,11 +34,11 @@ const BookingHeader = () => {
                         <div>{t('booking.create')}</div>
                     </Link> : clientHeaderSkeleton}
                 {session.status !== 'loading' ?
-                    <DownloadTable tables={bookings} selectedTable={selectedBookings} />
+                    <DownloadTable tables={bookingRequests} selectedTable={selectedBookingRequests} />
                     : clientHeaderSkeleton}
             </ul>
         </nav>
     )
 }
 
-export default BookingHeader
+export default BookingRequestHeader

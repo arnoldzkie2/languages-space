@@ -53,7 +53,7 @@ const Page = ({ searchParams }: Props) => {
         confirm_password: ''
     })
 
-    const { isLoading, setIsLoading, err, setErr } = useGlobalStore()
+    const { setIsLoading, err, setErr } = useGlobalStore()
 
     const signupUser = async (event: any) => {
 
@@ -106,8 +106,8 @@ const Page = ({ searchParams }: Props) => {
 
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
-            <h1 className='pb-10 text-4xl font-bold'>{t('fillup')}</h1>
-            <form className='flex flex-col gap-3 w-96 border p-8' onSubmit={signupUser}>
+            <h1 className='pb-10 text-4xl'>{t('fillup')}</h1>
+            <form className='flex flex-col gap-3 w-96 shadow-md bg-white p-8' onSubmit={signupUser}>
 
                 {err && <small className='text-center text-red-500 mb-2 w-full py-0.5 bg-red-200'>{err}</small>}
 
@@ -141,7 +141,7 @@ const Page = ({ searchParams }: Props) => {
                     {formData.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}
                 </div>
                 <SubmitButton msg={t('signup')} style="w-full py-2 text-white rounded-sm mt-3" />
-               
+
                 <div className='mt-3 text-slate-500 text-center'>
                     <div>
                         {t('already_signup')}

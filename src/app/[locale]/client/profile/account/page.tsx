@@ -19,11 +19,11 @@ const Page = () => {
 
     const router = useRouter()
     const pathname = usePathname()
-    const { client, setClient } = useClientStore()
+    const { client, setClient, setPage } = useClientStore()
     const t = useTranslations('client')
     const tt = useTranslations('global')
 
-    const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales, setPage } = useGlobalStore()
+    const { setErr, isLoading, setIsLoading, setOkMsg, eye, toggleEye, locales } = useGlobalStore()
 
     const updateClient = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()

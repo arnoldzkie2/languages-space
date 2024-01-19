@@ -51,27 +51,26 @@ const Page = ({ params }: Props) => {
         if (!password || !username) return setErr('Fill up some inputs')
         if (username.length < 3) return setErr('Username minimum length 3')
         if (password.length < 3) return setErr('Password minimum length 3')
+            try {
 
-        try {
+                setIsLoading(true)
 
-            setIsLoading(true)
+                const { data } = await axios.patch(`/api/client?clientID=${clientID}`, formData)
 
-            const { data } = await axios.patch(`/api/client?clientID=${clientID}`, formData)
+                if (data.ok) {
+                    setIsLoading(false)
+                    router.push('/admin/manage/client')
 
-            if (data.ok) {
+                }
+
+            } catch (error: any) {
                 setIsLoading(false)
-                router.push('/admin/manage/client')
-
+                console.log(error);
+                if (error.response.data.msg) {
+                    return setErr(error.response.data.msg)
+                }
+                setErr('Something went wrong')
             }
-
-        } catch (error: any) {
-            setIsLoading(false)
-            console.log(error);
-            if (error.response.data.msg) {
-                return setErr(error.response.data.msg)
-            }
-            setErr('Something went wrong')
-        }
 
     }
 

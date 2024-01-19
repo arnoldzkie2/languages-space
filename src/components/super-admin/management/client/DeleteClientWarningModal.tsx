@@ -52,13 +52,13 @@ const DeleteClientWarningModal: React.FC<Props> = () => {
                     selectedClients.map(client => (
                         <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={client.id}>
                             <div>CLIENT ID: <span className='font-normal text-gray-700'>{client.id}</span></div>
-                            <div>NAME: <span className='font-normal text-gray-700'>{client.name}</span></div>
+                            <div>{tt('username')}: <span className='font-normal text-gray-700'>{client.name}</span></div>
                         </div>
                     ))
                     :
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={clientData?.id}>
                         <div>CLIENT ID: <span className='font-normal text-gray-700'>{clientData?.id}</span></div>
-                        <div>NAME: <span className='font-normal text-gray-700'>{clientData?.name}</span></div>
+                        <div>{tt('username')}: <span className='font-normal text-gray-700'>{clientData?.name}</span></div>
                     </div>
                 }
                 <div className='flex items-center w-full justify-end mt-5 gap-5'>

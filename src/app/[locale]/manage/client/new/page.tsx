@@ -37,9 +37,10 @@ const Page = () => {
     const registerUser = async (e: any) => {
 
         e.preventDefault()
-        const { username, password } = formData
+        const { username, password, departments } = formData
         if (password.length < 3) return setErr('Password minimum length 3')
         if (!username) return setErr('Username Cannot Be Empty')
+        if (departments.length < 1) return setErr("Select Department")
 
         try {
             setIsLoading(true)

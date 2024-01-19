@@ -104,8 +104,8 @@ const Page = ({ searchParams }: Props) => {
 
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>
-            <h1 className='pb-10 text-4xl font-bold text-gray-800'>{t('welcome-back')}</h1>
-            <form className='flex flex-col gap-3 w-96 border p-10' onSubmit={loginUser}>
+            <h1 className='pb-10 text-4xl'>{t('welcome-back')}</h1>
+            <form className='flex flex-col gap-3 w-96 bg-white shadow-md rounded-md p-10' onSubmit={loginUser}>
                 <Err />
                 <Success />
                 <input type="text"
@@ -124,7 +124,7 @@ const Page = ({ searchParams }: Props) => {
                         onChange={handleChange}
                     />
                     {formData.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-4 right-4 text-slate-600' />}</div>
-                <SubmitButton msg={t('signup')} style="w-full py-2 text-white rounded-sm mt-3" />
+                <SubmitButton msg={t('signin')} style="w-full py-2 text-white rounded-sm mt-3" />
 
                 <div className='mt-3 text-slate-500 text-center'>
                     <div>

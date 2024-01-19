@@ -1,4 +1,4 @@
-import { Booking } from '@/lib/types/super-admin/bookingType'
+import { Booking, BookingRequest } from '@/lib/types/super-admin/bookingType'
 import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
@@ -65,6 +65,14 @@ interface BookingProps {
     openDeleteRemindersWarningMOdal: (booking: Booking) => void
     closeDeleteBookingWarningModal: () => void
     closeDeleteRemindersWarningModal: () => void
+    bookingRequests: BookingRequest[]
+    getBookingRequests: () => Promise<void>
+    selectedBookingRequests: BookingRequest[]
+    setSelectedBookingRequests: (bookingRequsts: BookingRequest[]) => void
+    deleteBookingRequestModal: boolean
+    bookingRequestData: BookingRequest | null
+    openDeleteBookingReqeustWarningMOdal: (data: BookingRequest) => void
+    closeDeleteBookingRequestWarningModal: () => void
 }
 
 const useAdminBookingStore = create<BookingProps>((set) => ({
@@ -113,7 +121,27 @@ const useAdminBookingStore = create<BookingProps>((set) => ({
     setSelectedBookings: (bookings: Booking[]) => set({ selectedBookings: bookings }),
     totalBooking: totalBookingValue,
     setTotalBooking: (total: TotalProps) => set({ totalBooking: total }),
-    setTotalReminders: (total: TotalProps) => set({ totalBooking: total })
+    setTotalReminders: (total: TotalProps) => set({ totalBooking: total }),
+    bookingRequests: [],
+    getBookingRequests: async () => {
+        try {
+
+            const { departmentID } = useGlobalStore.getState()
+            const { data } = await axios.get(`/api/booking/request${departmentID && `?departmentID=${departmentID}`}`)
+
+            if (data.ok) set({ bookingRequests: data.data })
+
+        } catch (error) {
+            console.log(error);
+            alert('Something went wrong')
+        }
+    },
+    selectedBookingRequests: [],
+    setSelectedBookingRequests: (bookingRequsts: BookingRequest[]) => set({ selectedBookingRequests: bookingRequsts }),
+    deleteBookingRequestModal: false,
+    bookingRequestData: null,
+    openDeleteBookingReqeustWarningMOdal: (data: BookingRequest) => set({ deleteBookingRequestModal: true, bookingRequestData: data }),
+    closeDeleteBookingRequestWarningModal: () => set({ deleteBookingRequestModal: false, bookingRequestData: null }),
 }))
 
 export default useAdminBookingStore

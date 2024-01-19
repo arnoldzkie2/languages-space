@@ -68,6 +68,39 @@ const FormBookingPermission: React.FC<{
                     name='cancel_booking'
                 />
             </div>
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="view_booking_request" className={`cursor-pointer ${permissionData.view_booking_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.view-booking-request')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.view_booking_request}
+                    onChange={handleChange}
+                    id='view_booking_request'
+                    className='w-4 h-4'
+                    name='view_booking_request'
+                />
+            </div>
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="cancel_booking_request" className={`cursor-pointer ${permissionData.cancel_booking_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.cancel-booking-request')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.cancel_booking_request}
+                    onChange={handleChange}
+                    id='cancel_booking_request'
+                    className='w-4 h-4'
+                    name='cancel_booking_request'
+                />
+            </div>
+            <div className='flex items-center w-full justify-between'>
+                <label htmlFor="delete_booking_request" className={`cursor-pointer ${permissionData.delete_booking_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.delete-booking-request')}</label>
+                <input
+                    type="checkbox"
+                    checked={permissionData.delete_booking_request}
+                    onChange={handleChange}
+                    id='delete_booking_request'
+                    className='w-4 h-4'
+                    name='delete_booking_request'
+                />
+            </div>
         </div>
     );
 };

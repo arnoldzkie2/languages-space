@@ -8,7 +8,7 @@ export const POST = async (req: Request) => {
 
 
     try {
-        
+
         const { cardID, quantity } = await req.json()
 
         if (!cardID) return notFoundRes('Card')
@@ -36,12 +36,19 @@ export const POST = async (req: Request) => {
 
         //create stripe session
         const stripeSession = await stripe.checkout.sessions.create({
+            payment_method_types: ['card', 'alipay', 'wechat_pay'],
+            payment_method_options: {
+                wechat_pay: {
+                    client: 'web',
+                },
+            },
             line_items: [
                 {
                     price: card.productPriceID,
                     quantity
                 },
             ],
+
             metadata: {
                 clientID: client.id, cardID, quantity
             },
@@ -50,7 +57,6 @@ export const POST = async (req: Request) => {
             cancel_url: `${process.env.NEXTAUTH_URL}/client/buy`
         })
         if (!stripeSession) return badRequestRes("Failed to create session") // return 400 response if it fails
-
 
         //return 200 response and pass the stripesession url
         //we will use this session url to navigate the client to checkout page

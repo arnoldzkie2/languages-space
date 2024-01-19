@@ -88,6 +88,18 @@ export const GET = async (req: NextRequest) => {
                 where: { id: departmentID },
                 select: {
                     booking_requests: {
+                        include: {
+                            client: {
+                                select: {
+                                    username: true
+                                }
+                            },
+                            supplier: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        },
                         orderBy: { created_at: 'desc' }
                     }
                 }
@@ -100,7 +112,21 @@ export const GET = async (req: NextRequest) => {
         }
 
         //return all booking requests in order
-        const allBookingRequest = await prisma.bookingRequest.findMany({ orderBy: { created_at: 'desc' } })
+        const allBookingRequest = await prisma.bookingRequest.findMany({
+            include: {
+                client: {
+                    select: {
+                        username: true
+                    }
+                },
+                supplier: {
+                    select: {
+                        name: true
+                    }
+                }
+            },
+            orderBy: { created_at: 'desc' }
+        })
         if (!allBookingRequest) return badRequestRes("Failed to get all booking request")
 
         //return 200 response and passed allBookingRequest
@@ -151,6 +177,41 @@ export const POST = async (req: NextRequest) => {
         if (!supplierPrice) return NextResponse.json({ msg: "Supplier is not supported in this card" }, { status: 400 })
         //check if card used in this booking has enough balance to book
         if (Number(card.price) < supplierPrice.price) return badRequestRes("Card don't have enough balance to request a booking")
+
+        //get the current Date and compare the schedule date
+        const currentDate = new Date();
+        const cardValidityDate = new Date(card.validity);
+        const scheduleDate = new Date(`${date}T${time}`);
+
+        console.log(currentDate)
+        console.log(scheduleDate)
+        //check if client card is expired or schedule is passed
+        if (currentDate > cardValidityDate || currentDate > scheduleDate) {
+            return NextResponse.json(
+                {
+                    msg: currentDate > cardValidityDate ? 'Card is expired' : 'This schedule already passed',
+                },
+                { status: 400 }
+            );
+        }
+
+        //get the date with this format 2023-11-22 (YEAR-MONTH-DAY)
+        const today = new Date().toISOString().split('T')[0];
+
+        if (date === today) {
+            // Check if the booking time is at least 3 hours ahead
+            const bookingTime = new Date(`${date}T${time}`);
+            const minimumBookingTime = new Date(currentDate.getTime() + 3 * 60 * 60 * 1000);
+
+            if (bookingTime < minimumBookingTime) {
+                return NextResponse.json(
+                    {
+                        msg: 'Booking schedule must be at least 3 hours ahead of the current time.',
+                    },
+                    { status: 400 }
+                )
+            }
+        }
 
         //create a booking request and update client card balance
         const [createBookingRequest, updateClientCardBalance] = await Promise.all([

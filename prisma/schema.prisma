@@ -23,7 +23,7 @@ model Client {
   password        String
   address         String?
   origin          Json?
-  note            String?
+  note            String?          @db.Text
   created_at      DateTime         @default(now())
   updated_at      DateTime         @updatedAt
   departments     Department[]
@@ -98,7 +98,7 @@ model Supplier {
   gender            String?
   tags              Json?
   origin            String?
-  note              String?
+  note              String?               @db.Text
   employment_status String?
   entry             DateTime?
   departure         DateTime?
@@ -210,7 +210,7 @@ model Booking {
   name              String
   operator          String
   status            String
-  note              String?
+  note              String?          @db.Text
   supplier_rate     Int
   card_balance_cost Int
   supplierID        String
@@ -241,7 +241,7 @@ model Booking {
 
 model BookingRequest {
   id                String     @id @default(uuid())
-  note              String?
+  note              String?    @db.Text
   date              String
   time              String
   status            String
@@ -270,7 +270,7 @@ model Reminders {
   name         String
   operator     String
   status       String
-  note         String?
+  note         String?     @db.Text
   supplierID   String?
   clientID     String?
   departmentID String?
@@ -294,6 +294,8 @@ model SupplierPrice {
   price      Int
   supplierID String
   cardID     String
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
   supplier   Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
   card       ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
 
@@ -325,7 +327,7 @@ model Agent {
   address      String?
   gender       String?
   origin       String
-  note         String?
+  note         String?        @db.Text
   created_at   DateTime       @default(now())
   updated_at   DateTime       @updatedAt
   departments  Department[]
@@ -403,7 +405,7 @@ model Order {
   price          Decimal
   operator       String
   status         String
-  note           String?
+  note           String?        @db.Text
   invoice_number String?
   express_number String?
   cardID         String
@@ -431,7 +433,7 @@ model Admin {
   password              String
   origin                String?
   organization          String?
-  note                  String?
+  note                  String?                @db.Text
   gender                String?
   address               String?
   profile_key           String?
@@ -527,11 +529,14 @@ model AdminPermission {
   delete_news Boolean @default(false)
 
   //booking permissions
-  view_booking   Boolean @default(false)
-  create_booking Boolean @default(false)
-  update_booking Boolean @default(false)
-  delete_booking Boolean @default(false)
-  cancel_booking Boolean @default(false)
+  view_booking           Boolean @default(false)
+  create_booking         Boolean @default(false)
+  update_booking         Boolean @default(false)
+  delete_booking         Boolean @default(false)
+  cancel_booking         Boolean @default(false)
+  view_booking_request   Boolean @default(false)
+  cancel_booking_request Boolean @default(false)
+  delete_booking_request Boolean @default(false)
 
   //reminders permissions
   view_reminders    Boolean @default(false)
@@ -591,4 +596,8 @@ model News {
   department    Department? @relation(fields: [department_id], references: [id], onDelete: Cascade)
 
   @@index([department_id])
+}
+
+model Settings {
+  id String @id @default(uuid())
 }

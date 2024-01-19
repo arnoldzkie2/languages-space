@@ -62,6 +62,9 @@
                 "update-booking": "Update Booking",
                 "delete-booking": "Delete Booking",
                 "cancel-booking": "Cancel Booking",
+                "view-booking-request": "View Booking Request",
+                "cancel-booking-request": "Cancel Booking Request",
+                "delete-booking-request": "Delete Booking Request",
                 "view-reminders": "View Reminders",
                 "create-reminders": "Create Reminders",
                 "update-reminders": "Update Reminders",
@@ -246,6 +249,10 @@
                 "create": "Create Reminders",
                 "confirm": "Book!",
                 "update": "Update Reminders"
+            },
+            "request": {
+                "h1": "Manage Booking Request",
+                "h2": "Booking Request"
             }
         }
     },
@@ -293,6 +300,7 @@
         "search": "Search",
         "commission-rate": "Commission Rate",
         "submit": "Submit",
+        "message": "Message",
         "name": "Name",
         "balance": "Balance",
         "booking-rate": "Booking Rate",
@@ -388,6 +396,7 @@
             "my-meeting": "My Meeting",
             "my-cards": "My Cards",
             "my-bookings": "My Bookings",
+            "support": "Contact Support",
             "my-orders": "My Orders"
         },
         "booking": {

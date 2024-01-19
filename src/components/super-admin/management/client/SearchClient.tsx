@@ -1,12 +1,15 @@
+'use'
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
+import DownloadTable from '../DownloadTable';
+import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 
 interface Props {
 
     handleSearch: (event: ChangeEvent<HTMLInputElement>) => void
 
     searchQuery: {
-        name: string;
+        username: string;
         phone_number: string;
         organization: string;
         origin: string;
@@ -21,6 +24,8 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
+    const { clientWithCards, selectedClients } = useAdminClientStore()
+
     return (
         <div className='pt-4 mt-4 border-t border-gray-300 w-full'>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
@@ -30,11 +35,11 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                 <div className='flex flex-col text-gray-700 gap-3'>
 
                     <input type="text"
-                        placeholder={tt('name')}
-                        name='name'
+                        placeholder={tt('username')}
+                        name='username'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
-                        value={searchQuery.name}
+                        value={searchQuery.username}
                     />
 
                     <input type="text"
@@ -73,6 +78,8 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         <label htmlFor="cards" className='cursor-pointer'>{t('client.with-cards')}</label>
                         <input id='cards' type="checkbox" name='cards' onChange={handleSearch} checked={searchQuery.cards} />
                     </div>
+
+                    {searchQuery.cards && <DownloadTable tables={clientWithCards} selectedTable={selectedClients} />}
 
                 </div>
             </div>

@@ -42,9 +42,9 @@ const BookingSuccessSupplier = ({ clientName, supplierName, schedule, meetingInf
                             Schedule: {schedule.date} at {schedule.time}
                         </Text>
                         <Text className='mt-3'>
-                            Balance: {balance} <br />
+                            Balance: {balance - supplier_rate} <br />
                             Booking Rate: {supplier_rate} <br />
-                            Total Balance: {balance + supplier_rate} <br />
+                            Total Balance: {balance} <br />
                         </Text>
                         <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/bookings`} target='_blank'>My Bookings</Link>
                         <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
