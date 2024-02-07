@@ -12,6 +12,13 @@ import useSupplierStore from '@/lib/state/supplier/supplierStore'
 import SupplierHeader from '@/components/supplier/SupplierHeader'
 import SupplierProfile from '@/components/supplier/SupplierProfile'
 import useGlobalStore from '@/lib/state/globalStore'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Err from '@/components/global/Err'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import SubmitButton from '@/components/global/SubmitButton'
+import { Skeleton } from '@/components/ui/skeleton'
+import Success from '@/components/global/Success'
 
 const Page = () => {
 
@@ -62,8 +69,8 @@ const Page = () => {
 
   const skeleton = (
     <div className='flex flex-col gap-1.5 w-full'>
-      <div className='h-6 w-36 bg-slate-200 animate-pulse rounded-md'></div>
-      <div className='w-full h-7 bg-slate-200 animate-pulse rounded-md'></div>
+      <Skeleton className='h-6 w-36 rounded-md'></Skeleton>
+      <Skeleton className='w-full h-7 rounded-md'></Skeleton>
     </div>
   )
 
@@ -86,43 +93,41 @@ const Page = () => {
   return (
     <>
       <SupplierHeader />
-      <div className='px-5 md:flex-row lg:justify-center text-gray-700 sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
+      <div className='px-5 md:flex-row lg:justify-center text-muted-foreground sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
         <SupplierProfile />
+        <Card className='order-1 md:order-2 w-full lg:w-/2 xl:w-1/4'>
+          <CardHeader>
+            <CardTitle className='text-2xl'>{t('profile.account-info')}</CardTitle>
+            <CardDescription><Err /><Success /></CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={updateSupplier} className='flex flex-col gap-6 w-full text-muted-foreground'>
+              <Err />
+              <div className='w-full flex flex-col gap-2'>
+                <Label htmlFor="locale">{tt('select-language')}</Label>
+                <select id='locale' className={`py-2 w-full px-1 text-sm border bg-card cursor-pointer border-b focus:outline-none focus:ring-0 outline-none`} value={locale} onChange={handleTranslation}>
+                  {locales.map(loc => (
+                    <option value={loc.loc} key={loc.loc} className='flex items-center justify-between'>
+                      {loc.val}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {supplier?.id ? <div className='flex flex-col w-full gap-1'>
+                <Label htmlFor="username">{tt('username')}</Label>
+                <Input type="text" id='name' name='username' value={supplier.username} onChange={handleChange} />
+              </div> : skeleton}
 
-        <form onSubmit={(e) => updateSupplier(e)} className='flex flex-col gap-6 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
+              {supplier?.id ? <div className='flex flex-col w-full gap-1 relative'>
+                <Label htmlFor="password">{tt('password')}</Label>
+                <Input type={eye ? 'text' : 'password'} id='password' name='password' value={supplier.password} onChange={handleChange} />
+                <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-foreground' onClick={toggleEye} />
+              </div> : skeleton}
+              <SubmitButton msg={tt('update')} />
+            </form>
+          </CardContent>
+        </Card>
 
-          <h1 className='font-bold w-full text-2xl mb-2 pb-2 border-b text-blue-600'>{t('profile.account-info')}</h1>
-
-          {err && <small className='text-red-600 w-1/2 bg-red-200 text-center py-1 rounded-md'>{err}</small>}
-          {okMsg && <small className='text-green-600 w-1/2 bg-green-200 text-center py-1 rounded-md'>{okMsg}</small>}
-
-          <div className='w-full flex flex-col gap-2'>
-            <label htmlFor="locale" className='px-2 h-6 text-lg font-medium'>{tt('select-language')}</label>
-            <select id='locale' className={`py-2 w-full px-1 text-sm border cursor-pointer border-b focus:outline-none focus:ring-0 outline-none`} value={locale} onChange={handleTranslation}>
-              {locales.map(loc => (
-                <option value={loc.loc} key={loc.loc} className='flex items-center justify-between'>
-                  {loc.val}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <h1 className='text-blue-600 font-bold text-lg border-t pt-2'>{tt('credentials')}</h1>
-
-          {supplier?.id ? <div className='flex flex-col w-full gap-1'>
-            <label htmlFor="username" className='px-1 h-6 text-lg font-medium'>{tt('username')}</label>
-            <input type="text" id='name' name='username' className='w-full border outline-none px-3 h-8' value={supplier.username} onChange={handleChange} />
-          </div> : skeleton}
-
-          {supplier?.id ? <div className='flex flex-col w-full gap-1 relative'>
-            <label htmlFor="password" className='px-1 h-6 text-lg font-medium'>{tt('password')}</label>
-            <input type={eye ? 'text' : 'password'} id='password' name='password' className='w-full border outline-none px-3 pr-8 h-8' value={supplier.password} onChange={handleChange} />
-            <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-black' onClick={toggleEye} />
-          </div> : skeleton}
-
-          <button disabled={isLoading} className={`self-start px-6 mt-2 text-white py-2 rounded-md ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
-            {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('update')}</button>
-        </form>
       </div>
     </>
 

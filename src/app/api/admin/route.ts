@@ -76,7 +76,7 @@ export const POST = async (req: NextRequest) => {
         //get the requst body
         const { name, username, password, email, note,
             departments, organization, origin, phone_number,
-            address, gender } = await req.json()
+            address, gender, profile_key, profile_url } = await req.json()
 
         //check if one of this not found return 404 response
         if (!name || !username || !password) return notFoundRes("Missing Inputs")
@@ -86,7 +86,7 @@ export const POST = async (req: NextRequest) => {
 
         //create admin
         const createAdmin = await prisma.admin.create({
-            data: { name, email, password, username, note, organization, origin, phone_number, address, gender }
+            data: { name, email, password, username, note, organization, origin, phone_number, address, gender, profile_key, profile_url }
         })
         if (!createAdmin) return badRequestRes("Failed to create admin")
         //return 400 response if it fails to create
@@ -140,7 +140,7 @@ export const PATCH = async (req: NextRequest) => {
         //get the requst body
         const adminID = getSearchParams(req, 'adminID')
         const { name, username, password, email, note, departments,
-            organization, origin, phone_number, address, gender } = await req.json()
+            organization, origin, phone_number, address, gender, profile_key, profile_url } = await req.json()
 
         //check if one of this not found return 404 response
         if (!name || !username || !password || !adminID) return notFoundRes("Missing Inputs")
@@ -158,7 +158,7 @@ export const PATCH = async (req: NextRequest) => {
         //update admin
         const updateAdmin = await prisma.admin.update({
             where: { id: admin.id },
-            data: { name, email, password, username, note, organization, origin, phone_number, address, gender }
+            data: { name, email, password, username, note, organization, origin, phone_number, address, gender, profile_key, profile_url }
         })
         if (!updateAdmin) return badRequestRes("Failed to update admin")
         //return 400 response if it fails to update
@@ -172,7 +172,7 @@ export const PATCH = async (req: NextRequest) => {
                 !departmentsToConnect.some((newDepartment: any) => newDepartment.id === department.id)
             )
 
-            const updateAgentDepartment = await prisma.agent.update({
+            const updateAgentDepartment = await prisma.admin.update({
                 where: { id: admin.id },
                 data: {
                     departments: {
@@ -181,7 +181,7 @@ export const PATCH = async (req: NextRequest) => {
                     },
                 }
             })
-            if (!updateAgentDepartment) return badRequestRes("Failed to update agent")
+            if (!updateAgentDepartment) return badRequestRes("Failed to update admin")
             //return 400 response if it fails to update
 
         }

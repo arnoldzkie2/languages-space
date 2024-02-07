@@ -13,8 +13,8 @@ const Logout: React.FC = () => {
     const isSideNavOpen = useGlobalStore(s => s.isSideNavOpen)
 
     return (
-        <li className={`flex items-center ${isSideNavOpen ? 'justify-between' : 'justify-center'} text-black hover:text-blue-600 cursor-pointer mt-auto`}
-            onClick={() => signOut({ redirect: true, callbackUrl: '/login' })}>
+        <li className={`flex items-center justify-center gap-5 text-muted-foreground hover:text-primary cursor-pointer mt-auto`}
+            onClick={() => signOut({ redirect: true, callbackUrl: '/auth' })}>
             {isSideNavOpen && <span>{t('logout')}</span>}
             <FontAwesomeIcon width={20} height={20} icon={faArrowRightToBracket} className={`flex justify-center ${!isSideNavOpen && 'w-full text-xl'}`} />
         </li>

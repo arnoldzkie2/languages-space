@@ -1,5 +1,9 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { getAuth } from "@/lib/nextAuth";
+import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { checkIsAdmin } from "@/utils/checkUser";
+import { FINGERPOWER } from "@/utils/constants";
+import { calculateCommissionPriceQuantitySettlementAndStatus } from "@/utils/getBookingPrice";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
@@ -16,7 +20,7 @@ export const GET = async (req: Request) => {
             const reminders = await prisma.reminders.findUnique({
                 where: { id: remindersID },
             })
-            if (!reminders) return notFoundRes('Schedule')
+            if (!reminders) return notFoundRes('Reminder')
 
             return okayRes(reminders)
         }
@@ -24,14 +28,14 @@ export const GET = async (req: Request) => {
         if (departmentID) {
 
             //get all reminders in department
-            const departmentReminders = await prisma.department.findUnique({
+            const department = await prisma.department.findUnique({
                 where: { id: departmentID }, select: {
                     reminders: true
                 }
             })
-            if (!departmentReminders) return notFoundRes('Department')
+            if (!department) return notFoundRes('Department')
 
-            return okayRes(departmentReminders.reminders)
+            return okayRes(department.reminders)
 
         }
 
@@ -51,30 +55,40 @@ export const GET = async (req: Request) => {
 
 export const POST = async (req: Request) => {
 
-    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, quantity, settlement } = await req.json()
+    const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, client_quantity, supplier_quantity, settlement } = await req.json()
 
     try {
 
         const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
-        if (!card) return notFoundRes('Card')
 
-        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } })
-        if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported' }, { status: 400 })
+        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID }, include: { supplier: { include: { balance: true } } } })
 
-        const department = await prisma.department.findUnique({ where: { id: card?.card.departmentID } })
-        if (!department) return notFoundRes('Department')
+        const department = card && await prisma.department.findUnique({ where: { id: card?.card.departmentID } })
 
-        const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * Number(card.price) : (Number(card.price) / card?.card.balance!) * supplierPrice.price
+        const bookingPrice = department?.name.toLocaleLowerCase() === FINGERPOWER
+            ? Number(client_quantity) * Number(card?.price)
+            : (Number(card?.price) / card?.balance!) * Number(supplierPrice?.price);
 
         const createReminders = await prisma.reminders.create({
             data: {
-                note, status, operator, name, price: bookingPrice, card_name: card?.name, quantity, settlement,
+                note, status, operator, name, price: bookingPrice, card_name: card?.name,
+                settlement,
+                client_quantity: Number(client_quantity),
+                supplier_quantity: Number(supplier_quantity),
                 supplierID, clientID, scheduleID,
                 meeting_info, clientCardID, courseID,
-                department: { connect: { id: card.card.departmentID } },
             },
         })
         if (!createReminders) return badRequestRes()
+
+        if (department) {
+            const updateReminder = await prisma.reminders.update({
+                where: { id: createReminders.id }, data: {
+                    department: { connect: { id: department.id } }
+                }
+            })
+            if(!updateReminder) return badRequestRes("Faild to update department in reminder")
+        }
 
         return createdRes()
 
@@ -90,8 +104,15 @@ export const POST = async (req: Request) => {
 export const PATCH = async (req: NextRequest) => {
 
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
         const remindersID = getSearchParams(req, 'remindersID')
-        const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, quantity, settlement } = await req.json()
+        const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, supplier_quantity, client_quantity, settlement } = await req.json()
 
         if (remindersID) {
 
@@ -99,22 +120,27 @@ export const PATCH = async (req: NextRequest) => {
             if (!reminder) return notFoundRes('Reminders')
 
             const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
-            if (!card) return notFoundRes('Card')
 
-            const department = await prisma.department.findUnique({ where: { id: card?.card.departmentID } })
-            if (!department) return notFoundRes('Department')
+            const department = card && await prisma.department.findUnique({ where: { id: card?.card.departmentID } })
 
-            const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } })
+            const supplierPrice = await prisma.supplierPrice.findFirst({
+                where: { supplierID, cardID: card?.cardID },
+                include: { supplier: { include: { balance: true } } }
+            })
             if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported' }, { status: 400 })
 
-            const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * Number(card.price) : (Number(card.price) / card?.card.balance!) * supplierPrice.price
+            const bookingPrice = department?.name.toLocaleLowerCase() === FINGERPOWER
+                ? Number(client_quantity) * Number(card?.price)
+                : (Number(card?.price) / card?.balance!) * Number(supplierPrice?.price);
 
             const updateReminder = await prisma.reminders.update({
                 where: { id: remindersID },
                 data: {
                     scheduleID, clientCardID, clientID, note, operator,
-                    meeting_info, status, name, courseID, quantity, settlement,
-                    price: bookingPrice
+                    meeting_info, status, name, courseID,supplierID,
+                    client_quantity: Number(client_quantity),
+                    supplier_quantity: Number(supplier_quantity), settlement,
+                    price: bookingPrice, departmentID: department?.id
                 }
             })
             if (!updateReminder) return badRequestRes()
@@ -122,7 +148,7 @@ export const PATCH = async (req: NextRequest) => {
             return okayRes()
         }
 
-        return notFoundRes('remindersID')
+        return notFoundRes('Reminders')
 
     } catch (error) {
         console.log(error);

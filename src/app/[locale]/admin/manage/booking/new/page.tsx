@@ -1,252 +1,341 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import AdminSideNav from '@/components/admin/AdminSIdeNav'
-import { useRouter } from '@/lib/navigation'
+import SideNav from '@/components/super-admin/SideNav'
+import Departments from '@/components/super-admin/management/Departments'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 import useGlobalStore from '@/lib/state/globalStore'
 import useAdminBookingStore, { bookingFormDataValue } from '@/lib/state/super-admin/bookingStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { ADMIN } from '@/utils/constants'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
+import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
+import { toast } from "sonner"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from '@/utils'
+import { format, isValid } from "date-fns"
+import { faCalendar } from '@fortawesome/free-regular-svg-icons'
+import Err from '@/components/global/Err'
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
+import SubmitButton from '@/components/global/SubmitButton'
 
 const Page = () => {
 
-    const router = useRouter()
-    const { isSideNavOpen, err, setErr, isLoading, setIsLoading, departmentID, setDepartmentID } = useGlobalStore()
-    const { bookingFormData, setBookingFormData } = useAdminBookingStore()
-    const { getClientsWithCards, clientWithCards, clientCards, setClientCards, getClientCards } = useAdminClientStore()
-    const { supplier, getSupplierWithMeeting, cardCourses, getCardCourses, supplierSchedule, setSupplierSchedule, supplierMeetingInfo, getSupplierMeetingInfo } = useAdminSupplierStore()
+  const router = useRouter()
 
-    const handleChange = (e: any) => {
-        const { name, value } = e.target
-        setBookingFormData({ ...bookingFormData, [name]: value })
+  const { departmentID } = useDepartmentStore()
+  const { isSideNavOpen } = useGlobalStore()
+  const { bookingFormData, setBookingFormData, createBooking } = useAdminBookingStore()
+  const { getClientsWithCards, clientWithCards, clientCards, setClientCards, getClientCards } = useAdminClientStore()
+  const { supplierWithMeeting, getSupplierWithMeeting, cardCourses, getCardCourses, supplierSchedule, setSupplierSchedule, supplierMeetingInfo, getSupplierMeetingInfo } = useAdminSupplierStore()
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setBookingFormData({ ...bookingFormData, [name]: value })
+  }
+
+  const getSupplierSchedule = async () => {
+    try {
+
+      const { data } = await axios.get('/api/booking/supplier/schedule', {
+        params: { supplierID: bookingFormData.supplierID }
+      })
+
+      if (data.ok) { setSupplierSchedule(data.data) }
+
+    } catch (error) {
+      console.log(error);
+      alert('Something went wrong')
+    }
+  }
+
+  useEffect(() => {
+    if (bookingFormData.clientID) {
+      getClientCards(bookingFormData.clientID)
+    }
+  }, [bookingFormData.clientID])
+
+  useEffect(() => {
+
+    if (bookingFormData.supplierID) {
+      getSupplierSchedule()
+      getSupplierMeetingInfo(bookingFormData.supplierID)
     }
 
-    const getSupplierSchedule = async () => {
-        try {
+  }, [bookingFormData.supplierID])
 
-            const { data } = await axios.get('/api/booking/supplier/schedule', {
-                params: { supplierID: bookingFormData.supplierID }
-            })
-
-            if (data.ok) { setSupplierSchedule(data.data) }
-
-        } catch (error) {
-            console.log(error);
-            alert('Something went wrong')
-        }
+  useEffect(() => {
+    if (bookingFormData.clientCardID) {
+      getCardCourses(bookingFormData.clientCardID)
     }
+  }, [bookingFormData.clientCardID])
 
-    const createBooking = async (e: any) => {
+  useEffect(() => {
+    setBookingFormData(bookingFormDataValue)
+  }, [])
 
-        e.preventDefault()
+  useEffect(() => {
+    setBookingFormData(bookingFormDataValue)
+    setClientCards([])
+    getSupplierWithMeeting()
+    getClientsWithCards()
+  }, [departmentID])
 
-        try {
+  const t = useTranslations('super-admin')
+  const tt = useTranslations('global')
 
-            const { clientCardID, clientID, meetingInfoID, supplierID, scheduleID, note, courseID, name, status, quantity, settlement } = bookingFormData
+  return (
+    <div className='h-screen'>
+      <SideNav />
+      <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
+        <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between`}>
+          <h1 className='font-black text-xl uppercase'>{t('booking.create')}</h1>
+          <ul className='flex items-center h-full ml-auto gap-5'>
+            <Link href={'/admin/manage/booking'} className='flex items-center text-muted-foreground justify-center w-40 hover:text-primary cursor-pointer gap-1'>
+              <div>{t('booking.h1')}</div>
+            </Link>
+          </ul>
+        </nav>
+        <div className='w-full h-full px-8'>
+          <Card className='w-1/3 h-full'>
+            <CardHeader>
+              <CardTitle>{t('booking.create')}</CardTitle>
+              <CardDescription></CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={(e) => createBooking(e, router)} className='w-full'>
+                <Err />
+                <div className='flex w-full h-full gap-10'>
+                  <div className='flex flex-col w-full gap-4'>
+                    <Departments />
 
-            if (!name) return setErr('Write Name for this booking')
-            if (!clientID) return setErr('Select Client')
-            if (!clientCardID) return setErr('Select Card')
-            if (!meetingInfoID) return setErr('Select Meeting Info')
-            if (!supplierID) return setErr('Select Supplier')
-            if (!scheduleID) return setErr('Select Schedule')
-            if (!courseID) return setErr('Select Course')
-            if (quantity < 1) return setErr('Quantity must be greater than 0')
-            if (!settlement) return setErr('Set Settlement Period')
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="name">{tt("name")}</Label>
+                      <Input type="text" id="name" name='name' placeholder={tt("name")} value={bookingFormData.name} onChange={handleChange} />
+                    </div>
 
-            setIsLoading(true)
-            const { data } = await axios.post('/api/booking', {
-                note, clientCardID, clientID, meetingInfoID, settlement,
-                supplierID, scheduleID, courseID, quantity: Number(quantity),
-                name, operator: ADMIN, status
-            })
+                    <div className="w-full items-center gap-1.5">
+                      <Label htmlFor="status">{tt('status')}</Label>
+                      <Select onValueChange={(status) => setBookingFormData({ ...bookingFormData, status })} value={bookingFormData.status}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={tt('select-status')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{tt('status')}</SelectLabel>
+                            <SelectItem value="confirmed">{tt('confirmed')}</SelectItem>
+                            <SelectItem value="invoiced">{tt("invoiced")}</SelectItem>
+                            <SelectItem value="settled">{tt('settled')}</SelectItem>
+                            <SelectItem value="canceled">{tt('canceled')}</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-            if (data.ok) {
-                setErr('')
-                setIsLoading(false)
-                router.push('/admin/manage/booking')
-            }
+                    <div className="w-full items-center gap-1.5">
+                      <Label htmlFor="supplierID">{tt('supplier')}</Label>
+                      <Select onValueChange={(supplierID) => setBookingFormData({ ...bookingFormData, supplierID })} value={bookingFormData.supplierID}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t('supplier.select')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{departmentID && supplierWithMeeting.length === 0 ? t('supplier.nodata') : tt('supplier')}</SelectLabel>
+                            {supplierWithMeeting.length > 0 ? supplierWithMeeting.map(sup => (
+                              <SelectItem value={sup.id} key={sup.id}>{sup.name}</SelectItem>
+                            )) : null}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-        } catch (error: any) {
+                    <div className="w-full items-center gap-1.5">
+                      <Label htmlFor="scheduleID">{tt('schedule')}</Label>
+                      <Select onValueChange={(scheduleID) => setBookingFormData({ ...bookingFormData, scheduleID })} value={bookingFormData.scheduleID}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t('booking.select-schedule')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{bookingFormData.supplierID && supplierSchedule.length === 0 ? t('schedule.no-schedule') : !bookingFormData.supplierID ? t('supplier.select-first') : tt('supplier')}</SelectLabel>
+                            {bookingFormData.supplierID && supplierSchedule.length > 0 ? supplierSchedule.map(schedule => (
+                              <SelectItem value={schedule.id} key={schedule.id}>{schedule.date} ({schedule.time}) {schedule.status === 'reserved' && '(reserved)'}</SelectItem>
+                            )) : null}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-            setIsLoading(false)
-            if (error.response.data.msg === 'This schedule is already reserved') {
-                return setErr('This Schedule is already reserved')
-            }
-            console.log(error);
-            alert('Something went wrong')
-        }
+                    <div className="w-full items-center gap-1.5">
+                      <Label htmlFor="meetingInfoID">{tt('meeting')}</Label>
+                      <Select onValueChange={(meetingInfoID) => setBookingFormData({ ...bookingFormData, meetingInfoID })} value={bookingFormData.meetingInfoID}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t('supplier.select-meeting')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{bookingFormData.meetingInfoID && supplierMeetingInfo && supplierMeetingInfo.length === 0 ? t('supplier.no-meeting') : !bookingFormData.supplierID ? t('supplier.select-first') : tt('supplier')}</SelectLabel>
+                            {bookingFormData.supplierID && supplierMeetingInfo && supplierMeetingInfo.length > 0 ? supplierMeetingInfo.map(meeting => (
+                              <SelectItem value={meeting.id} key={meeting.id}>{meeting.service} ({meeting.meeting_code})</SelectItem>
+                            )) : null}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-    }
+                    <Button type='button' onClick={() => router.push('/admin/manage/booking')} className='mt-10' variant={'ghost'}>{t('global.cancel')}</Button>
 
-    useEffect(() => {
-        if (bookingFormData.clientID) {
-            getClientCards(bookingFormData.clientID)
-        }
-    }, [bookingFormData.clientID])
+                  </div>
+                  <div className='flex flex-col w-full gap-4'>
 
-    useEffect(() => {
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Label htmlFor="note">{tt("note")}</Label>
+                      <Input type="text" id="note" name='note' placeholder={tt("note")} value={bookingFormData.note} onChange={handleChange} />
+                    </div>
 
-        if (bookingFormData.supplierID) {
-            getSupplierSchedule()
-            getSupplierMeetingInfo(bookingFormData.supplierID)
-        }
+                    <div className="w-full items-center gap-1.5">
+                      <Label>{tt('client')}</Label>
+                      <Select onValueChange={(clientID) => setBookingFormData({ ...bookingFormData, clientID })} value={bookingFormData.clientID}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t('client.select')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{departmentID && clientWithCards.length === 0 ? t('client.nodata') : tt('client')}</SelectLabel>
+                            {clientWithCards.length > 0 ? clientWithCards.map(client => (
+                              <SelectItem value={client.id} key={client.id}>{client.username}</SelectItem>
+                            )) : null}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-    }, [bookingFormData.supplierID])
+                    <div className="w-full items-center gap-1.5">
+                      <Label>{tt('clientcard')}</Label>
+                      <Select onValueChange={(clientCardID) => setBookingFormData({ ...bookingFormData, clientCardID })} value={bookingFormData.clientCardID}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t('booking.clientcard-select')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{clientCards.length === 0 ? t('client.select-first') : tt('clientcard')}</SelectLabel>
+                            {clientCards.length > 0 ? clientCards.map(card => (
+                              <SelectItem value={card.id} key={card.id}>{card.name}</SelectItem>
+                            )) : null}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-    useEffect(() => {
-        if (bookingFormData.clientCardID) {
-            getCardCourses(bookingFormData.clientCardID)
-        }
-    }, [bookingFormData.clientCardID])
+                    <div className="w-full items-center gap-1.5">
+                      <Label>{tt('course')}</Label>
+                      <Select onValueChange={(courseID) => setBookingFormData({ ...bookingFormData, courseID })} value={bookingFormData.courseID}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t('booking.select-course')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>{cardCourses && cardCourses.length > 0 ? tt('course') : t('client-card.select-first')}</SelectLabel>
+                            {cardCourses && cardCourses.length > 0 ? cardCourses.map(card => (
+                              <SelectItem value={card.id} key={card.id}>{card.name}</SelectItem>
+                            )) : null}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-    useEffect(() => {
-        setBookingFormData(bookingFormDataValue)
-        setDepartmentID('')
-    }, [])
+                    <div className="w-full items-center gap-1.5">
+                      <Label>{tt('settlement')}</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-[280px] justify-start text-left gap-3 font-normal",
+                              !bookingFormData.settlement && "text-muted-foreground"
+                            )}
+                          >
+                            <FontAwesomeIcon icon={faCalendar} width={16} height={16} />
+                            {bookingFormData.settlement && isValid(new Date(bookingFormData.settlement))
+                              ? format(new Date(bookingFormData.settlement), "PPP")
+                              : <span>{tt('select-settlement')}</span>
+                            }
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={new Date(new Date(bookingFormData.settlement).setHours(0, 0, 0, 0))}
+                            onSelect={(date) => {
+                              const adjustedDate = new Date(date!);
+                              adjustedDate.setHours(0, 0, 0, 0);
 
-    useEffect(() => {
-        setClientCards([])
-        getSupplierWithMeeting()
-        getClientsWithCards()
-    }, [departmentID])
+                              // Check if the adjusted date is valid
+                              if (!isNaN(adjustedDate.getTime())) {
+                                const formattedDate = `${adjustedDate.getFullYear()}-${(adjustedDate.getMonth() + 1).toString().padStart(2, '0')}-${adjustedDate.getDate().toString().padStart(2, '0')}`;
+                                setBookingFormData({
+                                  ...bookingFormData,
+                                  settlement: formattedDate,
+                                });
+                              } else {
+                                // If the date is not valid, set settlement to an empty string
+                                setBookingFormData({
+                                  ...bookingFormData,
+                                  settlement: '',
+                                });
+                              }
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+                    <div className='w-full border-b pb-1 text-center'>{tt("quantity")}</div>
+                    <div className='flex w-full items-center gap-5'>
 
-    return (
-        <div className='h-screen'>
+                      <div className="grid w-full max-w-sm items-center gap-1.5">
+                        <Label htmlFor="client_quantity">{tt("client")}</Label>
+                        <Input type="number" id="client_quantity" name='client_quantity'
+                          value={bookingFormData.client_quantity}
+                          onChange={handleChange} />
+                      </div>
 
-            <AdminSideNav />
+                      <div className="grid w-full max-w-sm items-center gap-1.5">
+                        <Label htmlFor="supplier_quantity">{tt("supplier")}</Label>
+                        <Input type="number" id="supplier_quantity" name='supplier_quantity'
+                          value={bookingFormData.supplier_quantity}
+                          onChange={handleChange} />
+                      </div>
 
-            <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-40' : 'pl-16'}`}>
+                    </div>
 
-                <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between bg-white`}>
-                    <h1 className='font-black text-gray-600 text-xl uppercase'>{t('booking.create')}</h1>
-                </nav>
-                <div className='w-full px-8 h-full'>
-                    <form onSubmit={createBooking} className='bg-white w-1/3 h-full border p-10'>
+                    <SubmitButton style='mt-auto w-full' msg={tt('create')} />
+                  </div>
 
-                        {err && <small className='text-red-600 mb-2'>{err}</small>}
-
-                        <div className='flex w-full h-full gap-10'>
-                            <div className='flex flex-col w-full gap-4'>
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="name" className='text-gray-700 font-medium px-3'>{tt('name')}</label>
-                                    <input type="text" id='name' name='name' placeholder={tt('name')} value={bookingFormData.name} onChange={handleChange} className='w-full border px-3 py-1.5 outline-none' />
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="status" className='text-gray-700 font-medium px-3'>{tt('status')}</label>
-                                    <select name="status" className='outline-none px-3 py-1.5' id="status" value={bookingFormData.status} onChange={handleChange}>
-                                        <option value="pending">Pending</option>
-                                        <option value="completed">Completed</option>
-                                        <option value="invoiced">Invoiced</option>
-                                        <option value="settled">Settled</option>
-                                        <option value="canceled">Canceled</option>
-                                    </select>
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="supplierID" className='text-gray-700 font-medium px-3'>{tt('supplier')}</label>
-                                    <select className='px-3 py-1.5 w-full outline-none border' name="supplierID" value={bookingFormData.supplierID} onChange={handleChange} id="supplierID">
-                                        <option value="">{t('supplier.select')}</option>
-                                        {supplier.length > 0 ? supplier.map(sup => (
-                                            <option value={sup.id} key={sup.id}>{sup.name}</option>
-                                        )) : ''}
-                                    </select>
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="scheduleID" className='text-gray-700 font-medium px-3'>{tt('schedule')}</label>
-                                    <select className='px-3 py-1.5 w-full outline-none border' name="scheduleID" value={bookingFormData.scheduleID} onChange={handleChange} id="scheduleID">
-                                        <option value="">{t('booking.select-schedule')}</option>
-                                        {bookingFormData.supplierID && supplierSchedule.length > 0 ? supplierSchedule.map(schedule => (
-                                            <option value={schedule.id} key={schedule.id}>{schedule.date} ({schedule.time}) {schedule.status === 'reserved' && '(reserved)'}</option>
-                                        )) : bookingFormData.supplierID && supplierSchedule.length < 1 ? <option disabled>{t('schedule.no-schedule')}</option> : <option disabled>{t('supplier.select-first')}</option>}
-                                    </select>
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="meetingInfoID" className='text-gray-700 font-medium px-3'>{tt('meeting')}</label>
-                                    <select className='px-3 py-1.5 w-full outline-none border' name="meetingInfoID" value={bookingFormData.meetingInfoID} onChange={handleChange} id="meetingInfoID">
-                                        <option value="">{t('supplier.select-meeting')}</option>
-                                        {supplierMeetingInfo && supplierMeetingInfo.length > 0 ? supplierMeetingInfo.map(meeting => (
-                                            <option value={meeting.id} key={meeting.id}>{meeting.service} ({meeting.meeting_code})</option>
-                                        )) : bookingFormData.meetingInfoID && supplierMeetingInfo && supplierMeetingInfo.length < 1 ?
-                                            <option disabled>{t('schedule.no-schedule')}</option> : <option disabled>{t('supplier.select-first')}</option>}
-                                    </select>
-                                </div>
-
-                                <Link href={'/admin/manage/booking'} className='border w-full mt-auto py-2 flex items-center justify-center hover:bg-slate-100'>{t('global.cancel')}</Link>
-
-                            </div>
-                            <div className='flex flex-col w-full gap-4'>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="note" className='text-gray-700 font-medium px-3'>{tt('note')} (optional)</label>
-                                    <input type="text" id='note' name='note' placeholder={tt('note')} value={bookingFormData.note} onChange={handleChange} className='w-full border px-3 py-1.5 outline-none' />
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="clientID" className='text-gray-700 font-medium px-3'>{tt('client')}</label>
-                                    <select required className='px-3 py-1.5 w-full outline-none border' name="clientID" value={bookingFormData.clientID} onChange={handleChange} id="clientID">
-                                        <option value="">{t('client.select')}</option>
-                                        {clientWithCards.length > 0 ? clientWithCards.map(client => (
-                                            <option value={client.id} key={client.id}>{client.username}</option>
-                                        )) : ''}
-                                    </select>
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="clientCardID" className='text-gray-700 font-medium px-3'>{tt('clientcard')}</label>
-                                    <select required className='px-3 py-1.5 w-full outline-none border' name="clientCardID" value={bookingFormData.clientCardID} onChange={handleChange} id="clientCardID">
-                                        <option value="">{t('booking.clientcard-select')}</option>
-                                        {clientCards.length > 0 ? clientCards.map(card => (
-                                            <option value={card.id} key={card.id}>{card.name} ({card.balance})</option>
-                                        )) : <option disabled>{t('client.select-first')}</option>}
-                                    </select>
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="courseID" className='text-gray-700 font-medium px-3'>{tt('course')}</label>
-                                    <select required className='px-3 py-1.5 w-full outline-none border' name="courseID" value={bookingFormData.courseID} onChange={handleChange} id="courseID">
-                                        <option value="">{t('booking.select-course')}</option>
-                                        {cardCourses && cardCourses.length > 0 ? cardCourses.map(card => (
-                                            <option value={card.id} key={card.id}>{card.name}</option>
-                                        )) : <option disabled>{t('client-card.select-first')}</option>}
-                                    </select>
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('settlement')}</label>
-                                    <input type="date" required className='w-full px-3 py-1.5 border outline-none' value={bookingFormData.settlement} name='settlement' onChange={handleChange} />
-                                </div>
-
-                                <div className='flex flex-col gap-2 w-full'>
-                                    <label htmlFor="quantity" className='text-gray-700 font-medium px-3'>{tt('quantity')}</label>
-                                    <input type="number" className='w-full px-3 py-1.5 border outline-none' value={bookingFormData.quantity} name='quantity' onChange={handleChange} />
-                                </div>
-
-                                <button disabled={isLoading} className={`w-full py-2 text-white rounded-md mt-auto ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
-                                    {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('booking.create')}</button>
-
-                            </div>
-
-                        </div>
-                    </form>
                 </div>
-
-            </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-    )
+      </div>
+    </div>
+  )
 
 }
 

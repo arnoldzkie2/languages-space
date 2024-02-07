@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { CLIENT } from "@/utils/constants";
 import stripe from "@/utils/getStripe";
 
 
@@ -12,8 +13,6 @@ interface Data {
 export const POST = async (req: Request) => {
 
     try {
-
-        console.log(req.url);
 
         const data = await req.text()
         const signature = req.headers.get('stripe-signature')
@@ -114,7 +113,7 @@ export const POST = async (req: Request) => {
                     //update agent balance
                     const updateAgentBalance = await prisma.agentBalance.update({
                         where: { id: balance.id }, data: {
-                            amount: balance.amount + commissionRate
+                            amount: Number(balance.amount) + commissionRate
                         }
                     })
                     if (!updateAgentBalance) return badRequestRes("Failed to update agent balance")
@@ -130,13 +129,15 @@ export const POST = async (req: Request) => {
                     const startDate = new Date(Date.UTC(currentYear, currentMonth - 1, 1, 0, 0, 0));
                     const endDate = new Date(Date.UTC(currentYear, currentMonth, 1, 0, 0, 0));
 
+                    const commissionRateInteger = Math.floor(commissionRate);
+
                     const earnings = await prisma.agentEarnings.findFirst({
                         //retrieve earnings for this month with the same rate
                         where:
                         {
                             agentBalanceID: balance.id,
                             name: 'Commission',
-                            rate: commissionRate,
+                            rate: commissionRateInteger,
                             created_at: {
                                 gte: startDate.toISOString(),
                                 lt: endDate.toISOString(),
@@ -150,7 +151,7 @@ export const POST = async (req: Request) => {
                         //update the agentearnings for this month
                         const updateAgentEarnings = await prisma.agentEarnings.update({
                             where: { id: earnings.id }, data: {
-                                amount: earnings.amount + commissionRate,
+                                amount: Number(earnings.amount) + commissionRate,
                                 quantity: earnings.quantity + 1
                             }
                         })
@@ -185,11 +186,12 @@ export const POST = async (req: Request) => {
                     prisma.order.create({
                         data: {
                             client: { connect: { id: client.id } },
-                            card: { connect: { id: card.id } },
+                            cardID: card.id,
+                            name: `Bought: ${card.name}`,
                             price: card.price, quantity: Number(quantity),
-                            operator: 'client',
+                            operator: CLIENT,
                             status: 'paid',
-                            department: { connect: { id: card.departmentID } }
+                            departments: { connect: { id: card.departmentID } }
                         }
                     })
                 ])
@@ -200,7 +202,7 @@ export const POST = async (req: Request) => {
                 return okayRes()
             }
 
-            return badRequestRes("This vent type does not existin webhook")
+            return badRequestRes("This event type does not existin webhook")
         }
 
         return badRequestRes("Signature error")

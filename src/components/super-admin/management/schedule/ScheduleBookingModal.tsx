@@ -11,17 +11,18 @@ import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 import Err from '@/components/global/Err'
 import useGlobalStore from '@/lib/state/globalStore'
-import { ADMIN } from '@/utils/constants'
+import { ADMIN, CONFIRMED } from '@/utils/constants'
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
 
 const ScheduleBookingModal = () => {
 
     const [searchClient, setSearchClient] = useState('')
     const { closeBindSchedule, getSchedule, currentDate, deleteSupplierSchedule } = useAdminScheduleStore()
-    const { departmentID, isLoading, setIsLoading, setErr } = useGlobalStore()
+    const { isLoading, setIsLoading, setErr } = useGlobalStore()
     const { clientWithCards, getClientsWithCards, clientCards, getClientCards } = useAdminClientStore()
     const { supplierMeetingInfo, getCardCourses, getSupplierMeetingInfo, cardCourses, clearCardCourses } = useAdminSupplierStore()
     const { bookingFormData, setBookingFormData } = useAdminBookingStore()
-
+    const departmentID = useDepartmentStore(s => s.departmentID)
     const filterClient = clientWithCards.filter(client => client.username.toUpperCase().includes(searchClient.toUpperCase())).slice(0, 30)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -33,7 +34,7 @@ const ScheduleBookingModal = () => {
 
         e.preventDefault()
 
-        const { note, meetingInfoID, clientCardID, courseID, quantity, settlement, scheduleID, supplierID, clientID } = bookingFormData
+        const { note, meetingInfoID, clientCardID, courseID, client_quantity, supplier_quantity, settlement, scheduleID, supplierID, clientID } = bookingFormData
 
         if (!meetingInfoID) return setErr('Select  meeting info')
         if (!clientCardID) return setErr('Select card')
@@ -41,7 +42,8 @@ const ScheduleBookingModal = () => {
         if (!courseID) return setErr('Select course')
         if (!settlement) return setErr('Settlement is requireqd')
         if (!supplierID || !scheduleID) return setErr('Please reload the page')
-        if (quantity < 1) return setErr('Quantity must be greater than 0')
+        if (!client_quantity) return setErr('Client quantity be greater than 0')
+        if (!supplier_quantity) return setErr('Supplier quantity be greater than 0')
 
         try {
 
@@ -49,8 +51,10 @@ const ScheduleBookingModal = () => {
             const { data } = await axios.post('/api/booking', {
                 scheduleID, supplierID, clientID, clientCardID,
                 meetingInfoID, note, settlement,
-                name: "1v1 Class", operator: 'admin',
-                status: "pending", quantity,
+                name: "1v1 Class", operator: ADMIN,
+                status: CONFIRMED,
+                client_quantity: Number(client_quantity),
+                supplier_quantity: Number(supplier_quantity),
                 courseID
             })
 
@@ -168,13 +172,22 @@ const ScheduleBookingModal = () => {
                     </div>
 
                     <div className='flex flex-col gap-2 w-full'>
-                        <label htmlFor="quantity" className='font-medium px-2 text-gray-700'>{tt('quantity')}</label>
+                        <label htmlFor="client_quantity" className='font-medium px-2 text-gray-700'>{tt('client')}</label>
                         <input className='py-1.5 px-3 border rounded-md outline-none'
-                            type="text" id='quantity' name='quantity'
-                            value={bookingFormData.quantity}
+                            type="text" id='client_quantity' name='client_quantity'
+                            value={bookingFormData.client_quantity}
                             onChange={handleChange}
                         />
                     </div>
+                    <div className='flex flex-col gap-2 w-full'>
+                        <label htmlFor="supplier_quantity" className='font-medium px-2 text-gray-700'>{tt('supplier')}</label>
+                        <input className='py-1.5 px-3 border rounded-md outline-none'
+                            type="text" id='supplier_quantity' name='supplier_quantity'
+                            value={bookingFormData.supplier_quantity}
+                            onChange={handleChange}
+                        />
+                    </div>
+
                     <div className='flex flex-col gap-2 w-full'>
                         <label htmlFor="note" className='font-medium px-2 text-gray-700'>{tt('note')}</label>
                         <input className='py-1.5 px-3 border rounded-md outline-none'

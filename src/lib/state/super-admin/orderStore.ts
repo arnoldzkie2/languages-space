@@ -2,6 +2,7 @@ import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { Order } from '@/lib/types/super-admin/orderType'
 import axios from 'axios'
 import { create } from 'zustand'
+import useDepartmentStore from './departmentStore'
 
 const ManageOrderSearchValue = {
     card: '',
@@ -18,8 +19,9 @@ const ManageOrderSearchValue = {
 
 const newOrderFormValue = {
     name: '',
-    card: null,
-    client: null,
+    selectedCardID: '',
+    selectedClientID: '',
+    price: 0,
     express_number: '',
     status: '',
     note: '',
@@ -49,8 +51,14 @@ interface OrderType {
 const useAdminOrderStore = create<OrderType>((set, get) => ({
     orders: [],
     getOrders: async () => {
+
+        const { departmentID } = useDepartmentStore.getState()
         try {
-            const { data } = await axios.get('/api/orders')
+            const { data } = await axios.get('/api/orders', {
+                params: {
+                    departmentID: departmentID || null
+                }
+            })
             if (data.ok) set({ orders: data.data })
         } catch (error) {
             console.log(error);

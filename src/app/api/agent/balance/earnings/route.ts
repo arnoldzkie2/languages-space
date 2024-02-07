@@ -12,9 +12,6 @@ export const GET = async (req: NextRequest) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        //get agentID
-        const agentID = getSearchParams(req, 'agentID')
-
         //if user is agent proceed to this if statement
         if (session.user.type === AGENT) {
 
@@ -40,11 +37,14 @@ export const GET = async (req: NextRequest) => {
 
         }
 
+        //get agentID
+        const agentID = getSearchParams(req, 'agentID')
+
         //return 404 if agentID not passed
         if (!agentID) return notFoundRes(AGENT)
 
         //only admin are allowed to proceed
-        const isAdmin = await checkIsAdmin(session.user.type)
+        const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
 
         //check agent get earnings
@@ -107,7 +107,7 @@ export const POST = async (req: NextRequest) => {
         const [updateAgentBalance, createEarnings] = await Promise.all([
             prisma.agentBalance.update({
                 where: { id: agent.balance[0].id }, data: {
-                    amount: agent.balance[0].amount + amount
+                    amount: Number(agent.balance[0].amount) + amount
                 }
             }),
             prisma.agentEarnings.create({
@@ -123,6 +123,36 @@ export const POST = async (req: NextRequest) => {
 
         //return 200 response
         return okayRes()
+
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
+    }
+}
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+
+        //get all earningsID in searchParams
+        const { searchParams } = new URL(req.url)
+        const earningsIds = searchParams.getAll("earningsID")
+
+        if (earningsIds.length > 0) {
+            const deleteDeductions = await prisma.agentEarnings.deleteMany({
+                where: { id: { in: earningsIds } }
+            })
+            if (deleteDeductions.count === 0) return notFoundRes("Earnings")
+
+            return okayRes()
+        }
+
+        return notFoundRes("Earnings")
 
     } catch (error) {
         console.log(error);

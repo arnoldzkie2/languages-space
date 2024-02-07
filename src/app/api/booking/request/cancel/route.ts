@@ -1,9 +1,9 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
-import { ADMIN, CANCELED, SUPERADMIN } from "@/utils/constants";
+import { ADMIN, CANCELED, CONFIRMED, SUPERADMIN } from "@/utils/constants";
 import axios from "axios";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export const POST = async (req: NextRequest) => {
     try {
@@ -26,7 +26,8 @@ export const POST = async (req: NextRequest) => {
             }
         })
         if (!bookingRequest) return notFoundRes("Booking Request")
-        if (bookingRequest.status === CANCELED) return NextResponse.json({ msg: "Booking request already cancelled" }, { status: 400 })
+        if (bookingRequest.status === CANCELED) return badRequestRes("Booking request already canceled")
+        if (bookingRequest.status === CONFIRMED) return badRequestRes("Booking request already confirmed")
         //return 404 respone if not found
 
         //cancel the booking request
@@ -43,7 +44,9 @@ export const POST = async (req: NextRequest) => {
             prisma.supplierMeetingInfo.findUnique({ where: { id: bookingRequest.meetingInfoID } }),
             prisma.clientCard.findUnique({ where: { id: bookingRequest.clientCardID } })
         ])
-        if (!course || !meetingInfo || !card) return badRequestRes()
+        if (!course) return badRequestRes("Failed to retrieve course")
+        if (!meetingInfo) return badRequestRes("Failed to retrieve Meeting Info")
+        if (!card) return badRequestRes("Failed to retrieve card")
 
         //refund client card balance
         const refundClientCard = await prisma.clientCard.update({

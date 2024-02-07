@@ -40,7 +40,7 @@ export const POST = async (req: NextRequest) => {
             const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplier.id, cardID: card.cardID } })
             if (!supplierPrice) return badRequestRes()
 
-            if (client.email && client.name) {
+            if (client.email) {
 
                 resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
@@ -48,14 +48,14 @@ export const POST = async (req: NextRequest) => {
                     subject: `Booking Canceled - Schedule: ${schedule.date} at ${schedule.time}`,
                     react: BookingCanceledClient({
                         supplierName: supplier.name,
-                        clientName: client.name,
+                        clientName: client.username,
                         schedule: {
                             date: booking.schedule.date,
                             time: booking.schedule.time
                         },
                         cardName: card.name,
-                        cardBalance: card.balance + supplierPrice.price,
-                        price: supplierPrice.price,
+                        cardBalance: Number(card.balance) + Number(supplierPrice.price),
+                        price: Number(supplierPrice.price),
                         course: booking.course.name,
                         meetingInfo: meeting_info as {
                             id: string,
@@ -68,14 +68,14 @@ export const POST = async (req: NextRequest) => {
 
             }
 
-            if (supplier.email && supplier.name && client.name) {
+            if (supplier.email) {
                 resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
                     to: supplier.email,
                     subject: `Booking Canceled - Schedule: ${schedule.date} at ${schedule.time}`,
                     react: BookingCanceledSupplier({
                         supplierName: supplier.name,
-                        clientName: client.name,
+                        clientName: client.username,
                         schedule: {
                             date: booking.schedule.date,
                             time: booking.schedule.time
@@ -83,8 +83,8 @@ export const POST = async (req: NextRequest) => {
                         course: booking.course.name,
                         meetingInfo: meeting_info as any,
                         operator,
-                        supplier_rate: booking.supplier_rate,
-                        balance: supplier.balance[0].amount
+                        supplier_rate: Number(booking.supplier_rate),
+                        balance: Number(supplier.balance[0].amount)
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })

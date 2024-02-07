@@ -1,9 +1,9 @@
-import { Client } from '@/lib/types/super-admin/clientType'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { create } from 'zustand'
-import useGlobalStore from '../globalStore'
 import axios from 'axios'
 import { ClientCard } from '@/lib/types/super-admin/clientCardType'
+import useDepartmentStore from './departmentStore'
+import { Client } from '@prisma/client'
 
 const newClientFormValue = {
     name: '',
@@ -37,36 +37,44 @@ const ManageClientSearchQueryValue = {
     cards: false
 }
 
+
+interface ClientProps extends Client {
+    cards: boolean
+    orders: boolean
+}
+
+export type { ClientProps }
+
 export { totalClientsValue, ManageClientSearchQueryValue, newClientFormValue }
 
-interface ClientProps {
-    clients: Client[]
+interface ClientStoreProps {
+    clients: ClientProps[]
     method: string
-    clientData: Client | undefined
+    clientData: ClientProps | undefined
     deleteModal: boolean
     totalClients: TotalProps
     viewClientModal: boolean
     clientCards: ClientCard[]
-    selectedClients: Client[]
+    selectedClients: ClientProps[]
     clientSelectedID: string
-    setClients: (allClients: Client[]) => void
+    setClients: (allClients: ClientProps[]) => void
     setMethod: (name: string) => void
-    setClientData: (data: Client) => void
+    setClientData: (data: ClientProps) => void
     setTotalClients: (total: TotalProps) => void
     closeViewModal: () => void
-    viewClient: (client: Client) => void
+    viewClient: (client: ClientProps) => void
     closeDeleteModal: () => void
-    deleteWarning: (client: Client) => void
-    setSelectedClients: (clients: Client[]) => void
+    deleteWarning: (client: ClientProps) => void
+    setSelectedClients: (clients: ClientProps[]) => void
     getClients: () => Promise<void>
     setClientSelectedID: (clientID: string) => void
-    clientWithCards: Client[]
+    clientWithCards: ClientProps[]
     getClientsWithCards: () => Promise<void>
     setClientCards: (cards: ClientCard[]) => void
     getClientCards: (clientID: string) => Promise<void>
 }
 
-const useAdminClientStore = create<ClientProps>((set) => ({
+const useAdminClientStore = create<ClientStoreProps>((set) => ({
     clients: [],
     clientWithCards: [],
     method: '',
@@ -78,7 +86,6 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     clientCards: [],
     getClientCards: async (clientID: string) => {
         try {
-
             const { data } = await axios.get('/api/booking/client/card', {
                 params: { clientID }
             })
@@ -96,18 +103,18 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     clientSelectedID: '',
     setClientCards: (cards: ClientCard[]) => set({ clientCards: cards }),
     setClientSelectedID: (clientID: string) => set({ clientSelectedID: clientID }),
-    setClients: (allClients: Client[]) => set({ clients: allClients }),
+    setClients: (allClients: ClientProps[]) => set({ clients: allClients }),
     setMethod: (name: string) => set(state => ({ method: name })),
-    setClientData: (data: Client) => set(state => ({ clientData: data })),
+    setClientData: (data: ClientProps) => set(state => ({ clientData: data })),
     setTotalClients: (total: TotalProps) => set(state => ({ totalClients: total })),
     closeViewModal: () => set(state => ({ viewClientModal: false, clientData: undefined })),
-    viewClient: (client: Client) => set(state => ({ viewClientModal: true, clientData: client })),
+    viewClient: (client: ClientProps) => set(state => ({ viewClientModal: true, clientData: client })),
     closeDeleteModal: () => set({ deleteModal: false, clientData: undefined }),
-    deleteWarning: (client: Client) => set(state => ({ deleteModal: true, clientData: client, clientSelectedID: '' })),
-    setSelectedClients: (clients: Client[]) => set(state => ({ selectedClients: clients })),
+    deleteWarning: (client: ClientProps) => set(state => ({ deleteModal: true, clientData: client, clientSelectedID: '' })),
+    setSelectedClients: (clients: ClientProps[]) => set(state => ({ selectedClients: clients })),
     getClients: async () => {
         try {
-            const { departmentID } = useGlobalStore.getState()
+            const { departmentID } = useDepartmentStore.getState()
             const { data } = await axios.get(`/api/client${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) set({ clients: data.data })
 
@@ -118,7 +125,7 @@ const useAdminClientStore = create<ClientProps>((set) => ({
     },
     getClientsWithCards: async () => {
         try {
-            const { departmentID } = useGlobalStore.getState()
+            const { departmentID } = useDepartmentStore.getState()
             const { data } = await axios.get(`/api/booking/client/card${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) set({ clientWithCards: data.data })
 

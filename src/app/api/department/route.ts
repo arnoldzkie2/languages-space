@@ -1,17 +1,20 @@
-import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "next-auth/react";
-import axios from "axios";
+import { NextRequest } from "next/server";
+import { getAuth } from "@/lib/nextAuth";
+import { checkIsAdmin } from "@/utils/checkUser";
 
-export const POST = async (req: Request) => {
-
+export const POST = async (req: NextRequest) => {
 
     const { name }: { name: string } = await req.json()
-
     const departmentName = name.toLowerCase()
 
     try {
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
         const existingDepartment = await prisma.department.findUnique({ where: { name: departmentName } })
         if (existingDepartment) return existRes('department')
@@ -35,6 +38,12 @@ export const GET = async (req: NextRequest) => {
 
     try {
 
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
         if (departmentID) {
 
             const department = await prisma.department.findUnique({ where: { id: departmentID } })
@@ -57,27 +66,41 @@ export const GET = async (req: NextRequest) => {
 
 }
 
-export const PATCH = async (req: Request) => {
+export const PATCH = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-    const departmentID = searchParams.get('departmentID')
+    const departmentID = getSearchParams(req, 'departmentID')
     const { name } = await req.json()
     const departmentName = name.toLowerCase()
 
     try {
 
-        if (departmentID) {
 
-            const department = await prisma.department.findUnique({ where: { id: departmentID } })
-            if (!department) notFoundRes('Department')
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
-            const updateDepartment = await prisma.department.update({ where: { id: departmentID }, data: { name: departmentName } })
-            if (!updateDepartment) badRequestRes()
+        if (!departmentID) return notFoundRes("Department")
 
-            return okayRes()
+        //retrieve department
+        const department = await prisma.department.findUnique({ where: { id: departmentID } })
+        if (!department) notFoundRes('Department')
+        //return 404 reposnse if not exist
 
-        }
-        return notFoundRes('departmentID')
+        //check for existing department
+        const existingDepartment = await prisma.department.findUnique({ where: { name: departmentName } })
+        if (existingDepartment) return existRes("Department")
+        //return 409 reponse if department name already exist
+
+        //update department
+        const updateDepartment = await prisma.department.update({ where: { id: departmentID }, data: { name: departmentName } })
+        if (!updateDepartment) badRequestRes()
+        //return 400 reponse if it fails
+
+
+        //return 200 response
+        return okayRes()
 
     } catch (error) {
         console.error(error);
@@ -87,23 +110,28 @@ export const PATCH = async (req: Request) => {
     }
 }
 
-export const DELETE = async (req: Request) => {
+export const DELETE = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-    const departmentID = searchParams.get('departmentID')
+    const departmentID = getSearchParams(req, 'departmentID')
     try {
-        if (departmentID) {
 
-            const department = await prisma.department.findUnique({ where: { id: departmentID } })
-            if (!department) return notFoundRes('Department')
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
-            const deleteDepartment = await prisma.department.delete({ where: { id: departmentID } })
-            if (!deleteDepartment) badRequestRes()
+        //return 404 response if department not passed
+        if (!departmentID) return notFoundRes("Department")
 
-            return okayRes()
-        }
+        //retrieve department
+        const department = await prisma.department.findUnique({ where: { id: departmentID } })
+        if (!department) return notFoundRes('Department')
 
-        return notFoundRes('Department')
+        const deleteDepartment = await prisma.department.delete({ where: { id: departmentID } })
+        if (!deleteDepartment) badRequestRes()
+
+        return okayRes()
 
     } catch (error) {
         console.error(error);

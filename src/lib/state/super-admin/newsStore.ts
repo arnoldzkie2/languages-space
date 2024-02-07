@@ -1,5 +1,7 @@
 import { News, TotalNews } from '@/lib/types/super-admin/newsType'
+import axios from 'axios'
 import { create } from 'zustand'
+import useDepartmentStore from './departmentStore'
 
 const ManageWebSearchQueryValue = {
     title: '',
@@ -39,6 +41,7 @@ interface NewsProps {
     setSelectedNews: (news: News[]) => void
     openNewsDeleteWarning: (news: News) => void
     closeNewsDeleteWarning: () => void
+    getNews: () => Promise<void>
 }
 
 const useAdminNewsStore = create<NewsProps>((set) => ({
@@ -51,7 +54,28 @@ const useAdminNewsStore = create<NewsProps>((set) => ({
     setNews: (news: News[]) => set({ news: news }),
     setSelectedNews: (news: News[]) => set({ selectedNews: news }),
     openNewsDeleteWarning: (news: News) => set({ newsData: news, deleteNewsWarning: true }),
-    closeNewsDeleteWarning: () => set({ deleteNewsWarning: false, newsData: newsValue })
+    closeNewsDeleteWarning: () => set({ deleteNewsWarning: false, newsData: newsValue }),
+    getNews: async () => {
+
+        const departmentID = useDepartmentStore.getState().departmentID
+        try {
+            const { data } = await axios.get(`/api/news`, {
+                params: {
+                    departmentID: departmentID || null
+                }
+            })
+            if (data.ok) {
+                set({ news: data.data })
+            }
+
+        } catch (error: any) {
+            console.log(error);
+            if (error.response.data.msg) {
+                return alert(error.response.data.msg)
+            }
+            alert("Something went wrong")
+        }
+    }
 }))
 
 export default useAdminNewsStore

@@ -4,7 +4,7 @@ import { checkUsername } from "@/utils/checkUser";
 import { NextRequest } from "next/server";
 
 interface FormData {
-    departmentID: string | null
+    departmentName: string | null
     agentID: string | null
     username: string
     password: string
@@ -15,7 +15,7 @@ export const POST = async (req: NextRequest) => {
     try {
 
         //get the username and password departmentID and agentID
-        const { username, password, departmentID, agentID }: FormData = await req.json()
+        const { username, password, departmentName, agentID }: FormData = await req.json()
 
         if (!username || !password) return notFoundRes("Invalid Inputs")
 
@@ -29,15 +29,15 @@ export const POST = async (req: NextRequest) => {
         })
         if (!createClient) return badRequestRes("Failed to create client")
 
-        if (departmentID) {
+        if (departmentName) {
 
-            const department = await prisma.department.findUnique({ where: { id: departmentID } })
+            const department = await prisma.department.findUnique({ where: { name: departmentName } })
             if (!department) return notFoundRes("Department")
 
             const updateClientDepartment = await prisma.client.update({
                 where: { id: createClient.id }, data: {
                     departments: {
-                        connect: { id: departmentID }
+                        connect: { id: department.id }
                     }
                 }
             })

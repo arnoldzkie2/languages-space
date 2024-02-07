@@ -98,9 +98,7 @@ export const GET = async (req: NextRequest) => {
 
             const client = await prisma.client.findUnique({
                 where: { id: clientID }, include: {
-                    cards: true, bookings: true, orders: true, departments: {
-                        select: { id: true }
-                    }
+                    departments: true
                 }
             })
             if (!client) notFoundRes('Client')
@@ -121,11 +119,8 @@ export const GET = async (req: NextRequest) => {
                             origin: true,
                             created_at: true,
                             note: true,
-                            cards: {
-                                select: {
-                                    validity: true
-                                }
-                            }
+                            cards: true,
+                            orders: true
                         },
 
                     }
@@ -134,7 +129,13 @@ export const GET = async (req: NextRequest) => {
 
             if (!department) return notFoundRes('Department')
 
-            return okayRes(department.clients)
+            const filterClients = department.clients.map(client => ({
+                ...client,
+                cards: client.cards.length > 0 ? true : false,
+                orders: client.orders.length > 0 ? true : false
+            }))
+
+            return okayRes(filterClients)
 
         }
 
@@ -144,24 +145,25 @@ export const GET = async (req: NextRequest) => {
                 name: true,
                 username: true,
                 phone_number: true,
-                created_at: true,
                 organization: true,
                 origin: true,
+                created_at: true,
                 note: true,
-                departments: {
-                    select: { id: true, name: true }
-                }, cards: {
-                    select: {
-                        validity: true
-                    }
-                }
+                cards: true,
+                orders: true
             },
 
         })
 
         if (!allClient) return badRequestRes()
 
-        return okayRes(allClient)
+        const filterClients = allClient.map(client => ({
+            ...client,
+            cards: client.cards.length > 0 ? true : false,
+            orders: client.orders.length > 0 ? true : false
+        }))
+
+        return okayRes(filterClients)
 
     } catch (error) {
         console.log(error);
@@ -177,7 +179,7 @@ export const PATCH = async (req: NextRequest) => {
 
         //get clientID and request body
         const clientID = getSearchParams(req, 'clientID')
-        const { name, password, organization, username, phone_number, email, address, gender, origin, note, departments }: FormData = await req.json()
+        const { name, password, organization, username, phone_number, email, address, gender, origin, note, departments, profile_key, profile_url }: FormData = await req.json()
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
@@ -228,7 +230,7 @@ export const PATCH = async (req: NextRequest) => {
             const updatedClient = await prisma.client.update({
                 where: { id: client.id },
                 data: {
-                    name, username, password, organization, origin, phone_number, email, address, gender, note
+                    name, username, password, organization, origin, phone_number, email, address, gender, note, profile_key, profile_url
                 }
             })
             if (!updatedClient) return badRequestRes()

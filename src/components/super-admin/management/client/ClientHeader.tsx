@@ -3,45 +3,25 @@
 import Link from 'next/link';
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { useSession } from 'next-auth/react';
 import DownloadTable from '../DownloadTable';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
+import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 
 const ClientHeader: React.FC = ({ }) => {
 
-    const session = useSession()
-
     const t = useTranslations('super-admin')
-
+    const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
     const { clients, selectedClients } = useAdminClientStore()
 
-    const clientHeaderSkeleton = (
-        <li className='bg-slate-200 animate-pulse w-28 h-5 rounded-3xl'></li>
-    )
-
     return (
-        <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between bg-white`}>
-            <h1 className='font-black text-gray-600 text-xl uppercase'>{t('client.h1')}</h1>
-            <ul className='flex items-center h-full ml-auto gap-5'>
-                {session.status !== 'loading' ?
-                    <Link href={'/manage/client/new'} className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
+        <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between`}>
+            <h1 className='font-black text-xl uppercase'>{t('client.h1')}</h1>
+            <ul className='flex items-center h-full ml-auto gap-5 text-muted-foreground'>
+                {isAdminAllowed('create_client') &&
+                    <Link href={'/admin/manage/client/new'} className='flex items-center justify-center w-28 hover:text-primary cursor-pointer'>
                         <div>{t('client.create')}</div>
-                    </Link> : clientHeaderSkeleton}
-                {session.status !== 'loading' ?
-                    <Link href={'/manage/client/card/new'} className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
-                        <div>{t('client-card.create')}</div>
-                    </Link> : clientHeaderSkeleton}
-
-                {session.status !== 'loading' ? <Link href='/manage/client/card' className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
-                    <div>{t('client-card.h1')}</div>
-                </Link> : clientHeaderSkeleton}
-
-                {session.status !== 'loading' ? <li className='flex items-center text-gray-600 justify-center w-28 hover:text-blue-600 cursor-pointer'>
-                    <Link href={'/manage/client/card/bind'}>{t('client.card.bind')}</Link>
-                </li> : clientHeaderSkeleton}
-
+                    </Link>}
                 <DownloadTable tables={clients} selectedTable={selectedClients} />
-
             </ul>
         </nav>
     );

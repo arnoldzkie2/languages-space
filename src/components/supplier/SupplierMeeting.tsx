@@ -7,6 +7,8 @@ import Err from '../global/Err'
 import Success from '../global/Success'
 import useSupplierMeetingStore from '@/lib/state/supplier/supplireMeetingStore'
 import SubmitButton from '../global/SubmitButton'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 
 const SupplierMeeting: React.FC = () => {
 
@@ -31,37 +33,36 @@ const SupplierMeeting: React.FC = () => {
     const tt = useTranslations('global')
 
     return (
-        <form className='flex flex-col gap-3 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2' onSubmit={updateMeeting}>
+        <form className='flex flex-col gap-3 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2 text-muted-foreground' onSubmit={updateMeeting}>
             <Err />
             <Success />
-            <h1 className='text-blue-600 border-b mb-1 pb-1 text-lg font-bold'>{tt('meeting')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{tt('meeting')}</h1>
             {meetingInfo && meetingInfo.length > 0 ? meetingInfo.map((info, index) => (
-                <div key={index} className='flex flex-col gap-3 w-full p-4 border'>
-                    <input
+                <div key={index} className='flex flex-col gap-3 w-full p-4 border bg-card'>
+                    <Input
                         type="text"
                         required
                         name="service"
                         placeholder={tt('service')}
                         value={info.service}
-                        className='py-1.5 px-2 outline-none border rounded-sm'
                         onChange={(e) => handleMeetinInfoChange(e, index)}
                     />
-                    <input
+                    <Input
                         type="text"
                         required
                         name="meeting_code"
                         placeholder={tt('meeting-code')}
                         value={info.meeting_code}
-                        className='py-1.5 px-2 outline-none border rounded-sm'
                         onChange={(e) => handleMeetinInfoChange(e, index)}
                     />
-                    <button type='button' onClick={() => removeMeetingInfo(index)} className='bg-red-500 hover:bg-red-600 w-1/2 self-end text-white py-1.5 rounded-md outline-none'>{tt('remove')}</button>
+                    <Button variant={'destructive'} onClick={() => removeMeetingInfo(index)} className='w-1/2 self-end'>{tt('remove')}</Button>
                 </div>
             )) : <div>{tt('no-data')}</div>
             }
             <div className='flex items-center gap-10 py-5'>
-                <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-1/2 text-white'>{tt('add-more')}</button>
-                <SubmitButton msg={tt('update')} style='bg-blue-600 text-white w-1/2 rounded-md py-1.5' />
+                <Button variant={'secondary'} className='w-full' onClick={addMoreMeetingInfo}>{tt('add-more')}</Button>
+                {/* <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-1/2 text-white'>{tt('add-more')}</button> */}
+                <SubmitButton msg={tt('update')} style='w-full' />
             </div>
         </form>
     )

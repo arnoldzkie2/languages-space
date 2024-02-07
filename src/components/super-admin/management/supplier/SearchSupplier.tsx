@@ -1,11 +1,11 @@
 'use client'
-import SubmitButton from '@/components/global/SubmitButton';
-import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
 import SupplierPayslip from '../../SendPayslipButton';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface Props {
 
@@ -26,19 +26,18 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
-    const permissions = useAdminPageStore(s => s.permissions)
-
+    const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
     const sendSupplierPayslip = useAdminSupplierStore(s => s.sendSupplierPayslips)
 
     return (
-        <div className='pt-4 mt-4 border-t border-gray-300'>
-            <div className='flex justify-between items-center mb-2 font-medium px-2'>
+        <div className='pt-4 mt-4 border-t'>
+            <Label className='flex justify-between items-center mb-2 font-medium px-2'>
                 {t('supplier.search')}
-            </div>
+            </Label>
             <div>
-                <div className='flex flex-col text-gray-700 gap-3'>
+                <div className='flex flex-col gap-3'>
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('name')}
                         name='name'
                         className='w-full border text-sm px-3 outline-none py-2'
@@ -46,7 +45,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.name}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('phone')}
                         name='phone_number'
                         className='w-full border text-sm px-3 outline-none py-2'
@@ -54,7 +53,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.phone_number}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('organization')}
                         name='organization'
                         className='w-full border text-sm px-3 outline-none py-2'
@@ -62,7 +61,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.organization}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('origin')}
                         name='origin'
                         className='w-full border text-sm px-3 outline-none py-2'
@@ -70,7 +69,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.origin}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('note')}
                         name='note'
                         className='w-full border text-sm px-3 outline-none py-2'
@@ -78,8 +77,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.note}
                     />
 
-                    {permissions?.send_supplier_payslip && <SupplierPayslip sendPayslip={sendSupplierPayslip} />
-                    }
+                    {isAdminAllowed('send_supplier_payslip') && <SupplierPayslip sendPayslip={sendSupplierPayslip} />}
                 </div>
             </div>
         </div>

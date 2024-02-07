@@ -1,38 +1,44 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import Err from '@/components/global/Err'
+import SubmitButton from '@/components/global/SubmitButton'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import useGlobalStore from '@/lib/state/globalStore'
-import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
 import axios from 'axios'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 const UpdateDepartmentModal = () => {
 
-    const { getDepartments, departmentData, isLoading, setIsLoading, closeUpdateDepartment } = useGlobalStore()
-
+    const { getDepartments, departmentData, closeUpdateDepartment, updateDepartment } = useDepartmentStore()
+    const { setIsLoading, setErr } = useGlobalStore()
     const [name, setName] = useState('')
 
-    const updateDepartment = async (e: any) => {
+    const updateDepartmentFunc = async (e: any) => {
 
         e.preventDefault()
         try {
-
             setIsLoading(true)
             const { data } = await axios.patch('/api/department', { name }, {
                 params: { departmentID: departmentData?.id }
             })
-
             if (data.ok) {
                 setIsLoading(false)
                 setName('')
+                toast('Success! department has been updated.')
                 closeUpdateDepartment()
                 getDepartments()
             }
-
-        } catch (error) {
+        } catch (error: any) {
             setIsLoading(false)
-            console.log(error);
+            if (error.response.data.msg) {
+                return setErr(error.response.data.msg)
+            }
+            alert("Somethihng went wrong")
         }
     }
 
@@ -43,18 +49,32 @@ const UpdateDepartmentModal = () => {
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
+
+    if (!updateDepartment) return null
+
     return (
 
-        <div className='fixed top-0 left-0 z-40 grid place-items-center w-screen h-screen bg-black bg-opacity-40'>
-            <form onSubmit={updateDepartment} className='bg-white w-96 p-10 gap-4 flex flex-col relative rounded-sm'>
-                <h1 className='text-center'>{t('department.update')}</h1>
-                <FontAwesomeIcon onClick={closeUpdateDepartment} icon={faXmark} width={16} height={16} className='cursor-pointer absolute top-4 right-4 hover:text-blue-600' />
-                <input required type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='Department Name' className='outline-none px-3 py-1 border' />
-                <div className='flex w-full gap-5 items-center'>
-                    <button type='button' onClick={closeUpdateDepartment} className='border outline-none py-2 hover:bg-slate-100 text-slate-700 w-full rounded-sm'>{tt('close')}</button>
-                    <button disabled={isLoading} className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white w-full rounded-sm py-2`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' /> : tt('update')}</button>
-                </div>
-            </form>
+        <div className='fixed top-0 left-0 flex items-center justify-center z-30 w-screen h-screen backdrop-blur-sm'>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('department.update')}</CardTitle>
+                    <CardDescription><Err /></CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={updateDepartmentFunc} className='relative w-full flex flex-col gap-5'>
+                        <Input required
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder='Department Name'
+                        />
+                        <div className='flex w-full gap-5 items-center'>
+                            <Button type='button' variant={'ghost'} className='w-full' onClick={closeUpdateDepartment}>{tt('close')}</Button>
+                            <SubmitButton msg={tt('update')} style='w-full' />
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
     )
 }

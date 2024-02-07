@@ -2,6 +2,8 @@ import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
 import { AdminPermission } from '@prisma/client'
+import useDepartmentStore from './departmentStore'
+import { toast } from 'sonner'
 
 interface AdminPermissionStore {
     permissionData: AdminPermission | null
@@ -23,7 +25,8 @@ const useAdminPermissionStore = create<AdminPermissionStore>((set, get) => ({
     setShowCreatePermissionButton: (state: boolean) => set({ showCreatePermissionButton: state }),
     retrieveAdminPermission: async (adminID: string) => {
 
-        const { setErr, departmentID } = useGlobalStore.getState()
+        const { departmentID } = useDepartmentStore.getState()
+        const { setErr } = useGlobalStore.getState()
         try {
 
             const { data } = await axios.get('/api/admin/permissions', {
@@ -49,7 +52,8 @@ const useAdminPermissionStore = create<AdminPermissionStore>((set, get) => ({
     createPermission: async (e: React.FormEvent, adminID: string) => {
         e.preventDefault()
 
-        const { setIsLoading, setOkMsg, setErr, departmentID } = useGlobalStore.getState()
+        const { departmentID } = useDepartmentStore.getState()
+        const { setIsLoading, setErr } = useGlobalStore.getState()
         const { retrieveAdminPermission } = get()
         try {
 
@@ -60,7 +64,7 @@ const useAdminPermissionStore = create<AdminPermissionStore>((set, get) => ({
 
             if (data.ok) {
                 setIsLoading(false)
-                setOkMsg("Sucess")
+                toast("Success! Admin now have permission in this department.")
                 retrieveAdminPermission(adminID)
             }
 
@@ -87,7 +91,7 @@ const useAdminPermissionStore = create<AdminPermissionStore>((set, get) => ({
                 if (data.ok) {
                     setIsLoading(false)
                     retrieveAdminPermission(adminID)
-                    setOkMsg("Success")
+                    toast("Success! permissions updated.")
                 }
             }
 
@@ -118,7 +122,7 @@ const useAdminPermissionStore = create<AdminPermissionStore>((set, get) => ({
 
                 if (data.ok) {
                     setIsLoading(false)
-                    setOkMsg("Deleted")
+                    toast("Success! permissions deleted.")
                     set({ permissionData: null })
                 }
 

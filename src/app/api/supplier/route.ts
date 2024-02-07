@@ -127,6 +127,7 @@ export const GET = async (req: Request) => {
                 select: {
                     id: true,
                     username: true,
+                    phone_number: true,
                     name: true,
                     origin: true,
                     organization: true,
@@ -144,6 +145,7 @@ export const GET = async (req: Request) => {
                 id: true,
                 name: true,
                 username: true,
+                phone_number: true,
                 origin: true,
                 organization: true,
                 note: true

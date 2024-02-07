@@ -2,119 +2,84 @@
 import { AdminPermission } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
+import PermissionSwitch from './PermissionSwitch';
 
 const FormSupplierPermission = (props: {
-    handleChange: (event: ChangeEvent<HTMLInputElement>) => void
+    handleCheckboxChange: (isChecked: boolean, name: string) => void
     permissionData: AdminPermission
 }) => {
-    const { permissionData, handleChange } = props;
+    const { permissionData, handleCheckboxChange } = props;
     const t = useTranslations('super-admin'); // Assuming you have a translation function
 
     return (
-        <div className='flex flex-col gap-1 w-1/2'>
-            <div className='font-bold text-lg'>{t('supplier.h1')}</div>
+        <div className='flex flex-col gap-1 w-full'>
+            <div className='font-bold text-lg text-foreground'>{t('supplier.h1')}</div>
 
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="view_supplier" className={`${permissionData.view_supplier ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.view-supplier')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.view_supplier}
-                    onChange={handleChange}
-                    id='view_supplier'
-                    className='w-4 h-4'
-                    name='view_supplier'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="create_supplier" className={`${permissionData.create_supplier ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.create-supplier')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.create_supplier}
-                    onChange={handleChange}
-                    id='create_supplier'
-                    className='w-4 h-4'
-                    name='create_supplier'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="update_supplier" className={`${permissionData.update_supplier ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.update-supplier')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.update_supplier}
-                    onChange={handleChange}
-                    id='update_supplier'
-                    className='w-4 h-4'
-                    name='update_supplier'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="delete_supplier" className={`${permissionData.delete_supplier ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.delete-supplier')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.delete_supplier}
-                    onChange={handleChange}
-                    id='delete_supplier'
-                    className='w-4 h-4'
-                    name='delete_supplier'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="send_supplier_payslip" className={`${permissionData.send_supplier_payslip ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.send-supplier-payslip')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.send_supplier_payslip}
-                    onChange={handleChange}
-                    id='send_supplier_payslip'
-                    className='w-4 h-4'
-                    name='send_supplier_payslip'
-                />
-            </div>
-
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="create_supplier_earnings" className={`${permissionData.create_supplier_earnings ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.create-supplier-earnings')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.create_supplier_earnings}
-                    onChange={handleChange}
-                    id='create_supplier_earnings'
-                    className='w-4 h-4'
-                    name='create_supplier_earnings'
-                />
-            </div>
-
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="create_supplier_deductions" className={`${permissionData.create_supplier_deductions ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.create-supplier-deductions')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.create_supplier_deductions}
-                    onChange={handleChange}
-                    id='create_supplier_deductions'
-                    className='w-4 h-4'
-                    name='create_supplier_deductions'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="view_supplier_payment_request" className={`${permissionData.view_supplier_payment_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.view-supplier-payment-request')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.view_supplier_payment_request}
-                    onChange={handleChange}
-                    id='view_supplier_payment_request'
-                    className='w-4 h-4'
-                    name='view_supplier_payment_request'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="update_supplier_payment_request" className={`${permissionData.update_supplier_payment_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500 cursor-pointer`}>- {t('admin.permissions.update-supplier-payment-request')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.update_supplier_payment_request}
-                    onChange={handleChange}
-                    id='update_supplier_payment_request'
-                    className='w-4 h-4'
-                    name='update_supplier_payment_request'
-                />
-            </div>
+            <PermissionSwitch
+                label={t('admin.permissions.view_supplier')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.view_supplier}
+                permissionKey='view_supplier' />
+            <PermissionSwitch
+                label={t('admin.permissions.create_supplier')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.create_supplier}
+                permissionKey='create_supplier' />
+            <PermissionSwitch
+                label={t('admin.permissions.update_supplier')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.update_supplier}
+                permissionKey='update_supplier' />
+            <PermissionSwitch
+                label={t('admin.permissions.delete_supplier')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.delete_supplier}
+                permissionKey='delete_supplier' />
+            <PermissionSwitch
+                label={t('admin.permissions.send_supplier_payslip')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.send_supplier_payslip}
+                permissionKey='send_supplier_payslip' />
+            <PermissionSwitch
+                label={t('admin.permissions.view_supplier_earnings')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.view_supplier_earnings}
+                permissionKey='view_supplier_earnings' />
+            <PermissionSwitch
+                label={t('admin.permissions.create_supplier_earnings')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.create_supplier_earnings}
+                permissionKey='create_supplier_earnings' />
+            <PermissionSwitch
+                label={t('admin.permissions.delete_supplier_earnings')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.delete_supplier_earnings}
+                permissionKey='delete_supplier_earnings' />
+            <PermissionSwitch
+                label={t('admin.permissions.view_supplier_deductions')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.view_supplier_deductions}
+                permissionKey='view_supplier_deductions' />
+            <PermissionSwitch
+                label={t('admin.permissions.create_supplier_deductions')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.create_supplier_deductions}
+                permissionKey='create_supplier_deductions' />
+            <PermissionSwitch
+                label={t('admin.permissions.delete_supplier_deductions')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.delete_supplier_deductions}
+                permissionKey='delete_supplier_deductions' />
+            <PermissionSwitch
+                label={t('admin.permissions.view_supplier_payment_request')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.view_supplier_payment_request}
+                permissionKey='view_supplier_payment_request' />
+            <PermissionSwitch
+                label={t('admin.permissions.update_supplier_payment_request')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.update_supplier_payment_request}
+                permissionKey='update_supplier_payment_request' />
 
         </div>
     );

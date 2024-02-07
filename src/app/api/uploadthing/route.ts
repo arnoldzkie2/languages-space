@@ -1,17 +1,16 @@
 import { createNextRouteHandler } from "uploadthing/next";
 import { ourFileRouter } from "./core";
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import { UTApi } from "uploadthing/server";
+import { NextRequest } from "next/server";
 
 export const { GET, POST } = createNextRouteHandler({
   router: ourFileRouter,
 });
 
-export const DELETE = async (req: Request) => {
+export const DELETE = async (req: NextRequest) => {
 
-  const { searchParams } = new URL(req.url)
-
-  const key = searchParams.get('key')
+  const key = getSearchParams(req, 'key')
 
   try {
 
@@ -19,8 +18,11 @@ export const DELETE = async (req: Request) => {
 
       const utapi = new UTApi()
 
-      const deleteProfile = await utapi.deleteFiles(key)
-      if (!deleteProfile) return badRequestRes()
+      const profile = await utapi.getFileUrls(key)
+      if (profile.length > 0) {
+        const deleteProfile = await utapi.deleteFiles(profile[0].key)
+        if (!deleteProfile) return badRequestRes("Failed to delete profile")
+      }
 
       return okayRes()
     }

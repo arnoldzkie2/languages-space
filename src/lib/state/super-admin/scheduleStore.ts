@@ -3,6 +3,7 @@ import axios from 'axios';
 import { create } from 'zustand'
 import useAdminBookingStore from './bookingStore';
 import useGlobalStore from '../globalStore';
+import { toast } from 'sonner';
 
 interface TimeSlot {
     [key: string]: string[]
@@ -43,7 +44,7 @@ interface ScheduleProps {
     }) => void
     setSelectedInterval: (interval: number) => void
     handleSelectAllTimeSlot: (category: string) => void
-    createSchedule: (e: React.MouseEvent, supplierID: string) => Promise<void>
+    createSchedule: (e: React.FormEvent, supplierID: string, setOpen: React.Dispatch<React.SetStateAction<boolean>>) => Promise<void>
     handleTimeSlotChange: (time: string) => void
     areAllTimeSlotSelected: (category: string) => boolean
     deleteSupplierSchedule: (e: React.MouseEvent, scheduleID: string) => Promise<void>
@@ -102,21 +103,19 @@ const useAdminScheduleStore = create<ScheduleProps>((set, get) => ({
         e.preventDefault()
 
         const { schedules, setSchedules, closeBindSchedule } = get()
-        const { setOkMsg, setIsLoading } = useGlobalStore.getState()
+        const { setIsLoading } = useGlobalStore.getState()
 
         try {
 
-
-            setOkMsg('Deleting schedule...')
             setIsLoading(true)
             const { data } = await axios.delete('/api/schedule', { params: { scheduleID } })
 
             if (data.ok) {
+                toast("Success! schedule deleted.")
                 const filterSChedule = schedules.filter(sched => sched.id !== scheduleID)
                 setSchedules(filterSChedule)
                 setIsLoading(false)
                 closeBindSchedule()
-                setOkMsg('Success')
             }
 
         } catch (error: any) {
@@ -182,7 +181,7 @@ const useAdminScheduleStore = create<ScheduleProps>((set, get) => ({
     },
     timeSlots: {},
     setTimeSlots: (slot: TimeSlot) => set({ timeSlots: slot }),
-    createSchedule: async (e: React.MouseEvent, supplierID: string) => {
+    createSchedule: async (e: React.FormEvent, supplierID: string, setOpen: React.Dispatch<React.SetStateAction<boolean>>) => {
 
         const { selectedDates, getSchedule, toggleSchedule, currentDate } = get()
         const { setErr, setIsLoading } = useGlobalStore.getState()
@@ -190,7 +189,7 @@ const useAdminScheduleStore = create<ScheduleProps>((set, get) => ({
         e.preventDefault()
         if (selectedDates.dates.length < 1) return setErr('Select atleast 1 date')
         if (selectedDates.times.length < 1) return setErr('Select atleast 1 timeslot')
-
+        if (!supplierID) return setErr("Select Supplier")
         try {
 
             setIsLoading(true)
@@ -201,10 +200,11 @@ const useAdminScheduleStore = create<ScheduleProps>((set, get) => ({
             })
 
             if (data.ok) {
+                toast(`Success! schedule created.`)
                 getSchedule(supplierID, currentDate.fromDate, currentDate.toDate)
                 setIsLoading(false)
                 set({ selectedDates: { dates: [], times: [] } })
-                toggleSchedule()
+                setOpen(false)
             }
 
         } catch (error: any) {

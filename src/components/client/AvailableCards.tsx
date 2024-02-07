@@ -2,12 +2,17 @@
 'use client'
 import useClientCardStore from '@/lib/state/client/clientCardStore'
 import useClientStore from '@/lib/state/client/clientStore'
-import useGlobalStore from '@/lib/state/globalStore'
-import { faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { Skeleton } from '../ui/skeleton'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from '../ui/select'
+import SubmitButton from '../global/SubmitButton'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 const AvailableCards = () => {
 
@@ -16,7 +21,6 @@ const AvailableCards = () => {
     const [searchQuery, setSearchQery] = useState('')
     const [maxVisibleItems, setMaxVisibleItems] = useState(6);
 
-    const { isLoading } = useGlobalStore()
     const client = useClientStore(s => s.client)
     const { availableCards, getAvailableCardsToBuy, checkoutCard } = useClientCardStore()
 
@@ -33,77 +37,87 @@ const AvailableCards = () => {
     }, [client?.id])
 
     return (
-        <div className='padding py-28 flex flex-col items-center text-slate-600'>
-            <div className='w-full flex flex-col gap-5 sm:bg-white sm:p-5 sm:shadow 2xl:w-1/2'>
-                <div className='w-full relative'>
-                    <FontAwesomeIcon icon={faSearch} width={16} height={16} className='absolute right-3 top-3 text-slate-600' />
-                    <input type="text" value={searchQuery} onChange={(e) => setSearchQery(e.target.value)} placeholder={ttt('client-card.search')} className='py-1.5 px-3 border w-full outline-none' />
-                </div>
-                <div className='w-full flex gap-8 items-center justify-evenly flex-wrap'>
-                    {filterCards && filterCards.length > 0 ? filterCards.map(card => (
-                        <div className='shadow w-full sm:w-80 h-56 border bg-white flex flex-col gap-1.5 p-5' key={card.id}>
-                            <h1 className='text-slate-700 border-b pb-2 h-8 text-xl font-black uppercase'>{card.name}</h1>
-                            <small className='h-5'>{t('card.validity')}: {card.validity} {t('card.days')}</small>
-                            <small className='h-5'>{t('card.balance')}: <span className='font-bold'>{card.balance}</span></small>
-                            <div className='h-5 flex gap-3 w-full items-center text-xs'>
-                                <label htmlFor="courses" className='w-24'>
-                                    {tt('courses')}:
-                                </label>
-                                <select id='courses' className='w-full px-2 h-5 outline-none rounded-sm cursor-pointer'>
-                                    {card.supported_courses.map(course => (
-                                        <option key={course.id}>{course.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className='h-5 flex gap-3 w-full items-center text-xs'>
-                                <label htmlFor="suppliers" className='w-24'>
-                                    {tt('suppliers')}:
-                                </label>
-                                <select id='suppliers' className='w-full px-2 h-5 outline-none rounded-sm cursor-pointer'>
-                                    {card.supported_suppliers.map(sup => (
-                                        <option key={sup.supplier.id}>{sup.supplier.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className='w-full flex justify-between mt-3'>
-                                <div className='flex items-center gap-2 text-sm'>{t('card.price')}: <span className='text-blue-600 font-bold'>¥{card.price}</span></div>
-                                <button disabled={isLoading} className={`text-sm w-1/3 ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} h-7 text-white rounded-md`} onClick={(e) => checkoutCard(e, card.id, router)}>{isLoading ?
-                                    <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' />
-                                    : t('card.buy')}</button>
-                            </div>
-                        </div>
-                    ))
-                        : skeleton.map(item => (
-                            <div className='border shadow w-full bg-white sm:w-80 h-56 flex flex-col gap-2 p-5' key={item}>
-                                <h1 className='text-slate-700 border-b pb-2 w-44 h-8 bg-slate-200 animate-pulse rounded-md'></h1>
-                                <div className='h-5 w-40 bg-slate-200 animate-pulse rounded-md'></div>
-                                <div className='h-5 w-24 bg-slate-200 animate-pulse rounded-md'></div>
-                                <ul className='w-full flex gap-3 h-5'>
-                                    <li className='h-5 w-24 bg-slate-200 animate-pulse rounded-md'></li>
-                                    <li className='h-5 w-full bg-slate-200 animate-pulse rounded-md'></li>
-                                </ul>
-                                <ul className='w-full flex gap-3 h-5'>
-                                    <li className='h-5 w-24 bg-slate-200 animate-pulse rounded-md'></li>
-                                    <li className='h-5 w-full bg-slate-200 animate-pulse rounded-md'></li>
-                                </ul>
-                                <div className='w-full flex justify-between mt-auto gap-4'>
-                                    <div className='w-1/2 bg-slate-200 animate-pulse h-7 rounded-md'></div>
-                                    <div className='px-5 h-7 bg-blue-200 animate-pulse rounded-md w-1/3'></div>
+        <div className='padding py-28 flex flex-col items-center text-muted-foreground'>
+            <Card className='w-full sm:bg-card sm:shadow 2xl:w-1/2'>
+                <CardHeader>
+                    <CardTitle className='text-3xl'>Grab Your Cards Now!</CardTitle>
+                </CardHeader>
+                <CardContent className='flex flex-col gap-5'>
+                    <div className='w-full sm:w-1/2 md:w-1/4 relative'>
+                        <Label htmlFor='search-card'>
+                            <FontAwesomeIcon icon={faSearch} width={16} height={16} className='absolute right-3 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer' />
+                        </Label>
+                        <Input id='search-card' value={searchQuery} onChange={(e) => setSearchQery(e.target.value)} placeholder={ttt('client-card.search')} />
+                    </div>
+                    <div className='w-full flex gap-5 items-center justify-evenly flex-wrap'>
+                        {filterCards && filterCards.length > 0 ? filterCards.map(card => (
+                            <form className='shadow w-full sm:w-72 h-auto border bg-card flex flex-col gap-2.5 p-5' key={card.id} onSubmit={(e) => checkoutCard(e, card.id, router)}>
+                                <h1 className='text-foreground border-b pb-2 text-xl font-black uppercase'>{card.name}</h1>
+                                <div className='flex items-center justify-between'>
+                                    <small className='h-5'>{t('card.validity')}: {card.validity} {t('card.days')}</small>
+                                    <small className='h-5'>{t('card.balance')}: {card.balance}</small>
                                 </div>
-                            </div>
-                        ))}
-                </div>
-                {availableCards && availableCards.length > maxVisibleItems && (
-                    <button
-                        onClick={() => setMaxVisibleItems((prevState) => prevState + 6)}
-                        className='text-blue-600 hover:text-blue-500 cursor-pointer mt-5'
-                    >
-                        {tt('show-more')}
-                    </button>
-                )}
-
-            </div>
-        </div>
+                                <div className="w-full items-center">
+                                    <Select>
+                                        <SelectTrigger>
+                                            {tt('courses')}
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {card.supported_courses.map(course => (
+                                                    <SelectItem key={course.id} value={course.id}>{course.name}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="w-full items-center">
+                                    <Select>
+                                        <SelectTrigger>
+                                            {tt('suppliers')}
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {card.supported_suppliers.map(supplier => (
+                                                    <SelectItem key={supplier.id} value={supplier.id}>{supplier.supplier.name}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className='w-full flex justify-between items-center'>
+                                    <Label className='flex items-center font-normal gap-2'>{t('card.price')}: <span className='text-primary font-bold'>¥{card.price}</span></Label>
+                                    <SubmitButton msg={t('card.buy')} />
+                                </div>
+                            </form>
+                        ))
+                            : searchQuery && filterCards && filterCards.length === 0 ? <div>No card found</div> : skeleton.map(item => (
+                                <div className='border shadow w-full bg-card sm:w-72 h-60 flex flex-col gap-2 p-5' key={item}>
+                                    <Skeleton className='border-b pb-2 w-44 h-8 rounded-md'></Skeleton>
+                                    <div className='flex items-center justify-between'>
+                                        <Skeleton className='h-5 w-24 rounded-md'></Skeleton>
+                                        <Skeleton className='h-5 w-24 rounded-md'></Skeleton>
+                                    </div>
+                                    <Skeleton className='h-5 w-full rounded-md'></Skeleton>
+                                    <Skeleton className='h-5 w-full rounded-md'></Skeleton>
+                                    <div className='w-full flex justify-between mt-auto gap-4'>
+                                        <Skeleton className='w-1/2 h-7 rounded-md'></Skeleton>
+                                        <Skeleton className='px-5 h-7 rounded-md w-1/3'></Skeleton>
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                    {availableCards && availableCards.length > maxVisibleItems && (
+                        <button
+                            onClick={() => setMaxVisibleItems((prevState) => prevState + 6)}
+                            className='text-blue-600 hover:text-blue-500 cursor-pointer mt-5'
+                        >
+                            {tt('show-more')}
+                        </button>
+                    )}
+                </CardContent>
+            </Card>
+        </div >
     )
 }
 

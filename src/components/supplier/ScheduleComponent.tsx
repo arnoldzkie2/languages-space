@@ -1,4 +1,5 @@
 import { SupplierSchedule } from "@/lib/types/super-admin/scheduleType"
+import { AVAILABLE, RESERVED } from "@/utils/constants";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -21,11 +22,10 @@ const ScheduleComponent: React.FC<Props> = (schedule) => {
     const isLoading = schedule.event.extendedProps.isLoading
 
     return (
-        <button disabled={isLoading} title={status === 'reserved' ? 'View Booking' : 'Delete Schedule'}
-            onClick={(e) => status === 'available' ? deleteSupplierSchedule(e, scheduleID) : viewBooking(booking![0].id)
+        <button disabled={isLoading} title={status === RESERVED ? 'View Booking' : 'Delete Schedule'}
+            onClick={(e) => status === AVAILABLE ? deleteSupplierSchedule(e, scheduleID) : viewBooking(booking![0].id)
             } className={`p-2 mx-2 my-0.5 relative w-full border 
-            ${status === 'reserved' ? 'bg-blue-600 text-white' :
-                    status === 'canceled' ? 'bg-orange-400 text-white' : 'bg-slate-100 text-gray-600 hover:text-red-500 hover:border-red-500'} cursor-pointer rounded-md flex items-center gap-2`}>
+            ${status === RESERVED ? 'bg-primary text-secondary' : 'bg-card text-muted-foreground hover:text-red-500 hover:border-red-500'} cursor-pointer rounded-md flex items-center gap-2`}>
             <strong>{time}</strong> {clientUsername || ''}
             <FontAwesomeIcon icon={faXmark} width={16} height={16} className="absolute right-3 top-3" />
         </button >

@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const withNextIntl = require('next-intl/plugin')();
 
-
 const nextConfig = {
   images: {
     domains: ["uploadthing.com", "utfs.io"], // Add more domains if needed
@@ -11,7 +10,7 @@ const nextConfig = {
       '@react-email/components',
       '@react-email/render',
       '@react-email/tailwind'
-  ]
+    ]
   }
 };
 

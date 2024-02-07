@@ -1,4 +1,3 @@
-import { ClientCardList } from "./clientCardType"
 import { Client } from "./clientType"
 import { Department } from "./globalType"
 
@@ -6,9 +5,9 @@ interface Order {
     id: string
     name: string
     client: Client
-    client_id: string
-    card: ClientCardList
-    card_id: string
+    clientID: string
+    card_name: string
+    cardID: string
     quantity: number
     price: number
     operator: string
@@ -22,8 +21,9 @@ interface Order {
 }
 
 interface OrderFormValue {
-    client: Client | null
-    card: ClientCardList | null
+    selectedClientID: string
+    price: number
+    selectedCardID: string
     name: string;
     express_number: string;
     status: string;

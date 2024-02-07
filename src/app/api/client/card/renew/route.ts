@@ -2,6 +2,7 @@ import { notFoundRes, badRequestRes, serverErrorRes, okayRes, unauthorizedRes } 
 import prisma from "@/lib/db"
 import { getAuth } from "@/lib/nextAuth"
 import { checkIsAdmin } from "@/utils/checkUser"
+import { ADMIN } from "@/utils/constants"
 
 export const POST = async (req: Request) => {
 
@@ -19,7 +20,7 @@ export const POST = async (req: Request) => {
         const card = await prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true, client: true } })
         if (!card) return notFoundRes('Client Card')
 
-        const { name, price, balance, invoice, validity, repeat_purchases, online_renews } = card.card
+        const { name, balance, validity } = card.card
 
         //renew the expsiration date
         const currentDate = new Date()
@@ -33,10 +34,9 @@ export const POST = async (req: Request) => {
         const renewCard = await prisma.clientCard.update({
             where: { id: card.id },
             data: {
-                name, price,
-                balance: card.balance + balance, invoice,
+                name,
+                balance: card.balance + balance,
                 validity: formattedExpirationDate,
-                repeat_purchases, online_renews
             }
         })
         if (!renewCard) return badRequestRes("Failed to renew card")
@@ -46,17 +46,16 @@ export const POST = async (req: Request) => {
         const createOrder = await prisma.order.create({
             data: {
                 client: { connect: { id: card.client.id } },
-                card: { connect: { id: card.id } },
+                name: `Renewed: ${card.card.name}`,
+                cardID: card.card.id,
                 price: card.price, quantity: 1,
-                operator: session.user.type,
+                operator: ADMIN,
                 status: 'paid',
-                note: 'renew',
-                department: { connect: { id: card.card.departmentID } }
+                departments: { connect: { id: card.card.departmentID } }
             }
         })
         if (!createOrder) return badRequestRes("Failed to create order")
         //return 400 response if it fails
-
 
         //return 200 response
         return okayRes()

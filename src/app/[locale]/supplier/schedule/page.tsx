@@ -9,21 +9,20 @@ import ScheduleComponent from '@/components/supplier/ScheduleComponent';
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import useSupplierStore from '@/lib/state/supplier/supplierStore'
 import { useTranslations } from 'next-intl'
-import CreateScheduleModal from '@/components/supplier/CreateScheduleModal'
 import Success from '@/components/global/Success'
 import BookingModal from '@/components/supplier/BookingModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import useSupplierBookingStore from '@/lib/state/supplier/supplierBookingStore'
 import useGlobalStore from '@/lib/state/globalStore'
-import RequestCancelBookingModal from '@/components/client/RequestCancelBookingModal'
+import SupplierCreateScheduleSheet from '@/components/supplier/SupplierCreateScheduleSheet'
 
 const Page = () => {
 
-  const { schedules, setCurrentDate, getSchedule, currentDate, newSchedule, toggleSchedule, deleteSupplierSchedule } = useAdminScheduleStore()
+  const { schedules, setCurrentDate, getSchedule, currentDate, deleteSupplierSchedule } = useAdminScheduleStore()
   const { isLoading } = useGlobalStore()
   const supplier = useSupplierStore(state => state.supplier)
-  const { viewBooking, bookingModal, requestCancelBooking } = useSupplierBookingStore()
+  const { viewBooking, bookingModal } = useSupplierBookingStore()
 
   const events = schedules.map(supplier => ({
     start: `${supplier.date}T${supplier.time}:00`,
@@ -69,7 +68,7 @@ const Page = () => {
       <div className='padding py-24 w-full h-full flex flex-col'>
         <div className='flex w-full justify-end gap-5 py-5 items-center'>
           <Success />
-          <button onClick={toggleSchedule} className='py-2 px-6 hover:bg-blue-500 bg-blue-600 text-white rounded-md'>{t('schedule.create')}</button>
+          <SupplierCreateScheduleSheet />
         </div>
         {supplier ? <FullCalendar
           plugins={[dayGridPlugin, listPlugin]}
@@ -89,7 +88,6 @@ const Page = () => {
           <FontAwesomeIcon icon={faSpinner} width={28} height={28} className='animate-spin w-7 h-7' />
         </div>}
       </div>
-      {newSchedule && <CreateScheduleModal />}
       {bookingModal && <BookingModal />}
     </>
   )

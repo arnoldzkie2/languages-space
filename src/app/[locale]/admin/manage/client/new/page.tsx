@@ -4,8 +4,6 @@ import SideNav from '@/components/super-admin/SideNav'
 import { newClientFormValue } from '@/lib/state/super-admin/clientStore'
 import { ClientFormData } from '@/lib/types/super-admin/clientType'
 import { UploadButton } from '@/utils/uploadthing'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import axios from 'axios'
 import { signIn, useSession } from 'next-auth/react'
@@ -14,9 +12,17 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import useGlobalStore from '@/lib/state/globalStore'
-import AdminSideNav from '@/components/admin/AdminSIdeNav'
-import useAdminPageStore from '@/lib/state/admin/adminPageStore'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 import SubmitButton from '@/components/global/SubmitButton'
+import { Checkbox } from '@/components/ui/checkbox'
+import Err from '@/components/global/Err'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
+import { toast } from 'sonner'
+import useAdminPageStore from '@/lib/state/admin/adminPageStore'
 
 const Page = () => {
 
@@ -30,24 +36,31 @@ const Page = () => {
     const router = useRouter()
 
     const t = useTranslations('super-admin')
-    const permissions = useAdminPageStore(s => s.permissions)
+
     const [formData, setFormData] = useState<ClientFormData>(newClientFormValue)
-
-    const { isSideNavOpen, err, setErr, setOkMsg, deleteProfile, prevProfileKey, setPrevProfileKey, departmentID, setIsLoading } = useGlobalStore()
-
-    const registerUser = async (e: any) => {
+    const { admin, isAdminAllowed } = useAdminPageStore()
+    const { isSideNavOpen, setErr, setOkMsg, deleteProfile, prevProfileKey, setPrevProfileKey, setIsLoading } = useGlobalStore()
+    const { departments, getDepartments, departmentID } = useDepartmentStore()
+    const registerUser = async (e: React.FormEvent) => {
 
         e.preventDefault()
-        const { username, password } = formData
+        const { username, password, departments } = formData
         if (password.length < 3) return setErr('Password minimum length 3')
         if (!username) return setErr('Username Cannot Be Empty')
 
+        if (admin) {
+            formData.departments = [departmentID]
+        } else {
+            if (departments.length < 1) return setErr("Select Department")
+        }
+
         try {
             setIsLoading(true)
-            const { data } = await axios.post('/api/client', { ...formData, departments: [departmentID] })
+            const { data } = await axios.post('/api/client', formData)
 
             if (data.ok) {
                 setIsLoading(false)
+                toast("Success! client created")
                 router.push('/admin/manage/client')
             }
 
@@ -62,177 +75,194 @@ const Page = () => {
 
     }
 
-    const handleChange = (e: any) => {
-        const { name, type, value, checked } = e.target;
-        let updatedFormData: any = { ...formData }; // Create a copy of the formData
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }))
+    };
 
-        if (type === "checkbox") {
-            if (checked) {
-                updatedFormData.departments = [...updatedFormData.departments, value];
-            } else {
-                updatedFormData.departments = updatedFormData.departments.filter((deptId: any) => deptId !== value);
-            }
+    const handleCheckboxChange = (isChecked: boolean, deptId: string) => {
+        if (isChecked) {
+            // If checkbox is checked, add deptId to formData.departments
+            setFormData(prevState => ({
+                ...prevState,
+                departments: [...prevState.departments, deptId]
+            }));
         } else {
-            updatedFormData[name] = value; // Use a type assertion for the key
+            // If checkbox is unchecked, remove deptId from formData.departments
+            setFormData(prevState => ({
+                ...prevState,
+                departments: prevState.departments.filter(id => id !== deptId)
+            }));
         }
-        setFormData(updatedFormData)
     };
 
     useEffect(() => {
         setPrevProfileKey('')
+        if (!admin) getDepartments()
     }, [])
 
     useEffect(() => {
 
         if (prevProfileKey) {
-
             deleteProfile(prevProfileKey)
             setPrevProfileKey(formData.profile_key)
-
         } else {
-
             setPrevProfileKey(formData.profile_key)
-
         }
 
     }, [formData.profile_key])
-
-    const clientHeaderSkeleton = (
-        <li className='bg-slate-200 w-32 h-5 rounded-3xl animate-pulse'></li>
-    )
 
     const tt = useTranslations('global')
 
     return (
         <div className=''>
 
-            <AdminSideNav />
+            <SideNav />
 
-            <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-40' : 'pl-16'}`}>
+            <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-                <nav className={`border-b h-20 flex items-center bg-white px-8 justify-between`}>
-                    <h1 className='font-black text-gray-600 text-xl uppercase'>{t('client.create')}</h1>
-                    <ul className='flex items-center h-full ml-auto gap-5'>
-                        {session.status !== 'loading' && permissions?.view_client ?
-                            <Link href={'/manage/client'} className='flex items-center text-gray-600 justify-center w-32 hover:text-blue-600 cursor-pointer gap-1'>
+                <nav className={`border-b h-20 flex items-center px-8 justify-between`}>
+                    <h1 className='font-black text-xl uppercase'>{t('client.create')}</h1>
+                    <ul className='flex items-center h-full ml-auto gap-5 text-muted-foreground'>
+                        {isAdminAllowed('view_client') &&
+                            <Link href={'/admin/manage/client'} className='flex items-center justify-center w-32 hover:hover:text-primary cursor-pointer gap-1'>
                                 <div>{t('client.h1')}</div>
-                            </Link> : clientHeaderSkeleton}
-                        {session.status !== 'loading' && permissions?.view_cards ?
-                            <Link href={'/manage/client/card'} className='flex items-center text-gray-600 justify-center w-32 hover:text-blue-600 cursor-pointer gap-1'>
-                                <div>{t('client-card.h1')}</div>
-                            </Link> : clientHeaderSkeleton}
-                        {session.status !== 'loading' && permissions?.bind_cards ? <Link href={'/manage/client/card/bind'} className='flex items-center gap-1 text-gray-600 justify-center w-32 hover:text-blue-600 cursor-pointer'>
-                            <div>{t('client.card.bind')}</div>
-                        </Link> : clientHeaderSkeleton}
+                            </Link>}
                     </ul>
                 </nav>
 
                 <div className='w-full px-8'>
 
-                    <form className='w-1/2 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={registerUser}>
-                        {err && <small className='w-full text-red-400'>{err}</small>
-                        }
-                        <div className='w-full flex gap-20'>
+                    <Card className='w-[40%] h-full'>
+                        <CardHeader>
+                            <CardTitle>{t('client.create')}</CardTitle>
+                            <CardDescription></CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={registerUser} className='w-full flex flex-col'>
+                                <Err />
+                                <div className='w-full flex gap-20'>
 
-                            <div className='w-full flex flex-col gap-4'>
+                                    <div className='w-full flex flex-col gap-4'>
 
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="name" className='font-medium px-2'>{tt('name')} {tt('optional')}</label>
-                                    <input value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none py-1 px-3' id='name' />
-                                </div>
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="name">{tt("name")}</Label>
+                                            <Input type="text" id="name" name='name' placeholder={tt("name")} value={formData.name} onChange={handleChange} />
+                                        </div>
 
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="username" className='font-medium px-2'>{tt('username')}</label>
-                                    <input required value={formData.username} onChange={handleChange} name='username' type="text" className='w-full border outline-none py-1 px-3' id='username' />
-                                </div>
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="username">{tt("username")}</Label>
+                                            <Input type="text" id="username" name='username' placeholder={tt("username")} value={formData.username} onChange={handleChange} />
+                                        </div>
 
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="email" className='font-medium px-2'>{tt('email')} {tt('optional')}</label>
-                                    <input value={formData.email} onChange={handleChange} name='email' type="text" className='w-full border outline-none py-1 px-3' id='email' />
-                                </div>
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="email">{tt("email")}</Label>
+                                            <Input type="email" id="email" name='email' placeholder={tt("email")} value={formData.email} onChange={handleChange} />
+                                        </div>
 
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="password" className='font-medium px-2'>{tt('password')}</label>
-                                    <input required value={formData.password} onChange={handleChange} name='password' type="text" className='w-full border outline-none py-1 px-3' id='password' />
-                                </div>
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="password">{tt("password")}</Label>
+                                            <Input type="text" id="password" name='password' placeholder={tt("password")} value={formData.password} onChange={handleChange} />
+                                        </div>
 
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="phone" className='font-medium px-2'>{tt('phone')} {tt('optional')}</label>
-                                    <input value={formData.phone_number} onChange={handleChange} name='phone_number' type="text" className='w-full border outline-none py-1 px-3' id='phone' />
-                                </div>
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="phone_number">{tt("phone")}</Label>
+                                            <Input type="number" id="phone_number" name='phone_number' placeholder={tt("phone")} value={formData.phone_number} onChange={handleChange} />
+                                        </div>
 
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="organization" className='font-medium px-2'>{tt('organization')} {tt('optional')}</label>
-                                    <input value={formData.organization} onChange={handleChange} name='organization' type="text" className='w-full border outline-none py-1 px-3' id='organization' />
-                                </div>
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="organization">{tt("organization")}</Label>
+                                            <Input type="text" id="organization" name='organization' placeholder={tt("organization")} value={formData.organization} onChange={handleChange} />
+                                        </div>
 
-                            </div>
-
-                            <div className='w-full flex flex-col gap-4'>
-
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="gender" className='font-medium px-2'>{tt('gender')} {tt('optional')}</label>
-                                    <select name="gender" id="gender" onChange={handleChange} value={formData.gender} className='py-1 outline-none px-3 border'>
-                                        <option value="" disabled>{tt('select-gender')}</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="others">Others</option>
-                                    </select>
-                                </div>
-
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="address" className='font-medium px-2'>{tt('address')} {tt('optional')}</label>
-                                    <input value={formData.address} onChange={handleChange} name='address' type="text" className='w-full border outline-none py-1 px-3' id='address' />
-                                </div>
-
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="origin" className='font-medium px-2'>{tt('origin')} {tt('optional')}</label>
-                                    <input value={formData.origin} onChange={handleChange} name='origin' type="text" className='w-full border outline-none py-1 px-3' id='origin' />
-                                </div>
-
-                                <div className='w-full flex flex-col gap-2'>
-                                    <label htmlFor="note" className='font-medium px-2'>{tt('note')} {tt('optional')}</label>
-                                    <input value={formData.note} onChange={handleChange} name='note' type="text" className='w-full border outline-none py-1 px-3' id='note' />
-                                </div>
-
-                                <div className='flex w-full justify-around items-center'>
-
-                                    <Image width={120} height={120} src={formData.profile_url || '/profile/profile.svg'} alt='Client Profile' className='rounded-full border' />
-
-                                    <div className='flex flex-col gap-3'>
-                                        <label className='block font-medium'>{tt('profile')}</label>
-                                        <UploadButton
-                                            endpoint="profileUploader"
-                                            onClientUploadComplete={async (res) => {
-                                                // Do something with the response
-                                                if (res) {
-
-                                                    setFormData(prevState => ({ ...prevState, profile_url: res[0].url, profile_key: res[0].key }))
-                                                    setOkMsg('Profile Changed')
-                                                    setTimeout(() => {
-                                                        setOkMsg('')
-                                                    }, 4000)
-                                                }
-                                            }}
-                                            onUploadError={(error: Error) => {
-                                                setErr('Something went wrong.')
-
-                                            }}
-                                        />
                                     </div>
 
+                                    <div className='w-full flex flex-col gap-4'>
+
+                                        <div className="w-full items-center gap-1.5">
+                                            <Label>{tt('gender')}</Label>
+                                            <Select onValueChange={(gender) => setFormData(prev => ({ ...prev, gender }))} value={formData.gender}>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder={tt('select-gender')} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectLabel>{tt('gender')}</SelectLabel>
+                                                        <SelectItem value="male">Male</SelectItem>
+                                                        <SelectItem value="female">Female</SelectItem>
+                                                        <SelectItem value="others">Others</SelectItem>
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="address">{tt("address")}</Label>
+                                            <Input type="text" id="address" name='address' placeholder={tt("address")} value={formData.address} onChange={handleChange} />
+                                        </div>
+
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="origin">{tt("origin")}</Label>
+                                            <Input type="text" id="origin" name='origin' placeholder={tt("origin")} value={formData.origin} onChange={handleChange} />
+                                        </div>
+
+                                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                                            <Label htmlFor="note">{tt("note")}</Label>
+                                            <Input type="text" id="note" name='note' placeholder={tt("note")} value={formData.note} onChange={handleChange} />
+                                        </div>
+
+                                        {!admin && <div className='w-full flex flex-col gap-2'>
+                                            <Label className='block font-medium'>{tt('departments')}</Label>
+                                            {departments && departments.map((dept) => (
+                                                <div key={dept.id} className="flex items-center">
+                                                    <Checkbox
+                                                        onCheckedChange={(isChecked: boolean) => handleCheckboxChange(isChecked, dept.id)}
+                                                        id={`department_${dept.id}`}
+                                                        name={`department_${dept.id}`}
+                                                        value={dept.id}
+                                                        checked={formData.departments.includes(dept.id)}
+                                                        className="mr-2"
+                                                    />
+                                                    <Label htmlFor={`department_${dept.id}`} className="mr-4">{dept.name}</Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        }
+                                        <div className='flex w-full justify-between gap-5 items-center'>
+
+                                            <Image width={90} height={90} src={formData.profile_url || '/profile/profile.svg'} alt='Client Profile' className='rounded-full bg-foreground border' />
+
+                                            <div className='flex flex-col gap-3'>
+                                                <label className='block font-medium'>{tt('profile')}</label>
+                                                <UploadButton
+                                                    appearance={
+                                                        { button: 'bg-primary text-sm' }
+                                                    }
+                                                    endpoint="profileUploader"
+                                                    onClientUploadComplete={async (res) => {
+                                                        // Do something with the response
+                                                        if (res) {
+                                                            setFormData(prevState => ({ ...prevState, profile_url: res[0].url, profile_key: res[0].key }))
+                                                            toast('Profile Changed')
+                                                        }
+                                                    }}
+                                                    onUploadError={(error: Error) => {
+                                                        setErr('Something went wrong.')
+                                                    }}
+                                                />
+                                            </div>
+
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className='flex items-center gap-10 w-1/2 self-end'>
-                            <Link href={'/admin/manage/client'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{tt('cancel')}</Link>
-                            <SubmitButton msg={tt('create')} style='w-full bg-blue-600 rounded-md py-2 text-white' />
-                        </div>
-
-                    </form>
-
+                                <div className='flex items-center gap-10 w-1/2 self-end pt-5'>
+                                    <Button variant={'ghost'} className='w-full' onClick={() => router.push('/admin/manage/client')} type='button'>{tt('cancel')}</Button>
+                                    <SubmitButton msg={tt('create')} style='w-full' />
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
                 </div>
-
             </div>
 
         </div>

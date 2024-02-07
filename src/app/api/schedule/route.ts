@@ -181,7 +181,7 @@ export const DELETE = async (req: NextRequest) => {
                 //refund the client's card by the supplier price amount
                 const refundClient = await prisma.clientCard.update({
                     where: { id: booking[0].clientCardID },
-                    data: { balance: card.balance + supplierPrice.price }
+                    data: { balance: Number(card.balance) + Number(supplierPrice.price) }
                 })
                 if (!refundClient) return badRequestRes()
 

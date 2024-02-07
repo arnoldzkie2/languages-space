@@ -1,7 +1,7 @@
-import useAdminAgentStore from '@/lib/state/super-admin/agentStore';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
-import SendPayslipButton from '../../SendPayslipButton';
 
 interface Props {
 
@@ -23,49 +23,44 @@ const SearchAdmin: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const tt = useTranslations('global')
 
     return (
-        <div className='pt-4 mt-4 border-t border-gray-300 w-full'>
-            <div className='flex justify-between items-center mb-2 font-medium px-2'>
+        <div className='pt-4 mt-4 border-t w-full'>
+            <Label className='flex justify-between items-center mb-2 font-medium px-2'>
                 {t('admin.search')}
-            </div>
+            </Label>
             <div>
-                <div className='flex flex-col text-gray-700 gap-3'>
+                <div className='flex flex-col gap-3'>
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('name')}
                         name='name'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.name}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('phone')}
                         name='phone_number'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.phone_number}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('organization')}
                         name='organization'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.organization}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('origin')}
                         name='origin'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.origin}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('note')}
                         name='note'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.note}
                     />

@@ -5,6 +5,8 @@ import useAdminBookingStore from '../super-admin/bookingStore'
 import useGlobalStore from '../globalStore'
 import useClientStore from './clientStore'
 import useClientCardStore from './clientCardStore'
+import { toast } from 'sonner'
+import { CONFIRMED } from '@/utils/constants'
 
 interface ClientBookingStore {
     bookings: Booking[] | null
@@ -31,19 +33,20 @@ interface ClientBookingStore {
     bookingRequestModal: boolean
     openBookingRequestModal: () => void
     closeBookingRequestModal: () => void
-    createBookingRequest: (e: React.FormEvent, router: any) => Promise<void>
     cancelBookingRequest: (e: React.FormEvent, bookingRequestID: string) => Promise<void>
+    createBookingRequest: (e: React.FormEvent, data: {
+        date: string;
+        time: string;
+        router: any;
+    }) => Promise<void>
 }
 
 const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
     bookings: null,
     getBookings: async () => {
-
         try {
-
             const { data } = await axios.get('/api/client/booking')
             if (data.ok) set({ bookings: data.data })
-
         } catch (error: any) {
             console.log(error);
             if (error.response.data.msg) {
@@ -63,7 +66,7 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
 
         e.preventDefault()
         const { bookingFormData } = useAdminBookingStore.getState()
-        const { setIsLoading, setErr, setOkMsg } = useGlobalStore.getState()
+        const { setIsLoading, setErr } = useGlobalStore.getState()
         const { client } = useClientStore.getState()
         const getBookings = useClientBookingStore.getState().getBookings
         const getCards = useClientCardStore.getState().getCards
@@ -86,14 +89,12 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
             })
 
             if (data.ok) {
-                setOkMsg('Success Redirecting...')
+                toast('Success! booking created.')
                 getBookings()
                 getCards()
-                setTimeout(() => {
-                    setIsLoading(false)
-                    closeBookingModal()
-                    router.push('/client/profile/bookings')
-                }, 2000)
+                setIsLoading(false)
+                closeBookingModal()
+                router.push('/client/profile/bookings')
             }
 
         } catch (error: any) {
@@ -110,7 +111,6 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
         e.preventDefault()
         const setErr = useGlobalStore.getState().setErr
         const setIsLoading = useGlobalStore.getState().setIsLoading
-        const setOkMsg = useGlobalStore.getState().setOkMsg
         const getBookings = get().getBookings
 
         try {
@@ -123,7 +123,7 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
             if (data.ok) {
                 getBookings()
                 setIsLoading(false)
-                setOkMsg('Success')
+                toast("Success! booking canceled.")
             }
 
         } catch (error: any) {
@@ -145,7 +145,7 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
 
         e.preventDefault()
 
-        const { setErr, setIsLoading, setOkMsg } = useGlobalStore.getState()
+        const { setErr, setIsLoading } = useGlobalStore.getState()
         const { requestCancelForm, getBookings, closeRequestCancelBookingaModal } = get()
         try {
             requestCancelForm.note = requestCancelForm.note.slice(0, 150)
@@ -155,7 +155,7 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
             if (data.ok) {
                 getBookings()
                 setIsLoading(false)
-                setOkMsg("Request sent successfully!")
+                toast("Success! Request sent successfully!")
                 closeRequestCancelBookingaModal()
             }
 
@@ -206,7 +206,7 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
 
         e.preventDefault()
         const { bookingFormData } = useAdminBookingStore.getState()
-        const { setIsLoading, setErr, setOkMsg } = useGlobalStore.getState()
+        const { setIsLoading, setErr } = useGlobalStore.getState()
         const { client } = useClientStore.getState()
         const getBookingRequests = useClientBookingStore.getState().getBookingRequests
         const getCards = useClientCardStore.getState().getCards
@@ -219,24 +219,27 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
             if (!supplierID) return setErr('Select Supplier')
             if (!clientCardID) return setErr('Select Card')
             if (!meetingInfoID) return setErr("Select Meeting Info")
+            if (!time) return setErr("Time is required")
+            if (!date) return setErr("Select Date")
+
 
             setIsLoading(true)
 
+            const today = new Date().toISOString().split('T')[0];
+
             const { data } = await axios.post('/api/booking/request', {
-                clientID: client?.id, clientCardID, date, time, note,
-                courseID, supplierID, meetingInfoID, settlement: '2024-01-20',
-                operator: 'client', status: 'confirmed', quantity: 1, name: '1v1 Class'
+                clientID: client?.id, clientCardID, date, time, note, quantity: 1,
+                courseID, supplierID, meetingInfoID, settlement: today,
+                operator: 'client', status: CONFIRMED, name: '1v1 Class'
             })
 
             if (data.ok) {
-                setOkMsg('Success Redirecting...')
+                setIsLoading(false)
+                closeBookingModal()
+                toast('Success! booking request created.')
                 getBookingRequests()
                 getCards()
-                setTimeout(() => {
-                    setIsLoading(false)
-                    closeBookingModal()
-                    router.push('/client/profile/booking-requests')
-                }, 2000)
+                router.push('/client/profile/booking-requests')
             }
 
         } catch (error: any) {
@@ -253,7 +256,6 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
         e.preventDefault()
         const setErr = useGlobalStore.getState().setErr
         const setIsLoading = useGlobalStore.getState().setIsLoading
-        const setOkMsg = useGlobalStore.getState().setOkMsg
         const getBookingRequests = get().getBookingRequests
 
         try {
@@ -264,7 +266,7 @@ const useClientBookingStore = create<ClientBookingStore>((set, get) => ({
             if (data.ok) {
                 getBookingRequests()
                 setIsLoading(false)
-                setOkMsg('Success')
+                toast('Success! booking request canceled.')
             }
 
         } catch (error: any) {

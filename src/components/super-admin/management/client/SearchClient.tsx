@@ -1,8 +1,10 @@
 'use'
 import { useTranslations } from 'next-intl';
-import React, { ChangeEvent } from 'react';
-import DownloadTable from '../DownloadTable';
+import React, { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Props {
 
@@ -17,9 +19,18 @@ interface Props {
         cards: boolean
     }
 
+    setSearchQuery: Dispatch<SetStateAction<{
+        username: string;
+        phone_number: string;
+        organization: string;
+        origin: string;
+        note: string;
+        cards: boolean;
+    }>>
+
 }
 
-const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
+const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQuery }) => {
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
@@ -27,60 +38,52 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const { clientWithCards, selectedClients } = useAdminClientStore()
 
     return (
-        <div className='pt-4 mt-4 border-t border-gray-300 w-full'>
+        <div className='pt-4 mt-4 border-t w-full'>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
                 {t('client.search')}
             </div>
             <div>
-                <div className='flex flex-col text-gray-700 gap-3'>
+                <div className='flex flex-col gap-3'>
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('username')}
                         name='username'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.username}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('phone')}
                         name='phone_number'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.phone_number}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('organization')}
                         name='organization'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.organization}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('origin')}
                         name='origin'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.origin}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('note')}
                         name='note'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.note}
                     />
 
                     <div className='flex items-center gap-3 px-3'>
-                        <label htmlFor="cards" className='cursor-pointer'>{t('client.with-cards')}</label>
-                        <input id='cards' type="checkbox" name='cards' onChange={handleSearch} checked={searchQuery.cards} />
+                        <Label htmlFor="cards" className='cursor-pointer'>{t('client.with-cards')}</Label>
+                        <Checkbox checked={searchQuery.cards} onCheckedChange={() => setSearchQuery(prev => ({ ...prev, cards: !prev.cards }))} />
                     </div>
-
-                    {searchQuery.cards && <DownloadTable tables={clientWithCards} selectedTable={selectedClients} />}
-
                 </div>
             </div>
         </div>

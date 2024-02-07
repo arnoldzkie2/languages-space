@@ -77,6 +77,7 @@ export const GET = async (req: Request) => {
                         supplier: {
                             ...supplier.supplier,
                             meeting_info: undefined,
+                            schedule: [supplier.supplier.schedule.length]
                         },
                     }));
 

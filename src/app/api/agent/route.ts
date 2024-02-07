@@ -18,36 +18,6 @@ export const GET = async (req: NextRequest) => {
         const departmentID = getSearchParams(req, 'departmentID')
         const agentID = getSearchParams(req, 'agentID')
 
-        if (departmentID) {
-
-            //check department and get all agents in this department
-            const department = await prisma.department.findUnique({
-                where: {
-                    id: departmentID
-                },
-                select: {
-                    agents: {
-                        select: {
-                            id: true,
-                            name: true,
-                            username: true,
-                            organization: true,
-                            origin: true,
-                            note: true,
-                            created_at: true
-                        },
-                        orderBy: {
-                            created_at: 'desc'
-                        }
-                    }
-                }
-            })
-            //return 404 if department not found
-            if (!department) return notFoundRes("Department")
-            //return 200 response and pass the agents as data            
-            return okayRes(department.agents)
-        }
-
         if (agentID) {
 
             //retrieve agent
@@ -66,6 +36,51 @@ export const GET = async (req: NextRequest) => {
             //return 200 response
         }
 
+        if (departmentID) {
+
+            //check department and get all agents in this department
+            const department = await prisma.department.findUnique({
+                where: {
+                    id: departmentID
+                },
+                select: {
+                    agents: {
+                        select: {
+                            id: true,
+                            name: true,
+                            username: true,
+                            organization: true,
+                            origin: true,
+                            note: true,
+                            created_at: true,
+                            balance: {
+                                include: {
+                                    earnings: true,
+                                    deductions: true
+                                }
+                            },
+                            invites: true
+                        },
+                        orderBy: {
+                            created_at: 'desc'
+                        }
+                    }
+                }
+            })
+            //return 404 if department not found
+            if (!department) return notFoundRes("Department")
+            
+            const filterAgent = department.agents.map(agent => ({
+                ...agent,
+                balance: undefined,
+                invites: agent.invites.length > 0 ? true : false,
+                deductions: agent.balance[0].deductions.length > 0 ? true : false,
+                earnings: agent.balance[0].earnings.length > 0 ? true : false
+            }))
+            //return 200 response and pass the agents as data            
+            return okayRes(filterAgent)
+        }
+
         //get all agents
         const allAgents = await prisma.agent.findMany({
             select: {
@@ -75,7 +90,14 @@ export const GET = async (req: NextRequest) => {
                 organization: true,
                 origin: true,
                 note: true,
-                created_at: true
+                created_at: true,
+                balance: {
+                    include: {
+                        earnings: true,
+                        deductions: true
+                    }
+                },
+                invites: true
             },
             orderBy: {
                 created_at: 'desc'
@@ -83,9 +105,17 @@ export const GET = async (req: NextRequest) => {
         })
         //return 400 response if it fails
         if (!allAgents) return badRequestRes("Failed to get all agents")
+        console.log(allAgents)
+        const filterAgent = allAgents.map(agent => ({
+            ...agent,
+            balance: undefined,
+            invites: agent.invites.length > 0 ? true : false,
+            deductions: agent.balance[0].deductions.length > 0 ? true : false,
+            earnings: agent.balance[0].earnings.length > 0 ? true : false
+        }))
+        //return 200 response and pass the agents as data        
 
-        return okayRes(allAgents)
-
+        return okayRes(filterAgent)
     } catch (error) {
         console.log(error);
         return serverErrorRes(error)

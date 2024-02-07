@@ -20,7 +20,8 @@ export const POST = async (req: NextRequest) => {
             operator,
             cardName,
             cardBalance,
-            price
+            price,
+            bookingRequestID
         } = await req.json()
 
         //send supplier email without waiting
@@ -30,6 +31,7 @@ export const POST = async (req: NextRequest) => {
                 to: supplierEmail,
                 subject: `Booking Request Created - Schedule: ${date} at ${time}`,
                 react: SupplierBookingRequestCreated({
+                    bookingRequestID,
                     supplierName: supplierName,
                     clientName: clientName,
                     schedule: {

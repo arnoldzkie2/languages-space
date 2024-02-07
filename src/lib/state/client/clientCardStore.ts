@@ -11,7 +11,7 @@ interface ClientCardStore {
     getAvailableCardsToBuy: () => Promise<void>
     setSelectedCardID: (cardID: string) => void
     selectedCardID: string
-    checkoutCard: (e: React.FormEvent<HTMLButtonElement>, cardID: string, router: any) => Promise<void>
+    checkoutCard: (e: React.FormEvent, cardID: string, router: any) => Promise<void>
 }
 
 const useClientCardStore = create<ClientCardStore>((set, get) => ({
@@ -48,7 +48,7 @@ const useClientCardStore = create<ClientCardStore>((set, get) => ({
         }
 
     },
-    checkoutCard: async (e: React.FormEvent<HTMLButtonElement>, cardID: string, router: any) => {
+    checkoutCard: async (e: React.FormEvent, cardID: string, router: any) => {
 
         e.preventDefault()
         const setIsLoading = useGlobalStore.getState().setIsLoading

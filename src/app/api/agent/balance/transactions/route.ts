@@ -141,7 +141,7 @@ export const POST = async (req: NextRequest) => {
             const balance = agent.balance[0]
 
             //check if agent has enough balance to request a payment
-            if (!balance.amount) return NextResponse.json({ msg: "Not enough balance to request a payment" }, { status: 400 })
+            if (!Number(balance.amount)) return badRequestRes("Not enough balance to request a payment")
 
             const returnCurrency = (currency: string) => {
                 switch (currency) {

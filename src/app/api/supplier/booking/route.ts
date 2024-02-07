@@ -56,9 +56,9 @@ export const GET = async (req: NextRequest) => {
                                 time: true
                             },
                         },
-                        supplier: {
+                        client: {
                             select: {
-                                name: true
+                                username: true
                             }
                         },
                         card_name: true,

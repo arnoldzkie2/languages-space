@@ -1,62 +1,39 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import { useTranslations } from 'next-intl';
 import { AdminPermission } from '@prisma/client';
+import PermissionSwitch from './PermissionSwitch';
 
 const FormOrdersPermission: React.FC<{
-  handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleCheckboxChange: (isChecked: boolean, name: string) => void
   permissionData: AdminPermission;
 }> = (props) => {
-  const { permissionData, handleChange } = props;
+  const { permissionData, handleCheckboxChange } = props;
   const t = useTranslations('super-admin');
 
   return (
-    <div className='flex flex-col gap-1 w-1/2'>
-      <div className='font-bold text-lg'>{t('order.h1')}</div>
+    <div className='flex flex-col gap-1 w-full'>
+      <div className='font-bold text-lg text-foreground'>{t('order.h1')}</div>
 
-      <div className='flex items-center w-full justify-between'>
-        <label htmlFor="view_orders" className={`cursor-pointer ${permissionData.view_orders ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.view-orders')}</label>
-        <input
-          type="checkbox"
-          checked={permissionData.view_orders}
-          onChange={handleChange}
-          id='view_orders'
-          className='w-4 h-4'
-          name='view_orders'
-        />
-      </div>
-      <div className='flex items-center w-full justify-between'>
-        <label htmlFor="create_orders" className={`cursor-pointer ${permissionData.create_orders ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.create-orders')}</label>
-        <input
-          type="checkbox"
-          checked={permissionData.create_orders}
-          onChange={handleChange}
-          id='create_orders'
-          className='w-4 h-4'
-          name='create_orders'
-        />
-      </div>
-      <div className='flex items-center w-full justify-between'>
-        <label htmlFor="update_orders" className={`cursor-pointer ${permissionData.update_orders ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.update-orders')}</label>
-        <input
-          type="checkbox"
-          checked={permissionData.update_orders}
-          onChange={handleChange}
-          id='update_orders'
-          className='w-4 h-4'
-          name='update_orders'
-        />
-      </div>
-      <div className='flex items-center w-full justify-between'>
-        <label htmlFor="delete_orders" className={`cursor-pointer ${permissionData.delete_orders ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.delete-orders')}</label>
-        <input
-          type="checkbox"
-          checked={permissionData.delete_orders}
-          onChange={handleChange}
-          id='delete_orders'
-          className='w-4 h-4'
-          name='delete_orders'
-        />
-      </div>
+      <PermissionSwitch
+        label={t('admin.permissions.view_orders')}
+        onCheckedChange={handleCheckboxChange}
+        checked={permissionData.view_orders}
+        permissionKey='view_orders' />
+      <PermissionSwitch
+        label={t('admin.permissions.create_orders')}
+        onCheckedChange={handleCheckboxChange}
+        checked={permissionData.create_orders}
+        permissionKey='create_orders' />
+      <PermissionSwitch
+        label={t('admin.permissions.update_orders')}
+        onCheckedChange={handleCheckboxChange}
+        checked={permissionData.update_orders}
+        permissionKey='update_orders' />
+      <PermissionSwitch
+        label={t('admin.permissions.delete_orders')}
+        onCheckedChange={handleCheckboxChange}
+        checked={permissionData.delete_orders}
+        permissionKey='delete_orders' />
     </div>
   );
 };

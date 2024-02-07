@@ -1,12 +1,19 @@
-import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { badRequestRes, createdRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import prisma from "@/lib/db";
-import { NextResponse } from "next/server";
+import { getAuth } from "@/lib/nextAuth";
+import { checkIsAdmin } from "@/utils/checkUser";
 
 export const POST = async (req: Request) => {
 
-    const { content, title, author, keywords, departmentID } = await req.json()
-
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
+        const { content, title, author, keywords, departmentID } = await req.json()
 
         const createNews = await prisma.news.create({
             data: { content, title, author, keywords, department: { connect: { id: departmentID } } }
@@ -14,7 +21,7 @@ export const POST = async (req: Request) => {
         })
         if (!createNews) return badRequestRes()
 
-        return createdRes(createNews)
+        return createdRes()
 
     } catch (error) {
         console.log(error);
@@ -26,11 +33,11 @@ export const POST = async (req: Request) => {
 
 export const GET = async (req: Request) => {
 
-    const { searchParams } = new URL(req.url)
-    const newsID = searchParams.get('newsID')
-    const departmentID = searchParams.get('departmentID')
-
     try {
+
+        const { searchParams } = new URL(req.url)
+        const newsID = searchParams.get('newsID')
+        const departmentID = searchParams.get('departmentID')
 
         if (newsID) {
 
@@ -41,7 +48,6 @@ export const GET = async (req: Request) => {
             if (!singleNews) return notFoundRes('News')
 
             return okayRes(singleNews)
-
         }
 
         if (departmentID) {
@@ -64,7 +70,6 @@ export const GET = async (req: Request) => {
             if (!newsDepartment) return badRequestRes()
 
             return okayRes(newsDepartment.news)
-
         }
 
         const allNews = await prisma.news.findMany({
@@ -91,11 +96,17 @@ export const GET = async (req: Request) => {
 
 export const PATCH = async (req: Request) => {
 
-    const { searchParams } = new URL(req.url);
-    const newsID = searchParams.get('newsID');
-    const { content, title, author, keywords, departmentID } = await req.json()
-
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
+        const { searchParams } = new URL(req.url);
+        const newsID = searchParams.get('newsID');
+        const { content, title, author, keywords, departmentID } = await req.json()
 
         if (newsID) {
 
@@ -118,7 +129,7 @@ export const PATCH = async (req: Request) => {
             });
             if (!updatedNews) return badRequestRes()
 
-            return okayRes(updatedNews)
+            return okayRes()
 
         }
 
@@ -135,25 +146,27 @@ export const PATCH = async (req: Request) => {
 
 export const DELETE = async (req: Request) => {
 
-    const { searchParams } = new URL(req.url);
-    const ids = searchParams.getAll('id');
-
     try {
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
+        const { searchParams } = new URL(req.url);
+        const ids = searchParams.getAll('newsID');
 
         if (ids.length > 0) {
 
             const deletedNews = await prisma.news.deleteMany({
-
                 where: { id: { in: ids } },
 
             })
-            if (deletedNews.count === 0) return notFoundRes('News')
-
-            return NextResponse.json({ ok: true }, { status: 200 });
-
+            if (deletedNews.count === 0) return notFoundRes("News")
+            return okayRes()
         }
 
-        return notFoundRes('Nwes')
+        return notFoundRes('News')
 
     } catch (error) {
         console.log(error);

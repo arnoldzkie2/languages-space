@@ -83,7 +83,7 @@ export const POST = async (req: NextRequest) => {
         const [updateSupplierBalance, createDeductions] = await Promise.all([
             prisma.supplierBalance.update({
                 where: { id: supplier.balance[0].id }, data: {
-                    amount: supplier.balance[0].amount - amount
+                    amount: Number(supplier.balance[0].amount) - amount
                 }
             }),
             prisma.supplierDeductions.create({

@@ -1,42 +1,52 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-
-import useGlobalStore from "@/lib/state/globalStore";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import useDepartmentStore from "@/lib/state/super-admin/departmentStore";
+import { ADMIN, SUPERADMIN } from "@/utils/constants";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 
 const Departments = () => {
 
-    const { departments, getDepartments, setDepartmentID, departmentID } = useGlobalStore()
-
-    const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedId = event.target.value;
-        setDepartmentID(selectedId)
-    };
+    const { departments, getDepartments, setDepartmentID, departmentID } = useDepartmentStore()
+    const session = useSession()
 
     useEffect(() => {
-        setDepartmentID('')
-        getDepartments()
-    }, [])
+        if (session.status === 'authenticated' && session.data.user.type === SUPERADMIN) {
+            setDepartmentID('')
+            if (!departments) getDepartments()
+        }
+    }, [session])
 
     const t = useTranslations('super-admin')
 
+    if (session.data?.user.type === ADMIN) return null
+
     return (
-        <div className="relative">
-            <select onChange={handleDepartmentChange} value={departmentID} id="department" className="text-gray-600 w-full border text-sm rounded-sm focus:ring-blue-600 focus:border-blue-600 block p-2.5 pr-7 appearance-none outline-none cursor-pointer">
-                <option value=''>{t('global.department.all')}</option>
-                {departments &&
-                    departments.length > 0 &&
-                    departments.map((department) => (
-                        <option key={department.id} value={department.id}>
-                            {department.name}
-                        </option>
-                    ))}
-            </select>
-            <FontAwesomeIcon width={16} height={16} icon={faChevronDown} className="absolute right-3 top-3 text-gray-500" />
-        </div>
+        <Select onValueChange={deptID => deptID === 'all' ? setDepartmentID('') : setDepartmentID(deptID)} value={departmentID}>
+            <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={t('global.department.select-department')} />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    <SelectLabel>{t('global.department.select')}</SelectLabel>
+                    <SelectItem value="all">{t('global.department.all')}</SelectItem>
+                    {departments && departments.length > 0 ? departments.map(dept => (
+                        <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                    ))
+                        : null}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
     )
 };
 

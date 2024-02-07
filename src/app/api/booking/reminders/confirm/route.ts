@@ -1,39 +1,43 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, createdRes, existRes, notFoundRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { CLIENT, CONFIRMED, FINGERPOWER, PENDING, RESERVED, SUPPLIER } from "@/utils/constants";
+import { calculateCommissionPriceQuantitySettlementAndStatus } from "@/utils/getBookingPrice";
+import axios from "axios";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
 
-    const { remindersID } = await req.json()
     try {
 
+        const { remindersID } = await req.json()
         if (!remindersID) return notFoundRes('Reminders')
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
         if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
 
+        //retrieve reminder
         const reminder = await prisma.reminders.findUnique({
             where: { id: remindersID }
         })
         if (!reminder) return notFoundRes('Reminder')
 
-        const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, status, name, courseID, quantity, settlement }: any = reminder
+        const { scheduleID, supplierID, clientID, note, operator, meeting_info, clientCardID, name, courseID, client_quantity, supplier_quantity, settlement } = reminder
 
-        const checkNotFound = (entity: string, value: any) => {
-            if (!value) return notFoundRes(entity);
-        }
-
-        const params = [scheduleID, name, supplierID, clientID, clientCardID, settlement, operator, meeting_info]
-        params.forEach((param, index) =>
-            checkNotFound(['Schedule', 'Booking name', 'Supplier', 'Client', 'Card', 'Settlement period', 'Operator', 'Meeting info'][index], param)
-        )
+        if (!clientID) return notFoundRes(CLIENT)
+        if (!supplierID) return notFoundRes(SUPPLIER)
+        if (!meeting_info) return notFoundRes("Meeting Info")
+        if (!clientCardID) return notFoundRes("Client Card")
+        if (!scheduleID) return notFoundRes("Schedule")
+        if (!settlement) return notFoundRes("Settlement")
+        if (!courseID) return notFoundRes("Course")
+        const meeting = meeting_info as any
 
         const [client, supplier, meetingInfo, card, schedule] = await Promise.all([
             prisma.client.findUnique({ where: { id: clientID } }),
             prisma.supplier.findUnique({ where: { id: supplierID }, include: { balance: true } }),
-            prisma.supplierMeetingInfo.findUnique({ where: { id: meeting_info.id } }),
+            prisma.supplierMeetingInfo.findUnique({ where: { id: meeting.id } }),
             prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } }),
             prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
         ]);
@@ -45,7 +49,7 @@ export const POST = async (req: Request) => {
         if (!schedule) return notFoundRes("Schedule")
 
         const currentDate = new Date();
-        const cardValidityDate = new Date(card?.validity!);
+        const cardValidityDate = new Date(card.validity);
         const scheduleDate = new Date(`${schedule.date}T${schedule.time}`);
 
         if (currentDate > cardValidityDate || currentDate > scheduleDate) {
@@ -75,33 +79,41 @@ export const POST = async (req: Request) => {
             }
         }
 
-        const department = await prisma.department.findUnique({ where: { id: card?.card.departmentID } });
+        const department = await prisma.department.findUnique({ where: { id: card.card.departmentID } });
         if (!department) return notFoundRes('Department');
 
-        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card?.cardID } });
+        const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card.cardID } });
         if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported in this card' }, { status: 400 });
 
-        if (card.balance < supplierPrice.price) {
+        if (card.balance < Number(supplierPrice.price)) {
             return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 });
         }
 
-        const bookingPrice =
-            department.name.toLocaleLowerCase() === 'fingerpower'
-                ? Number(quantity) * Number(card?.card.price!)
-                : (Number(card?.card.price!) / card?.card.balance!) * supplierPrice.price;
+        //get this data in this function I made to return the value base on department
+        const { bookingPrice, bookingQuantity, supplierCommission, settlementDate } = calculateCommissionPriceQuantitySettlementAndStatus({
+            balance: supplier.balance,
+            supplierPrice,
+            supplierQuantity: Number(supplier_quantity),
+            department,
+            card: card.card,
+            clientQuantity: Number(client_quantity),
+            settlement,
+            status: PENDING
+        })
 
         const createBooking = await prisma.booking.create({
             data: {
                 note,
-                status,
+                status: CONFIRMED,
                 operator,
-                card_balance_cost: supplierPrice.price,
-                supplier_rate: supplier.balance[0].booking_rate,
+                card_balance_cost: Number(supplierPrice.price),
+                supplier_rate: supplierCommission,
                 name,
                 price: bookingPrice.toFixed(2),
-                card_name: card?.name!,
-                quantity: Number(quantity),
-                settlement,
+                card_name: card.name,
+                client_quantity: bookingQuantity.client,
+                supplier_quantity: bookingQuantity.supplier,
+                settlement: settlementDate,
                 supplier: { connect: { id: supplierID } },
                 client: { connect: { id: clientID } },
                 schedule: { connect: { id: schedule.id } },
@@ -114,50 +126,93 @@ export const POST = async (req: Request) => {
         if (!createBooking) return badRequestRes();
 
         //reduce client card balance if it's not in fingerpower department
-        if (department.name.toLocaleLowerCase() !== 'fingerpower') {
+        if (department.name.toLocaleLowerCase() !== FINGERPOWER) {
             const reduceCardBalance = await prisma.clientCard.update({
-                where: { id: card?.id! },
-                data: { balance: card?.balance! - supplierPrice.price },
+                where: { id: card.id },
+                data: { balance: card.balance - Number(supplierPrice.price) },
             });
             if (!reduceCardBalance) return badRequestRes();
         }
 
         //update supplier schedule and create earnings for supplier as well as updating the supplier balance
 
-        const [updateSchedule, supplierEarnings, updateSupplierBalance, updateReminder] = await Promise.all([
+        const balance = supplier.balance[0]
+
+        const currentMonth = currentDate.getUTCMonth() + 1; // Adjust month to be in the range 1 to 12
+        const currentYear = currentDate.getUTCFullYear();
+
+        // Construct the start and end dates in ISO format
+        const startDate = new Date(Date.UTC(currentYear, currentMonth - 1, 1, 0, 0, 0));
+        const endDate = new Date(Date.UTC(currentYear, currentMonth, 1, 0, 0, 0));
+
+        const [updateSchedule, earnings, updateSupplierBalance, updateReminder] = await Promise.all([
             prisma.supplierSchedule.update({
                 where: { id: schedule.id },
                 data: {
-                    status: 'reserved',
+                    status: RESERVED,
                     clientID: client?.id,
                     clientUsername: client?.username,
                 },
             }),
-            prisma.supplierEarnings.create({
-                data: {
-                    name: 'Class',
-                    quantity: Number(quantity),
-                    rate: supplier?.balance[0].booking_rate!,
-                    amount: supplier?.balance[0].booking_rate!,
-                    balance: { connect: { id: supplier?.balance[0].id } }
+            prisma.supplierEarnings.findFirst({
+                //retrieve earnings for this month
+                where:
+                {
+                    supplierBalanceID: balance.id,
+                    rate: balance.booking_rate,
+                    created_at: {
+                        gte: startDate.toISOString(),
+                        lt: endDate.toISOString(),
+                    },
                 }
             }),
             prisma.supplierBalance.update({
                 where: { id: supplier?.balance[0].id }, data: {
-                    amount: supplier?.balance[0].amount! + supplier?.balance[0].booking_rate!
+                    amount: Number(balance.amount) + balance.booking_rate
                 }
             }),
             prisma.reminders.update({
                 where: {
                     id: reminder.id
                 }, data: {
-                    status: 'booked'
+                    status: CONFIRMED,
+                    note: 'booking created'
                 }
             })
         ])
-        if (!updateSchedule || !supplierEarnings || !updateSupplierBalance || !updateReminder) return badRequestRes();
+        if (!updateSchedule || !updateSupplierBalance || !updateReminder) return badRequestRes();
 
-        return createdRes(createBooking.id);
+        //if earnings this month exist update the earnings instead of creating a new data
+        if (earnings) {
+            const updateSupplierEarnings = await prisma.supplierEarnings.update({
+                where: { id: earnings.id },
+                data: {
+                    amount: Number(earnings.amount) + balance.booking_rate,
+                    quantity: earnings.quantity + 1
+                }
+            })
+            if (!updateSupplierEarnings) return badRequestRes()
+        } else {
+            //if there's no earnings for this month then create one
+            const createEarnings = await prisma.supplierEarnings.create({
+                data: {
+                    name: 'Class Fee',
+                    balance: { connect: { id: balance.id } },
+                    amount: balance.booking_rate,
+                    quantity: 1,
+                    rate: balance.booking_rate,
+                }
+            })
+            if (!createEarnings) return badRequestRes()
+        }
+
+        //send emails to client and supplier
+        axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/created`, {
+            bookingID: createBooking.id, operator
+        })
+
+        //return 201 response
+        return createdRes();
 
     } catch (error) {
         console.log(error);

@@ -8,6 +8,10 @@ import Link from 'next/link'
 import { ClientCardList } from '@/lib/types/super-admin/clientCardType';
 import useAdminCardStore from '@/lib/state/super-admin/cardStore';
 import useGlobalStore from '@/lib/state/globalStore';
+import { Skeleton } from '@/components/ui/skeleton';
+import useAdminPageStore from '@/lib/state/admin/adminPageStore';
+import TruncateTextModal from '@/components/global/TruncateTextModal';
+import ViewCardAlert from './ViewCardAlert';
 
 interface Props {
     filteredTable: ClientCardList[]
@@ -15,16 +19,16 @@ interface Props {
 
 const CardTable: React.FC<Props> = ({ filteredTable }) => {
 
-
-    const { operation, selectedID, skeleton, openOperation, closeOperation } = useGlobalStore()
+    const { operation, selectedID, skeleton, openOperation, closeOperation, returnTruncateText, openTruncateTextModal } = useGlobalStore()
+    const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
 
     const { openViewCard, openDeleteCardModal } = useAdminCardStore()
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
     return (
-        <table className="text-sm text-left text-gray-800 shadow-md w-full">
-            <thead className="text-xs uppercase bg-slate-100 border">
+        <table className="text-sm text-left shadow-md w-full text-muted-foreground">
+            <thead className="text-xs uppercase bg-card border">
                 <tr>
                     <th scope="col" className="px-6 py-3">{tt('name')}</th>
                     <th scope="col" className="px-6 py-3">{tt('price')}</th>
@@ -39,10 +43,10 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
             <tbody>
                 {filteredTable && filteredTable.length > 0 ?
                     filteredTable.map(card => (
-                        <tr className="bg-white border hover:bg-slate-50" key={card.id}>
+                        <tr className="border bg-card hover:bg-muted hover:text-foreground" key={card.id}>
                             <td className='px-6 py-3'>
-                                <div className='h-5 w-36'>
-                                    {card.name}
+                                <div className='h-5 w-36 cursor-pointer hover:text-primary' onClick={() => openTruncateTextModal(card.name)}>
+                                    {returnTruncateText(card.name, 15)}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
@@ -78,47 +82,48 @@ const CardTable: React.FC<Props> = ({ filteredTable }) => {
                                 </div>
                             </td>
                             <td className='py-3 relative px-6'>
-                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(card.id)} />
-                                <ul className={`${operation && selectedID === card.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <li onClick={() => openViewCard(card)} className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
-                                    <Link href={`/manage/client/card/update/${card.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteCardModal(card)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(card.id)} />
+                                <ul className={`${operation && selectedID === card.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
+                                    <ViewCardAlert cardID={card.id} />
+                                    {isAdminAllowed('update_cards') && <Link href={`/admin/manage/card/update/${card.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                    {isAdminAllowed('delete_cards') && <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground' onClick={() => openDeleteCardModal(card)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>}
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>
                     )) :
                     skeleton.map(item => (
-                        <tr key={item}>
+                        <tr key={item} className='border bg-card'>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                <Skeleton className='rounded-3xl w-36 h-5' />
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                <Skeleton className='rounded-3xl w-20 h-5' />
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                <Skeleton className='rounded-3xl w-20 h-5' />
                             </td>
 
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                <Skeleton className='rounded-3xl w-20 h-5' />
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                <Skeleton className='rounded-3xl w-20 h-5' />
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                <Skeleton className='rounded-3xl w-20 h-5' />
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                                <Skeleton className='rounded-3xl w-44 h-5' />
                             </td>
                             <td className='py-3.5 px-6'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
+                                <Skeleton className='rounded-3xl w-10 h-5' />
                             </td>
                         </tr>
                     ))
                 }
             </tbody >
+            <TruncateTextModal />
         </table >
     );
 };

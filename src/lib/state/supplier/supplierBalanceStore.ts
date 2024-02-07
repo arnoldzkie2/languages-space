@@ -5,6 +5,8 @@ import useGlobalStore from '../globalStore'
 import { SupplierBalanceTransaction } from '@/lib/types/super-admin/supplierBalanceType'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { totalClientsValue } from '../super-admin/clientStore'
+import useDepartmentStore from '../super-admin/departmentStore'
+import { toast } from 'sonner'
 
 interface SupplierBalanceStore {
     balance: SupplierBalance | null
@@ -39,7 +41,7 @@ const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
     setTotalTransactions: (totals: TotalProps) => set({ totalTransactions: totals }),
     getTransactions: async () => {
 
-        const departmentID = useGlobalStore.getState().departmentID
+        const departmentID = useDepartmentStore.getState().departmentID
         try {
 
             const { data } = await axios.get('/api/supplier/balance/transactions', {
@@ -149,14 +151,13 @@ const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
     updatePaymentInfo: async (e: React.FormEvent) => {
         e.preventDefault()
         const setErr = useGlobalStore.getState().setErr
-        const setOkMsg = useGlobalStore.getState().setOkMsg
         const setIsLoading = useGlobalStore.getState().setIsLoading
         const payment_address = get().payment_address
         try {
             setIsLoading(true)
             const { data } = await axios.patch('/api/supplier', { payment_address })
             if (data.ok) {
-                setOkMsg('Success')
+                toast('Success! payment address updated.')
                 setIsLoading(false)
             }
         } catch (error: any) {
@@ -176,11 +177,10 @@ const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
     confirmPaymentRequest: async (e: React.FormEvent) => {
         e.preventDefault()
         const { singleTransaction, closeConfirmPaymentModal, getTransactions } = get()
-        const { setErr, setIsLoading, setOkMsg } = useGlobalStore.getState()
+        const { setErr, setIsLoading } = useGlobalStore.getState()
         try {
 
             setIsLoading(true)
-
             if (!singleTransaction) return closeConfirmPaymentModal()
 
             const { data } = await axios.post('/api/supplier/balance/transactions/completed', {
@@ -189,7 +189,7 @@ const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
 
             if (data.ok) {
                 setIsLoading(false)
-                setOkMsg("Success")
+                toast("Success! payment request completed.")
                 closeConfirmPaymentModal()
                 getTransactions()
             }

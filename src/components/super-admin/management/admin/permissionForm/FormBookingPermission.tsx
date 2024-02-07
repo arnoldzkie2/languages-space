@@ -1,106 +1,68 @@
 import React, { ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { AdminPermission } from '@prisma/client';
+import PermissionSwitch from './PermissionSwitch';
 
 const FormBookingPermission: React.FC<{
-    handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    handleCheckboxChange: (isChecked: boolean, name: string) => void
     permissionData: AdminPermission;
 }> = (props) => {
-    const { permissionData, handleChange } = props;
+    const { permissionData, handleCheckboxChange } = props;
     const t = useTranslations('super-admin');
 
     return (
-        <div className='flex flex-col gap-1 w-1/2'>
-            <div className='font-bold text-lg'>{t('booking.h1')}</div>
+        <div className='flex flex-col gap-1 w-full'>
+            <div className='font-bold text-lg text-foreground'>{t('booking.h1')}</div>
 
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="view_booking" className={`cursor-pointer ${permissionData.view_booking ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.view-booking')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.view_booking}
-                    onChange={handleChange}
-                    id='view_booking'
-                    className='w-4 h-4'
-                    name='view_booking'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="create_booking" className={`cursor-pointer ${permissionData.create_booking ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.create-booking')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.create_booking}
-                    onChange={handleChange}
-                    id='create_booking'
-                    className='w-4 h-4'
-                    name='create_booking'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="update_booking" className={`cursor-pointer ${permissionData.update_booking ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.update-booking')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.update_booking}
-                    onChange={handleChange}
-                    id='update_booking'
-                    className='w-4 h-4'
-                    name='update_booking'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="delete_booking" className={`cursor-pointer ${permissionData.delete_booking ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.delete-booking')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.delete_booking}
-                    onChange={handleChange}
-                    id='delete_booking'
-                    className='w-4 h-4'
-                    name='delete_booking'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="cancel_booking" className={`cursor-pointer ${permissionData.cancel_booking ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.cancel-booking')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.cancel_booking}
-                    onChange={handleChange}
-                    id='cancel_booking'
-                    className='w-4 h-4'
-                    name='cancel_booking'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="view_booking_request" className={`cursor-pointer ${permissionData.view_booking_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.view-booking-request')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.view_booking_request}
-                    onChange={handleChange}
-                    id='view_booking_request'
-                    className='w-4 h-4'
-                    name='view_booking_request'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="cancel_booking_request" className={`cursor-pointer ${permissionData.cancel_booking_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.cancel-booking-request')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.cancel_booking_request}
-                    onChange={handleChange}
-                    id='cancel_booking_request'
-                    className='w-4 h-4'
-                    name='cancel_booking_request'
-                />
-            </div>
-            <div className='flex items-center w-full justify-between'>
-                <label htmlFor="delete_booking_request" className={`cursor-pointer ${permissionData.delete_booking_request ? 'text-blue-500' : 'text-slate-600'} hover:text-blue-500`}>- {t('admin.permissions.delete-booking-request')}</label>
-                <input
-                    type="checkbox"
-                    checked={permissionData.delete_booking_request}
-                    onChange={handleChange}
-                    id='delete_booking_request'
-                    className='w-4 h-4'
-                    name='delete_booking_request'
-                />
-            </div>
+            <PermissionSwitch
+                label={t('admin.permissions.view_booking')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.view_booking}
+                permissionKey='view_booking' />
+              
+            <PermissionSwitch
+                label={t('admin.permissions.create_booking')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.create_booking}
+                permissionKey='create_booking' />
+
+            <PermissionSwitch
+                label={t('admin.permissions.update_booking')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.update_booking}
+                permissionKey='update_booking' />
+
+            <PermissionSwitch
+                label={t('admin.permissions.delete_booking')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.delete_booking}
+                permissionKey='delete_booking' />
+            <PermissionSwitch
+                label={t('admin.permissions.cancel_booking')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.cancel_booking}
+                permissionKey='cancel_booking' />
+            <PermissionSwitch
+                label={t('admin.permissions.view_booking_request')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.view_booking_request}
+                permissionKey='view_booking_request' />
+            <PermissionSwitch
+                label={t('admin.permissions.create_booking_request')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.create_booking_request}
+                permissionKey='create_booking_request' />
+            <PermissionSwitch
+                label={t('admin.permissions.cancel_booking_request')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.cancel_booking_request}
+                permissionKey='cancel_booking_request' />
+            <PermissionSwitch
+                label={t('admin.permissions.delete_booking_request')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.delete_booking_request}
+                permissionKey='delete_booking_request' />
+
         </div>
     );
 };

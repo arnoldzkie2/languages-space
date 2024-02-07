@@ -5,6 +5,7 @@ import useGlobalStore from '../globalStore'
 import useAdminScheduleStore from '../super-admin/scheduleStore'
 import useSupplierStore from './supplierStore'
 import useClientBookingStore from '../client/clientBookingStore'
+import { toast } from 'sonner'
 
 interface SupplerBookingStore {
     getBookings: () => Promise<void>
@@ -66,7 +67,6 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
         e.preventDefault()
         const setErr = useGlobalStore.getState().setErr
         const setIsLoading = useGlobalStore.getState().setIsLoading
-        const setOkMsg = useGlobalStore.getState().setOkMsg
         const { bookingID, closeBooking } = get()
         const { currentDate, getSchedule } = useAdminScheduleStore.getState()
         const supplier = useSupplierStore.getState().supplier
@@ -81,10 +81,9 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
             })
 
             if (data.ok) {
-                axios.post('/api/email/booking/cancel', { bookingID: data.data, operator: 'supplier' })
                 getSchedule(supplier?.id!, currentDate.fromDate, currentDate.toDate)
                 setIsLoading(false)
-                setOkMsg('Booking Canceled')
+                toast('Success! Booking canceled')
                 closeBooking()
             }
 
@@ -100,7 +99,7 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
     requestCancelBooking: async (e: React.FormEvent) => {
         e.preventDefault()
         const { closeRequestCancelBookingaModal, requestCancelForm } = useClientBookingStore.getState()
-        const { setErr, setOkMsg, setIsLoading } = useGlobalStore.getState()
+        const { setErr, setIsLoading } = useGlobalStore.getState()
         const { getBookings, getSingleBooking } = get()
         try {
             setIsLoading(true)
@@ -110,7 +109,7 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
                 getBookings()
                 getSingleBooking()
                 setIsLoading(false)
-                setOkMsg("Success")
+                toast("Success! cancel request sent.")
                 closeRequestCancelBookingaModal()
             }
 
@@ -141,7 +140,6 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
         e.preventDefault()
         const setErr = useGlobalStore.getState().setErr
         const setIsLoading = useGlobalStore.getState().setIsLoading
-        const setOkMsg = useGlobalStore.getState().setOkMsg
         const getBookingRequests = get().getBookingRequests
 
         try {
@@ -152,7 +150,7 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
             if (data.ok) {
                 getBookingRequests()
                 setIsLoading(false)
-                setOkMsg('Success')
+                toast('Success! booking request canceled.')
             }
 
         } catch (error: any) {
@@ -161,15 +159,14 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
             if (error.response.data.msg) {
                 return setErr(error.response.data.msg)
             }
-            alert("Something wentg wrong")
+            alert("Something went wrong")
         }
     },
     confirmBookingRequest: async (e: React.MouseEvent, bookingRequestID: string) => {
         e.preventDefault()
         const setErr = useGlobalStore.getState().setErr
         const setIsLoading = useGlobalStore.getState().setIsLoading
-        const setOkMsg = useGlobalStore.getState().setOkMsg
-        const getBookingRequests = get().getBookingRequests
+        const { getBookingRequests, getBookings } = get()
 
         try {
 
@@ -177,9 +174,10 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
             const { data } = await axios.post('/api/booking/request/confirm', { bookingRequestID })
 
             if (data.ok) {
+                toast('Success! booking request confirmed')
                 getBookingRequests()
+                getBookings()
                 setIsLoading(false)
-                setOkMsg('Success')
             }
 
         } catch (error: any) {
@@ -188,7 +186,7 @@ const useSupplierBookingStore = create<SupplerBookingStore>((set, get) => ({
             if (error.response.data.msg) {
                 return setErr(error.response.data.msg)
             }
-            alert("Something wentg wrong")
+            alert("Something went wrong")
         }
     }
 }))

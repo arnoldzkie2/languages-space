@@ -13,7 +13,7 @@ const Page = () => {
     return (
         <>
             <AgentHeader />
-            <div className='px-5 md:flex-row lg:justify-center text-gray-700 sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
+            <div className='px-5 md:flex-row lg:justify-center sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
                 <AgentProfile />
                 <AgentBalance />
             </div>

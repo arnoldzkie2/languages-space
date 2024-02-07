@@ -6,6 +6,8 @@ import 'react-quill/dist/quill.snow.css';
 import { NextIntlClientProvider, useMessages } from 'next-intl'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { unstable_setRequestLocale } from 'next-intl/server';
+import { ThemeProvider } from '@/components/global/ThemeProvider';
+import { Toaster } from '@/components/ui/sonner';
 
 export const metadata = {
   title: 'Languages Spaces',
@@ -38,10 +40,18 @@ export default function LocaleLayout({ children, params: { locale } }: Props) {
 
   return (
     <html lang={locale}>
-      <body className='bg-slate-50'>
+      <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SessionProviders>
-            {children}
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
             <SpeedInsights />
           </SessionProviders>
         </NextIntlClientProvider>

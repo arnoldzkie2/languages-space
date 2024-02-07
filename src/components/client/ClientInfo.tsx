@@ -10,10 +10,16 @@ import { UploadButton } from '@/utils/uploadthing'
 import { useEffect } from 'react'
 import useClientStore from '@/lib/state/client/clientStore'
 import useGlobalStore from '@/lib/state/globalStore';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../ui/select';
+import SubmitButton from '../global/SubmitButton';
+import { toast } from 'sonner';
 
 const ClientInfo = () => {
 
-    const { setOkMsg, setErr, okMsg, err, isLoading } = useGlobalStore()
+    const { setErr, isLoading } = useGlobalStore()
     const { client, setClient, updateClient, setPage } = useClientStore()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -31,8 +37,8 @@ const ClientInfo = () => {
 
     const skeleton = (
         <div className='flex flex-col gap-1.5 w-full'>
-            <div className='h-6 w-36 bg-slate-200 animate-pulse rounded-md'></div>
-            <div className='w-full h-7 bg-slate-200 animate-pulse rounded-md'></div>
+            <Skeleton className='h-6 w-36 rounded-md'></Skeleton>
+            <Skeleton className='w-full h-7 rounded-md'></Skeleton>
         </div>
     )
 
@@ -41,13 +47,9 @@ const ClientInfo = () => {
     }, [])
 
     return (
-        <form onSubmit={(e) => updateClient(e, signIn)} className='flex flex-col gap-5 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
+        <form onSubmit={(e) => updateClient(e, signIn)} className='flex flex-col gap-5 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2 text-muted-foreground'>
 
-            <h1 className='font-bold w-full text-2xl mb-2 pb-2 border-b text-blue-600'>{t('profile.info')}</h1>
-
-            {err && <small className='text-red-600 w-1/2 bg-red-200 text-center py-1 rounded-md'>{err}</small>}
-            {okMsg && <small className='text-green-600 w-1/2 bg-green-200 text-center py-1 rounded-md'>{okMsg}</small>}
-
+            <h1 className='font-bold w-full text-2xl mb-2 pb-2 border-b text-foreground'>{t('profile.info')}</h1>
             {client ?
                 <div className='flex items-center justify-around gap-5'>
                     <Image src={client.profile_url || '/profile/profile.svg'} alt='Profile' width={120} height={120} className='border min-w-[120px] min-h-[120px] object-cover bg-cover rounded-full' />
@@ -67,7 +69,8 @@ const ClientInfo = () => {
                                         await signIn('credentials', {
                                             username: client.username, password: client.password, redirect: false
                                         })
-                                        setOkMsg('Profile Changed')
+                                        setClient({ ...client, profile_url: res[0].url })
+                                        toast('Profile Changed')
                                     }
                                 }
                             }}
@@ -76,7 +79,7 @@ const ClientInfo = () => {
 
                             }}
                             appearance={{
-                                button: 'hover:bg-blue-500'
+                                button: 'bg-primary text-secondary'
                             }}
                         />
                     </div>
@@ -84,47 +87,54 @@ const ClientInfo = () => {
 
                 :
                 <div className='flex items-center justify-around'>
-                    <div className='w-[120px] h-[120px] rounded-full bg-slate-200 animate-pulse'></div>
+                    <Skeleton className='w-[120px] h-[120px] rounded-full'></Skeleton>
                     <div className='flex flex-col gap-3'>
-                        <div className='w-32 h-7 bg-slate-200 rounded-md animate-pulse'></div>
-                        <div className='w-40 h-9 rounded-md animate-pulse bg-slate-200'></div>
+                        <Skeleton className='w-32 h-7 rounded-md'></Skeleton>
+                        <Skeleton className='w-40 h-9 rounded-md'></Skeleton>
                     </div>
 
                 </div>
             }
 
             {client ? <div className='flex flex-col w-full gap-1'>
-                <label htmlFor="name" className='px-2 h-6 text-lg font-medium'>{tt('name')}</label>
-                <input type="text" id='name' name='name' className='w-full border outline-none px-3 h-8' value={client.name || ''} onChange={handleChange} />
+                <Label htmlFor="name">{tt('name')}</Label>
+                <Input className='text-foreground' placeholder={tt('name')} type="text" id='name' name='name' value={client.name || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {client ? <div className='flex flex-col w-full gap-1'>
-                <label htmlFor="email" className='px-2 h-6 text-lg font-medium'>{tt('email')}</label>
-                <input type="text" id='email' name='email' className='w-full border outline-none px-3 h-8' value={client.email || ''} onChange={handleChange} />
+                <Label htmlFor="email">{tt('email')}</Label>
+                <Input className='text-foreground' placeholder={tt('email')} type="text" id='email' name='email' value={client.email || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {client ? <div className='flex flex-col w-full gap-1'>
-                <label htmlFor="phone_number" className='px-2 h-6 text-lg font-medium'>{tt('phone')}</label>
-                <input type="number" id='phone_number' name='phone_number' className='w-full border outline-none px-3 h-8' value={client.phone_number || ''} onChange={handleChange} />
+                <Label htmlFor="phone_number">{tt('phone')}</Label>
+                <Input className='text-foreground' placeholder={tt('phone')} type="number" id='phone_number' name='phone_number' value={client.phone_number || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {client ? <div className='flex flex-col w-full gap-1'>
-                <label htmlFor="address" className='px-2 h-6 text-lg font-medium'>{tt('address')}</label>
-                <input type="text" id='address' name='address' className='w-full border outline-none px-3 h-8' value={client.address || ''} onChange={handleChange} />
+                <Label htmlFor="address">{tt('address')}</Label>
+                <Input className='text-foreground' placeholder={tt('address')} type="text" id='address' name='address' value={client.address || ''} onChange={handleChange} />
             </div> : skeleton}
-            {client ? <div className='flex flex-col w-full gap-1'>
-                <label htmlFor="gender" className='px-2 h-6 text-lg font-medium'>{tt('gender')}</label>
-                <select name="gender" value={client.gender || ''} onChange={handleChange} id="gender" className='px-3 h-8 border outline-none bg-white'>
-                    <option value="">{tt('select-gender')}</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="others">Prefer not to say</option>
-                </select>
-            </div>
-                : skeleton}
-            <button disabled={isLoading} className={`w-1/4 mt-2 text-white py-2 rounded-md ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
-                {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('update')}</button>
 
+
+            {client ? <div className="w-full items-center gap-1.5">
+                <Label>{tt('gender')}</Label>
+                <Select onValueChange={(gender) => setClient({ ...client, gender })} value={client.gender || ''}>
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder={tt('select-gender')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>{tt('gender')}</SelectLabel>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="others">Others</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div> : skeleton}
+
+            <SubmitButton msg={tt('update')} style='w-full mt-3' />
         </form>
     )
 }

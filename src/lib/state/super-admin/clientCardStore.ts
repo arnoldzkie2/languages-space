@@ -3,6 +3,7 @@ import { TotalProps } from '@/lib/types/super-admin/globalType'
 import axios, { AxiosError } from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
+import { toast } from 'sonner'
 
 const totalCards = {
     selected: '',
@@ -16,6 +17,7 @@ const clientCardValue = {
     price: 0,
     balance: 0,
     validity: 0,
+    prepaid: true,
     invoice: false,
     available: false,
     online_renews: false,
@@ -39,10 +41,10 @@ interface ClientCardProps {
         clientCardID: string;
     }) => Promise<void>
     unbindClientCard: ({ e, clientID, clientCardID }: {
-        e: React.MouseEvent;
+        e: React.FormEvent;
         clientCardID: string;
         clientID: string;
-    }) => Promise<void>
+    }) => Promise<string | number | undefined>
 
     closeClientCardModal: () => void
     closeDeleteClientCardModal: () => void
@@ -61,7 +63,6 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
         } catch (error) {
             console.log(error);
             alert('Something went wrong')
-
         }
     },
     renewClientCard: async ({ e, clientCardID, clientID }: { e: React.MouseEvent, clientID: string, clientCardID: string }) => {
@@ -76,7 +77,7 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
             if (data.ok) {
                 setIsLoading(false)
                 get().getClientCards(clientID)
-                alert('Success')
+                toast("Success! The card has been successfully renewed.")
             }
 
         } catch (error: any) {
@@ -84,17 +85,17 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
             if (error instanceof AxiosError) {
                 console.error(error);
                 if (error.response?.data?.msg) {
-                    alert(error.response.data.msg);
+                    toast(error.response.data.msg);
                 } else {
-                    alert('Something went wrong');
+                    toast('Something went wrong');
                 }
             } else {
                 console.error(error);
-                alert('Something went wrong');
+                toast('Something went wrong');
             }
         }
     },
-    unbindClientCard: async ({ e, clientID, clientCardID }: { e: React.MouseEvent, clientCardID: string, clientID: string }) => {
+    unbindClientCard: async ({ e, clientID, clientCardID }: { e: React.FormEvent, clientCardID: string, clientID: string }) => {
 
         const { setIsLoading } = useGlobalStore.getState()
         e.preventDefault()
@@ -107,7 +108,7 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
                 setIsLoading(false)
                 get().getClientCards(clientID)
                 get().closeDeleteClientCardModal()
-                alert('Success')
+                toast('Success! The card has been successfully unlinked from client.')
             }
 
         } catch (error) {
@@ -115,13 +116,13 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
             if (error instanceof AxiosError) {
                 console.error(error);
                 if (error.response?.data?.msg) {
-                    alert(error.response.data.msg);
+                    return toast(error.response.data.msg);
                 } else {
-                    alert('Something went wrong');
+                    toast('Something went wrong');
                 }
             } else {
                 console.error(error);
-                alert('Something went wrong');
+                toast('Something went wrong');
             }
         }
     },

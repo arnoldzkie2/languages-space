@@ -3,6 +3,8 @@ import useGlobalStore from '../globalStore'
 import axios from 'axios'
 import { AgentBalance, AgentBalanceTransactions, AgentDeductions, AgentEarnings } from '@prisma/client'
 import useSupplierBalanceStore from '../supplier/supplierBalanceStore'
+import useDepartmentStore from '../super-admin/departmentStore'
+import { toast } from 'sonner'
 
 interface AgentBalanceStoreProps {
     transactions: AgentBalanceTransactions[] | null
@@ -31,7 +33,7 @@ const useAgentBalanceStore = create<AgentBalanceStoreProps>((set, get) => ({
     transactions: null,
     getTransactions: async () => {
 
-        const departmentID = useGlobalStore.getState().departmentID
+        const departmentID = useDepartmentStore.getState().departmentID
         try {
 
             const { data } = await axios.get('/api/agent/balance/transactions', {
@@ -69,7 +71,7 @@ const useAgentBalanceStore = create<AgentBalanceStoreProps>((set, get) => ({
             setIsLoading(true)
             const { data } = await axios.patch('/api/agent', { payment_address })
             if (data.ok) {
-                setOkMsg('Success')
+                toast('Success! payment address updated')
                 setIsLoading(false)
             }
         } catch (error: any) {
@@ -139,7 +141,7 @@ const useAgentBalanceStore = create<AgentBalanceStoreProps>((set, get) => ({
 
             if (data.ok) {
                 setIsLoading(false)
-                setOkMsg("Success")
+                toast("Success! payment request created.")
                 closeConfirmPaymentModal()
                 getTransactions()
             }

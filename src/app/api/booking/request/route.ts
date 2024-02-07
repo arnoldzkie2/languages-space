@@ -3,13 +3,13 @@ import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { checkIsAdmin } from "@/utils/checkUser";
 import { ADMIN, CLIENT, DEPARTMENT, PENDING, SUPERADMIN, SUPPLIER } from "@/utils/constants";
+import { calculateCommissionPriceQuantitySettlementAndStatus } from "@/utils/getBookingPrice";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
     try {
 
-        //only client are allowed to
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
@@ -133,7 +133,7 @@ export const GET = async (req: NextRequest) => {
         return okayRes(allBookingRequest)
 
     } catch (error) {
-        console.log(error);
+        console.log(error)
         return serverErrorRes(error)
     } finally {
         prisma.$disconnect()
@@ -148,9 +148,15 @@ export const POST = async (req: NextRequest) => {
         const session = await getAuth()
         if (!session) return unauthorizedRes()
 
-        const { note, date, time, supplierID, clientCardID, meetingInfoID, courseID, clientID } = await req.json()
+        const { note, date, time, supplierID, clientCardID, name, meetingInfoID, courseID, clientID, settlement, client_quantity, supplier_quantity } = await req.json()
 
-        if (!date || !time || !supplierID || !clientCardID || !meetingInfoID || !courseID || !clientID) return badRequestRes("Missing Data")
+        if (!date) return notFoundRes("Date")
+        if (!time) return notFoundRes('Time')
+        if (!supplierID) return notFoundRes('Supplier')
+        if (!clientCardID) return notFoundRes('Client Card')
+        if (!meetingInfoID) return notFoundRes('Meeting Info')
+        if (!courseID) return notFoundRes('Course')
+        if (!clientID) return notFoundRes('Client')
 
         //return admin if operator is super-admin
         const operator = session.user.type === SUPERADMIN ? ADMIN : session.user.type
@@ -158,7 +164,7 @@ export const POST = async (req: NextRequest) => {
         //get the client,supplier and meetingInfo all at once
         const [client, supplier, meetingInfo, course, card] = await Promise.all([
             prisma.client.findUnique({ where: { id: clientID } }),
-            prisma.supplier.findUnique({ where: { id: supplierID } }),
+            prisma.supplier.findUnique({ where: { id: supplierID }, include: { balance: true } }),
             prisma.supplierMeetingInfo.findUnique({ where: { id: meetingInfoID } }),
             prisma.courses.findUnique({ where: { id: courseID } }),
             prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } })
@@ -170,21 +176,22 @@ export const POST = async (req: NextRequest) => {
         if (!course) return notFoundRes('Course')
         if (!card) return notFoundRes("Client Card")
 
+        const department = await prisma.department.findUnique({ where: { id: card.card.departmentID } })
+        if (!department) return notFoundRes("Department")
+
         //get the booking card price
         const supplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: supplier.id, cardID: card.cardID } })
 
         //check if supplier is supported in this card or not
         if (!supplierPrice) return NextResponse.json({ msg: "Supplier is not supported in this card" }, { status: 400 })
         //check if card used in this booking has enough balance to book
-        if (Number(card.price) < supplierPrice.price) return badRequestRes("Card don't have enough balance to request a booking")
+        if (Number(card.price) < Number(supplierPrice.price)) return badRequestRes("Card don't have enough balance to request a booking")
 
         //get the current Date and compare the schedule date
         const currentDate = new Date();
         const cardValidityDate = new Date(card.validity);
         const scheduleDate = new Date(`${date}T${time}`);
 
-        console.log(currentDate)
-        console.log(scheduleDate)
         //check if client card is expired or schedule is passed
         if (currentDate > cardValidityDate || currentDate > scheduleDate) {
             return NextResponse.json(
@@ -195,37 +202,42 @@ export const POST = async (req: NextRequest) => {
             );
         }
 
-        //get the date with this format 2023-11-22 (YEAR-MONTH-DAY)
-        const today = new Date().toISOString().split('T')[0];
-
-        if (date === today) {
-            // Check if the booking time is at least 3 hours ahead
-            const bookingTime = new Date(`${date}T${time}`);
-            const minimumBookingTime = new Date(currentDate.getTime() + 3 * 60 * 60 * 1000);
-
-            if (bookingTime < minimumBookingTime) {
-                return NextResponse.json(
-                    {
-                        msg: 'Booking schedule must be at least 3 hours ahead of the current time.',
-                    },
-                    { status: 400 }
-                )
-            }
-        }
+        //get this data in this function I made to return the value base on department
+        const { bookingQuantity, settlementDate } = calculateCommissionPriceQuantitySettlementAndStatus({
+            balance: supplier.balance,
+            supplierPrice,
+            supplierQuantity: Number(supplier_quantity),
+            department,
+            card: card.card,
+            clientQuantity: Number(client_quantity),
+            settlement,
+            status: PENDING
+        })
+        if (!settlementDate) return notFoundRes("Settlement Date")
 
         //create a booking request and update client card balance
         const [createBookingRequest, updateClientCardBalance] = await Promise.all([
             prisma.bookingRequest.create({
                 data: {
-                    note, date, time, clientCardID, meetingInfoID, card_name: card.name,
-                    courseID, status: PENDING, operator, card_balance_cost: supplierPrice.price,
+                    note, date, time,
+                    clientCardID,
+                    meetingInfoID,
+                    card_name: card.name,
+                    settlement,
+                    client_quantity: bookingQuantity.client,
+                    supplier_quantity: bookingQuantity.supplier,
+                    name,
+                    courseID, status: PENDING, operator,
+                    card_balance_cost: Number(supplierPrice.price),
                     client: { connect: { id: client.id } },
                     supplier: { connect: { id: supplier.id } },
                     department: { connect: { id: card.card.departmentID } }
                 }
             }),
             prisma.clientCard.update({
-                where: { id: card.id }, data: { balance: card.balance - supplierPrice.price }
+                where: { id: card.id }, data: {
+                    balance: card.balance - Number(supplierPrice.price)
+                }
             })
         ])
         if (!createBookingRequest) return badRequestRes("Failed to create booking request")
@@ -234,6 +246,7 @@ export const POST = async (req: NextRequest) => {
 
         //notify the supplier and client
         axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/request`, {
+            bookingRequestID: createBookingRequest.id,
             clientName: client.name,
             supplierName: supplier.name,
             supplierEmail: supplier.email,
@@ -268,7 +281,7 @@ export const DELETE = async (req: NextRequest) => {
         if (!isAdmin) return unauthorizedRes()
 
         const { searchParams } = new URL(req.url)
-        const requestBookingIds = searchParams.getAll('boookingRequestID')
+        const requestBookingIds = searchParams.getAll('bookingRequestID')
 
         if (requestBookingIds.length > 0) {
 

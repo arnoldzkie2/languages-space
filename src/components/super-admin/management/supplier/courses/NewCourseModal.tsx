@@ -1,15 +1,18 @@
 'use client'
+import SubmitButton from '@/components/global/SubmitButton'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import useGlobalStore from '@/lib/state/globalStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
-
+import { Button } from '@/components/ui/button'
+import Err from '@/components/global/Err'
 const NewCourseModal = () => {
 
-  const { isLoading, setIsLoading } = useGlobalStore()
+  const { setIsLoading, setErr } = useGlobalStore()
   const { toggleCreateCourse, getCourses } = useAdminSupplierStore()
 
   const [course, setCourse] = useState('')
@@ -20,15 +23,9 @@ const NewCourseModal = () => {
       if (!course) return alert('Fill up Course name')
 
       setIsLoading(true)
-      const { data, status } = await axios.post('/api/courses', {
+      const { data } = await axios.post('/api/courses', {
         name: course
       })
-
-      if (status === 409) {
-        setIsLoading(false)
-        setCourse('')
-        return alert('Course already exist')
-      }
 
       if (data.ok) {
         getCourses()
@@ -36,30 +33,37 @@ const NewCourseModal = () => {
         toggleCreateCourse()
       }
 
-    } catch (error) {
+    } catch (error: any) {
       setIsLoading(false)
       console.log(error);
+      if (error.response.data.msg) {
+        return setErr(error.response.data.msg)
+      }
       alert('Something went wrong')
     }
   }
 
-  const t = useTranslations('global')
-  const tt = useTranslations('super-admin')
+  const t = useTranslations('super-admin')
+  const tt = useTranslations('global')
   return (
-    <div className='w-screen h-screen fixed top-0 left-o bg-black bg-opacity-40 z-20 grid place-items-center'>
-      <form onSubmit={createCourse} className='w-80 p-10 gap-5 rounded-md shadow relative bg-white flex flex-col'>
-
-        <FontAwesomeIcon icon={faXmark} onClick={toggleCreateCourse} width={16} height={16} className='cursor-pointer absolute top-3 right-3 hover:text-blue-600' />
-        <input
-          value={course}
-          required
-          onChange={(e) => setCourse(e.target.value)}
-          type="text" placeholder={tt('courses.course-name')}
-          className='border outline-none px-3 py-1.5'
-        />
-        <button disabled={isLoading} className={`text-white rounded-md py-2 w-full ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>{isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : t('create')}</button>
-      </form>
-    </div>
+    <form className='w-screen h-screen fixed top-0 left-o bg-black bg-opacity-40 z-20 grid place-items-center' onSubmit={createCourse}>
+      <Card className="w-full sm:w-[350px]">
+        <CardHeader>
+          <CardTitle>{tt('create')} {tt('course')}</CardTitle>
+          <CardDescription><Err /></CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="course">{tt('course')} {tt("name")}</Label>
+            <Input type="text" required id="course" placeholder={tt("course")} value={course} onChange={(e) => setCourse(e.target.value)} />
+          </div>
+        </CardContent>
+        <CardFooter className="flex items-center gap-5 w-full">
+          <Button variant={'outline'} type='button' className='w-full' onClick={toggleCreateCourse}>{tt('close')}</Button>
+          <SubmitButton msg={tt('create')} variant={'default'} style='w-full' />
+        </CardFooter>
+      </Card>
+    </form>
   )
 }
 

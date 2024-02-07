@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
+import SideNav from '@/components/super-admin/SideNav';
 import Departments from '@/components/super-admin/management/Departments';
 import ScheduleHeader from '@/components/super-admin/management/schedule/ScheduleHeader';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
@@ -8,27 +9,29 @@ import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react'
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore';
 import ScheduleComponent from '@/components/super-admin/management/schedule/ScheduleComponent';
-import NewScheduleModal from '@/components/super-admin/management/schedule/NewScheduleModal';
 import ViewBokingModal from '@/components/super-admin/management/schedule/ViewBokingModal';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list';
 import useGlobalStore from '@/lib/state/globalStore';
 import ScheduleBookingModal from '@/components/super-admin/management/schedule/ScheduleBookingModal';
-import AdminSideNav from '@/components/admin/AdminSIdeNav';
-import useAdminPageStore from '@/lib/state/admin/adminPageStore';
-import AdminScheduleBookingModal from '@/components/admin/management/schedule/AdminScheduleBookingModal';
-import AdminViewBookingModal from '@/components/admin/management/schedule/AdminViewBookingModal';
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/utils';
+import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 
 const Page = ({ }) => {
 
-    const [searchQuery, setSearchQuery] = useState('')
-    const { isSideNavOpen, departmentID, skeleton } = useGlobalStore()
-    const { getSupplierWithMeeting, supplier } = useAdminSupplierStore()
+    const departmentID = useDepartmentStore(s => s.departmentID)
+    const { isSideNavOpen } = useGlobalStore()
+    const { getSupplierWithMeeting, supplierWithMeeting } = useAdminSupplierStore()
     const { setBookingFormData, bookingFormData } = useAdminBookingStore()
-    const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewBooking, viewBooking, toggleSchedule } = useAdminScheduleStore()
-    const permissions = useAdminPageStore(s => s.permissions)
-    const filterSupplier = supplier.filter(supplier => supplier.name.toUpperCase().includes(searchQuery.toUpperCase()))
+    const { getSchedule, schedules, currentDate, setCurrentDate, newSchedule, bindSchedule, openBindSchedule, openViewBooking, viewBooking } = useAdminScheduleStore()
+
+    const [openSupplier, setOpenSupplier] = useState(false)
 
     const formatDate = (date: any) => {
         const year = date.getFullYear();
@@ -73,34 +76,72 @@ const Page = ({ }) => {
     }, [currentDate, bookingFormData.supplierID])
 
     const t = useTranslations('super-admin')
+    const tt = useTranslations("global")
 
     return (
         <>
-
-            <AdminSideNav />
+            <SideNav />
 
             <div className={`flex flex-col gap-8 w-full h-full ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-                <nav className={`border-b h-20 flex items-center bg-white px-8 justify-between`}>
-                    <h1 className='font-black text-gray-600 text-xl uppercase'>{t('schedule.h1')}</h1>
-                    <ul className='flex items-center h-full ml-auto gap-5'>
-                        {permissions?.create_supplier_schedule &&
-                            <li onClick={() => toggleSchedule()} className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
-                                <div>{t('schedule.create')}</div>
-                            </li>}
-                    </ul>
-                </nav>
+                <ScheduleHeader />
+
                 <div className='flex w-full items-start h-full gap-8 px-8 pb-8'>
 
-                    <div className='border py-3 px-6 flex flex-col gap-4 shadow bg-white w-1/6'>
-                        <input value={searchQuery} onChange={(e: any) => setSearchQuery(e.target.value)} type="text" className='border outline-none py-1.5 px-3' placeholder={t('supplier.search')} />
-                        <ul className='flex flex-col pr-2 h-[42rem] gap-3 overflow-y-auto py-2 text-gray-600'>
-                            {filterSupplier.length > 0 ? filterSupplier.map(supplier => (
-                                <li onClick={() => setBookingFormData({ ...bookingFormData, supplierID: supplier.id })} className={`${bookingFormData.supplierID === supplier.id ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-blue-600 hover:text-white'} rounded-md w-full py-1.5 cursor-pointer px-2`} key={supplier.id}>{supplier.name}</li>
-                            )) : skeleton.map(supplier => (
-                                <li key={supplier} className='bg-slate-200 animate-pulse min-h-[28px] rounded-xl w-full'></li>
-                            ))}
-                        </ul>
+                    <div className='border py-3 px-6 flex flex-col gap-4 shadow bg-card w-1/6'>
+                        <Departments />
+
+                        <div className='flex w-full flex-col gap-1.5'>
+                            <Label>{tt('supplier')}</Label>
+                            <Popover open={openSupplier} onOpenChange={setOpenSupplier}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={openSupplier}
+                                        className={cn(
+                                            "w-full justify-between",
+                                            !bookingFormData.supplierID && "text-muted-foreground"
+                                        )}
+                                    >
+                                        {bookingFormData.supplierID
+                                            ? supplierWithMeeting.find((supplier) => supplier.id === bookingFormData.supplierID)?.name
+                                            : t('supplier.select')}
+                                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[200px] p-0">
+                                    <Command>
+                                        <CommandInput
+                                            placeholder={t('supplier.search')}
+                                            className="h-9"
+                                        />
+                                        <CommandEmpty>{t('supplier.404')}</CommandEmpty>
+                                        <CommandGroup>
+                                            {supplierWithMeeting.length > 0 ? supplierWithMeeting.map(supplier => (
+                                                <CommandItem
+                                                    key={supplier.id}
+                                                    className={`${bookingFormData.supplierID === supplier.id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                                    value={supplier.name}
+                                                    onSelect={() => {
+                                                        setBookingFormData({ ...bookingFormData, supplierID: supplier.id })
+                                                        setOpenSupplier(false)
+                                                    }}
+                                                >
+                                                    {supplier.name}
+                                                    <CheckIcon
+                                                        className={cn(
+                                                            "ml-auto h-4 w-4",
+                                                            bookingFormData.supplierID === supplier.id ? "opacity-100" : "opacity-0"
+                                                        )}
+                                                    />
+                                                </CommandItem>
+                                            )) : <CommandItem>{t('supplier.404')}</CommandItem>}
+                                        </CommandGroup>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
                     </div>
 
                     <div className='h-[51rem] overflow-y-auto w-full'>
@@ -122,9 +163,8 @@ const Page = ({ }) => {
 
             </div>
 
-            {newSchedule && <NewScheduleModal />}
-            {bindSchedule && <AdminScheduleBookingModal />}
-            {viewBooking && <AdminViewBookingModal />}
+            {bindSchedule && <ScheduleBookingModal />}
+            {viewBooking && <ViewBokingModal />}
         </>
     );
 };

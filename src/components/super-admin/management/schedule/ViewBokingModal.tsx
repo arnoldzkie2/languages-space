@@ -9,6 +9,7 @@ import axios from 'axios'
 import { Booking } from '@/lib/types/super-admin/bookingType'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 import useGlobalStore from '@/lib/state/globalStore'
+import { toast } from 'sonner'
 
 const ViewBokingModal = () => {
 
@@ -32,9 +33,9 @@ const ViewBokingModal = () => {
             })
 
             if (data.ok) {
-                axios.post('/api/email/booking/cancel', { bookingID: data.data, operator: 'admin' })
                 setIsLoading(false)
                 closeViewBooking()
+                toast("Success! booking canceled.")
                 getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)
             }
 

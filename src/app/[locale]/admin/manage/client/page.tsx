@@ -1,23 +1,21 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
-//components
-import DeleteClientWarningModal from '@/components/super-admin/management/client/DeleteClientWarningModal';
-import ClientModal from '@/components/super-admin/management/client/ClientModal';
+import SideNav from '@/components/super-admin/SideNav';
+import ClientTable from '@/components/super-admin/management/client/ClientTable';
+import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
 import { useEffect, useState, FC } from 'react';
+import ClientHeader from '@/components/super-admin/management/client/ClientHeader';
 import SearchClient from '@/components/super-admin/management/client/SearchClient';
 import useAdminClientStore, { ManageClientSearchQueryValue } from '@/lib/state/super-admin/clientStore';
 import useGlobalStore from '@/lib/state/globalStore';
-import AdminSideNav from '@/components/admin/AdminSIdeNav';
-import AdminClientTable from '@/components/admin/management/client/AdminClientTable';
-import AdminClientHeader from '@/components/admin/management/client/AdminClientHeader';
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore';
 
-const Page: FC = () => {
+const ManageClient: FC = () => {
 
-    const { departmentID, currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
-
-    const { totalClients, clients, setTotalClients, selectedClients, deleteModal, viewClientModal, getClients, setSelectedClients } = useAdminClientStore()
-
+    const { currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
+    const { departmentID } = useDepartmentStore()
+    const { totalClients, clients, setTotalClients, selectedClients, getClients, setSelectedClients } = useAdminClientStore()
     const [searchQuery, setSearchQuery] = useState(ManageClientSearchQueryValue)
 
     const filteredClients = clients.filter((client) => {
@@ -30,7 +28,7 @@ const Page: FC = () => {
 
         if (filterCard) {
             // If filterCard is true, filter based on client.cards.length
-            if (client.cards && client.cards.length > 0) {
+            if (client.cards) {
                 return (
                     (searchUsername === '' || client.username.toUpperCase().includes(searchUsername)) &&
                     (searchPhone === '' || client.phone_number?.toUpperCase().includes(searchPhone)) &&
@@ -50,6 +48,7 @@ const Page: FC = () => {
             );
         }
     });
+
 
     const indexOfLastItem = currentPage * itemsPerPage
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
@@ -86,29 +85,30 @@ const Page: FC = () => {
     return (
         <div className='h-screen'>
 
-            <AdminSideNav />
+            <SideNav />
 
             <div className={`flex flex-col h-full w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-                <AdminClientHeader />
+                <ClientHeader />
 
                 <div className='flex w-full items-start gap-8 px-8'>
-                    <div className='border py-4 px-6 flex flex-col shadow bg-white w-1/6'>
-                        <SearchClient handleSearch={handleSearch} searchQuery={searchQuery} />
+                    <div className='border py-4 px-6 flex flex-col shadow bg-card w-1/6'>
+                        <Departments />
+                        <SearchClient
+                            handleSearch={handleSearch}
+                            setSearchQuery={setSearchQuery}
+                            searchQuery={searchQuery} />
                     </div>
-                    <AdminClientTable filteredTable={currentClients} />
+
+                    <ClientTable filteredTable={currentClients} />
 
                 </div>
 
                 <Pagination totals={totalClients} getTotalPages={getTotalPages} />
 
             </div>
-
-            {deleteModal && <DeleteClientWarningModal />}
-            {viewClientModal && <ClientModal />}
-
         </div>
     );
 };
 
-export default Page;
+export default ManageClient;

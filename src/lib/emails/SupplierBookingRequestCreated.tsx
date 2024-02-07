@@ -12,9 +12,11 @@ interface SupplierBookingRequestCreated {
     course: string
     meetingInfo: SupplierMeetingInfo
     operator: string
+    bookingRequestID: string
 }
 
 const SupplierBookingRequestCreated = ({
+    bookingRequestID,
     clientName,
     supplierName,
     schedule,
@@ -42,6 +44,10 @@ const SupplierBookingRequestCreated = ({
                             <br />
                             Course: {course}<br />
                             Schedule: {schedule.date} at {schedule.time}
+                        </Text>
+                        <Text className='flex items-center gap-5'>
+                            <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/booking-requests/${bookingRequestID}/cancel`} target='_blank' className='text-white mr-5 px-4 py-1 rounded-md bg-red-500'>Cancel</Link>
+                            <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/booking-requests/${bookingRequestID}/confirm`} target='_blank' className='text-white bg-green-500 px-4 py-1 rounded-md'>Confirm</Link>
                         </Text>
                         <Link href={`${process.env.NEXTAUTH_URL}/supplier/profile/booking-requests`} target='_blank'>My Booking Request</Link>
                         <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />

@@ -3,8 +3,10 @@ import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { totalClientsValue } from './clientStore'
-import { Agent } from '@prisma/client'
 import { AgentFormDataValueProps } from '@/lib/types/super-admin/agentType'
+import useDepartmentStore from './departmentStore'
+import { toast } from 'sonner'
+import { Agent } from '@prisma/client'
 
 const agentSearchQueryValue = {
     name: '',
@@ -37,17 +39,26 @@ const agentFormDataValue = {
 
 export { agentSearchQueryValue, agentFormDataValue }
 
+
+interface AgentProps extends Agent {
+    deductions: boolean
+    earnings: boolean
+    invites: boolean
+}
+
+export type { AgentProps }
+
 interface Props {
-    agents: Agent[]
-    agentData: Agent | null,
-    selectedAgents: Agent[]
-    setSelectedAgents: (agents: Agent[]) => void
+    agents: AgentProps[]
+    agentData: AgentProps | null,
+    selectedAgents: AgentProps[]
+    setSelectedAgents: (agents: AgentProps[]) => void
     getAgents: () => Promise<void>
     totalAgent: TotalProps
     setTotalAgent: (total: TotalProps) => void
     agentFormData: AgentFormDataValueProps
     deleteAgentModal: boolean
-    openDeleteAgentModal: (agent: Agent) => void
+    openDeleteAgentModal: (agent: AgentProps) => void
     closeDeleteAgentModal: () => void
     sendAgentPayslip: (e: React.FormEvent) => Promise<void>
 }
@@ -56,14 +67,12 @@ const useAdminAgentStore = create<Props>((set, get) => ({
     agentData: null,
     selectedAgents: [],
     agentFormData: agentFormDataValue,
-    setSelectedAgents: (agents: Agent[]) => set({ selectedAgents: agents }),
+    setSelectedAgents: (agents: AgentProps[]) => set({ selectedAgents: agents }),
     getAgents: async () => {
         try {
 
-            const { departmentID } = useGlobalStore.getState()
-
+            const { departmentID } = useDepartmentStore.getState()
             const { data } = await axios.get(`/api/agent${departmentID && `?departmentID=${departmentID}`}`)
-
             if (data.ok) set({ agents: data.data })
 
         } catch (error: any) {
@@ -77,11 +86,11 @@ const useAdminAgentStore = create<Props>((set, get) => ({
     totalAgent: totalClientsValue,
     setTotalAgent: (total: TotalProps) => set({ totalAgent: total }),
     deleteAgentModal: false,
-    openDeleteAgentModal: (agent: Agent) => set({ deleteAgentModal: true, agentData: agent }),
+    openDeleteAgentModal: (agent: AgentProps) => set({ deleteAgentModal: true, agentData: agent }),
     closeDeleteAgentModal: () => set({ deleteAgentModal: false, agentData: null }),
     sendAgentPayslip: async (e: React.FormEvent) => {
 
-        const { setIsLoading, setOkMsg, setErr } = useGlobalStore.getState()
+        const { setIsLoading, setErr } = useGlobalStore.getState()
 
         try {
             e.preventDefault()
@@ -89,8 +98,9 @@ const useAdminAgentStore = create<Props>((set, get) => ({
             const { data } = await axios.post("/api/email/payslip/agent");
             if (data.ok) {
                 setIsLoading(false);
-                setOkMsg("Success");
+                toast("Success! payslips sent.");
             }
+
         } catch (error: any) {
             setIsLoading(false);
             console.log(error);
@@ -99,7 +109,8 @@ const useAdminAgentStore = create<Props>((set, get) => ({
             }
             alert("Something went wrong");
         }
-    }
+    },
+
 }))
 
 export default useAdminAgentStore

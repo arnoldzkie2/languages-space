@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import AdminSideNav from '@/components/admin/AdminSIdeNav';
-import AdminSUpplierHeader from '@/components/admin/management/supplier/AdminSupplierHeader';
-import AdminSupplierTable from '@/components/admin/management/supplier/AdminSupplierTable';
 import SideNav from '@/components/super-admin/SideNav';
 import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
 import SearchSupplier from '@/components/super-admin/management/supplier/SearchSupplier';
 import SupplierDeleteWarningModal from '@/components/super-admin/management/supplier/SupplierDeleteWarningModal';
+import SupplierHeader from '@/components/super-admin/management/supplier/SupplierHeader';
+import SupplierTable from '@/components/super-admin/management/supplier/SupplierTable';
 import useGlobalStore from '@/lib/state/globalStore';
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore';
 import useAdminSupplierStore, { manageSupplierSearchQueryValue } from '@/lib/state/super-admin/supplierStore';
 import React, { useEffect, useState } from 'react';
 
@@ -18,8 +18,8 @@ interface PageProps {
 const Page: React.FC<PageProps> = ({ }) => {
 
     const { supplier, totalSupplier, selectedSupplier, deleteSupplierModal, getSupplier, setTotalSupplier } = useAdminSupplierStore()
-    const { currentPage, departmentID, isSideNavOpen, setCurrentPage, itemsPerPage, setDepartmentID } = useGlobalStore()
-
+    const { currentPage, isSideNavOpen, setCurrentPage, itemsPerPage } = useGlobalStore()
+    const { departmentID, setDepartmentID } = useDepartmentStore()
     const [searchQuery, setSearchQuery] = useState(manageSupplierSearchQueryValue)
 
     const filteredSupplier = supplier.filter((supplier) => {
@@ -62,7 +62,6 @@ const Page: React.FC<PageProps> = ({ }) => {
         setCurrentPage(1)
     }, [departmentID])
 
-
     useEffect(() => {
 
         setTotalSupplier({
@@ -75,17 +74,19 @@ const Page: React.FC<PageProps> = ({ }) => {
 
     return (
         <div className='h-screen'>
-
-            <AdminSideNav />
+            <SideNav />
             <div className={`flex flex-col gap-8 w-full h-full ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-                <AdminSUpplierHeader />
+                <SupplierHeader />
 
                 <div className='flex w-full items-start h-full gap-8 px-8'>
-                    <div className='border py-3 px-6 flex flex-col shadow bg-white w-1/6'>
+                    <div className='border py-3 px-6 flex flex-col shadow bg-card w-1/6'>
+                        <Departments />
                         <SearchSupplier handleSearch={handleSearch} searchQuery={searchQuery} />
                     </div>
-                    <AdminSupplierTable filteredTable={currentSupplier} />
+
+                    <SupplierTable filteredTable={currentSupplier} />
+
                 </div>
 
                 <Pagination getTotalPages={getTotalPages} totals={totalSupplier} />

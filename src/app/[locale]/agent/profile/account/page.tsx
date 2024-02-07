@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { signIn } from 'next-auth/react'
@@ -12,6 +11,14 @@ import useGlobalStore from '@/lib/state/globalStore'
 import useAgentStore from '@/lib/state/agent/agentStore'
 import AgentHeader from '@/components/agent/AgentHeader'
 import AgentProfile from '@/components/agent/AgentProfile'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Err from '@/components/global/Err'
+import Success from '@/components/global/Success'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import SubmitButton from '@/components/global/SubmitButton'
+import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from 'sonner'
 
 const Page = () => {
 
@@ -19,35 +26,29 @@ const Page = () => {
     const pathname = usePathname()
     const locale = useLocale()
     const { agent, setAgent } = useAgentStore()
-    const { err, setErr, isLoading, setIsLoading, okMsg, setOkMsg, eye, toggleEye, locales, setPage } = useGlobalStore()
+    const { setErr, setIsLoading, setOkMsg, eye, toggleEye, locales, setPage } = useGlobalStore()
 
-    const updateSupplier = async (e: FormEvent<HTMLFormElement>) => {
+    const updateAgent = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
-            const { username, password, payment_info } = agent!
+            const { username, password } = agent!
             if (!username) return setErr('Username is required')
             if (username.length < 6) return setErr('Username is to short minimum 6 characters.')
             if (!password) return setErr('Password is required')
 
             setIsLoading(true)
-            const { data } = await axios.patch('/api/agent', { username, password, payment_info })
+            const { data } = await axios.patch('/api/agent', { username, password })
 
             if (data.ok) {
                 setIsLoading(false)
                 await signIn('credentials', { username, password, redirect: false })
-                setOkMsg('Success')
-                setTimeout(() => {
-                    setOkMsg('')
-                }, 3000)
+                toast('Success! account updated.')
             }
 
         } catch (error: any) {
             setIsLoading(false)
             console.log(error);
             if (error.response.data.msg) {
-                setTimeout(() => {
-                    setErr('')
-                }, 5000)
                 return setErr(error.response.data.msg)
             }
             alert('Something went wrong')
@@ -61,8 +62,8 @@ const Page = () => {
 
     const skeleton = (
         <div className='flex flex-col gap-1.5 w-full'>
-            <div className='h-6 w-36 bg-slate-200 animate-pulse rounded-md'></div>
-            <div className='w-full h-7 bg-slate-200 animate-pulse rounded-md'></div>
+            <Skeleton className='h-6 w-36 rounded-md'></Skeleton>
+            <Skeleton className='w-full h-7 rounded-md'></Skeleton>
         </div>
     )
 
@@ -85,42 +86,43 @@ const Page = () => {
     return (
         <>
             <AgentHeader />
-            <div className='px-5 md:flex-row lg:justify-center text-gray-700 sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
+            <div className='px-5 md:flex-row lg:justify-center text-muted-foreground sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 flex flex-col gap-10 py-32'>
                 <AgentProfile />
-                <form onSubmit={(e) => updateSupplier(e)} className='flex flex-col gap-6 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2'>
+                <Card className='order-1 md:order-2 w-full lg:w-/2 xl:w-1/4'>
+                    <CardHeader>
+                        <CardTitle className='text-2xl'>{t('profile.account-info')}</CardTitle>
+                        <CardDescription><Err /></CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={updateAgent} className='flex flex-col gap-6 w-full text-muted-foreground'>
+                            <Success />
+                            <div className='w-full flex flex-col gap-2'>
+                                <Label htmlFor="locale">{tt('select-language')}</Label>
+                                <select id='locale' className={`py-2 w-full px-1 text-sm border bg-card cursor-pointer border-b focus:outline-none focus:ring-0 outline-none`} value={locale} onChange={handleTranslation}>
+                                    {locales.map(loc => (
+                                        <option value={loc.loc} key={loc.loc} className='flex items-center justify-between'>
+                                            {loc.val}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                    <h1 className='font-bold w-full text-2xl mb-2 pb-2 border-b text-blue-600'>{t('profile.account-info')}</h1>
+                            {agent?.id ? <div className='flex flex-col w-full gap-1'>
+                                <Label htmlFor="username">{tt('username')}</Label>
+                                <Input type="text" id='name' name='username' value={agent.username} onChange={handleChange} />
+                            </div> : skeleton}
 
-                    {err && <small className='text-red-600 w-1/2 bg-red-200 text-center py-1 rounded-md'>{err}</small>}
-                    {okMsg && <small className='text-green-600 w-1/2 bg-green-200 text-center py-1 rounded-md'>{okMsg}</small>}
+                            {agent?.id ? <div className='flex flex-col w-full gap-1 relative'>
+                                <Label htmlFor="password">{tt('password')}</Label>
+                                <Input type={eye ? 'text' : 'password'} id='password' name='password' value={agent.password} onChange={handleChange} />
+                                <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-foreground' onClick={toggleEye} />
+                            </div> : skeleton}
 
-                    <div className='w-full flex flex-col gap-2'>
-                        <label htmlFor="locale" className='px-2 h-6 text-lg font-medium'>{tt('select-language')}</label>
-                        <select id='locale' className={`py-2 w-full px-1 text-sm border cursor-pointer border-b focus:outline-none focus:ring-0 outline-none`} value={locale} onChange={handleTranslation}>
-                            {locales.map(loc => (
-                                <option value={loc.loc} key={loc.loc} className='flex items-center justify-between'>
-                                    {loc.val}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                            <SubmitButton msg={tt('update')} />
+                        </form>
+                    </CardContent>
+                </Card>
 
-                    <h1 className='text-blue-600 font-bold text-lg border-t pt-2'>{tt('credentials')}</h1>
-
-                    {agent?.id ? <div className='flex flex-col w-full gap-1'>
-                        <label htmlFor="username" className='px-1 h-6 text-lg font-medium'>{tt('username')}</label>
-                        <input type="text" id='name' name='username' className='w-full border outline-none px-3 h-8' value={agent.username} onChange={handleChange} />
-                    </div> : skeleton}
-
-                    {agent?.id ? <div className='flex flex-col w-full gap-1 relative'>
-                        <label htmlFor="password" className='px-1 h-6 text-lg font-medium'>{tt('password')}</label>
-                        <input type={eye ? 'text' : 'password'} id='password' name='password' className='w-full border outline-none px-3 pr-8 h-8' value={agent.password} onChange={handleChange} />
-                        <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-black' onClick={toggleEye} />
-                    </div> : skeleton}
-
-                    <button disabled={isLoading} className={`self-start px-6 mt-2 text-white py-2 rounded-md ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
-                        {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('update')}</button>
-                </form>
             </div>
         </>
 

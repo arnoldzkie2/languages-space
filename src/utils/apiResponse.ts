@@ -40,10 +40,6 @@ const existRes = (name: string) => {
 const unauthorizedRes = () => {
     return NextResponse.json({ msg: 'Unauthorized try re-login' }, { status: 401 })
 }
-//check not found
-const checkNotFoundParams = (entity: string, value: any) => {
-    if (!value) return notFoundRes(entity);
-};
 
 //get searchParameters
 const getSearchParams = ({ url }: NextRequest, key: string) => {
@@ -60,5 +56,4 @@ export {
     createdRes,
     unauthorizedRes,
     getSearchParams,
-    checkNotFoundParams
 }

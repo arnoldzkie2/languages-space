@@ -4,9 +4,10 @@ import { useTranslations } from 'next-intl'
 import React, { useEffect, useState } from 'react'
 import useClientStore from '@/lib/state/client/clientStore'
 import TablePagination from './TablePagination'
-import { Order } from '@/lib/types/super-admin/orderType'
 import useGlobalStore from '@/lib/state/globalStore'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
+import { Order } from '@prisma/client'
+import { Skeleton } from '../ui/skeleton'
 
 
 const ClientOrders: React.FC = () => {
@@ -33,10 +34,10 @@ const ClientOrders: React.FC = () => {
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 xl:w-1/2 order-1 md:order-2'>
-            <h1 className='text-blue-600 border-b mb-1 pb-1 text-lg font-bold'>{t('profile.my-orders')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{t('profile.my-orders')}</h1>
             <div className='overflow-x-auto'>
-                <table className="text-sm text-left text-gray-800 shadow-md w-full">
-                    <thead className="text-xs uppercase bg-slate-100 border">
+                <table className="text-sm text-left text-muted-foreground shadow-md w-full">
+                    <thead className="text-xs uppercase bg-card border">
                         <tr>
                             <th scope="col" className="px-3 py-3">{tt('card')}</th>
                             <th scope="col" className="px-3 py-3">{tt('quantity')}</th>
@@ -48,24 +49,24 @@ const ClientOrders: React.FC = () => {
                     <tbody>
                         {currentOrders && currentOrders.length > 0 ?
                             currentOrders.map(order => (
-                                <tr className="bg-white border hover:bg-slate-50" key={order.id}>
+                                <tr className="bg-card border hover:bg-muted" key={order.id}>
                                     <td className='px-3 py-3'>
                                         <div className='h-5 text-xs md:text-sm w-36'>
-                                            {order.card.name}
+                                            {order.name}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-8'>
+                                        <div className='h-5 text-xs md:text-sm w-10'>
                                             {order.quantity}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs md:text-sm w-16'>
-                                            ¥{order.price}
+                                            ¥{Number(order.price)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-16 uppercase'>
+                                        <div className='h-5 text-xs md:text-sm w-24 uppercase'>
                                             {order.status}
                                         </div>
                                     </td>
@@ -76,27 +77,27 @@ const ClientOrders: React.FC = () => {
                                     </td>
                                 </tr>
                             )) : currentOrders && currentOrders.length < 1 ?
-                                <tr>
-                                    <td>
+                                <tr className='border bg-card'>
+                                    <td className='p-3'>
                                         {tt('no-data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (
-                                    <tr key={item}>
+                                    <tr key={item} className='bg-card border'>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-8 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-10 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-16 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-16 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-16 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-44 h-5'></Skeleton>
                                         </td>
                                     </tr>
                                 ))

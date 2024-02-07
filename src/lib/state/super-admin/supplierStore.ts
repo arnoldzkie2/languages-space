@@ -3,6 +3,7 @@ import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
 import { SupplierSchedule } from '@/lib/types/super-admin/scheduleType'
+import useDepartmentStore from './departmentStore'
 const totalSupplierValue = {
     total: '',
     searched: '',
@@ -62,6 +63,7 @@ interface SupplierProps {
     totalCourse: TotalCourse
     supplierSelectedID: string
     supplierSchedule: SupplierSchedule[]
+    supplierWithMeeting: Supplier[]
     courses: Courses[]
     supplierMeetingInfo: SupplierMeetingInfo[] | null
     getSupplierMeetingInfo: (supplierID: string) => Promise<void>
@@ -95,6 +97,7 @@ interface SupplierProps {
 const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     supplier: [],
     supplierData: null,
+    supplierWithMeeting: [],
     supplierSelectedID: '',
     deleteSupplierModal: false,
     viewSupplierModal: false,
@@ -150,7 +153,7 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     setSelectedSupplier: (suppliers: Supplier[]) => set({ selectedSupplier: suppliers }),
     getSupplier: async () => {
         try {
-            const { departmentID } = useGlobalStore.getState()
+            const { departmentID } = useDepartmentStore.getState()
             const { data } = await axios.get(`/api/supplier${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) {
                 set({ supplier: data.data })
@@ -178,10 +181,10 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     },
     getSupplierWithMeeting: async () => {
         try {
-            const { departmentID } = useGlobalStore.getState()
+            const { departmentID } = useDepartmentStore.getState()
             const { data } = await axios.get(`/api/booking/supplier/meeting${departmentID && `?departmentID=${departmentID}`}`)
             if (data.ok) {
-                set({ supplier: data.data })
+                set({ supplierWithMeeting: data.data })
             }
         } catch (error) {
             console.log(error);

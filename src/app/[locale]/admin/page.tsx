@@ -1,12 +1,13 @@
-import AdminSideNav from '@/components/admin/AdminSIdeNav'
-import React from 'react'
+import SideNav from '@/components/super-admin/SideNav';
+import React from 'react';
 
-const Page = () => {
+const Page = ({ }) => {
 
     return (
-        <>
-            <AdminSideNav />
-        </>
+        <div className='flex h-screen'>
+            <SideNav />
+            <div className='text-foreground font-black text-3xl w-screen h-screen grid place-items-center'>Hello World</div>
+        </div>
     )
 }
 

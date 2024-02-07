@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import useGlobalStore from '@/lib/state/globalStore';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface Props {
     getTotalPages: () => number
@@ -48,18 +50,19 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
         const pageNumbers = [];
 
         if (start > 1) {
-            pageNumbers.push(<div key={1} className="cursor-pointer text-lg hover:bg-blue-600 px-2 hover:text-white" onClick={() => goToPage(1)}>1</div>);
+            pageNumbers.push(<Button variant={'outline'} key={1} className="hover:bg-primary px-2 hover:text-white" onClick={() => goToPage(1)}>1</Button>);
 
             if (start > 2) {
-                pageNumbers.push(<div key="ellipsis-prev" className="text-lg"><FontAwesomeIcon icon={faEllipsis} /></div>);
+                pageNumbers.push(<div key="ellipsis-prev"><FontAwesomeIcon icon={faEllipsis} /></div>);
 
             }
         }
 
         for (let i = start; i <= end; i++) {
-            pageNumbers.push(<div key={i}
-                className={`${i === currentPage && 'text-white bg-blue-600 px-2'} cursor-pointer text-lg hover:text-white hover:bg-blue-600 px-2`}
-                onClick={() => goToPage(i)}>{i}</div>);
+            pageNumbers.push(<Button key={i}
+                variant={i === currentPage ? 'default' : 'outline'}
+                className='px-2.5 hover:bg-primary hover:text-secondary'
+                onClick={() => goToPage(i)}>{i}</Button>);
 
         }
 
@@ -68,7 +71,7 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
                 pageNumbers.push(<div key="ellipsis-next" className="pagination-ellipsis"><FontAwesomeIcon icon={faEllipsis} /></div>);
 
             }
-            pageNumbers.push(<div key={totalPages} className="text-lg hover:text-white cursor-pointer hover:bg-blue-600 px-2" onClick={() => goToPage(totalPages)}>{totalPages}</div>);
+            pageNumbers.push(<Button variant={'outline'} key={totalPages} className="cursor-pointer px-2 hover:bg-primary hover:text-white" onClick={() => goToPage(totalPages)}>{totalPages}</Button>);
 
         }
         return pageNumbers;
@@ -78,12 +81,12 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
     const t = useTranslations('super-admin')
 
     return (
-        <footer className={`flex px-8 mt-auto min-h-[80px] items-center justify-between border-t bg-white`}>
+        <footer className={`flex px-8 mt-auto min-h-[80px] items-center justify-between border-t text-muted-foreground`}>
             <div className='flex items-center gap-3'>
                 <div className='font-medium'>
                     {t('pagination.page')} {currentPage} of {getTotalPages()}
                 </div>
-                <input
+                <Input
                     type='text'
                     className='outline-none border px-3 py-2 w-1/3'
                     placeholder={t('pagination.goto')}
@@ -94,22 +97,23 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
                 />
             </div>
             <div className='flex items-center gap-10'>
-                <div className='font-medium'>{t('global.result')} <span className='font-black text-gray-600'>{totals.searched === totals.total ? '' : totals.searched}</span></div>
-                <div className='font-medium'>{t('global.selected')} <span className='font-black text-gray-600'>{totals.selected === '0' ? '' : totals.selected}</span></div>
-                <div className='font-medium'>{t('global.total')} <span className='font-black text-gray-600'>{totals.total}</span></div>
+                <div className='flex items-center gap-2'>{t('global.result')} <span className='font-black'>{totals.searched === totals.total ? '' : totals.searched}</span></div>
+                <div className='flex items-center gap-2'>{t('global.selected')} <span className='font-black'>{totals.selected === '0' ? '' : totals.selected}</span></div>
+                <div className='flex items-center gap-2'>{t('global.total')} <span className='font-black'>{totals.total}</span></div>
             </div>
             <div className='flex gap-4 items-center'>{renderPageNumbers()}</div>
             <div className='flex items-center gap-5 h-full'>
-                <button onClick={goToPreviousPage}
-                    className={`w-32 border h-10 rounded-md ${currentPage !== 1 && 'hover:bg-blue-600 hover:text-white'}`}
-                    disabled={currentPage === 1}>
+                <Button onClick={goToPreviousPage}
+                    className={`w-32 border h-10 rounded-md`}
+                    disabled={currentPage === 1}
+                >
                     {t('pagination.prev')}
-                </button>
-                <button onClick={goToNextPage}
-                    className={`w-32 border h-10 rounded-md ${currentPage !== getTotalPages() && 'hover:bg-blue-600 hover:text-white'}`}
+                </Button>
+                <Button onClick={goToNextPage}
+                    className={`w-32 border h-10 rounded-md`}
                     disabled={currentPage === getTotalPages()}>
                     {t('pagination.next')}
-                </button>
+                </Button>
             </div>
 
         </footer>

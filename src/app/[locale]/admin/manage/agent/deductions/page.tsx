@@ -1,33 +1,44 @@
 'use client'
-import AdminSideNav from '@/components/admin/AdminSIdeNav'
 import Err from '@/components/global/Err'
+import SubmitButton from '@/components/global/SubmitButton'
 import Success from '@/components/global/Success'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
 import AgentDeductionHeader from '@/components/super-admin/management/agent/AgentDeductionsHeader'
-import { Link } from '@/lib/navigation'
-import useAdminPageStore from '@/lib/state/admin/adminPageStore'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Link, useRouter } from '@/lib/navigation'
 import useGlobalStore from '@/lib/state/globalStore'
 import useAdminAgentStore from '@/lib/state/super-admin/agentStore'
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
+import { cn } from '@/utils'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import axios from 'axios'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 const Page = () => {
 
-    const [searchQuery, setSearchQuery] = useState('')
     const [formData, setFormData] = useState({
         agentID: '',
         name: '',
         quantity: 0,
         rate: 0,
     })
+    const [openAgent, setOpenAgent] = useState(false)
+    const router = useRouter()
 
-    const { isSideNavOpen, isLoading, departmentID, setErr, setOkMsg, setIsLoading } = useGlobalStore()
+    const departmentID = useDepartmentStore(s => s.departmentID)
+    const { isSideNavOpen, isLoading, setErr, setOkMsg, setIsLoading } = useGlobalStore()
     const { agents, getAgents } = useAdminAgentStore()
-    const permissions = useAdminPageStore(s => s.permissions)
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
 
@@ -36,7 +47,7 @@ const Page = () => {
         }))
     }
 
-    const createDeductions = async (e: React.MouseEvent) => {
+    const createDeductions = async (e: React.FormEvent) => {
 
         e.preventDefault()
 
@@ -51,7 +62,7 @@ const Page = () => {
             const { data } = await axios.post('/api/agent/balance/deductions', formData)
             if (data.ok) {
                 setIsLoading(false)
-                setOkMsg('Success')
+                toast('Success! deductions created.')
                 setFormData({ agentID: '', name: '', quantity: 0, rate: 0 })
             }
 
@@ -75,87 +86,112 @@ const Page = () => {
 
     return (
         <div>
-
-            <AdminSideNav />
+            <SideNav />
 
             <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-40' : 'pl-16'}`}>
 
-                <nav className={`border-b h-20 flex items-center bg-white px-8 justify-between`}>
-                    <h1 className='font-black text-gray-600 text-xl uppercase'>{t('agent.deductions')}</h1>
-                    <ul className='flex items-center h-full ml-auto gap-4'>
-                        {permissions?.create_agent_earnings && <Link href='/manage/agent/earnings' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
-                            <div>{tt('earnings')}</div>
-                        </Link>}
-                        {permissions?.view_agent && <Link href='/manage/agent' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
-                            <div>{t('agent.h1')}</div>
-                        </Link>}
-                    </ul>
-                </nav>
+                <AgentDeductionHeader />
 
                 <div className='w-full px-8'>
-                    <div className='flex p-10 w-1/2 border justify-between'>
+                    <Card className='w-1/4'>
+                        <CardHeader>
+                            <CardTitle>{t("agent.deductions")}</CardTitle>
+                            <CardDescription><Err /></CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form className='flex flex-col w-full gap-5' onSubmit={createDeductions}>
 
-                        <div className='flex flex-col w-1/2 gap-5'>
-                            <Err />
-                            <Success />
-                            <div className='relative w-full'>
-                                <input type="text" className='px-2 py-1.5 outline-none border w-full'
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder={t('agent.search')} />
-                            </div>
-                            <ul className='flex flex-col gap-3 w-full text-gray-600'>
-                                {agents.length < 1 ? <Skeleton /> : agents.map(agent => (
-                                    <li key={agent.id}
-                                        className={`${agent.id === formData.agentID && 'bg-blue-600 text-white'}
-                                     border px-3 h-9 w-full py-1.5 cursor-pointer hover:bg-blue-600 hover:text-white rounded-md`}
-                                        onClick={() => setFormData(prevData => ({ ...prevData, agentID: agent.id }))}>{agent.name} ({agent.username})</li>
-                                ))}
-                            </ul>
-                        </div>
+                                <Departments />
 
-                        <div className='flex flex-col w-1/3 gap-5'>
+                                <div className='flex w-full flex-col gap-1.5'>
+                                    <Label>{tt('agent')}</Label>
+                                    <Popover open={openAgent} onOpenChange={setOpenAgent}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={openAgent}
+                                                className={cn(
+                                                    "w-full justify-between",
+                                                    !formData.agentID && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {formData.agentID
+                                                    ? agents.find((agent) => agent.id === formData.agentID)?.username
+                                                    : tt('select')}
+                                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-full p-0">
+                                            <Command>
+                                                <CommandInput
+                                                    placeholder={t('agent.search')}
+                                                    className="h-9"
+                                                />
+                                                <CommandEmpty>{t('agent.404')}</CommandEmpty>
+                                                <CommandGroup>
+                                                    {agents.length > 0 ? agents.map(agent => (
+                                                        <CommandItem
+                                                            key={agent.id}
+                                                            className={`${formData.agentID === agent.id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                                            value={agent.username}
+                                                            onSelect={() => {
+                                                                setFormData(prev => ({ ...prev, agentID: agent.id }))
+                                                                setOpenAgent(false)
+                                                            }}
+                                                        >
+                                                            {agent.username}
+                                                            <CheckIcon
+                                                                className={cn(
+                                                                    "ml-auto h-4 w-4",
+                                                                    formData.agentID === agent.id ? "opacity-100" : "opacity-0"
+                                                                )}
+                                                            />
+                                                        </CommandItem>
+                                                    )) : <CommandItem>{t('agent.404')}</CommandItem>}
+                                                </CommandGroup>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
 
-                            <div className='flex w-full flex-col gap-1'>
-                                <label htmlFor="name" className='font-medium text-gray-700'>{tt('name')}</label>
-                                <input type="text" className='px-2 py-1.5 outline-none border w-full text-gray-600'
-                                    value={formData.name}
-                                    name='name'
-                                    onChange={handleChange}
-                                    placeholder={tt('name')} />
-                            </div>
+                                <div className='flex w-full flex-col gap-1'>
+                                    <Label htmlFor="name">{tt('name')}</Label>
+                                    <Input type="text"
+                                        value={formData.name}
+                                        name='name'
+                                        onChange={handleChange}
+                                        placeholder={tt('name')} />
+                                </div>
 
-                            <div className='flex w-full flex-col gap-1'>
-                                <label htmlFor="rate" className='font-medium text-gray-700'>{tt('rate')}</label>
-                                <input type="text" className='px-2 py-1.5 outline-none border w-full text-gray-600'
-                                    value={formData.rate}
-                                    name='rate'
-                                    onChange={handleChange}
-                                    placeholder={tt('rate')} />
-                            </div>
+                                <div className='flex w-full flex-col gap-1'>
+                                    <Label htmlFor="rate">{tt('rate')}</Label>
+                                    <Input type="text"
+                                        value={formData.rate}
+                                        name='rate'
+                                        onChange={handleChange}
+                                        placeholder={tt('rate')} />
+                                </div>
 
-                            <div className='flex w-full flex-col gap-1'>
-                                <label htmlFor="quantity" className='font-medium text-gray-700'>{tt('quantity')}</label>
-                                <input type="text" className='px-2 py-1.5 outline-none border w-full text-gray-600'
-                                    value={formData.quantity}
-                                    name='quantity'
-                                    onChange={handleChange}
-                                    placeholder={tt('quantity')} />
-                            </div>
+                                <div className='flex w-full flex-col gap-1'>
+                                    <Label htmlFor="quantity">{tt('quantity')}</Label>
+                                    <Input type="text"
+                                        value={formData.quantity}
+                                        name='quantity'
+                                        onChange={handleChange}
+                                        placeholder={tt('quantity')} />
+                                </div>
 
-                            <div>Total: <strong>{formData.quantity * formData.rate}</strong></div>
+                                <div>Total: <strong>{formData.quantity * formData.rate}</strong></div>
 
+                                <div className='flex w-full items-center gap-5'>
+                                    <Button onClick={() => router.push('/admin/manage/agent')} className='w-full' variant={'ghost'} type='button'>{tt('cancel')}</Button>
+                                    <SubmitButton msg={tt("confirm")} style='w-full' />
+                                </div>
 
-                            <div className='flex w-full items-center gap-5'>
-                                <Link href={'/admin/manage/agent'} className='border py-2 w-1/2 flex items-center justify-center rounded-md hover:bg-slate-50'>{tt('cancel')}</Link>
-                                <button disabled={isLoading && true}
-                                    onClick={(e) => createDeductions(e)}
-                                    className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} outline-none py-2 w-1/2 self-end text-white rounded-md`}>
-                                    {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : tt('create')}</button>
-                            </div>
-                        </div>
-
-                    </div>
+                            </form>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div >

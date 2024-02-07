@@ -7,6 +7,7 @@ import { SupplierBalanceTransactions } from '@prisma/client'
 import useGlobalStore from '@/lib/state/globalStore'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
 import TruncateTextModal from '../global/TruncateTextModal'
+import { Skeleton } from '../ui/skeleton'
 
 const SupplierBalanceTransactions = () => {
 
@@ -31,10 +32,10 @@ const SupplierBalanceTransactions = () => {
 
     return (
         <div className='flex flex-col gap-3 w-full order-1 md:order-2'>
-            <h1 className='text-blue-600 border-b mb-1 pb-1 text-lg font-bold'>{tt('transactions')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{tt('transactions')}</h1>
             <div className='overflow-x-auto'>
-                <table className="text-sm text-left text-gray-800 shadow-md w-full">
-                    <thead className="text-xs uppercase bg-slate-100 border">
+                <table className="text-sm text-left text-muted-foreground shadow-md w-full">
+                    <thead className="text-xs uppercase bg-card border">
                         <tr>
                             <th scope="col" className="px-3 py-3">ID</th>
                             <th scope="col" className="px-3 py-3">{tt('amount')}</th>
@@ -47,7 +48,7 @@ const SupplierBalanceTransactions = () => {
                     <tbody>
                         {currentTransactions && currentTransactions.length > 0 ?
                             currentTransactions.map(transac => (
-                                <tr className="bg-white border hover:bg-slate-50" key={transac.id}>
+                                <tr className="bg-card border hover:bg-muted" key={transac.id}>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs md:text-sm w-20 cursor-pointer' onClick={() => copy(transac.id)} title={tt('copy')}>
                                             {returnTruncateText(transac.id, 8)}
@@ -88,31 +89,31 @@ const SupplierBalanceTransactions = () => {
                                 </tr>
                             )) :
                             currentTransactions && currentTransactions.length < 1 ?
-                                <tr>
+                                <tr className='border bg-card'>
                                     <td className='w-full px-3 py-2'>
                                         {tt('no-data')}
                                     </td>
                                 </tr>
                                 :
                                 skeleton.map(item => (
-                                    <tr key={item}>
+                                    <tr key={item} className='border bg-card'>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-20 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-20 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-20 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-32 h-5'></Skeleton>
                                         </td>
                                         <td className='py-3.5 px-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                                         </td>
                                     </tr>
                                 ))

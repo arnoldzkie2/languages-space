@@ -1,9 +1,9 @@
 import { Admin } from '@prisma/client'
 import axios from 'axios'
 import { create } from 'zustand'
-import useGlobalStore from '../globalStore'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { totalClientsValue } from './clientStore'
+import useDepartmentStore from './departmentStore'
 
 
 const adminSearchQueryValue = {
@@ -50,7 +50,7 @@ const useAdminStore = create<AdminStore>((set, get) => ({
     admins: [],
     getAdmins: async () => {
 
-        const departmentID = useGlobalStore.getState().departmentID
+        const departmentID = useDepartmentStore.getState().departmentID
         try {
             const { data } = await axios.get('/api/admin', {
                 params: {

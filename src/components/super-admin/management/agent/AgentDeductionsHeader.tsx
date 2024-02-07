@@ -2,31 +2,21 @@
 import Link from 'next/link';
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { useSession } from 'next-auth/react';
 
-const AgentDeductionHeader: React.FC = ({ }) => {
-
-    const { status } = useSession()
+const AgentEarningsHeader: React.FC = ({ }) => {
 
     const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
-    const skeleton = (
-        <li className='bg-slate-200 animate-pulse w-40 h-5 rounded-3xl'></li>
-    )
 
     return (
-        <nav className={`border-b h-20 flex items-center bg-white px-8 justify-between`}>
-            <h1 className='font-black text-gray-600 text-xl uppercase'>{t('agent.deductions')}</h1>
-            <ul className='flex items-center h-full ml-auto gap-4'>
-                {status !== 'loading' ? <Link href='/manage/agent/earnings' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
-                    <div>{tt('earnings')}</div>
-                </Link> : skeleton}
-                {status !== 'loading' ? <Link href='/manage/agent' className='flex items-center justify-center w-40 text-gray-700 hover:text-blue-600 cursor-pointer gap-1'>
+        <nav className={`border-b h-20 flex items-center px-8 justify-between`}>
+            <h1 className='font-black  text-xl uppercase'>{t('agent.earnings')}</h1>
+            <ul className='flex items-center h-full ml-auto gap-4 text-muted-foreground'>
+                <Link href='/admin/manage/agent' className='flex hover:text-primary items-center justify-center w-40  hover:-primary cursor-pointer gap-1'>
                     <div>{t('agent.h1')}</div>
-                </Link> : skeleton}
+                </Link>
             </ul>
         </nav>
     )
 }
 
-export default AgentDeductionHeader
+export default AgentEarningsHeader

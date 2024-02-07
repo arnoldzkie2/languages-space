@@ -1,3 +1,4 @@
+'use client'
 import { SupplierSchedule } from "@/lib/types/super-admin/scheduleType"
 
 interface Props {
@@ -20,10 +21,10 @@ const ScheduleComponent: React.FC<Props> = (schedule) => {
 
     return (
         <div onClick={() => status === 'available' ? bindSchedule(scheduleID) : viewBooking(booking![0].id)
-        } className={`p-2 mx-2 my-0.5 w-full border hover:border-blue-600 
-        ${status === 'reserved' ? 'bg-blue-600 text-white' :
-                status === 'canceled' ? 'bg-orange-400 text-white' :
-                    'bg-slate-200 text-gray-600'} cursor-pointer rounded-md flex items-center gap-2`}>
+        } className={`p-2 mx-2 my-0.5 w-full border hover:border-primary 
+        ${status === 'reserved' ? 'bg-primary text-secondary' :
+                status === 'canceled' ? ' bg-destructive text-foreground' :
+                    'bg-secondary text-muted-foreground'} cursor-pointer rounded-md flex items-center gap-2`}>
             <strong>{time}</strong> {clientUsername || ''}
         </div >
     )

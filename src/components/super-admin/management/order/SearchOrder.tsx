@@ -1,4 +1,5 @@
 'use client'
+import { Input } from '@/components/ui/input';
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
 
@@ -26,67 +27,59 @@ const SearchOrder: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const tt = useTranslations('global')
 
     return (
-        <div className='border-gray-300 w-full'>
+        <div className='w-full'>
             <div>
-                <div className='flex w-full text-gray-700 gap-3'>
+                <div className='flex w-full text-muted-foreground gap-3'>
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={t('order.card')}
                         name='card'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.card}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={t('order.client_name')}
                         name='client_name'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.client_name}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={t('order.quantity')}
                         name='quantity'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.quantity}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('price')}
                         name='price'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.price}
                     />
 
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('note')}
                         name='note'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.note}
                     />
-                    <input type="text"
+                    <Input type="text"
                         placeholder={tt('status')}
                         name='status'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.status}
                     />
-                    <input type="text"
+                    <Input type="text"
                         placeholder={t('order.invoice_number')}
                         name='invoice_number'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.invoice_number}
                     />
-                    <input type="text"
+                    <Input type="text"
                         placeholder={t('order.express_number')}
                         name='express_number'
-                        className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
                         value={searchQuery.express_number}
                     />

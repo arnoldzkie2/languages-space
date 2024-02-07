@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import { Order } from '@/lib/types/super-admin/orderType'
 import { SupplierPrice } from '@/lib/types/super-admin/supplierTypes';
 import useGlobalStore from '../globalStore';
+import { toast } from 'sonner';
 
 interface Props {
     page: string
@@ -78,7 +79,7 @@ const useClientStore = create<Props>((set, get) => ({
                     username: username, password, redirect: false
                 })
                 setIsLoading(false)
-                setOkMsg('Success')
+                toast('Success! info updated')
             }
 
         } catch (error: any) {

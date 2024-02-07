@@ -32,7 +32,7 @@ export const POST = async (req: NextRequest) => {
                 currency: true,
                 agent: {
                     select: {
-                        name: true,
+                        username: true,
                         email: true
                     }
                 },
@@ -83,7 +83,7 @@ export const POST = async (req: NextRequest) => {
                     to: balance.agent.email,
                     subject: 'Payslip',
                     react: Payslip({
-                        name: balance.agent.name,
+                        name: balance.agent.username,
                         date, balanceID: balance.id,
                         earnings: balance.earnings,
                         deductions: balance.deductions,

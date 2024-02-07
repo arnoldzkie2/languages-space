@@ -13,6 +13,7 @@ import Success from '../global/Success'
 import Err from '../global/Err'
 import { Button } from '../ui/button'
 import { CANCELED, CONFIRMED } from '@/utils/constants'
+import { Skeleton } from '../ui/skeleton'
 
 const SupplierBookingRequest: React.FC = () => {
 
@@ -40,13 +41,13 @@ const SupplierBookingRequest: React.FC = () => {
     return (
         <div className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='w-full border-b pb-1 mb-1 flex items-center gap-5'>
-                <h1 className='text-blue-600 text-lg font-bold'>{t('profile.booking-requests')}</h1>
+                <h1 className='text-foreground text-lg font-bold'>{t('profile.booking-requests')}</h1>
                 <Success />
                 <Err />
             </div>
             <div className='overflow-x-auto'>
-                <table className="text-sm text-left text-gray-800 shadow-md w-full">
-                    <thead className="text-xs uppercase bg-slate-100 border">
+                <table className="text-sm text-left text-muted-foreground shadow-md w-full">
+                    <thead className="text-xs uppercase bg-card border">
                         <tr>
                             <th scope="col" className="p-3">{tt('schedule')}</th>
                             <th scope="col" className="p-3">{tt('client')}</th>
@@ -59,7 +60,7 @@ const SupplierBookingRequest: React.FC = () => {
                     <tbody>
                         {currentBookings && currentBookings.length > 0 ?
                             currentBookings.map(bookingRequest => (
-                                <tr className="bg-white border hover:bg-slate-50" key={bookingRequest.id}>
+                                <tr className="bg-card border hover:bg-muted" key={bookingRequest.id}>
                                     <td className='p-3'>
                                         <div className='h-5 text-xs md:text-sm w-36'>
                                             {bookingRequest.date} ({bookingRequest.time})
@@ -102,27 +103,30 @@ const SupplierBookingRequest: React.FC = () => {
                                 </tr>
                             )) :
                             currentBookings && currentBookings.length < 1 ?
-                                <tr>
+                                <tr className='bg-card border'>
                                     <td className='w-full px-3 py-2'>
                                         {tt('no-data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (
-                                    <tr key={item}>
+                                    <tr key={item} className='bg-card border'>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-32 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-44 h-5'></Skeleton>
+                                        </td>
+                                        <td className='p-3'>
+                                            <Skeleton className='rounded-3xl w-10 h-5'></Skeleton>
                                         </td>
                                     </tr>
                                 ))

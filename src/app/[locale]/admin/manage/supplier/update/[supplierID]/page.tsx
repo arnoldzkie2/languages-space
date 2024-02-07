@@ -2,7 +2,7 @@
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
 import { supplierFormDataValue } from '@/lib/state/super-admin/supplierStore'
-import { SupplierFormDataProps, SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
+import { SupplierFormDataProps } from '@/lib/types/super-admin/supplierTypes'
 import { UploadButton } from '@/utils/uploadthing'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,11 +10,21 @@ import axios from 'axios'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { Department } from '@/lib/types/super-admin/globalType'
+import Err from '@/components/global/Err'
 import useGlobalStore from '@/lib/state/globalStore'
-import AdminSideNav from '@/components/admin/AdminSIdeNav'
+import { useRouter } from '@/lib/navigation'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@/components/ui/button'
+import SubmitButton from '@/components/global/SubmitButton'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { toast } from 'sonner'
+import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
+import { Department } from '@prisma/client'
+import useAdminPageStore from '@/lib/state/admin/adminPageStore'
 
 interface Props {
     params: {
@@ -24,11 +34,14 @@ interface Props {
 
 const Page = ({ params }: Props) => {
 
-    const { supplierID } = params
+    const supplierID = params.supplierID
+
     const router = useRouter()
     const [formData, setFormData] = useState<SupplierFormDataProps>(supplierFormDataValue)
 
-    const { isSideNavOpen, isLoading, setIsLoading, err, setErr, prevProfileKey, setPrevProfileKey, deleteProfile } = useGlobalStore()
+    const { isSideNavOpen, setIsLoading, setErr, prevProfileKey, setPrevProfileKey, deleteProfile } = useGlobalStore()
+    const { departments, getDepartments, departmentID } = useDepartmentStore()
+    const admin = useAdminPageStore(s => s.admin)
 
     const updateSupplier = async (e: React.FormEvent) => {
 
@@ -40,7 +53,7 @@ const Page = ({ params }: Props) => {
         );
         const updatedFormData = { ...formData, meeting_info: filteredMeetingInfo };
 
-        const { name, username, password, payment_address, payment_schedule, currency, salary, booking_rate } = updatedFormData
+        const { name, username, password, payment_address, payment_schedule, currency, booking_rate, departments } = updatedFormData
 
         try {
 
@@ -50,9 +63,13 @@ const Page = ({ params }: Props) => {
             if (!payment_address) return setErr('Payment Address is required')
             if (!payment_schedule) return setErr('Payment Scheudule is required')
             if (!currency) return setErr('Currency is required')
-            if (!salary) return setErr('Basic Salary is required')
             if (!booking_rate) return setErr('Booking Rate is required')
 
+            if (admin) {
+                updatedFormData.departments = [departmentID]
+            } else {
+                if (departments.length < 1) return setErr("Select Department")
+            }
             setIsLoading(true)
             const { data } = await axios.patch('/api/supplier', updatedFormData, { params: { supplierID } })
 
@@ -71,6 +88,34 @@ const Page = ({ params }: Props) => {
         }
 
     }
+
+    const retrieveSupplier = async () => {
+        try {
+
+            const { data } = await axios.get(`/api/supplier?supplierID=${supplierID}`)
+            if (data.ok) {
+                const departmentIDs = data.data.departments.length > 0 ? data.data.departments.map((dept: Department) => dept.id) : []
+                data.data.departments = departmentIDs
+                const { salary, currency, payment_schedule, payment_address, booking_rate } = data.data.balance[0]
+                data.data.salary = salary
+                data.data.currency = currency
+                data.data.payment_schedule = payment_schedule
+                data.data.payment_address = payment_address
+                data.data.booking_rate = booking_rate
+                setFormData(data.data)
+            }
+
+        } catch (error: any) {
+            console.log(error);
+            if (error.response.status === 404) {
+                alert('Supplier not found')
+                return router.push('/manage/supplier')
+            }
+            alert('Something went wrong')
+            router.push('/manage/supplier')
+        }
+    }
+
 
     const addMoreMeetingInfo = () => {
         const updatedMeetingInfo = [...formData.meeting_info, { service: '', meeting_code: '' }];
@@ -122,7 +167,7 @@ const Page = ({ params }: Props) => {
             if (newTag && !formData.tags.includes(newTag)) {
                 const updatedTags = [...formData.tags, newTag];
                 setFormData(prevData => ({ ...prevData, tags: updatedTags }));
-                event.currentTarget.value = ''; // Clear the input
+                event.currentTarget.value = ''; // Clear the Input
             } else {
                 event.currentTarget.value = ''
             }
@@ -136,37 +181,10 @@ const Page = ({ params }: Props) => {
         setFormData(updatedFormData);
     };
 
-    const retrieveSupplier = async () => {
-
-        try {
-
-            const { data } = await axios.get(`/api/supplier?supplierID=${supplierID}`)
-            if (data.ok) {
-                const departmentIDs = data.data.departments.length > 0 ? data.data.departments.map((dept: Department) => dept.id) : []
-                data.data.departments = departmentIDs
-                const { salary, currency, payment_schedule, payment_address, booking_rate } = data.data.balance[0]
-                data.data.salary = salary
-                data.data.currency = currency
-                data.data.payment_schedule = payment_schedule
-                data.data.payment_address = payment_address
-                data.data.booking_rate = booking_rate
-                setFormData(data.data)
-            }
-
-        } catch (error: any) {
-            console.log(error);
-            if (error.response.status === 404) {
-                alert('Supplier not found')
-                return router.push('/manage/supplier')
-            }
-            alert('Something went wrong')
-            router.push('/manage/supplier')
-        }
-    }
-
     useEffect(() => {
         setPrevProfileKey('')
         retrieveSupplier()
+        if (!admin) getDepartments()
     }, [])
 
     useEffect(() => {
@@ -187,47 +205,58 @@ const Page = ({ params }: Props) => {
     return (
         <>
 
-            <AdminSideNav />
+            <SideNav />
 
-            <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-40' : 'pl-16'}`}>
+            <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
-                <nav className={`border-b h-20 flex items-center bg-white px-8 justify-between`}>
-                    <h1 className='font-black text-gray-600 text-xl uppercase'>{t('supplier.update')}</h1>
+                <nav className={`border-b h-20 flex items-center px-8 justify-between`}>
+                    <h1 className='font-black text-xl uppercase'>{t('supplier.update')}</h1>
+                    <ul className='flex items-center h-full ml-auto gap-5 text-muted-foreground'>
+                        <Link href={'/admin/manage/supplier'} className='flex items-center justify-center w-44 hover:text-primary cursor-pointer'>
+                            {t('supplier.h1')}
+                        </Link>
+                    </ul>
                 </nav>
 
                 <div className='w-full px-8'>
 
-                    <form className='w-2/3 flex flex-col gap-10 bg-white text-gray-600 p-10 border' onSubmit={updateSupplier}>
-                        {err && <small className='w-full text-red-400'>{err}</small>}
+                    <Card className='w-2/3'>
+                        <CardHeader>
+                            <CardTitle>{t('supplier.update')}</CardTitle>
+                            <CardDescription><Err /></CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form className='w-full flex flex-col gap-10' onSubmit={updateSupplier}>
+                                <div className='w-full flex gap-20'>
 
-                        <div className='w-full flex gap-20'>
+                                    <SupplierFormFirstRow formData={formData}
+                                        handleChange={handleChange}
+                                        handleRemoveTag={handleRemoveTag}
+                                        handleTagInputChange={handleTagInputChange} />
 
-                            <SupplierFormFirstRow formData={formData}
-                                handleChange={handleChange}
-                                handleRemoveTag={handleRemoveTag}
-                                handleTagInputChange={handleTagInputChange} />
+                                    <SupplierFormSecondRow formData={formData}
+                                        handleChange={handleChange}
+                                        departments={departments}
+                                        setFormData={setFormData}
+                                    />
 
-                            <SupplierFormSecondRow formData={formData}
-                                handleChange={handleChange}
-                                setFormData={setFormData}
-                            />
+                                    <SupplierFormThirdRow meetingInfo={formData.meeting_info}
+                                        formData={formData}
+                                        handleChange={handleChange}
+                                        addMoreMeetingInfo={addMoreMeetingInfo}
+                                        handleMeetinInfoChange={handleMeetinInfoChange}
+                                        removeMeetingInfo={removeMeetingInfo} />
 
-                            <SupplierFormThirdRow meetingInfo={formData.meeting_info}
-                                formData={formData}
-                                handleChange={handleChange}
-                                addMoreMeetingInfo={addMoreMeetingInfo}
-                                handleMeetinInfoChange={handleMeetinInfoChange}
-                                removeMeetingInfo={removeMeetingInfo} />
+                                </div>
 
-                        </div>
+                                <div className='flex items-center gap-10 w-1/2 self-end'>
+                                    <Button variant={'ghost'} type='button' className='w-full' onClick={() => router.push('/admin/manage/supplier')}>{tt('cancel')}</Button>
+                                    <SubmitButton msg={tt('update')} style='w-full' />
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
 
-                        <div className='flex items-center gap-10 w-1/2 self-end'>
-                            <Link href={'/admin/manage/supplier'} className='flex items-center justify-center w-full h-10 rounded-md hover:bg-slate-200 border'>{tt('cancel')}</Link>
-                            <button disabled={isLoading && true} className={`w-full h-10 flex items-center justify-center ${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} text-white rounded-md`}>
-                                {isLoading ? <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} /> : tt('update')}</button>
-                        </div>
-
-                    </form>
 
                 </div>
 
@@ -252,51 +281,51 @@ const SupplierFormFirstRow = (props: {
         <div className='w-full flex flex-col gap-4'>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="name" className='font-medium text-gray-700'>{tt('name')}</label>
-                <input required value={formData.name} onChange={handleChange} name='name' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='name' />
+                <Label htmlFor="name">{tt('name')}</Label>
+                <Input required value={formData.name} onChange={handleChange} name='name' type="text" id='name' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="username" className='font-medium text-gray-700'>{tt('username')}</label>
-                <input required value={formData.username} onChange={handleChange} name='username' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='username' />
+                <Label htmlFor="username">{tt('username')}</Label>
+                <Input required value={formData.username} onChange={handleChange} name='username' type="text" id='username' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="email" className='font-medium text-gray-700'>{tt('email')} (optional)</label>
-                <input value={formData.email} onChange={handleChange} name='email' type="email" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='email' />
+                <Label htmlFor="email">{tt('email')} (optional)</Label>
+                <Input value={formData.email} onChange={handleChange} name='email' type="email" id='email' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="password" className='font-medium text-gray-700'>{tt('password')}</label>
-                <input required value={formData.password} onChange={handleChange} name='password' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='password' />
+                <Label htmlFor="password">{tt('password')}</Label>
+                <Input required value={formData.password} onChange={handleChange} name='password' type="text" id='password' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="phone" className='font-medium text-gray-700'>{tt('phone')} (optional)</label>
-                <input value={formData.phone_number} onChange={handleChange} name='phone_number' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='phone' />
+                <Label htmlFor="phone">{tt('phone')} (optional)</Label>
+                <Input value={formData.phone_number} onChange={handleChange} name='phone_number' type="text" id='phone' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="organization" className='font-medium text-gray-700'>{tt('organization')} (optional)</label>
-                <input value={formData.organization} onChange={handleChange} name='organization' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='organization' />
+                <Label htmlFor="organization">{tt('organization')} (optional)</Label>
+                <Input value={formData.organization} onChange={handleChange} name='organization' type="text" id='organization' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="note" className='font-medium text-gray-700'>{tt('note')} (optional)</label>
-                <input value={formData.note} onChange={handleChange} name='note' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='note' />
+                <Label htmlFor="note">{tt('note')} (optional)</Label>
+                <Input value={formData.note} onChange={handleChange} name='note' type="text" id='note' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="tags" className='font-medium text-gray-700' title='Enter to add tags'>{t('supplier.tags')} (optional)</label>
-                <input onKeyDown={handleTagInputChange} name='tags' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='tags' />
+                <Label htmlFor="tags" title='Enter to add tags'>{t('supplier.tags')} (optional)</Label>
+                <Input onKeyDown={handleTagInputChange} name='tags' type="text" id='tags' />
             </div>
 
             <div className='flex flex-col gap-3'>
-                <span className='font-medium text-gray-700'>{t('supplier.tags')}</span>
+                <span>{t('supplier.tags')}</span>
 
                 <ul className='w-full flex items-center gap-5 flex-wrap'>
                     {formData.tags.map(item => (
-                        <li key={item} onClick={() => handleRemoveTag(item)} className='border cursor-pointer bg-slate-100 py-1 px-3 flex items-center gap-2'>
+                        <li key={item} onClick={() => handleRemoveTag(item)} className='border cursor-pointer bg-muted py-1 px-3 flex items-center gap-2'>
                             <div>{item}</div>
                             <FontAwesomeIcon icon={faXmark} />
                         </li>
@@ -311,83 +340,153 @@ const SupplierFormFirstRow = (props: {
 const SupplierFormSecondRow = (props: {
     handleChange: (e: any) => void
     formData: SupplierFormDataProps
+    departments: Department[] | null
     setFormData: React.Dispatch<React.SetStateAction<SupplierFormDataProps>>
 }) => {
 
-    const { handleChange, formData, setFormData } = props
+    const { handleChange, formData, departments, setFormData } = props
+
+    const admin = useAdminPageStore(s => s.admin)
+
+    const handleCheckboxChange = (isChecked: boolean, deptId: string) => {
+        if (isChecked) {
+            // If checkbox is checked, add deptId to formData.departments
+            setFormData(prevState => ({
+                ...prevState,
+                departments: [...prevState.departments, deptId]
+            }));
+        } else {
+            // If checkbox is unchecked, remove deptId from formData.departments
+            setFormData(prevState => ({
+                ...prevState,
+                departments: prevState.departments.filter(id => id !== deptId)
+            }));
+        }
+    };
 
     const tt = useTranslations('global')
     return (
         <div className='w-full flex flex-col gap-4'>
 
-            <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="gender" className='font-medium text-gray-700'>{tt('gender')} (optional)</label>
-                <select name="gender" id="gender" onChange={handleChange} value={formData.gender} className='py-1 outline-none px-3 shadow focus:shadow-blue-600 rounded-sm border'>
-                    <option value="" disabled>{tt('select')}</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="others">Others</option>
-                </select>
+
+            <div className="w-full items-center gap-1.5">
+                <Label>{tt('gender')}</Label>
+                <Select onValueChange={(gender) => setFormData(prev => ({ ...prev, gender }))} value={formData.gender}>
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder={tt('select')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>{tt('gender')}</SelectLabel>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="others">Others</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
-            <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="employment_status" className='font-medium text-gray-700'>{tt('employment')} (optional)</label>
-                <select name="employment_status" id="employment_status" onChange={handleChange} value={formData.employment_status} className='py-1 outline-none px-3 shadow focus:shadow-blue-600 rounded-sm border'>
-                    <option value="" disabled>{tt('select')}</option>
-                    <option value="full-time">Full-time</option>
-                    <option value="part-time">Part-time</option>
-                </select>
+
+            <div className="w-full items-center gap-1.5">
+                <Label>{tt('employment')}</Label>
+                <Select onValueChange={(employment_status) => setFormData(prev => ({ ...prev, employment_status }))} value={formData.employment_status}>
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder={tt('select')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>{tt('employment')}</SelectLabel>
+                            <SelectItem value="full-time">Full-time</SelectItem>
+                            <SelectItem value="part-time">Part-time</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
 
             <div className='flex w-full items-center gap-2'>
-                <div className='w-full flex flex-col gap-2'>
-                    <label htmlFor="payment_schedule" className='font-medium text-gray-700'>{tt('schedule')}</label>
-                    <select name="payment_schedule" id="payment_schedule" onChange={handleChange} value={formData.payment_schedule} className='py-1 outline-none px-3 shadow focus:shadow-blue-600 rounded-sm border'>
-                        <option value="" disabled>{tt('select')}</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                    </select>
+
+                <div className="w-full items-center gap-1.5">
+                    <Label>{tt('payment')}</Label>
+                    <Select onValueChange={(payment_schedule) => setFormData(prev => ({ ...prev, payment_schedule }))} value={formData.payment_schedule}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder={tt('select')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>{tt('payment')}</SelectLabel>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="monthly">Monthly</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
 
-                <div className='w-full flex flex-col gap-2'>
-                    <label htmlFor="currency" className='font-medium text-gray-700'>{tt('currency')}</label>
-                    <select name="currency" id="currency" onChange={handleChange} value={formData.currency} className='py-1 outline-none px-3 shadow focus:shadow-blue-600 rounded-sm border'>
-                        <option value="" disabled>{tt('select')}</option>
-                        <option value="USD">USD ($)</option>
-                        <option value="PHP">PHP (₱)</option>
-                        <option value="RMB">RMB (¥)</option>
-                        <option value="VND">VND (₫)</option>
-                    </select>
+                <div className="w-full items-center gap-1.5">
+                    <Label>{tt('currency')}</Label>
+                    <Select onValueChange={(currency) => setFormData(prev => ({ ...prev, currency }))} value={formData.currency}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder={tt('select')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>{tt('currency')}</SelectLabel>
+                                <SelectItem value="USD">USD ($)</SelectItem>
+                                <SelectItem value="PHP">PHP (₱)</SelectItem>
+                                <SelectItem value="RMB">RMB (¥)</SelectItem>
+                                <SelectItem value="VND">VND (₫)</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
 
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="payment_info" className='font-medium text-gray-700'>{tt('payment-address')} (optional)</label>
-                <input value={formData.payment_address} onChange={handleChange} name='payment_address' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='payment_address' />
+                <Label htmlFor="payment_info">{tt('payment-address')}</Label>
+                <Input value={formData.payment_address} onChange={handleChange} name='payment_address' type="text" id='payment_address' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="address" className='font-medium text-gray-700'>{tt('address')} (optional)</label>
-                <input value={formData.address} onChange={handleChange} name='address' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='address' />
+                <Label htmlFor="address">{tt('address')} {tt('optional')}</Label>
+                <Input value={formData.address} onChange={handleChange} name='address' type="text" id='address' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="origin" className='font-medium text-gray-700'>{tt('origin')} (optional)</label>
-                <input value={formData.origin} onChange={handleChange} name='origin' type="text" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='origin' />
+                <Label htmlFor="origin">{tt('origin')} {tt('optional')}</Label>
+                <Input value={formData.origin} onChange={handleChange} name='origin' type="text" id='origin' />
             </div>
+
+            {!admin && <div className='w-full flex flex-col gap-2'>
+                <Label className='block font-medium'>{tt('departments')}</Label>
+                {departments && departments.map((dept) => (
+                    <div key={dept.id} className="flex items-center">
+                        <Checkbox
+                            onCheckedChange={(isChecked: boolean) => handleCheckboxChange(isChecked, dept.id)}
+                            id={`department_${dept.id}`}
+                            name={`department_${dept.id}`}
+                            value={dept.id}
+                            checked={formData.departments.includes(dept.id)}
+                            className="mr-2"
+                        />
+                        <Label htmlFor={`department_${dept.id}`} className="mr-4">{dept.name}</Label>
+                    </div>
+                ))}
+            </div>}
 
             <div className='flex items-center justify-between w-full mt-2'>
 
                 <Image width={110} height={110} src={formData.profile_url || '/profile/profile.svg'} alt='Supplier Profile' className='border rounded-full' />
 
                 <div className='flex flex-col gap-3 items-start'>
-                    <span className='block font-medium text-gray-700'>{tt('profile')}</span>
+                    <span className='block'>{tt('profile')}</span>
                     <UploadButton
+                        appearance={{
+                            button: 'bg-primary text-muted'
+                        }}
                         endpoint="profileUploader"
                         onClientUploadComplete={(res) => {
                             if (res) {
                                 setFormData(prevData => ({ ...prevData, profile_key: res[0].key, profile_url: res[0].url }))
-                                alert("Upload Completed");
+                                toast("Upload Completed");
                             }
                         }}
                         onUploadError={(error: Error) => {
@@ -399,7 +498,6 @@ const SupplierFormSecondRow = (props: {
         </div>
     )
 }
-
 
 const SupplierFormThirdRow = (props: {
     meetingInfo: {
@@ -419,41 +517,38 @@ const SupplierFormThirdRow = (props: {
         <div className='flex flex-col gap-3 w-full'>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="salary" className='font-medium text-gray-700'>{tt('salary')}</label>
-                <input value={props.formData.salary} onChange={props.handleChange} name='salary' type="number" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='salary' />
+                <Label htmlFor="salary">{tt('salary')} {tt('optional')}</Label>
+                <Input value={props.formData.salary} onChange={props.handleChange} name='salary' type="number" id='salary' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <label htmlFor="booking_rate" className='font-medium text-gray-700'>{tt('booking-rate')}</label>
-                <input value={props.formData.booking_rate} onChange={props.handleChange} name='booking_rate' type="number" className='w-full border outline-none rounded-sm focus:shadow-blue-500 shadow py-1 px-3' id='booking_rate' />
+                <Label htmlFor="booking_rate">{tt('booking-rate')}</Label>
+                <Input value={props.formData.booking_rate} onChange={props.handleChange} name='booking_rate' type="number" id='booking_rate' />
             </div>
 
-            <h1 className='font-bold text-gray-700'>{tt('meeting')}</h1>
+            <h1 className='font-bold'>{tt('meeting')}</h1>
             {props.meetingInfo.map((info, index) => (
                 <div key={index} className='flex flex-col gap-3 w-full p-4 border'>
-                    <input
+                    <Input
                         type="text"
                         name="service"
                         placeholder={tt('service')}
                         value={info.service}
-                        className='py-1.5 px-2 outline-none border rounded-md'
                         onChange={(e) => props.handleMeetinInfoChange(e, index)}
                     />
-                    <input
+                    <Input
                         type="text"
                         name="meeting_code"
                         placeholder={tt('meeting-code')}
                         value={info.meeting_code}
-                        className='py-1.5 px-2 outline-none border rounded-md'
                         onChange={(e) => props.handleMeetinInfoChange(e, index)}
                     />
-                    <button type='button' onClick={() => props.removeMeetingInfo(index)} className='bg-red-500 hover:bg-red-600 w-1/2 self-end text-white py-1.5 rounded-md outline-none'>{tt('remove')}</button>
+                    <Button type='button' onClick={() => props.removeMeetingInfo(index)} className='w-full' variant={'destructive'}>{tt('remove')}</Button>
                 </div>
             ))}
-            <button type='button' onClick={props.addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-full text-white'>{tt("add-more")}</button>
+            <Button type='button' onClick={props.addMoreMeetingInfo} className='w-1/2 self-end mt-3' >{tt("add-more")}</Button>
         </div>
     )
-
 }
 
 export default Page

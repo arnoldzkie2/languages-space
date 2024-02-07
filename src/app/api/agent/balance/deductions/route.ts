@@ -44,7 +44,7 @@ export const GET = async (req: NextRequest) => {
         if (!agentID) return notFoundRes(AGENT)
 
         //only admin are allowed to proceed
-        const isAdmin = await checkIsAdmin(session.user.type)
+        const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
 
         //check agent
@@ -108,7 +108,7 @@ export const POST = async (req: NextRequest) => {
         const [updateAgentBalance, createDeductions] = await Promise.all([
             prisma.agentBalance.update({
                 where: { id: agent.balance[0].id }, data: {
-                    amount: agent.balance[0].amount - amount
+                    amount: Number(agent.balance[0].amount) - amount
                 }
             }),
             prisma.agentDeductions.create({
@@ -124,6 +124,36 @@ export const POST = async (req: NextRequest) => {
 
         //return 200 response
         return okayRes()
+
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
+    }
+}
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+
+        //get all deductionID in searchParams
+        const { searchParams } = new URL(req.url)
+        const deductionIds = searchParams.getAll("deductionID")
+
+        if (deductionIds.length > 0) {
+            const deleteDeductions = await prisma.agentDeductions.deleteMany({
+                where: { id: { in: deductionIds } }
+            })
+            if (deleteDeductions.count === 0) return notFoundRes("Deductions")
+
+            return okayRes()
+        }
+
+        return notFoundRes("Deductions")
 
     } catch (error) {
         console.log(error);

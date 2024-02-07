@@ -13,6 +13,9 @@ import useClientBookingStore from '@/lib/state/client/clientBookingStore'
 import RequestCancelBookingModal from '../client/RequestCancelBookingModal'
 import Success from '../global/Success'
 import Err from '../global/Err'
+import { Skeleton } from '../ui/skeleton'
+import { Button } from '../ui/button'
+import { CONFIRMED } from '@/utils/constants'
 
 const SupplierBooking: React.FC = () => {
 
@@ -40,16 +43,16 @@ const SupplierBooking: React.FC = () => {
     return (
         <div className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='w-full border-b pb-1 mb-1 flex items-center gap-5'>
-                <h1 className='text-blue-600 text-lg font-bold'>{t('profile.my-bookings')}</h1>
+                <h1 className='text-foreground text-lg font-bold'>{t('profile.my-bookings')}</h1>
                 <Success />
                 <Err />
             </div>
             <div className='overflow-x-auto'>
-                <table className="text-sm text-left text-gray-800 shadow-md w-full">
-                    <thead className="text-xs uppercase bg-slate-100 border">
+                <table className="text-sm text-left text-muted-foreground shadow-md w-full">
+                    <thead className="text-xs uppercase bg-card border">
                         <tr>
                             <th scope="col" className="p-3">{tt('schedule')}</th>
-                            <th scope="col" className="p-3">{tt('supplier')}</th>
+                            <th scope="col" className="p-3">{tt('client')}</th>
                             <th scope="col" className="p-3">{tt('card')}</th>
                             <th scope="col" className="p-3">{tt('status')}</th>
                             <th scope="col" className="p-3">{tt('note')}</th>
@@ -60,20 +63,20 @@ const SupplierBooking: React.FC = () => {
                     <tbody>
                         {currentBookings && currentBookings.length > 0 ?
                             currentBookings.map(booking => (
-                                <tr className="bg-white border hover:bg-slate-50" key={booking.id}>
+                                <tr className="bg-card border hover:bg-muted" key={booking.id}>
                                     <td className='p-3'>
                                         <div className='h-5 text-xs md:text-sm w-36'>
                                             {booking.schedule.date} ({booking.schedule.time})
                                         </div>
                                     </td>
                                     <td className="p-3">
-                                        <div className='h-5 text-xs md:text-sm w-32'>
-                                            {booking.supplier.name}
+                                        <div className='h-5 text-xs md:text-sm w-32 cursor-pointer' onClick={() => openTruncateTextModal(booking.client.username)}>
+                                            {returnTruncateText(booking.client.username, 12)}
                                         </div>
                                     </td>
                                     <td className="p-3">
-                                        <div className='h-5 text-xs md:text-sm w-24'>
-                                            {booking.card_name}
+                                        <div className='h-5 text-xs md:text-sm w-24 cursor-pointer' onClick={() => openTruncateTextModal(booking.card_name)}>
+                                            {returnTruncateText(booking.card_name, 10)}
                                         </div>
                                     </td>
                                     <td className="p-3">
@@ -99,30 +102,33 @@ const SupplierBooking: React.FC = () => {
                                 </tr>
                             )) :
                             currentBookings && currentBookings.length < 1 ?
-                                <tr>
+                                <tr className='border bg-card'>
                                     <td className='w-full px-3 py-2'>
                                         {tt('no-data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (
-                                    <tr key={item}>
+                                    <tr key={item} className='bg-card border'>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-32 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                                         </td>
                                         <td className='p-3'>
-                                            <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                                            <Skeleton className='rounded-3xl w-44 h-5'></Skeleton>
+                                        </td>
+                                        <td className='p-3'>
+                                            <Skeleton className='rounded-3xl w-10 h-5'></Skeleton>
                                         </td>
                                     </tr>
                                 ))
@@ -150,12 +156,13 @@ const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
 
     if (booking.status === 'canceled' || booking.status === 'cancel-request') return null
 
-    if (bookingDateTime >= threeHoursAhead) return (
-        <button
+    if (bookingDateTime >= threeHoursAhead && booking.status === CONFIRMED) return (
+        <Button
             onClick={() => openRequestCancelBookingaModal(booking.id)}
-            className='w-full flex items-center justify-center py-1 rounded-md bg-red-500 hover:bg-opacity-80 text-white'>
+            variant={'destructive'}
+        >
             {tt('cancel')}
-        </button>
+        </Button>
     );
 
     return null

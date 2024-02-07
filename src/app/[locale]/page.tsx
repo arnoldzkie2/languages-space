@@ -1,22 +1,26 @@
-/* eslint-disable @next/next/no-img-element */
-import Header from '@/components/web/Header';
-import Main from '@/components/web/Main';
-import { useTranslations } from 'next-intl';
+import { redirect } from '@/lib/navigation'
+import { getAuth } from '@/lib/nextAuth'
+import { ADMIN, AGENT, CLIENT, SUPERADMIN, SUPPLIER } from '@/utils/constants'
 
-interface AppProps {
+const Page = async () => {
+
+  const session = await getAuth()
+  if (!session) return redirect('/auth')
+
+  switch (session.user.type) {
+    case ADMIN:
+    case SUPERADMIN:
+      return redirect('/admin');
+    case CLIENT:
+      return redirect('/client');
+    case AGENT:
+      return redirect('/agent/invite');
+    case SUPPLIER:
+      return redirect('/supplier/schedule');
+    default:
+      return redirect('/auth');
+  }
+
 }
 
-const Page: React.FC<AppProps> = ({ }) => {
-
-  const t = useTranslations()
-
-  return (
-    <section className="bg-[url(/web/bg-large.svg)] bg-center bg-no-repeat bg-cover w-screen h-screen flex items-center">
-      <Header />
-      <Main />
-    </section>
-  );
-};
-
-export default Page;
-
+export default Page

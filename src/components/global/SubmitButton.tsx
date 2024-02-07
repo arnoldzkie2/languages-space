@@ -7,23 +7,26 @@ import { Button } from '../ui/button'
 
 interface Props {
     msg: string
-    style: string
+    variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
+    style?: string
+    onClick?: any
+    type?: "button" | "submit" | "reset" | undefined
 }
 
-const SubmitButton = ({ msg, style }: Props) => {
+const SubmitButton = ({ msg, variant, style, onClick, type }: Props) => {
 
     const isLoading = useGlobalStore(state => state.isLoading)
 
-    if (isLoading) return <Skeleton style={style} />
+    if (isLoading) return <Skeleton variant={variant} style={style} />
 
     return (
-        <Button className={`${style} hover:bg-opacity-80`}>{msg}</Button>
+        <Button onClick={onClick} type={type} variant={variant} className={style}>{msg}</Button>
     )
 }
 
-const Skeleton = ({ style }: { style: string }) => {
+const Skeleton = ({ variant, style }: { style?: string, variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined }) => {
     return (
-        <Button className={`${style} bg-opacity-80`} disabled>
+        <Button variant={variant} className={style} disabled>
             <FontAwesomeIcon icon={faSpinner} className='animate-spin' width={16} height={16} />
         </Button>
     )

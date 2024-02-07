@@ -7,8 +7,8 @@ interface EarningsAndDeductions {
     id: string;
     name: string;
     quantity: number;
-    rate: number;
-    amount: number;
+    rate: any;
+    amount: any;
 }
 
 interface ContactProps {

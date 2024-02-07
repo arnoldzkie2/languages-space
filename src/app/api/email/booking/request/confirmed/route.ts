@@ -36,21 +36,21 @@ export const POST = async (req: NextRequest) => {
 
             const { client, supplier, schedule, meeting_info } = booking!
 
-            if (client.email && client.name) {
+            if (client.email) {
                 resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
                     to: client.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
                     react: ClientBookingRequestConfirmed({
                         supplierName: supplier.name, operator,
-                        clientName: client.name,
+                        clientName: client.username,
                         schedule: {
                             date: booking.schedule.date,
                             time: booking.schedule.time
                         },
                         cardName: card.name,
-                        cardBalance: card.balance + supplierPrice.price,
-                        price: supplierPrice.price,
+                        cardBalance: Number(card.balance) + Number(supplierPrice.price),
+                        price: Number(supplierPrice.price),
                         course: booking.course.name,
                         meetingInfo: meeting_info as any
                     }),
@@ -58,22 +58,22 @@ export const POST = async (req: NextRequest) => {
                 })
             }
 
-            if (supplier.email && supplier.name && client.name) {
+            if (supplier.email) {
                 resend.emails.send({
                     from: 'VerbalAce <support@verbalace.com>',
                     to: supplier.email,
                     subject: `Booking Created - Schedule: ${schedule.date} at ${schedule.time}`,
                     react: SupplierBookingRequestConfirmed({
                         supplierName: supplier.name, operator,
-                        clientName: client.name,
+                        clientName: client.username,
                         schedule: {
                             date: booking.schedule.date,
                             time: booking.schedule.time
                         },
                         course: booking.course.name,
                         meetingInfo: meeting_info as any,
-                        supplier_rate: booking.supplier_rate,
-                        balance: supplier.balance[0].amount,
+                        supplier_rate: Number(booking.supplier_rate),
+                        balance: Number(supplier.balance[0].amount),
                     }),
                     reply_to: 'VerbalAce <support@verbalace.com>'
                 })

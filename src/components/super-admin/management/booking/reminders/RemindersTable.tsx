@@ -1,13 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
 import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import useGlobalStore from '@/lib/state/globalStore';
+import { Checkbox } from '@/components/ui/checkbox';
+import useAdminPageStore from '@/lib/state/admin/adminPageStore';
+import { Skeleton } from '@/components/ui/skeleton';
+import DeleteSingleRemindersAlert from './DeleteSingleReminderAlert';
 
 interface Props {
 
@@ -20,13 +24,15 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
     const { operation, skeleton, selectedID, openOperation, closeOperation } = useGlobalStore()
 
     const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders } = useAdminBookingStore()
-
+    const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
     const handleSelection = (booking: Booking) => {
+
+        console.log(booking)
 
         const isSelected = selectedReminders.some((selectedBooking) => selectedBooking.id === booking.id);
 
@@ -36,7 +42,6 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
         } else {
             const updatedSelectedBooking = [...selectedReminders, booking];
             setSelectedReminders(updatedSelectedBooking);
-
         }
     }
 
@@ -62,7 +67,6 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                 ),
             ];
         }
-
         setSelectedReminders(updatedSelectedBooking);
 
     };
@@ -78,15 +82,15 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
     }, [selectedReminders, filteredTable])
 
     return (
-        <table className="text-sm text-left text-gray-800 shadow-md w-full">
-            <thead className="text-xs uppercase bg-slate-100 border">
+        <table className="text-sm text-left text-muted-foreground shadow-md w-full">
+            <thead className="text-xs uppercase bg-card border">
                 <tr>
                     <th scope='col' className='px-3 py-3'>
-                        <input type="checkbox"
+                        <Checkbox
                             className='cursor-pointer w-4 h-4 outline-none'
                             title='Select all 10 rows'
                             checked={isRowChecked}
-                            onChange={selectAllRows}
+                            onCheckedChange={selectAllRows}
                         />
                     </th>
                     <th scope="col" className="px-3 py-3">{tt('name')}</th>
@@ -101,11 +105,11 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
             <tbody>
                 {filteredTable && filteredTable.length > 0 ?
                     filteredTable.map(reminders => (
-                        <tr className="bg-white border hover:bg-slate-50" key={reminders.id}>
+                        <tr className="bg-card border hover:bg-muted" key={reminders.id}>
                             <td className='px-3 py-3'>
-                                <input type="checkbox" id={reminders.id}
+                                <Checkbox id={reminders.id}
                                     className='cursor-pointer w-4 h-4 outline-none'
-                                    onChange={() => handleSelection(reminders)}
+                                    onCheckedChange={() => handleSelection(reminders)}
                                     checked={selectedReminders.some(selectedBooking => selectedBooking.id === reminders.id)}
                                 />
                             </td>
@@ -140,52 +144,40 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                                 </div>
                             </td>
                             <td className='py-3 relative px-3'>
-                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(reminders.id)} />
-                                <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                    <Link href={`/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-blue-600'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-red-600' onClick={() => openDeleteRemindersWarningMOdal(reminders)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(reminders.id)} />
+                                <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
+                                    {isAdminAllowed('update_reminders') && <Link href={`/admin/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                    {isAdminAllowed('delete_reminders') && <DeleteSingleRemindersAlert reminder={reminders} />}
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>
                     )) :
                     skeleton.map(item => (
-                        <tr key={item}>
+                        <tr key={item} className='border bg-card'>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-md animate-pulse w-5 h-5'></div>
+                                <Skeleton className='rounded-md w-5 h-5'></Skeleton>
                             </td>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                             </td>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                             </td>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                             </td>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                             </td>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                                <Skeleton className='rounded-3xl w-32 h-5'></Skeleton>
                             </td>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-16 h-5'></div>
+                                <Skeleton className='rounded-3xl w-44 h-5'></Skeleton>
                             </td>
                             <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
-                            </td>
-                            <td className='py-3.5 px-3'>
-                                <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
+                                <Skeleton className='rounded-3xl w-10 h-5'></Skeleton>
                             </td>
                         </tr>
                     ))

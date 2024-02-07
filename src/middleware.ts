@@ -3,7 +3,7 @@ import createIntlMiddleware from 'next-intl/middleware';
 import { NextRequest } from 'next/server';
 
 const locales = ['en', 'zh', 'kr', 'ja', 'vi'];
-const publicPages = ['/', '/login', '/signup', '/error'];
+const publicPages = ['/', '/auth', '/error'];
 
 const intlMiddleware = createIntlMiddleware({
   locales,
@@ -23,15 +23,20 @@ const authMiddleware = withAuth(
       authorized: ({ token }) => token != null
     },
     pages: {
-      signIn: '/login',
+      signIn: '/auth',
       error: '/error'
     }
   }
 );
 
+export default async function middleware(req: NextRequest) {
 
+  //this is the current session I will use this later to prevent none admin users to navigate in admin routes
+  // const token = await getToken({
+  //   req,
+  //   secret: process.env.NEXTAUTH_SECRET
+  // }) as any
 
-export default function middleware(req: NextRequest) {
   const publicPathnameRegex = RegExp(
     `^(/(${locales.join('|')}))?(${publicPages
       .flatMap((p) => (p === '/' ? ['', '/'] : p))

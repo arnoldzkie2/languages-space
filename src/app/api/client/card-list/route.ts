@@ -1,12 +1,19 @@
 import prisma from "@/lib/db";
-import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
+import { getAuth } from "@/lib/nextAuth";
+import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { checkIsAdmin } from "@/utils/checkUser";
 import stripe from "@/utils/getStripe";
-import { NextRequest, NextResponse } from "next/server";
-export const POST = async (req: Request) => {
-
-    const { name, price, balance, validity, invoice, repeat_purchases, available, online_renews, courses, suppliers, departmentID } = await req.json()
+import { NextRequest } from "next/server";
+export const POST = async (req: NextRequest) => {
 
     try {
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
+        const { name, price, balance, validity, invoice, repeat_purchases, available, online_renews, courses, suppliers, departmentID } = await req.json()
 
         //check if department exist
         const department = await prisma.department.findUnique({ where: { id: departmentID } })
@@ -19,7 +26,7 @@ export const POST = async (req: Request) => {
                 online_renews, productID: '', productPriceID: '', sold: 0,
                 supported_courses: {
                     connect: courses.map((id: string) => ({ id }))
-                }, department: { connect: { id: departmentID } }
+                }, departments: { connect: { id: departmentID } }
             },
             include: { supported_courses: true, supported_suppliers: true }
         })
@@ -102,8 +109,14 @@ export const POST = async (req: Request) => {
 
 export const GET = async (req: NextRequest) => {
 
-    const clientCardID = getSearchParams(req, 'clientCardID')
+    const cardID = getSearchParams(req, 'cardID')
     const departmentID = getSearchParams(req, 'departmentID')
+
+    const session = await getAuth()
+    if (!session) return unauthorizedRes()
+    //only allow admin to proceed
+    const isAdmin = checkIsAdmin(session.user.type)
+    if (!isAdmin) return unauthorizedRes()
 
     try {
 
@@ -127,10 +140,28 @@ export const GET = async (req: NextRequest) => {
             return okayRes(department.cards)
         }
 
-        if (clientCardID) {
+        if (cardID) {
 
             const card = await prisma.clientCardList.findUnique({
-                where: { id: clientCardID }, include: { supported_courses: true, supported_suppliers: true }
+                where: { id: cardID },
+                include: {
+                    departments: true,
+                    supported_courses: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    },
+                    supported_suppliers: {
+                        select: {
+                            supplier: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                }
 
             })
             if (!card) return notFoundRes('Card')
@@ -166,6 +197,12 @@ export const PATCH = async (req: NextRequest) => {
     const { name, price, balance, validity, invoice, repeat_purchases, available, departmentID,
         online_renews, courses, suppliers } = await req.json()
 
+    const session = await getAuth()
+    if (!session) return unauthorizedRes()
+    //only allow admin to proceed
+    const isAdmin = checkIsAdmin(session.user.type)
+    if (!isAdmin) return unauthorizedRes()
+
     try {
 
         const department = await prisma.department.findUnique({ where: { id: departmentID } })
@@ -193,28 +230,21 @@ export const PATCH = async (req: NextRequest) => {
                 name
             })
             if (!updateCardProduct) return badRequestRes()
-
-            const updateCard = await prisma.clientCardList.update({
-                where: { id: clientCardID },
-                data: {
-                    name,
-                }
-            })
-            if (!updateCard) return badRequestRes()
         }
 
         //if the product price change then update the card product as well as the card
-        if (price !== card.price) {
+        if (price.toFixed(2) !== card.price.toFixed(2)) {
 
-            const [updateCardProduct, deletePreviousPrice] = await Promise.all([
-                stripe.products.update(card.productID, {
-                    name, default_price: ''
-                }),
-                stripe.prices.update(card.productPriceID, {
-                    active: false,
-                }),
-            ])
-            if (!updateCardProduct || !deletePreviousPrice) return badRequestRes("Failed to update card product defaultPrice or deactivate product price")
+            const updateCardProduct = await stripe.products.update(card.productID, {
+                name,
+                default_price: '',
+            });
+            if (!updateCardProduct) return badRequestRes("Faild to remove default price to product")
+
+            const deletePreviousPrice = await stripe.prices.update(card.productPriceID, {
+                active: false,
+            });
+            if (!deletePreviousPrice) return badRequestRes("Failed to archieve default price")
 
             const newProductPrice = await stripe.prices.create({
                 product: updateCardProduct.id,
@@ -233,7 +263,7 @@ export const PATCH = async (req: NextRequest) => {
             const updateCard = await prisma.clientCardList.update({
                 where: { id: clientCardID },
                 data: {
-                    productPriceID: newProductPrice.id, name, price
+                    productPriceID: newProductPrice.id
                 }
             })
             if (!updateCard) return badRequestRes()
@@ -243,7 +273,7 @@ export const PATCH = async (req: NextRequest) => {
         const updateCard = await prisma.clientCardList.update({
             where: { id: clientCardID },
             data: {
-                balance, validity, invoice, repeat_purchases, departmentID, available,
+                balance, validity, invoice, repeat_purchases, departmentID, available, name, price,
                 online_renews,
                 supported_courses: {
                     connect: courses.map((id: string) => ({ id })),
@@ -278,18 +308,22 @@ export const PATCH = async (req: NextRequest) => {
     }
 }
 
-export const DELETE = async (req: Request) => {
+export const DELETE = async (req: NextRequest) => {
 
-    const { searchParams } = new URL(req.url)
-    const clientCardID = searchParams.get('clientCardID')
-
+    const clientCardID = getSearchParams(req, 'clientCardID')
     try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
         if (clientCardID) {
 
             const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID }, include: { active: true } })
-            if (!card) return notFoundRes('Client Card')
-            if (card.active.length > 0) return NextResponse.json({ msg: 'card has client' }, { status: 400 })
+            if (!card) return notFoundRes('Card')
+            if (card.active.length > 0) return badRequestRes("You can't delete a card that has client")
 
             // deactivate the product 
             const deactivateProduct = await stripe.products.update(card.productID, {
@@ -306,11 +340,12 @@ export const DELETE = async (req: Request) => {
             const deleteCard = await prisma.clientCardList.delete({ where: { id: clientCardID } })
             if (!deleteCard) return badRequestRes()
 
+            //return 200 response
             return okayRes()
 
         }
 
-        return notFoundRes('clientCardID')
+        return notFoundRes('Card')
 
     } catch (error) {
         console.error(error)

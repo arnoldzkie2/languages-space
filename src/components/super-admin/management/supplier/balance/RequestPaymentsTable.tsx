@@ -6,6 +6,8 @@ import { useTranslations } from 'next-intl';
 import React from 'react'
 import ConfirmPaymentModal from './ConfirmPaymentModal';
 import useSupplierBalanceStore from '@/lib/state/supplier/supplierBalanceStore';
+import useAdminPageStore from '@/lib/state/admin/adminPageStore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Props {
     filteredTable: SupplierBalanceTransaction[]
@@ -20,9 +22,11 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
+    const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
+
     return (
-        <table className="text-sm text-left text-gray-800 shadow-md w-full">
-            <thead className="text-xs uppercase bg-slate-100 border">
+        <table className="text-sm text-left text-muted-foreground shadow-md w-full">
+            <thead className="text-xs uppercase bg-card border">
                 <tr>
                     <th scope="col" className="px-6 py-3">{tt('name')}</th>
                     <th scope="col" className="px-6 py-3">{tt('amount')}</th>
@@ -34,8 +38,8 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                 </tr>
             </thead>
             <tbody>
-                {filteredTable.length < 1 ? <Skeleton /> : filteredTable.map(obj => (
-                    <tr className="bg-white border hover:bg-slate-50" key={obj.id}>
+                {filteredTable.length < 1 ? <SkeletonTable /> : filteredTable.map(obj => (
+                    <tr className="bg-card border hover:bg-muted" key={obj.id}>
                         <td className='px-6 py-3'>
                             <div className='h-5 w-36'>
                                 {obj.balance.supplier.name}
@@ -67,15 +71,15 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                             </div>
                         </td>
                         <td className='py-3 relative px-6'>
-                            <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-black' onClick={() => openOperation(obj.id)} />
-                            <ul className={`${operation && selectedID === obj.id ? 'block' : 'hidden'} absolute bg-white p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-gray-600`}>
-                                {obj.status !== 'completed' && <button
+                            <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(obj.id)} />
+                            <ul className={`${operation && selectedID === obj.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
+                                {obj.status !== 'completed' && isAdminAllowed('update_supplier_payment_request') && <button
                                     onClick={() => openConfirmPaymentModal(obj)}
                                     disabled={isLoading}
-                                    className='flex mb-1 justify-between items-center cursor-pointer hover:text-green-500'>
+                                    className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>
                                     {tt('paid')} <FontAwesomeIcon icon={faCheck} width={16} height={16} />
                                 </button>}
-                                <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-black pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
                             </ul>
                         </td>
                     </tr>
@@ -86,31 +90,34 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
     );
 }
 
-const Skeleton = () => {
+const SkeletonTable = () => {
 
     const { skeleton } = useGlobalStore()
 
     return (
         <>
             {skeleton.map(item => (
-                <tr key={item}>
+                <tr key={item} className='border bg-card'>
                     <td className='py-3.5 px-6'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                        <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                        <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                        <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-40 h-5'></div>
+                        <Skeleton className='rounded-3xl w-40 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                        <Skeleton className='rounded-3xl w-40 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-10 h-5'></div>
+                        <Skeleton className='rounded-3xl w-44 h-5'></Skeleton>
+                    </td>
+                    <td className='py-3.5 px-6'>
+                        <Skeleton className='rounded-3xl w-10 h-5'></Skeleton>
                     </td>
                 </tr>
             ))

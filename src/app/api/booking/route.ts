@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { badRequestRes, createdRes, existRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { getAuth } from "@/lib/nextAuth";
-import { ADMIN, CLIENT, DEPARTMENT, FINGERPOWER, SUPERADMIN } from "@/utils/constants";
+import { ADMIN, AVAILABLE, CANCELED, CLIENT, DEPARTMENT, FINGERPOWER, RESERVED, SUPERADMIN, VERBALACE } from "@/utils/constants";
 import axios from "axios";
-
-const SCHEDULE_RESERVED = 'reserved'
+import { checkIsAdmin } from "@/utils/checkUser";
+import { calculateCommissionPriceQuantitySettlementAndStatus } from "@/utils/getBookingPrice";
 
 export const GET = async (req: NextRequest) => {
 
@@ -15,10 +15,11 @@ export const GET = async (req: NextRequest) => {
         const departmentID = getSearchParams(req, 'departmentID')
         const clientID = getSearchParams(req, 'clientID')
 
-        //only admin and super-admin are allowed to proceed
         const session = await getAuth()
         if (!session) return unauthorizedRes()
-        if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
+        //only admin and super-admin are allowed to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
         if (clientID) {
             //get all client bookings
@@ -30,9 +31,11 @@ export const GET = async (req: NextRequest) => {
                                 select: {
                                     name: true
                                 }
-                            }, schedule: {
+                            },
+                            schedule: {
                                 select: {
                                     date: true,
+                                    time: true,
                                 }
                             }, client: {
                                 select: {
@@ -169,26 +172,15 @@ export const POST = async (req: NextRequest) => {
             supplierID,
             clientID,
             note,
-            operator,
             meetingInfoID,
             clientCardID,
             status,
             name,
             courseID,
-            quantity,
+            client_quantity,
+            supplier_quantity,
             settlement,
-            confirmed
         } = await req.json();
-
-        const checkNotFound = (entity: string, value: any) => {
-            if (!value) return notFoundRes(entity)
-        }
-
-        const params = [scheduleID, name, supplierID, clientID, clientCardID, settlement, operator, meetingInfoID, status, quantity];
-
-        params.forEach((param, index) =>
-            checkNotFound(['Schedule', 'Booking name', 'Supplier', 'Client', 'Card', 'Settlement period', 'Operator', 'Meeting info', 'Status', 'quantity'][index], param)
-        )
 
         //get all this data at once
         const [client, supplier, meetingInfo, card, schedule] = await Promise.all([
@@ -198,6 +190,9 @@ export const POST = async (req: NextRequest) => {
             prisma.clientCard.findUnique({ where: { id: clientCardID }, include: { card: true } }),
             prisma.supplierSchedule.findUnique({ where: { id: scheduleID } })
         ]);
+
+        //get the operator of this booking
+        const operator = session.user.type === SUPERADMIN ? ADMIN : session.user.type
 
         //check each of them if it exist
         if (!client) return notFoundRes('Client')
@@ -221,7 +216,7 @@ export const POST = async (req: NextRequest) => {
             );
         }
 
-        if (schedule.status === SCHEDULE_RESERVED) return existRes('Schedule already reserved')
+        if (schedule.status === RESERVED) return existRes('Schedule already reserved')
 
         //get the date with this format 2023-11-22 (YEAR-MONTH-DAY)
 
@@ -252,33 +247,44 @@ export const POST = async (req: NextRequest) => {
         if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported in this card' }, { status: 400 });
 
         //check if card have enough balance to book
-        if (card.balance < supplierPrice.price) {
+        if (card.balance < Number(supplierPrice.price)) {
             return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 });
         }
 
-        //calculate the booking price here is the calculation
-        // for fingerpower - quantity multiply by card price (quantity * card.card.price)
-        // the rest - card price divide by card balance multiply by supplier price (card.card.price / card.card.balance) * supplierPrice.price
-        const bookingPrice = department.name.toLocaleLowerCase() === FINGERPOWER ? quantity * Number(card.card.price) : (Number(card.card.price) / card.card.balance) * supplierPrice.price
+        //get this data in this function I made to return the value base on department
+        const { bookingPrice, supplierCommission, bookingQuantity, settlementDate, getStatus } = calculateCommissionPriceQuantitySettlementAndStatus({
+            balance: supplier.balance,
+            supplierPrice,
+            supplierQuantity: Number(supplier_quantity),
+            department,
+            card: card.card,
+            clientQuantity: Number(client_quantity),
+            settlement,
+            status
+        })
+        if (!settlementDate) return notFoundRes("Settlement Date")
+
+        if (bookingQuantity.client <= 0 || bookingQuantity.supplier <= 0) return badRequestRes("Quantity must be positive number")
 
         //create booking
         const createBooking = await prisma.booking.create({
             data: {
-                note,
-                status,
-                operator,
-                card_balance_cost: supplierPrice.price,
-                supplier_rate: supplier.balance[0].booking_rate,
                 name,
+                note,
+                status: getStatus,
+                operator,
+                card_balance_cost: Number(supplierPrice.price),
+                supplier_rate: supplierCommission,
                 price: bookingPrice.toFixed(2),
-                card_name: card?.name!,
-                quantity: Number(quantity),
-                settlement,
+                card_name: card.name,
+                client_quantity: bookingQuantity.client,
+                supplier_quantity: bookingQuantity.supplier,
+                settlement: settlementDate,
+                meeting_info: meetingInfo,
+                clientCardID,
                 supplier: { connect: { id: supplierID } },
                 client: { connect: { id: clientID } },
                 schedule: { connect: { id: schedule.id } },
-                meeting_info: meetingInfo!,
-                clientCardID,
                 department: { connect: { id: department.id } },
                 course: { connect: { id: courseID } },
             },
@@ -287,85 +293,88 @@ export const POST = async (req: NextRequest) => {
         if (!createBooking) return badRequestRes()
 
         //reduce client card balance if it's not in fingerpower department
-        if (department.name.toLocaleLowerCase() !== 'fingerpower') {
+        if (department.name.toLocaleLowerCase() !== FINGERPOWER) {
+
+            //client balance will be reduce by the amount of supplierprice.price
             const reduceCardBalance = await prisma.clientCard.update({
-                where: { id: card?.id! },
-                data: { balance: card?.balance! - supplierPrice.price },
+                where: { id: card.id },
+                data: { balance: card.balance - Number(supplierPrice.price) },
             });
             if (!reduceCardBalance) return badRequestRes();
+
+            //get the supplier balance
+            const balance = supplier.balance[0]
+
+            const currentMonth = currentDate.getUTCMonth() + 1; // Adjust month to be in the range 1 to 12
+            const currentYear = currentDate.getUTCFullYear();
+
+            // Construct the start and end dates in ISO format
+            const startDate = new Date(Date.UTC(currentYear, currentMonth - 1, 1, 0, 0, 0));
+            const endDate = new Date(Date.UTC(currentYear, currentMonth, 1, 0, 0, 0));
+
+            const [updateSupplierBalance, earnings] = await Promise.all([
+                prisma.supplierBalance.update({
+                    //apply the booking rate to supplier balance
+                    where: { id: balance.id },
+                    data: {
+                        amount: Number(balance.amount) + supplierCommission
+                    }
+                }),
+                prisma.supplierEarnings.findFirst({
+                    //retrieve earnings for this month
+                    where:
+                    {
+                        supplierBalanceID: balance.id,
+                        rate: supplierCommission,
+                        created_at: {
+                            gte: startDate.toISOString(),
+                            lt: endDate.toISOString(),
+                        },
+                    }
+                })
+            ])
+            if (!updateSupplierBalance) return badRequestRes("Faild to get supplier balance")
+
+            //if earnings this month exist update the earnings instead of creating a new data
+            if (earnings) {
+                const updateSupplierEarnings = await prisma.supplierEarnings.update({
+                    where: { id: earnings.id },
+                    data: {
+                        amount: Number(earnings.amount) + balance.booking_rate,
+                        quantity: earnings.quantity + 1
+                    }
+                })
+                if (!updateSupplierEarnings) return badRequestRes()
+            } else {
+                //if there's no earnings for this month then create one
+                const createEarnings = await prisma.supplierEarnings.create({
+                    data: {
+                        name: 'Class Fee',
+                        balance: { connect: { id: balance.id } },
+                        amount: balance.booking_rate,
+                        quantity: 1,
+                        rate: balance.booking_rate,
+                    }
+                })
+                if (!createEarnings) return badRequestRes()
+            }
+
         }
 
-        //get the supplier balance
-        const balance = supplier.balance[0]
-
-        const currentMonth = currentDate.getUTCMonth() + 1; // Adjust month to be in the range 1 to 12
-        const currentYear = currentDate.getUTCFullYear();
-
-        // Construct the start and end dates in ISO format
-        const startDate = new Date(Date.UTC(currentYear, currentMonth - 1, 1, 0, 0, 0));
-        const endDate = new Date(Date.UTC(currentYear, currentMonth, 1, 0, 0, 0));
-
-        //update supplier schedule and retrieve earnings for supplier as well as updating the supplier balance
-        const [updateSchedule, updateSupplierBalance, earnings] = await Promise.all([
-            //update the schedule to reserved
-            prisma.supplierSchedule.update({
-                where: { id: schedule.id },
-                data: {
-                    status: 'reserved',
-                    clientID: client?.id,
-                    clientUsername: client?.username,
-                },
-            }),
-            prisma.supplierBalance.update({
-                //apply the booking rate to supplier balance
-                where: { id: balance.id },
-                data: {
-                    amount: balance.amount + balance.booking_rate
-                }
-            }),
-            prisma.supplierEarnings.findFirst({
-                //retrieve earnings for this month
-                where:
-                {
-                    supplierBalanceID: balance.id,
-                    rate: balance.booking_rate,
-                    created_at: {
-                        gte: startDate.toISOString(),
-                        lt: endDate.toISOString(),
-                    },
-                }
-            })
-        ])
-        if (!updateSchedule || !updateSupplierBalance) return badRequestRes();
-
-        //if earnings this month exist update the earnings instead of creating a new data
-        if (earnings) {
-            const updateSupplierEarnings = await prisma.supplierEarnings.update({
-                where: { id: earnings.id },
-                data: {
-                    amount: earnings.amount + balance.booking_rate,
-                    quantity: earnings.quantity + 1
-                }
-            })
-            if (!updateSupplierEarnings) return badRequestRes()
-        } else {
-            //if there's no earnings for this month then create one
-            const createEarnings = await prisma.supplierEarnings.create({
-                data: {
-                    name: 'Class Fee',
-                    balance: { connect: { id: balance.id } },
-                    amount: balance.booking_rate,
-                    quantity: 1,
-                    rate: balance.booking_rate,
-                }
-            })
-            if (!createEarnings) return badRequestRes()
-        }
+        //update schedule to reserved
+        const updateSchedule = await prisma.supplierSchedule.update({
+            where: { id: schedule.id },
+            data: {
+                status: RESERVED,
+                clientID: client.id,
+                clientUsername: client.username,
+            },
+        })
+        if (!updateSchedule) return badRequestRes();
 
         //send emails to client and supplier
         axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/created`, {
-            bookingID: createBooking.id,
-            operator: session.user.type
+            bookingID: createBooking.id, operator
         })
 
         //return 201 response and pass bookingID we use this in front-end to send emails synchronously
@@ -384,14 +393,15 @@ export const PATCH = async (req: NextRequest) => {
 
     //retrieve data we need
     const bookingID = getSearchParams(req, 'bookingID')
-    const { scheduleID, supplierID, clientID, note, operator, meetingInfoID, clientCardID, status, name, courseID, quantity, settlement } = await req.json()
+    const { scheduleID, supplierID, clientID, note, operator, meetingInfoID, clientCardID, status, name, courseID, client_quantity, supplier_quantity, settlement } = await req.json()
 
     try {
 
         //only admin and super-admin are allowed to proceed
         const session = await getAuth()
         if (!session) return unauthorizedRes()
-        if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
 
         //check bookingID
         if (!bookingID) return notFoundRes("Booking")
@@ -416,60 +426,66 @@ export const PATCH = async (req: NextRequest) => {
 
         //retrieve previous card in booking
         const prevCard = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
-        if (!prevCard) return notFoundRes('Client Card')
+        if (!prevCard) return notFoundRes('Previous Client Card')
 
         //retrieve supplier price
         const prevSupplierPrice = await prisma.supplierPrice.findFirst({ where: { supplierID: booking.supplierID, cardID: prevCard.cardID } })
-        if (!prevSupplierPrice) return notFoundRes('Supplier Price')
+        if (!prevSupplierPrice) return notFoundRes('Previous Supported Supplier')
 
         const currentDate = new Date();
-        const cardValidityDate = new Date(card?.validity!);
+        const cardValidityDate = new Date(card.validity);
         const scheduleDate = new Date(`${schedule.date}T${schedule.time}`);
 
-        //check if client card is expired or schedule is passed
-        if (currentDate > cardValidityDate || currentDate > scheduleDate) {
-            return NextResponse.json(
-                {
-                    msg: currentDate > cardValidityDate ? 'Card is expired' : 'This schedule already passed',
-                },
-                { status: 400 }
-            );
-        }
+        //check if client card is changed and expired or schedule is passed
+        if (card.id !== booking.clientCardID && currentDate > cardValidityDate) return badRequestRes("Card is expired")
+        if (schedule.id !== booking.scheduleID && currentDate > scheduleDate) return badRequestRes("Schedule is passed")
 
+        //retrieve department and supplierPrice
         const [department, supplierPrice] = await Promise.all([
             prisma.department.findUnique({ where: { id: card.card.departmentID } }),
             prisma.supplierPrice.findFirst({ where: { supplierID, cardID: card.cardID } })
         ])
-        if (!supplierPrice) return NextResponse.json({ msg: 'Supplier is not supported' }, { status: 400 })
+        if (!supplierPrice) return badRequestRes("Supplier is not supported in this card")
         if (!department) return notFoundRes("Department")
 
         //check if balance is enough to book
-        if (card.balance < supplierPrice.price) return NextResponse.json({ msg: 'Not enough balance to book' }, { status: 400 })
+        if (card.balance < Number(supplierPrice.price)) badRequestRes("Card doesn't have enough balance to book")
 
-        //calculate the booking prices
-        const bookingPrice = department.name.toLocaleLowerCase() === 'fingerpower' ? quantity * Number(card.card.price) : (Number(card.card.price) / card.card.balance) * supplierPrice.price
+        //get this data in this function I made to return the value base on department
+        const { bookingPrice, supplierCommission, bookingQuantity, settlementDate, getStatus } = calculateCommissionPriceQuantitySettlementAndStatus({
+            balance: supplier.balance,
+            supplierPrice,
+            supplierQuantity: supplier_quantity,
+            department,
+            card: card.card,
+            clientQuantity: client_quantity,
+            settlement,
+            status
+        })
+        if (!settlementDate) return notFoundRes("Settlement Date")
 
         //update the booking
         const updateBooking = await prisma.booking.update({
             where: { id: bookingID },
             data: {
                 note,
-                status,
+                status: getStatus,
                 operator,
                 name,
                 price: bookingPrice.toFixed(2),
                 courseID,
                 card_name: card.name,
-                card_balance_cost: supplierPrice.price,
-                quantity: Number(quantity),
-                settlement,
-                supplier_rate: supplier.balance[0].booking_rate,
+                card_balance_cost: Number(supplierPrice.price),
+                client_quantity: bookingQuantity.client,
+                supplier_quantity: bookingQuantity.supplier,
+                supplier_rate: supplierCommission,
+                settlement: settlementDate,
+                meeting_info: meetingInfo,
+                departmentID: department.id,
                 supplierID,
                 clientID,
                 clientCardID,
-                meeting_info: meetingInfo,
-                scheduleID,
-                departmentID: department.id
+                scheduleID
             }, include: { supplier: { include: { balance: true } } }
         })
         if (!updateBooking) return badRequestRes()
@@ -478,7 +494,7 @@ export const PATCH = async (req: NextRequest) => {
         if (booking.scheduleID !== scheduleID) {
 
             //check if the schedule is reserved
-            if (schedule.status === 'reserved') return NextResponse.json({ msg: 'Schedule already reserved' }, { status: 409 })
+            if (schedule.status === RESERVED) return NextResponse.json({ msg: 'Schedule already reserved' }, { status: 409 })
 
             //update the previous schedule as well as the new schedule
             const [updatePreviousSchedule, updateNewSchedule] = await Promise.all([
@@ -487,14 +503,14 @@ export const PATCH = async (req: NextRequest) => {
                         //we set this to null so schedule will be marked as avilable again
                         clientID: null,
                         clientUsername: null,
-                        status: 'available'
+                        status: AVAILABLE
                     }
                 }),
                 prisma.supplierSchedule.update({
                     where: { id: schedule.id }, data: {
                         clientID: client.id,
                         clientUsername: client.username,
-                        status: 'reserved'
+                        status: RESERVED
                     }
                 })
 
@@ -503,24 +519,24 @@ export const PATCH = async (req: NextRequest) => {
         }
 
         //if this booking comes from verbalace department then deduct the client card balance
-        if (department.name.toLocaleLowerCase() === 'verbalace') {
+        if (department.name.toLocaleLowerCase() === VERBALACE) {
             // reduce client card balance
             const payClient = await prisma.clientCard.update({
                 where: { id: updateBooking.clientCardID },
-                data: { balance: card.balance - supplierPrice.price }
+                data: { balance: card.balance - Number(supplierPrice.price) }
             })
             if (!payClient) return badRequestRes()
 
             //refund the previous client
             const refundClient = await prisma.clientCard.update({
                 where: { id: booking.clientCardID },
-                data: { balance: prevCard.balance + prevSupplierPrice.price }
+                data: { balance: prevCard.balance + Number(prevSupplierPrice.price) }
             })
             if (!refundClient) return badRequestRes()
 
         }
 
-        if (booking.supplier.id !== updateBooking.supplier.id) {
+        if (booking.supplierID !== updateBooking.supplierID) {
 
             //if the supplier is changed in the booking deduct the previous commission and add it to the new supplier
             //after that we'll create a earnings for new supplier and deductions for previous supplier in booking
@@ -543,18 +559,18 @@ export const PATCH = async (req: NextRequest) => {
             const [updatePrevSupplierBalance, updateNewSupplierInBookingBalance, retrieveNewSupplierEarningsThisMonth, retrivePrevSupplierDeductionsThisMonth] = await Promise.all([
                 // update the previous supplier balance deduct the previous booking rate
                 prisma.supplierBalance.update({
-                    where: { id: booking.supplier.id }, data: { amount: prevSupplierBalance.amount - booking.supplier_rate }
+                    where: { id: booking.supplier.id }, data: { amount: Number(prevSupplierBalance.amount) - Number(booking.supplier_rate) }
                 }),
 
                 //update the new supplierbalance add the bookingrate to the supplier
                 prisma.supplierBalance.update({
-                    where: { id: updateBooking.supplierID }, data: { amount: newSupplierBalance.amount + newSupplierBalance.booking_rate }
+                    where: { id: updateBooking.supplierID }, data: { amount: Number(newSupplierBalance.amount) + Number(updateBooking.supplier_rate) }
                 }),
                 //retrieve the newsupplier earnings for this month if it exist then we just need to update this earnings
                 prisma.supplierEarnings.findFirst({
                     where: {
                         supplierBalanceID: newSupplierBalance.id,
-                        rate: newSupplierBalance.booking_rate,
+                        rate: Number(booking.supplier_rate),
                         //this will get the earnings for this month
                         created_at: {
                             gte: startDate.toISOString(),
@@ -567,7 +583,7 @@ export const PATCH = async (req: NextRequest) => {
                 prisma.supplierDeductions.findFirst({
                     where: {
                         supplierBalanceID: prevSupplierBalance.id,
-                        rate: prevSupplierBalance.booking_rate,
+                        rate: Number(updateBooking.supplier_rate),
                         //this will find the deduction this month
                         created_at: {
                             gte: startDate.toISOString(),
@@ -580,10 +596,11 @@ export const PATCH = async (req: NextRequest) => {
 
             //if newsupplier earnings this month exist update the amount and quantity
             if (retrieveNewSupplierEarningsThisMonth) {
+
                 const updateNewSupplierEarnings = await prisma.supplierEarnings.update({
                     where: { id: retrieveNewSupplierEarningsThisMonth.id }, data: {
                         // we add the earnings amount to the supplier booking rate
-                        amount: retrieveNewSupplierEarningsThisMonth.amount + newSupplierBalance.booking_rate,
+                        amount: Number(retrieveNewSupplierEarningsThisMonth.amount) + Number(updateBooking.supplier_rate),
                         //add 1 quantity
                         quantity: retrieveNewSupplierEarningsThisMonth.quantity + 1
                     }
@@ -596,9 +613,9 @@ export const PATCH = async (req: NextRequest) => {
                     data: {
                         balance: { connect: { id: newSupplierBalance.id } },
                         name: 'Class Fee',
-                        amount: newSupplierBalance.booking_rate,
+                        amount: Number(updateBooking.supplier_rate),
                         quantity: 1,
-                        rate: newSupplierBalance.booking_rate
+                        rate: Number(updateBooking.supplier_rate)
                     }
                 })
                 if (!createNewSupplierEarnings) return badRequestRes()
@@ -607,12 +624,13 @@ export const PATCH = async (req: NextRequest) => {
 
             //if previous supplier deductions this month exist update the amount and quantity
             if (retrivePrevSupplierDeductionsThisMonth) {
+
                 const updatePreviousSupplierDeductions = await prisma.supplierDeductions.update({
                     where: { id: retrivePrevSupplierDeductionsThisMonth.id }, data: {
                         //add 1 quantity
                         quantity: retrivePrevSupplierDeductionsThisMonth.quantity + 1,
                         //deduct the previous supplier rate this rate is based on the supplier rate when this booking is created
-                        amount: retrivePrevSupplierDeductionsThisMonth.amount + booking.supplier_rate
+                        amount: Number(retrivePrevSupplierDeductionsThisMonth.amount) + Number(booking.supplier_rate)
                     }
                 })
                 if (!updatePreviousSupplierDeductions) return badRequestRes()
@@ -625,8 +643,8 @@ export const PATCH = async (req: NextRequest) => {
                         name: 'Class Cancellation',
                         balance: { connect: { id: prevSupplierBalance.id } },
                         quantity: 1,
-                        rate: booking.supplier_rate,
-                        amount: booking.supplier_rate
+                        rate: Number(booking.supplier_rate),
+                        amount: Number(booking.supplier_rate)
                     }
                 })
                 if (!createPreviousSupplierDeductions) return badRequestRes()
@@ -635,6 +653,7 @@ export const PATCH = async (req: NextRequest) => {
 
         }
 
+        //return 200 response
         return okayRes()
 
     } catch (error) {
@@ -645,14 +664,14 @@ export const PATCH = async (req: NextRequest) => {
     }
 }
 
+
 export const DELETE = async (req: Request) => {
 
-    const { searchParams } = new URL(req.url)
-    const bookingID = searchParams.get('bookingID')
-    const bookingIDS = searchParams.getAll('bookingID')
-    const type = searchParams.get('type')
-
     try {
+        const { searchParams } = new URL(req.url)
+        const bookingID = searchParams.get('bookingID')
+        const bookingIDS = searchParams.getAll('bookingID')
+        const type = searchParams.get('type')
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
@@ -662,7 +681,9 @@ export const DELETE = async (req: Request) => {
 
         if (type === 'delete') {
 
-            if (!['super-admin', 'admin'].includes(session.user.type)) return unauthorizedRes()
+            //only allow admin to proceed
+            const isAdmin = checkIsAdmin(session.user.type)
+            if (!isAdmin) return unauthorizedRes()
 
             // Fetch the booking IDs
             const findBookingIds = await prisma.booking.findMany({
@@ -688,13 +709,14 @@ export const DELETE = async (req: Request) => {
                     },
                 },
                 data: {
-                    status: 'available',
+                    status: AVAILABLE,
                     clientUsername: null,
                     clientID: null
                 },
             });
             if (!updateSchedule) return badRequestRes()
 
+            //delete this valid bookings
             const deleteBookings = await prisma.booking.deleteMany({
                 where: { id: { in: validBookingIds } }
             })
@@ -709,8 +731,18 @@ export const DELETE = async (req: Request) => {
             if (![SUPERADMIN, ADMIN, CLIENT].includes(session.user.type)) return unauthorizedRes()
 
             //retrieve booking
-            const booking = await prisma.booking.findUnique({ where: { id: bookingID }, include: { schedule: true, supplier: { select: { balance: true } } } })
+            const booking = await prisma.booking.findUnique({
+                where: { id: bookingID },
+                include: {
+                    schedule: true, supplier: {
+                        select: { balance: true }
+                    }
+                }
+            })
             if (!booking) return notFoundRes('Booking')
+
+            //check if booking already canceled
+            if (booking.status === CANCELED) return badRequestRes("Booking already canceled")
 
             //retrieve client card
             const card = await prisma.clientCard.findUnique({ where: { id: booking.clientCardID } })
@@ -737,7 +769,7 @@ export const DELETE = async (req: Request) => {
 
                 }
 
-                const balance = booking.supplier.balance[0]
+                const supplierBalance = booking.supplier.balance[0]
 
                 const currentMonth = currentDate.getUTCMonth() + 1; // Adjust month to be in the range 1 to 12
                 const currentYear = currentDate.getUTCFullYear();
@@ -750,8 +782,8 @@ export const DELETE = async (req: Request) => {
                 const [retrieveSupplierDeductionsThisMonth, deductSupplierBalance] = await Promise.all([
                     prisma.supplierDeductions.findFirst({
                         where: {
-                            supplierBalanceID: balance.id,
-                            rate: booking.supplier_rate,
+                            supplierBalanceID: supplierBalance.id,
+                            rate: Number(booking.supplier_rate),
                             created_at: {
                                 gte: startDate.toISOString(),
                                 lt: endDate.toISOString(),
@@ -759,20 +791,21 @@ export const DELETE = async (req: Request) => {
                         }
                     }),
                     prisma.supplierBalance.update({
-                        where: { id: booking.supplier.balance[0].id },
-                        data: { amount: booking.supplier.balance[0].amount - booking.supplier_rate }
+                        where: { id: supplierBalance.id },
+                        data: { amount: Number(supplierBalance.amount) - Number(booking.supplier_rate) }
                     })
                 ])
                 if (!deductSupplierBalance) return badRequestRes()
 
                 //if previous supplier deductions this month exist update the amount and quantity
                 if (retrieveSupplierDeductionsThisMonth) {
+
                     const updatePreviousSupplierDeductions = await prisma.supplierDeductions.update({
                         where: { id: retrieveSupplierDeductionsThisMonth.id }, data: {
                             //add 1 quantity
                             quantity: retrieveSupplierDeductionsThisMonth.quantity + 1,
                             //deduct the previous supplier rate this rate is based on the supplier rate when this booking is created
-                            amount: retrieveSupplierDeductionsThisMonth.amount + booking.supplier_rate
+                            amount: Number(retrieveSupplierDeductionsThisMonth.amount) + Number(booking.supplier_rate)
                         }
                     })
                     if (!updatePreviousSupplierDeductions) return badRequestRes()
@@ -783,10 +816,10 @@ export const DELETE = async (req: Request) => {
                     const createPreviousSupplierDeductions = await prisma.supplierDeductions.create({
                         data: {
                             name: 'Class Cancellation',
-                            balance: { connect: { id: balance.id } },
+                            balance: { connect: { id: supplierBalance.id } },
                             quantity: 1,
-                            rate: booking.supplier_rate,
-                            amount: booking.supplier_rate
+                            rate: Number(booking.supplier_rate),
+                            amount: Number(booking.supplier_rate)
                         }
                     })
                     if (!createPreviousSupplierDeductions) return badRequestRes()
@@ -803,20 +836,22 @@ export const DELETE = async (req: Request) => {
                 }),
                 prisma.booking.update({
                     where: {
-                        id: bookingID
-                    }, data: { status: 'canceled' }
+                        id: booking.id
+                    }, data: { status: CANCELED }
                 }),
                 prisma.supplierSchedule.update({
                     where: {
                         id: booking.scheduleID
                     },
-                    data: { status: 'canceled', }
+                    data: { status: AVAILABLE, }
                 }),
             ])
             if (!refundClient || !cancelBooking || !updateSchedule) return badRequestRes()
 
+            const operator = session.user.type === SUPERADMIN ? ADMIN : session.user.type
+
             // to send emails to supplier and clients that the booking is canceled
-            axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/cancel`, { bookingID: booking.id, operator: session.user.type })
+            axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/cancel`, { bookingID: booking.id, operator })
 
             //return 200 response
             return okayRes()

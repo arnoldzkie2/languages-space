@@ -25,15 +25,8 @@ export const POST = async (req: Request) => {
             if (!client) return notFoundRes('Client')
 
             if (client.profile_key) {
-
-                const clientProfile = await utapi.getFileUrls(client.profile_key)
-
-                if (clientProfile) {
-
-                    const deleteProfile = await utapi.deleteFiles(client.profile_key)
-                    if (!deleteProfile) return badRequestRes()
-
-                }
+                const deleteProfile = await utapi.deleteFiles(client.profile_key)
+                if (!deleteProfile) return badRequestRes()
             }
 
             const updateClientProfile = await prisma.client.update({

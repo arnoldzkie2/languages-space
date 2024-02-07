@@ -2,7 +2,7 @@ import { ClientCardList } from '@/lib/types/super-admin/clientCardType'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import axios from 'axios'
 import { create } from 'zustand'
-import useGlobalStore from '../globalStore'
+import useDepartmentStore from './departmentStore'
 
 const totalCards = {
     selected: '',
@@ -42,19 +42,20 @@ const useAdminCardStore = create<ClientCardProps>((set) => ({
     cards: [],
     getCards: async () => {
 
-        const { departmentID } = useGlobalStore.getState()
-
+        const { departmentID } = useDepartmentStore.getState()
         try {
-            const { data } = await axios.get(`/api/client/card-list${departmentID ? `?departmentID=${departmentID}` : ''}`)
+            const { data } = await axios.get('/api/client/card-list', {
+                params: {
+                    departmentID: departmentID || null
+                }
+            })
             if (data.ok) set({ cards: data.data })
 
         } catch (error) {
             console.log(error);
             alert('Something went wrong')
-
         }
     },
- 
     totalCards: totalCards,
     viewCard: false,
     viewClientCard: false,

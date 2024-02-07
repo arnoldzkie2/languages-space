@@ -2,6 +2,7 @@ import { SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
 import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
+import { toast } from 'sonner'
 
 interface SupplierMeetingStore {
     meetingInfo: SupplierMeetingInfo[] | null
@@ -41,7 +42,7 @@ const useSupplierMeetingStore = create<SupplierMeetingStore>((set, get) => ({
     updateMeeting: async (e: React.FormEvent) => {
         e.preventDefault()
 
-        const { setIsLoading, setOkMsg, setErr } = useGlobalStore.getState()
+        const { setIsLoading, setErr } = useGlobalStore.getState()
 
         const { meetingInfo } = get()
 
@@ -51,7 +52,7 @@ const useSupplierMeetingStore = create<SupplierMeetingStore>((set, get) => ({
             const { data } = await axios.patch('/api/supplier/meeting', { meetingInfo })
 
             if (data.ok) {
-                setOkMsg('Success')
+                toast('Success! meeting info updated.')
                 setIsLoading(false)
             }
 

@@ -2,8 +2,6 @@ import prisma from "@/lib/db";
 import { getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import { NextRequest } from "next/server"
 
-
-
 export const GET = async (req: NextRequest) => {
 
     const clientCardID = getSearchParams(req, 'clientCardID')

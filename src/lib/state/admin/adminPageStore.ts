@@ -1,8 +1,7 @@
-import { AdminPermission, DepartmentPermission } from '@prisma/client'
+import { AdminPermission } from '@prisma/client'
 import axios from 'axios'
 import { Session } from 'next-auth'
 import { create } from 'zustand'
-import useGlobalStore from '../globalStore'
 
 interface AdminDepartment {
     department: {
@@ -18,6 +17,7 @@ interface AdminPageStore {
     adminDepartments: AdminDepartment[] | null
     getAdminDepartments: () => Promise<void>
     getPermissions: (departmentID: string) => Promise<void>
+    isAdminAllowed: (permissionRequired: keyof AdminPermission) => string | boolean | Date
 }
 
 const useAdminPageStore = create<AdminPageStore>((set, get) => ({
@@ -50,12 +50,9 @@ const useAdminPageStore = create<AdminPageStore>((set, get) => ({
     adminDepartments: null,
     getAdminDepartments: async () => {
 
-        const admin = get().admin
-        if (!admin) return
         try {
 
             const { data } = await axios.get('/api/admin/department')
-            console.log(data.data)
             if (data.ok) set({ adminDepartments: data.data })
 
         } catch (error: any) {
@@ -64,6 +61,14 @@ const useAdminPageStore = create<AdminPageStore>((set, get) => ({
                 return alert(error.response.data.msg)
             }
             alert("Something went wrong")
+        }
+    },
+    isAdminAllowed: (permissionRequired: keyof AdminPermission) => {
+        const { admin, permissions } = get()
+        if (admin) {
+            return permissions && permissions[permissionRequired] || false
+        } else {
+            return true
         }
     }
 }))

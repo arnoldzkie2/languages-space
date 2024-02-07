@@ -2,7 +2,7 @@ import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { checkIsAdmin } from "@/utils/checkUser";
-import { ADMIN, DEPARTMENT, DEPARTMENTID, OPERATOR, PENDING, SUPERADMIN, SUPPLIER } from "@/utils/constants";
+import { DEPARTMENTID, OPERATOR, PENDING, SUPERADMIN, SUPPLIER } from "@/utils/constants";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server"
 
@@ -140,7 +140,7 @@ export const POST = async (req: NextRequest) => {
             const balance = supplier.balance[0]
 
             //check if supplier has enough balance to request a payment
-            if (!balance.amount) return NextResponse.json({ msg: "Not enough balance to request a payment" }, { status: 400 })
+            if (!Number(balance.amount)) return badRequestRes("Not enough balance to request a payment")
 
             //this will return currency symbol
             const returnCurrency = (currency: string) => {

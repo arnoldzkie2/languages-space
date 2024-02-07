@@ -11,6 +11,8 @@ import Success from '../global/Success'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
 import useGlobalStore from '@/lib/state/globalStore'
 import SubmitButton from '../global/SubmitButton'
+import { Skeleton } from '../ui/skeleton'
+import { Button } from '../ui/button'
 
 const ClientBookings: React.FC = () => {
 
@@ -37,13 +39,12 @@ const ClientBookings: React.FC = () => {
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='flex w-full pb-1 mb-1 border-b items-center gap-5'>
-                <h1 className='text-blue-600 text-lg font-bold'>{t('profile.my-bookings')}</h1>
+                <h1 className='text-foreground text-lg font-bold'>{t('profile.my-bookings')}</h1>
                 <Err />
-                <Success />
             </div>
             <div className='overflow-x-auto'>
-                <table className="text-sm text-left text-gray-800 shadow-md w-full">
-                    <thead className="text-xs uppercase bg-slate-100 border">
+                <table className="text-sm text-left text-muted-foreground shadow-md w-full">
+                    <thead className="text-xs uppercase bg-card border">
                         <tr>
                             <th scope="col" className="px-3 py-3">{tt('schedule')}</th>
                             <th scope="col" className="px-3 py-3">{tt('supplier')}</th>
@@ -57,7 +58,7 @@ const ClientBookings: React.FC = () => {
                     <tbody>
                         {currentBookings && currentBookings.length > 0 ?
                             currentBookings.map(booking => (
-                                <tr className="bg-white border hover:bg-slate-50 overflow-x-auto" key={booking.id}>
+                                <tr className="bg-card border hover:bg-muted overflow-x-auto" key={booking.id}>
                                     <td className='px-3 py-3'>
                                         <div className='h-5 text-xs md:text-sm w-36'>
                                             {booking.schedule.date} ({booking.schedule.time})
@@ -95,13 +96,13 @@ const ClientBookings: React.FC = () => {
                                     </td>
                                 </tr>
                             )) : currentBookings && currentBookings.length < 1 ?
-                                <tr>
-                                    <td>
+                                <tr className='border bg-card'>
+                                    <td className='p-3'>
                                         {tt('no-data')}
                                     </td>
                                 </tr>
                                 :
-                                <Skeleton />
+                                <SkeletonTable />
                         }
                     </tbody >
                 </table >
@@ -122,48 +123,51 @@ const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
 
     const tt = useTranslations('global');
 
-    if (booking.status === 'canceled' || booking.status === 'cancel-request') return null
+    if (booking.status === 'canceled') return null
 
     if (bookingDateTime >= threeHoursAhead) return (
         <form onSubmit={(e) => cancelBooking(e, booking.id)}>
-            <SubmitButton msg={tt('cancel')} style='bg-red-500 hover:bg-red-400 text-white px-3 py-1 rounded-md' />
+            <SubmitButton msg={tt('cancel')} variant={'destructive'} />
         </form>
     );
 
     return (
-        <button onClick={() => openRequestCancelBookingaModal(booking.id)} className='bg-blue-600 hover:bg-opacity-80 text-white px-3 rounded-md py-1' title='Send request admin to cancel this booking'>{tt("cancel")}</button>
+        <Button
+            variant={'destructive'}
+            onClick={() => openRequestCancelBookingaModal(booking.id)}
+            title='Send request admin to cancel this booking'>{tt("cancel")}</Button>
     );
 
 };
 
-const Skeleton = () => {
+const SkeletonTable = () => {
 
     const skeleton = useGlobalStore(s => s.skeleton)
 
     return (
         <>
             {skeleton.map(item => (
-                <tr key={item}>
+                <tr key={item} className='bg-card border'>
                     <td className='py-3.5 px-3'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                        <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-3'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-32 h-5'></div>
+                        <Skeleton className='rounded-3xl w-32 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-3'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-24 h-5'></div>
+                        <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-3'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-28 h-5'></div>
+                        <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-3'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-36 h-5'></div>
+                        <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-3'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-44 h-5'></div>
+                        <Skeleton className='rounded-3xl w-44 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-3'>
-                        <div className='bg-slate-200 rounded-3xl animate-pulse w-20 h-5'></div>
+                        <Skeleton className='rounded-3xl w-20 h-5'></Skeleton>
                     </td>
                 </tr>
             ))}

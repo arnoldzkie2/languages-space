@@ -4,6 +4,10 @@ import axios from 'axios';
 import useAdminClientStore from '@/lib/state/super-admin/clientStore';
 import { useTranslations } from 'next-intl';
 import useGlobalStore from '@/lib/state/globalStore';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import SubmitButton from '@/components/global/SubmitButton';
+import { toast } from 'sonner';
 
 interface Props {
 
@@ -15,10 +19,10 @@ const DeleteClientWarningModal: React.FC<Props> = () => {
 
     const { clientData, selectedClients, closeDeleteModal, setSelectedClients, getClients } = useAdminClientStore()
 
-    const deleteClient = async () => {
+    const deleteClient = async (e: React.FormEvent) => {
 
         try {
-
+            e.preventDefault()
             setIsLoading(true)
             if (selectedClients.length > 0) {
                 const newsIds = selectedClients.map((newsItem) => newsItem.id);
@@ -29,6 +33,7 @@ const DeleteClientWarningModal: React.FC<Props> = () => {
             }
 
             if (data.ok) {
+                toast("Success! client deleted.")
                 setIsLoading(false)
                 closeDeleteModal()
                 getClients()
@@ -45,27 +50,31 @@ const DeleteClientWarningModal: React.FC<Props> = () => {
     const tt = useTranslations('global')
 
     return (
-        <div className='fixed top-0 left-0 w-screen z-20 h-screen grid place-items-center bg-opacity-50 bg-gray-600'>
-            <div className='bg-white p-10 rounded-lg shadow-lg flex flex-col gap-3 overflow-y-auto h-3/4 w-1/2'>
-                <h1 className='text-xl pb-4'>Are you sure you want to delete this client?</h1>
+        <div className='fixed top-0 left-0 w-screen z-20 h-screen grid place-items-center bg-opacity-50 backdrop-blur-sm'>
+            <Card className='bg-card p-10 shadow-lg flex flex-col gap-3 overflow-y-auto h-3/4 w-1/2'>
+                <CardHeader>
+                    <CardTitle>Are you sure you want to delete this client?</CardTitle>
+                </CardHeader>
                 {selectedClients.length > 0 ?
                     selectedClients.map(client => (
                         <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={client.id}>
-                            <div>CLIENT ID: <span className='font-normal text-gray-700'>{client.id}</span></div>
-                            <div>{tt('username')}: <span className='font-normal text-gray-700'>{client.name}</span></div>
+                            <div>CLIENT ID: <span className='font-normal text-muted-foreground'>{client.id}</span></div>
+                            <div>{tt('username')}: <span className='font-normal text-muted-foreground'>{client.username}</span></div>
                         </div>
                     ))
                     :
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={clientData?.id}>
-                        <div>CLIENT ID: <span className='font-normal text-gray-700'>{clientData?.id}</span></div>
-                        <div>{tt('username')}: <span className='font-normal text-gray-700'>{clientData?.name}</span></div>
+                        <div>CLIENT ID: <span className='font-normal text-muted-foreground'>{clientData?.id}</span></div>
+                        <div>{tt('username')}: <span className='font-normal text-muted-foreground'>{clientData?.username}</span></div>
                     </div>
                 }
                 <div className='flex items-center w-full justify-end mt-5 gap-5'>
-                    <button className='text-sm border py-2 px-3 rounded-lg hover:bg-gray-100' onClick={() => closeDeleteModal()}>{tt('cancel')}</button>
-                    <button className='text-sm text-white bg-red-600 rounded-lg px-3 py-2 hover:bg-red-700' onClick={() => deleteClient()}>{tt('confirm')}</button>
+                    <Button variant={'ghost'} onClick={closeDeleteModal}>{tt('close')}</Button>
+                    <form onSubmit={deleteClient}>
+                        <SubmitButton msg={tt('confirm')} variant={'destructive'} />
+                    </form>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 };
