@@ -128,22 +128,22 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                                     <label htmlFor={agent.id} className='cursor-pointer h-5 w-36'>{agent.name}</label>
                                 </td>
                                 <td className='px-6 py-3'>
-                                    <div className='h-5 w-32'>
+                                    {agent.phone_number && <div className='h-5 cursor-pointer w-32' onClick={() => openTruncateTextModal(agent.phone_number || '')}>
                                         {agent.phone_number}
-                                    </div>
+                                    </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    <div className='h-5 w-28'>
+                                    {agent.organization && <div className='h-5 cursor-pointer w-28' onClick={() => openTruncateTextModal(agent.organization || '')}>
                                         {agent.organization}
-                                    </div>
+                                    </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    <div className='h-5 w-28'>
+                                    {agent.origin && <div className='h-5 cursor-pointer w-28' onClick={() => openTruncateTextModal(agent.origin || '')}>
                                         {agent.origin}
-                                    </div>
+                                    </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    {agent.note && <div className='h-5 w-28' onClick={() => openTruncateTextModal(agent.note || '')}>
+                                    {agent.note && <div className='h-5 cursor-pointer w-28' onClick={() => openTruncateTextModal(agent.note || '')}>
                                         {returnTruncateText(agent.note, 15)}
                                     </div>}
                                 </td>
