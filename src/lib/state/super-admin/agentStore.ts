@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 import { Agent } from '@prisma/client'
 
 const agentSearchQueryValue = {
-    name: '',
+    username: '',
     phone_number: '',
     organization: '',
     origin: '',

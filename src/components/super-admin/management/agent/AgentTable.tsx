@@ -14,6 +14,7 @@ import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 import DeleteSingleAgentAlert from './DeleteSingleAgentALert';
 import DeleteSelectedAgentAlert from './DeleteSelectedAgentAlert';
 import ViewAgentAlert from './ViewAgentAlert';
+import TruncateTextModal from '@/components/global/TruncateTextModal';
 
 interface Props {
     filteredTable: AgentProps[]
@@ -104,7 +105,7 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                                 onCheckedChange={selectAllRows}
                             />
                         </th>
-                        <th scope="col" className="px-6 py-3">{tt('name')}</th>
+                        <th scope="col" className="px-6 py-3">{tt('username')}</th>
                         <th scope="col" className="px-6 py-3">{tt('phone')}</th>
                         <th scope="col" className="px-6 py-3">{tt('organization')}</th>
                         <th scope="col" className="px-6 py-3">{tt('origin')}</th>
@@ -125,26 +126,26 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                                     />
                                 </td>
                                 <td className="px-6 py-3">
-                                    <label htmlFor={agent.id} className='cursor-pointer h-5 w-36'>{agent.name}</label>
+                                    <label htmlFor={agent.id} className='cursor-pointer h-5 w-36'>{returnTruncateText(agent.username, 10)}</label>
                                 </td>
                                 <td className='px-6 py-3'>
-                                    {agent.phone_number && <div className='h-5 cursor-pointer w-32' onClick={() => openTruncateTextModal(agent.phone_number || '')}>
-                                        {agent.phone_number}
+                                    {agent.phone_number && <div className='h-5 cursor-pointer w-36' onClick={() => openTruncateTextModal(agent.phone_number || '')}>
+                                        {returnTruncateText(agent.phone_number, 15)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    {agent.organization && <div className='h-5 cursor-pointer w-28' onClick={() => openTruncateTextModal(agent.organization || '')}>
-                                        {agent.organization}
+                                    {agent.organization && <div className='h-5 cursor-pointer w-36' onClick={() => openTruncateTextModal(agent.organization || '')}>
+                                        {returnTruncateText(agent.organization, 10)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    {agent.origin && <div className='h-5 cursor-pointer w-28' onClick={() => openTruncateTextModal(agent.origin || '')}>
-                                        {agent.origin}
+                                    {agent.origin && <div className='h-5 cursor-pointer w-36' onClick={() => openTruncateTextModal(agent.origin || '')}>
+                                        {returnTruncateText(agent.origin, 10)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    {agent.note && <div className='h-5 cursor-pointer w-28' onClick={() => openTruncateTextModal(agent.note || '')}>
-                                        {returnTruncateText(agent.note, 15)}
+                                    {agent.note && <div className='h-5 cursor-pointer w-32' onClick={() => openTruncateTextModal(agent.note || '')}>
+                                        {returnTruncateText(agent.note, 10)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
@@ -203,6 +204,7 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                         ))
                     }
                 </tbody >
+                <TruncateTextModal />
             </table >
             <DeleteSelectedAgentAlert />
         </div>

@@ -105,7 +105,6 @@ export const GET = async (req: NextRequest) => {
         })
         //return 400 response if it fails
         if (!allAgents) return badRequestRes("Failed to get all agents")
-        console.log(allAgents)
         const filterAgent = allAgents.map(agent => ({
             ...agent,
             balance: undefined,

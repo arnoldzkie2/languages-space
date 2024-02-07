@@ -10,7 +10,7 @@ interface Props {
     handleSearch: (event: ChangeEvent<HTMLInputElement>) => void
 
     searchQuery: {
-        name: string;
+        username: string;
         phone_number: string;
         organization: string;
         origin: string;
@@ -35,10 +35,10 @@ const SearchAgent: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('name')}
-                        name='name'
+                        placeholder={tt('username')}
+                        name='username'
                         onChange={handleSearch}
-                        value={searchQuery.name}
+                        value={searchQuery.username}
                     />
 
                     <Input type="text"

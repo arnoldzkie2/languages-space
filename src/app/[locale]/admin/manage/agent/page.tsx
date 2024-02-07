@@ -19,13 +19,13 @@ const Page = () => {
     const [searchQuery, setSearchQuery] = useState(agentSearchQueryValue)
 
     const filteredAgents = agents.filter((agent) => {
-        const searchName = searchQuery.name.toUpperCase();
+        const searchName = searchQuery.username.toUpperCase();
         const searchPhone = searchQuery.phone_number.toUpperCase();
         const searchOrganization = searchQuery.organization.toUpperCase();
         const searchOrigin = searchQuery.origin.toUpperCase();
         const searchNote = searchQuery.note.toUpperCase();
         return (
-            (searchName === '' || agent.name?.toUpperCase().includes(searchName)) &&
+            (searchName === '' || agent.username.toUpperCase().includes(searchName)) &&
             (searchPhone === '' || agent.phone_number?.toUpperCase().includes(searchPhone)) &&
             (searchOrganization === '' || agent.organization?.toUpperCase().includes(searchOrganization)) &&
             (searchOrigin === '' || agent.origin?.toUpperCase().includes(searchOrigin)) &&

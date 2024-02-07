@@ -4,7 +4,6 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { signIn } from 'next-auth/react';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "@/lib/navigation";
