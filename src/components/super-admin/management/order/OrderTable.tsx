@@ -127,12 +127,12 @@ const OrderTable: React.FC<Props> = ({ filteredTable }) => {
                                 </td>
                                 <td className='px-4 py-3'>
                                     <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(order.name)}>
-                                        {returnTruncateText(order.name, 13)}
+                                        {returnTruncateText(order.name, 10)}
                                     </div>
                                 </td>
                                 <td className="px-4 py-3">
                                     <div className='h-5 w-32 cursor-pointer' onClick={() => openTruncateTextModal(order.client.username)}>
-                                        {returnTruncateText(order.client.username, 13)}
+                                        {returnTruncateText(order.client.username, 10)}
                                     </div>
                                 </td>
                                 <td className="px-4 py-3">
