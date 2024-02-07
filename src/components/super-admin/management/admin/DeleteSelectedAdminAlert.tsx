@@ -60,7 +60,7 @@ const DeleteSelectedAdminAlert = () => {
                             <Err />
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className='flex flex-col gap-3'>
+                    <div className='flex flex-col gap-3 max-h-[500px] overflow-y-auto'>
                         {selectedAdmins.length > 0 ? selectedAdmins.map(admin => (
                             <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={admin.id}>
                                 <div>ID: <span className='font-normal text-muted-foreground'>{admin.id}</span></div>

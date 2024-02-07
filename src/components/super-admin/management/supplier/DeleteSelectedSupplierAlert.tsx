@@ -60,7 +60,7 @@ const DeleteSelectedSupplierAlert = () => {
                             <Err />
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className='flex flex-col gap-3'>
+                    <div className='flex flex-col gap-3 max-h-[500px] overflow-y-auto'>
                         {selectedSupplier.map(supplier => (
                             <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={supplier.id}>
                                 <div>ID: <span className='font-normal text-muted-foreground'>{supplier.id}</span></div>

@@ -60,7 +60,7 @@ const DeleteSelectedAgentAlert = () => {
                             <Err />
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className='flex flex-col gap-3'>
+                    <div className='flex flex-col gap-3 max-h-[500px] overflow-y-auto'>
                         {selectedAgents.map(agent => (
                             <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={agent.id}>
                                 <div>ID: <span className='font-normal text-muted-foreground'>{agent.id}</span></div>
