@@ -17,7 +17,7 @@ import useGlobalStore from '@/lib/state/globalStore'
 import useAdminClientStore from '@/lib/state/super-admin/clientStore'
 import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { Courses, Supplier, SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
+import { Courses, SupplierMeetingInfo } from '@/lib/types/super-admin/supplierTypes'
 import { cn } from '@/utils'
 import { ADMIN, PENDING } from '@/utils/constants'
 import { faCalendar, faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -360,7 +360,7 @@ const Page = () => {
                       </div>
 
                     </div>
-                    
+
                     <SubmitButton style='mt-auto w-full' msg={tt('create')} />
                   </div>
                 </div>

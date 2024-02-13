@@ -27,8 +27,8 @@
             "404": "Supplier not found",
             "search": "Search Supplier",
             "tags": "Supplier Tags",
-            "earnings": "Create Earnings",
-            "deductions": "Create Deductions",
+            "earnings": "Supplier Earnings",
+            "deductions": "Supplier Deductions",
             "manage-tags": "Manage Tags",
             "nodata": "No Suppliers",
             "no-meeting": "Supplier has 0 meeting info",
@@ -38,10 +38,54 @@
                 "confirmed": "Are you sure this supplier is paid?"
             }
         },
+        "statistics": {
+            "total": {
+                "client": "Total Clients",
+                "supplier": "Total Suppliers",
+                "agent": "Total Agents",
+                "card": "Total Cards",
+                "booking": "Total Bookings",
+                "order": "Total Orders",
+                "revenue": "Total Revenue"
+            },
+            "this": {
+                "year": "This Year",
+                "month": "This Month",
+                "week": "This Week"
+            }
+        },
+        "dashboard": {
+            "h1": "Dashboard",
+            "h2": "Overview",
+            "total_revenue": "Total Revenue",
+            "most_data": {
+                "client": "Client Most Bookings",
+                "supplier": "Supplier Most Bookings",
+                "agent": "Agent Most Invites",
+                "card": "Most Card Purchases"
+            },
+            "last": {
+                "month": "Last Month",
+                "h2": "This is the most data last month"
+            },
+            "this": {
+                "month": "This Month",
+                "h2": "This is the most data this month"
+            },
+            "no_changes": "No changes",
+            "from_last_month": "from last month",
+            "from_last_week": "from last week",
+            "from_last_year": "from last year",
+            "bookings": "Bookings",
+            "total_clients": "Total Clients",
+            "orders": "Orders",
+            "new_clients": "New Clients"
+        },
         "courses": {
             "h1": "Manage Courses",
             "search": "Search Course",
             "update": "Update Course",
+            "supported-cards": "Supported Cards",
             "create": "Create Course",
             "select": "Select Course",
             "course-name": "Course Name"
@@ -320,10 +364,13 @@
         "canceled": "Canceled",
         "cancel-request": "Cancel Request",
         "select-settlement": "Select Settlement Period",
+        "invited": "Invited",
         "paid-by": "Paid By",
         "meeting-code": "Meeting Code",
+        "this_week": "This Week",
         "service": "Service",
         "departments": "Departments",
+        "validity": "Validity",
         "salary": "Salary",
         "settlement": "Settlement Period",
         "request-payment": "Request Payment",
@@ -404,6 +451,7 @@
         "note": "Note",
         "invoice": "Invoice Number",
         "express": "Express Number",
+        "total": "Total",
         "tags": "Tags"
     },
     "auth": {
@@ -448,9 +496,11 @@
             "info": "Profile Info",
             "balance": "My Balance",
             "navigate": "Navigate to",
+            "invites": "Invites",
             "booking-requests": "Booking Requests",
             "booking": "Booking",
             "my-meeting": "My Meeting",
+            "my-invites": "My Invites",
             "my-cards": "My Cards",
             "my-bookings": "My Bookings",
             "support": "Contact Support",

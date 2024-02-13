@@ -75,7 +75,6 @@ model ClientCardList {
   updated_at           DateTime             @updatedAt
   supported_courses    Courses[]
   supported_suppliers  SupplierPrice[]
-  supplier_commissions SupplierCommission[]
   active               ClientCard[]
   departments           Department           @relation(fields: [departmentID], references: [id], onDelete: Cascade)
   departmentID         String
@@ -112,7 +111,6 @@ model Supplier {
   departments       Department[]
   balance           SupplierBalance[]
   booking_request   BookingRequest[]
-  commission        SupplierCommission[]
 }
 
 model SupplierBalance {
@@ -217,20 +215,6 @@ model SupplierPrice {
 
   @@index([supplierID])
   @@index([cardID])
-}
-
-model SupplierCommission {
-  id           String         @id @default(uuid())
-  booking_rate Int
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  card         ClientCardList @relation(fields: [cardID], references: [id], onDelete: Cascade)
-  supplier     Supplier       @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  cardID       String
-  supplierID   String
-
-  @@index([cardID])
-  @@index([supplierID])
 }
 
 model Courses {

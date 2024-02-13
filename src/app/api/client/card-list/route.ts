@@ -154,8 +154,11 @@ export const GET = async (req: NextRequest) => {
                     },
                     supported_suppliers: {
                         select: {
+                            price: true,
+                            supplierID: true,
                             supplier: {
                                 select: {
+                                    id: true,
                                     name: true
                                 }
                             }

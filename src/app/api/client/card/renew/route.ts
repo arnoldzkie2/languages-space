@@ -42,20 +42,32 @@ export const POST = async (req: Request) => {
         if (!renewCard) return badRequestRes("Failed to renew card")
         //return 400 response if it fails
 
-        ///create an order
-        const createOrder = await prisma.order.create({
-            data: {
-                client: { connect: { id: card.client.id } },
-                name: `Renewed: ${card.card.name}`,
-                cardID: card.card.id,
-                price: card.price, quantity: 1,
-                operator: ADMIN,
-                status: 'paid',
-                departments: { connect: { id: card.card.departmentID } }
-            }
+        //update card sold
+        const updateCardSold = await prisma.clientCardList.update({
+            where: { id: card.cardID },
+            data: { sold: card.card.sold + 1 }
         })
-        if (!createOrder) return badRequestRes("Failed to create order")
-        //return 400 response if it fails
+        if (!updateCardSold) return badRequestRes("Failed to update card sold")
+
+        //if card is prepaid create an order
+        if (card.card.prepaid) {
+
+            ///create an order
+            const createOrder = await prisma.order.create({
+                data: {
+                    client: { connect: { id: card.client.id } },
+                    name: `Renewed: ${card.card.name}`,
+                    cardID: card.card.id,
+                    price: card.price,
+                    quantity: 1,
+                    operator: ADMIN,
+                    status: 'paid',
+                    departments: { connect: { id: card.card.departmentID } }
+                }
+            })
+            if (!createOrder) return badRequestRes("Failed to create order")
+            //return 400 response if it fails
+        }
 
         //return 200 response
         return okayRes()

@@ -29,7 +29,7 @@ const Page = () => {
     const [selectedCardID, setSelectedCardID] = useState('')
     const [openCard, setOpenCard] = useState(false)
     const { clients, getClients } = useAdminClientStore()
-    const { isSideNavOpen, setIsLoading, setErr, setOkMsg } = useGlobalStore()
+    const { isSideNavOpen, setIsLoading, setErr } = useGlobalStore()
     const { cards, getCards } = useAdminCardStore()
     const { departmentID } = useDepartmentStore()
     const router = useRouter()
@@ -52,7 +52,7 @@ const Page = () => {
 
             const { data } = await axios.post('/api/client//card/bind', {
                 clientID: selectedClientID,
-                clientCardID: selectedCardID
+                cardID: selectedCardID
             })
 
             if (data.ok) {

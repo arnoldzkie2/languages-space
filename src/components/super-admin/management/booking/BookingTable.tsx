@@ -127,61 +127,62 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                                         checked={selectedBookings.some(selectedBooking => selectedBooking.id === booking.id)}
                                     />
                                 </td>
-                                <td className='px-2 overflow-x-auto py-3'>
-                                    <div className='h-5 whitespace-nowrap w-36'>
-                                        {booking.name}
+                                <td className='px-2 py-3'>
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {returnTruncateText(booking.name, 10)}
                                     </div>
                                 </td>
-                                <td className='px-2 overflow-x-auto py-3'>
-                                    <div className='h-5 whitespace-nowrap w-36'>
-                                        {booking.client.username}
+                                <td className='px-2 py-3'>
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {returnTruncateText(booking.client.username, 10)}
                                     </div>
                                 </td>
-                                <td className='px-2 overflow-x-auto py-3'>
-                                    <div className='h-5 whitespace-nowrap w-36'>
-                                        {booking.supplier.name}
+                                <td className='px-2 py-3'>
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {returnTruncateText(booking.supplier.name, 10)}
                                     </div>
                                 </td>
-                                <td className='px-2 overflow-x-auto py-3'>
-                                    <div className='h-5 whitespace-nowrap w-36'>
-                                        {booking.card_name}
+                                <td className='px-2 py-3'>
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {returnTruncateText(booking.card_name, 10)}
                                     </div>
                                 </td>
-                                <td className='px-2 overflow-x-auto py-3'>
-                                    <div className='h-5 whitespace-nowrap w-36'>
-                                        {booking.schedule.date} ({booking.schedule.time})
+                                <td className='px-2 py-3'>
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {/* {booking.schedule.date} ({booking.schedule.time}) */}
+                                        {returnTruncateText(`${booking.schedule.date} ${booking.schedule.time}`, 10)}
                                     </div>
                                 </td>
-                                <td className="px-2 overflow-x-auto py-3">
-                                    <div className='h-5 whitespace-nowrap w-12'>
-                                        {booking.quantity}
+                                <td className="px-2 py-3">
+                                    <div className='h-5 w-12'>
+                                        {returnTruncateText(String(booking.quantity), 10)}
                                     </div>
                                 </td>
-                                <td className="px-2 overflow-x-auto py-3">
-                                    <div className='h-5 whitespace-nowrap w-16'>
-                                        {booking.price}
+                                <td className="px-2 py-3">
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {returnTruncateText(String(booking.price), 10)}
                                     </div>
                                 </td>
-                                <td className="px-2 overflow-x-auto py-3">
-                                    <div className='h-5 whitespace-nowrap w-28'>
-                                        {booking.operator}
+                                <td className="px-2 py-3">
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {returnTruncateText(booking.operator, 10)}
                                     </div>
                                 </td>
-                                <td className="px-2 overflow-x-auto py-3">
-                                    <div className={`h-5 whitespace-nowrap w-28 ${booking.status === 'cancel-request' && 'text-red-600'}`}>
-                                        {booking.status}
+                                <td className="px-2 py-3">
+                                    <div className={`h-5 w-28 cursor-pointer ${booking.status === 'cancel-request' && 'text-red-600'}`}>
+                                        {returnTruncateText(booking.status, 10)}
                                     </div>
                                 </td>
-                                <td className="px-2 py-3 overflow-x-auto">
+                                <td className="px-2 py-3">
                                     {booking.note &&
-                                        <div className={`h-5 w-36 cursor-pointer hover:text-foreground`} onClick={() => openTruncateTextModal(booking.note || 'No Data')}>
-                                            {returnTruncateText(booking.note || '', 15)}
+                                        <div className={`h-5 w-28 cursor-pointer hover:text-foreground`} onClick={() => openTruncateTextModal(booking.note || 'No Data')}>
+                                            {returnTruncateText(booking.note || '', 10)}
                                         </div>
                                     }
                                 </td>
-                                <td className="px-2 py-3 overflow-x-auto">
-                                    <div className='h-5 w-44 whitespace-nowrap'>
-                                        {new Date(booking.created_at).toLocaleString()}
+                                <td className="px-2 py-3">
+                                    <div className='h-5 w-28 cursor-pointer'>
+                                        {returnTruncateText(new Date(booking.created_at).toLocaleString(), 10)}
                                     </div>
                                 </td>
                                 <td className='py-3 relative px-2'>

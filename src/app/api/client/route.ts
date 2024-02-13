@@ -120,7 +120,12 @@ export const GET = async (req: NextRequest) => {
                             created_at: true,
                             note: true,
                             cards: true,
-                            orders: true
+                            orders: true,
+                            agent: {
+                                select: {
+                                    username: true
+                                }
+                            }
                         },
 
                     }
@@ -150,7 +155,12 @@ export const GET = async (req: NextRequest) => {
                 created_at: true,
                 note: true,
                 cards: true,
-                orders: true
+                orders: true,
+                agent: {
+                    select: {
+                        username: true
+                    }
+                }
             },
 
         })

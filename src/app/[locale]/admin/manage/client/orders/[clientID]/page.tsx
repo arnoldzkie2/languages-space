@@ -4,6 +4,7 @@ import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
 import Pagination from '@/components/super-admin/management/Pagination'
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader'
+import ClientOrderTable from '@/components/super-admin/management/client/orders/ClientOrdersTable'
 import OrderHeader from '@/components/super-admin/management/order/OrderHeader'
 import OrderTable from '@/components/super-admin/management/order/OrderTable'
 import SearchOrder from '@/components/super-admin/management/order/SearchOrder'
@@ -92,7 +93,7 @@ const Page = ({ params }: Props) => {
                     </div>
                 </div>
                 <div className='flex w-full items-start gap-8 px-8'>
-                    <OrderTable filteredTable={currentOrders} />
+                    <ClientOrderTable filteredTable={currentOrders} clientID={clientID} />
                 </div>
                 <Pagination totals={totalClientOrders} getTotalPages={getTotalPages} />
             </div>

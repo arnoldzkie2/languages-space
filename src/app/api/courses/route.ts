@@ -9,7 +9,10 @@ export const GET = async (req: NextRequest) => {
 
         if (courseID) {
 
-            const course = await prisma.courses.findUnique({ where: { id: courseID }, include: { supported_cards: true } })
+            const course = await prisma.courses.findUnique({
+                where: { id: courseID },
+                include: { supported_cards: true }
+            })
             if (!course) return notFoundRes('Course')
 
             return okayRes(course)
@@ -19,7 +22,12 @@ export const GET = async (req: NextRequest) => {
             select: {
                 id: true,
                 name: true,
-                created_at: true
+                created_at: true,
+                supported_cards: {
+                    select: {
+                        name: true
+                    }
+                }
             }
         })
         if (!courses) return badRequestRes()

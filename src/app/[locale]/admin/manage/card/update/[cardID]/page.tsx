@@ -16,9 +16,8 @@ import useGlobalStore from '@/lib/state/globalStore'
 import { clientCardValue } from '@/lib/state/super-admin/clientCardStore'
 import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { Courses, Supplier } from '@/lib/types/super-admin/supplierTypes'
+import { Courses, SupplierProps } from '@/lib/types/super-admin/supplierTypes'
 import axios from 'axios'
-import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -32,13 +31,6 @@ interface Props {
 }
 
 const Page = ({ params }: Props) => {
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
 
     const router = useRouter()
 
@@ -63,7 +55,7 @@ const Page = ({ params }: Props) => {
         try {
 
             const { data } = await axios.get('/api/client/card-list', {
-                params: { clientCardID: params.cardID }
+                params: { cardID: params.cardID }
             })
 
             if (data.ok) {
@@ -147,7 +139,7 @@ const Page = ({ params }: Props) => {
 
     }
 
-    const selectAllSupplier = (suppliers: Supplier[]) => {
+    const selectAllSupplier = (suppliers: SupplierProps[]) => {
 
 
         if (supportedSuppliers.length === supplier.length) {
@@ -208,12 +200,11 @@ const Page = ({ params }: Props) => {
 
         if (formData.id) {
             getSupplier()
+            getCourses()
         } else {
             retrieveCard()
-            getSupplier()
-            getCourses()
         }
-    }, [departmentID])
+    }, [departmentID, formData.id])
 
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')

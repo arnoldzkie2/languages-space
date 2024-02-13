@@ -41,6 +41,9 @@ const ManageClientSearchQueryValue = {
 interface ClientProps extends Client {
     cards: boolean
     orders: boolean
+    agent: {
+        username: string
+    } | null
 }
 
 export type { ClientProps }

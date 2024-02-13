@@ -76,10 +76,6 @@ const AgentDeductionPage = ({ params }: Props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [agentDeductions.length, filteredDeductions.length, selectedDeductions.length])
 
-    useEffect(() => {
-
-    }, [])
-
     return (
         <div className='h-screen'>
             <SideNav />

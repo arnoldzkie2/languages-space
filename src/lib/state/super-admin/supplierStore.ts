@@ -1,4 +1,4 @@
-import { Courses, Supplier, SupplierMeetingInfo, TotalCourse, TotalSupplier } from '@/lib/types/super-admin/supplierTypes'
+import { Courses, SupplierMeetingInfo, SupplierProps, TotalCourse, TotalSupplier } from '@/lib/types/super-admin/supplierTypes'
 import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
@@ -53,17 +53,19 @@ const manageSupplierSearchQueryValue = {
 
 export { totalSupplierValue, supplierFormDataValue, manageSupplierSearchQueryValue, totalCoursesValue }
 
-interface SupplierProps {
-    supplier: Supplier[]
-    supplierData: Supplier | null
+
+
+interface SupplierPropsStore {
+    supplier: SupplierProps[]
+    supplierData: SupplierProps | null
     deleteSupplierModal: boolean
-    selectedSupplier: Supplier[]
+    selectedSupplier: SupplierProps[]
     viewSupplierModal: boolean
     totalSupplier: TotalSupplier
     totalCourse: TotalCourse
     supplierSelectedID: string
     supplierSchedule: SupplierSchedule[]
-    supplierWithMeeting: Supplier[]
+    supplierWithMeeting: SupplierProps[]
     courses: Courses[]
     supplierMeetingInfo: SupplierMeetingInfo[] | null
     getSupplierMeetingInfo: (supplierID: string) => Promise<void>
@@ -73,15 +75,15 @@ interface SupplierProps {
     newCourse: boolean
     updateCourse: boolean
     selectedCourse: Courses | null
-    singleSupplier: Supplier | null
+    singleSupplier: SupplierProps | null
     setTotalCourse: (total: TotalCourse) => void
-    setSupplierData: (supplier: Supplier) => void
+    setSupplierData: (supplier: SupplierProps) => void
     setTotalSupplier: (total: TotalSupplier) => void
     closeViewSupplierModal: () => void
-    openViewSupplierModal: (supplier: Supplier) => void
-    deleteSupplierWarning: (supplier: Supplier) => void
+    openViewSupplierModal: (supplier: SupplierProps) => void
+    deleteSupplierWarning: (supplier: SupplierProps) => void
     closeDeleteSupplierModal: () => void
-    setSelectedSupplier: (suppliers: Supplier[]) => void
+    setSelectedSupplier: (suppliers: SupplierProps[]) => void
     getSupplier: () => Promise<void>
     getSupplierWithMeeting: () => Promise<void>
     setSupplierSelectedID: (supplierID: string) => void
@@ -94,7 +96,7 @@ interface SupplierProps {
     sendSupplierPayslips: (e: React.FormEvent) => Promise<void>
 }
 
-const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
+const useAdminSupplierStore = create<SupplierPropsStore>((set, get) => ({
     supplier: [],
     supplierData: null,
     supplierWithMeeting: [],
@@ -144,13 +146,13 @@ const useAdminSupplierStore = create<SupplierProps>((set, get) => ({
     closeSelectedCourse: () => set({ selectedCourse: null, updateCourse: false }),
     toggleCreateCourse: () => set((state) => ({ newCourse: !state.newCourse })),
     setSupplierSelectedID: (supplierID: string) => set({ supplierSelectedID: supplierID }),
-    setSupplierData: (supplier: Supplier) => set({ supplierData: supplier }),
+    setSupplierData: (supplier: SupplierProps) => set({ supplierData: supplier }),
     setTotalSupplier: (total: TotalSupplier) => set({ totalSupplier: total }),
     closeViewSupplierModal: () => set({ viewSupplierModal: false, supplierData: undefined }),
-    openViewSupplierModal: (supplier: Supplier) => set({ supplierData: supplier, viewSupplierModal: true }),
-    deleteSupplierWarning: (supplier: Supplier) => set({ deleteSupplierModal: true, supplierData: supplier }),
+    openViewSupplierModal: (supplier: SupplierProps) => set({ supplierData: supplier, viewSupplierModal: true }),
+    deleteSupplierWarning: (supplier: SupplierProps) => set({ deleteSupplierModal: true, supplierData: supplier }),
     closeDeleteSupplierModal: () => set({ deleteSupplierModal: false, supplierData: undefined }),
-    setSelectedSupplier: (suppliers: Supplier[]) => set({ selectedSupplier: suppliers }),
+    setSelectedSupplier: (suppliers: SupplierProps[]) => set({ selectedSupplier: suppliers }),
     getSupplier: async () => {
         try {
             const { departmentID } = useDepartmentStore.getState()

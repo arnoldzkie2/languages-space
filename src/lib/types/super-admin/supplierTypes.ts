@@ -1,5 +1,5 @@
+import { Department, Supplier, SupplierDeductions, SupplierEarnings } from "@prisma/client"
 import { ClientCard, ClientCardList } from "./clientCardType"
-import { Department } from "./globalType"
 import { SupplierSchedule } from "./scheduleType"
 
 interface TotalSupplier {
@@ -8,32 +8,39 @@ interface TotalSupplier {
     selected: string
 }
 
-interface Supplier {
-    id: string
-    profile_key: string | null
-    profile_url: string | null
-    name: string
-    username: string
-    organization: string | null
-    payment_information: string
-    phone_number: string | null
-    password: string
-    email: string | null
-    address: string | null
-    gender: string | null
-    card: any
-    meeting_info: SupplierMeetingInfo[]
-    tags: string[]
-    schedule: SupplierSchedule[]
-    origin: string | null
-    note: string | null
-    employment_status: string
-    entry: string | null
-    departure: string | null
+interface SupplierProps extends Supplier {
     departments: Department[]
-    created_at: string
-    updated_at: string
+    earnings: SupplierEarnings[]
+    meeting_info: SupplierMeetingInfo[]
+    deductions: SupplierDeductions[]
 }
+
+// interface Supplier {
+//     id: string
+//     profile_key: string | null
+//     profile_url: string | null
+//     name: string
+//     username: string
+//     organization: string | null
+//     payment_information: string
+//     phone_number: string | null
+//     password: string
+//     email: string | null
+//     address: string | null
+//     gender: string | null
+//     card: any
+//     meeting_info: SupplierMeetingInfo[]
+//     tags: string[]
+//     schedule: SupplierSchedule[]
+//     origin: string | null
+//     note: string | null
+//     employment_status: string
+//     entry: string | null
+//     departure: string | null
+//     departments: Department[]
+//     created_at: string
+//     updated_at: string
+// }
 
 interface SupplierFormDataProps {
     id?: string
@@ -101,5 +108,5 @@ interface SupplierPrice {
     cardID: string
 }
 
-export type { SupplierFormDataProps, SupplierPrice, Courses, Supplier, TotalSupplier, SupplierMeetingInfo, TotalCourse }
+export type { SupplierFormDataProps, SupplierPrice, Courses, SupplierProps, TotalSupplier, SupplierMeetingInfo, TotalCourse }
 

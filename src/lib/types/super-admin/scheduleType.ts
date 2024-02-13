@@ -1,5 +1,5 @@
+import { Supplier } from "@prisma/client"
 import { Booking } from "./bookingType"
-import { Supplier } from "./supplierTypes"
 
 interface SupplierSchedule {
     id: string

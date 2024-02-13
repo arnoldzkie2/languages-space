@@ -1,6 +1,6 @@
 import useGlobalStore from '@/lib/state/globalStore';
 import { SupplierBalanceTransaction } from '@/lib/types/super-admin/supplierBalanceType';
-import { faCheck, faEllipsis, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslations } from 'next-intl';
 import React from 'react'
@@ -8,6 +8,7 @@ import ConfirmPaymentModal from './ConfirmPaymentModal';
 import useSupplierBalanceStore from '@/lib/state/supplier/supplierBalanceStore';
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 import { Skeleton } from '@/components/ui/skeleton';
+import TruncateTextModal from '@/components/global/TruncateTextModal';
 
 interface Props {
     filteredTable: SupplierBalanceTransaction[]
@@ -15,7 +16,7 @@ interface Props {
 
 const RequestPaymentsTable = ({ filteredTable }: Props) => {
 
-    const { openOperation, closeOperation, operation, selectedID, isLoading } = useGlobalStore()
+    const { openOperation, closeOperation, operation, selectedID, isLoading, returnTruncateText, openTruncateTextModal } = useGlobalStore()
 
     const openConfirmPaymentModal = useSupplierBalanceStore(s => s.openConfirmPaymentModal)
 
@@ -41,32 +42,32 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                 {filteredTable.length < 1 ? <SkeletonTable /> : filteredTable.map(obj => (
                     <tr className="bg-card border hover:bg-muted" key={obj.id}>
                         <td className='px-6 py-3'>
-                            <div className='h-5 w-36'>
-                                {obj.balance.supplier.name}
+                            <div onClick={() => openTruncateTextModal(obj.balance.supplier.name)} className='h-5 cursor-pointer w-36 '>
+                                {returnTruncateText(obj.balance.supplier.name, 15)}
                             </div>
                         </td>
                         <td className="px-6 py-3">
-                            <div className='h-5 w-28'>
-                                {obj.amount}
+                            <div onClick={() => openTruncateTextModal(obj.amount)} className='h-5 cursor-pointer w-28'>
+                                {returnTruncateText(obj.amount, 10)}
                             </div>
                         </td>
                         <td className="px-6 py-3">
-                            <div className='h-5 w-28'>
-                                {obj.status}
+                            <div onClick={() => openTruncateTextModal(obj.status)} className='h-5 cursor-pointer w-28'>
+                                {returnTruncateText(obj.status, 10)}
                             </div>
                         </td>
                         <td className="px-6 py-3">
-                            <div className='h-5 w-40'>
-                                {obj.payment_address}
+                            <div onClick={() => openTruncateTextModal(obj.payment_address)} className='h-5 cursor-pointer w-40'>
+                                {returnTruncateText(obj.payment_address, 10)}
                             </div>
                         </td>
                         <td className="px-6 py-3">
-                            <div className='h-5 w-40'>
-                                {obj.paid_by}
+                            <div onClick={() => openTruncateTextModal(obj.paid_by || '')} className='h-5 cursor-pointer w-40'>
+                                {returnTruncateText(obj.paid_by || '', 10)}
                             </div>
                         </td>
                         <td className="px-6 py-3">
-                            <div className='h-5 w-44'>
+                            <div onClick={() => openTruncateTextModal(obj.status)} className='h-5 cursor-pointer w-44'>
                                 {new Date(obj.created_at).toLocaleString()}
                             </div>
                         </td>
@@ -85,6 +86,7 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                     </tr>
                 ))}
             </tbody >
+            <TruncateTextModal />
             <ConfirmPaymentModal />
         </table >
     );

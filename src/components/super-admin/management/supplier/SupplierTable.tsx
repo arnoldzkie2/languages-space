@@ -2,34 +2,33 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
-import { Supplier } from '@/lib/types/super-admin/supplierTypes';
 import useGlobalStore from '@/lib/state/globalStore';
 import TruncateTextModal from '@/components/global/TruncateTextModal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Checkbox } from '@/components/ui/checkbox';
 import useDepartmentStore from '@/lib/state/super-admin/departmentStore';
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
-import SupplierCommissionModal from './SupplierCommissionModal';
 import DeleteSingleSupplierAlert from './DeleteSingleSupplierAlert';
 import DeleteSelectedSupplierAlert from './DeleteSelectedSupplierAlert';
 import ViewSupplierAlert from './ViewSupplierAlert';
+import { SupplierProps } from '@/lib/types/super-admin/supplierTypes';
 
 interface Props {
-    filteredTable: Supplier[]
+    filteredTable: SupplierProps[]
 }
 
 const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
 
-    const { selectedSupplier, setSelectedSupplier, openViewSupplierModal, deleteSupplierWarning } = useAdminSupplierStore()
+    const { selectedSupplier, setSelectedSupplier } = useAdminSupplierStore()
     const { openOperation, closeOperation, operation, selectedID, returnTruncateText, openTruncateTextModal } = useGlobalStore()
     const departmentID = useDepartmentStore(s => s.departmentID)
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
-    const handleSelection = (supplier: Supplier) => {
+    const handleSelection = (supplier: SupplierProps) => {
         const isSelected = selectedSupplier.some((selectedSupplier) => selectedSupplier.id === supplier.id);
 
         if (isSelected) {
@@ -47,7 +46,7 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
 
         if (filteredTable.length === 0) return;
 
-        let updatedSelectedSupplier: Supplier[];
+        let updatedSelectedSupplier: SupplierProps[];
 
         const isSelected = filteredTable.every((suplier) =>
             selectedSupplier.some((selectedSupplier) => selectedSupplier.id === suplier.id)
@@ -121,41 +120,44 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
                             </td>
                             <td className="px-6 py-3">
                                 <label htmlFor={supplier.id}
-                                    className='cursor-pointer h-5 w-36'
+                                    className='cursor-pointer h-5 w-28'
                                     onClick={() => openTruncateTextModal(supplier.username)}
-                                >{returnTruncateText(supplier.username, 20)}</label>
+                                >{returnTruncateText(supplier.username, 10)}</label>
                             </td>
                             <td className="px-6 py-3">
                                 {supplier.name && <div
-                                    className='cursor-pointer h-5 w-36'
+                                    className='cursor-pointer h-5 w-28'
                                     onClick={() => openTruncateTextModal(supplier.name)}
-                                >{returnTruncateText(supplier.name, 20)}</div>}
+                                >{returnTruncateText(supplier.name, 10)}</div>}
                             </td>
                             <td className="px-6 py-3">
                                 {supplier.phone_number && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(supplier.phone_number || '')}>
-                                    {returnTruncateText(supplier.phone_number, 18)}
+                                    {returnTruncateText(supplier.phone_number, 10)}
                                 </div>}
                             </td>
                             <td className="px-6 py-3">
                                 {supplier.organization && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(supplier.organization || '')}>
-                                    {returnTruncateText(supplier.organization, 15)}
+                                    {returnTruncateText(supplier.organization, 10)}
                                 </div>}
                             </td>
                             <td className="px-6 py-3">
                                 {supplier.origin && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(supplier.origin || '')}>
-                                    {returnTruncateText(supplier.origin, 15)}
+                                    {returnTruncateText(supplier.origin, 10)}
                                 </div>}
                             </td>
                             <td className="px-6 py-3">
                                 {supplier.note && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(supplier.note || '')}>
-                                    {returnTruncateText(supplier.note, 15)}
+                                    {returnTruncateText(supplier.note, 10)}
                                 </div>}
                             </td>
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(supplier.id)} />
                                 <ul className={`${operation && selectedID === supplier.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-36 shadow-lg border flex flex-col text-muted-foreground`}>
+                                    {isAdminAllowed('view_agent_deductions') && supplier.deductions && <Link href={`/admin/manage/supplier/deductions/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('deductions')}</Link>}
+
+                                    {isAdminAllowed('view_agent_earnings') && supplier.earnings && <Link href={`/admin/manage/supplier/earnings/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('earnings')}</Link>}
+
                                     <ViewSupplierAlert supplierID={supplier.id} />
-                                    {isAdminAllowed('update_supplier') && <SupplierCommissionModal supplierName={supplier.name} supplierID={supplier.id} />}
                                     {isAdminAllowed('update_supplier') && <Link href={`/admin/manage/supplier/update/${supplier.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
                                     {isAdminAllowed('delete_supplier') && <DeleteSingleSupplierAlert supplier={supplier} />}
                                     <li className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
@@ -183,10 +185,10 @@ const TableSkeleton = () => {
                         <Skeleton className='rounded-md w-5 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
-                        <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
+                        <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
-                        <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
+                        <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
                     </td>
                     <td className='py-3.5 px-6'>
                         <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>

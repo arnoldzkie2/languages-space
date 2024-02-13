@@ -19,7 +19,7 @@ const Page: React.FC<PageProps> = ({ }) => {
 
     const { supplier, totalSupplier, selectedSupplier, deleteSupplierModal, getSupplier, setTotalSupplier } = useAdminSupplierStore()
     const { currentPage, isSideNavOpen, setCurrentPage, itemsPerPage } = useGlobalStore()
-    const { departmentID, setDepartmentID } = useDepartmentStore()
+    const { departmentID } = useDepartmentStore()
     const [searchQuery, setSearchQuery] = useState(manageSupplierSearchQueryValue)
 
     const filteredSupplier = supplier.filter((supplier) => {

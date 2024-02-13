@@ -14,7 +14,6 @@ import DeleteDeductionAlert from './DeleteDeductionAlert';
 import DeleteSelectedDeductionsAlert from './DeleteSelectedDeductionsALert';
 
 interface Props {
-
     filteredTable: AgentDeductions[]
     agentID: string
 }

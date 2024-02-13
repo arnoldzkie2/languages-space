@@ -4,7 +4,7 @@ import { ADMIN } from "@/utils/constants";
 
 export const POST = async (req: Request) => {
 
-    const { clientID, clientCardID } = await req.json()
+    const { clientID, cardID } = await req.json()
 
     try {
         //retrieve client
@@ -12,7 +12,7 @@ export const POST = async (req: Request) => {
         if (!client) return notFoundRes('Client')
 
         //retrieve card
-        const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID } })
+        const card = await prisma.clientCardList.findUnique({ where: { id: cardID } })
         if (!card) return notFoundRes('Client Card')
 
         const { name, price, balance, validity, invoice, repeat_purchases, online_renews, id, prepaid } = card
@@ -40,6 +40,12 @@ export const POST = async (req: Request) => {
         })
         if (!bindCard) return badRequestRes("Failed to bind card to client")
         //return 400 response if it fails
+
+        //update card sold
+        const updateCardSold = await prisma.clientCardList.update({
+            where: { id: bindCard.cardID }, data: { sold: card.sold + 1 }
+        })
+        if (!updateCardSold) return badRequestRes("Failed to update card sold")
 
         //if card is prepaid create an order
         if (prepaid) {

@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { checkIsAdmin } from "@/utils/checkUser";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -97,6 +98,38 @@ export const POST = async (req: NextRequest) => {
         if (!updateSupplierBalance || !createDeductions) return badRequestRes()
 
         return okayRes()
+
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
+    }
+}
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+        const isAdmin = checkIsAdmin(session.user.type)
+        if (!isAdmin) return unauthorizedRes()
+
+        //get all deductionID in searchParams
+        const { searchParams } = new URL(req.url)
+        const deductionIds = searchParams.getAll("deductionID")
+
+        if (deductionIds.length > 0) {
+            const deleteDeductions = await prisma.supplierDeductions.deleteMany({
+                where: { id: { in: deductionIds } }
+            })
+            if (deleteDeductions.count === 0) return notFoundRes("Deductions")
+
+            return okayRes()
+        }
+
+        return notFoundRes("Deductions")
 
     } catch (error) {
         console.log(error);

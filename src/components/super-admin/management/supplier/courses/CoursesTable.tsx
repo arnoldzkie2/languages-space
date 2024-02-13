@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 import TruncateTextModal from '@/components/global/TruncateTextModal';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Props {
 
@@ -55,6 +56,7 @@ const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
             <thead className="text-xs uppercase bg-card border">
                 <tr>
                     <th scope="col" className="px-6 py-3">{tt('name')}</th>
+                    <th scope="col" className="px-6 py-3">{t('courses.supported-cards')}</th>
                     <th scope="col" className="px-6 py-3">{tt('date')}</th>
                     <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
                 </tr>
@@ -65,7 +67,24 @@ const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
                         <tr className="bg-card border hover:bg-muted hover:text-muted-foreground" key={course.id}>
                             <td className='px-6 py-3'>
                                 <div className='h-5 w-40 cursor-pointer' onClick={() => openTruncateTextModal(course.name)}>
-                                    {returnTruncateText(course.name, 15)}
+                                    {returnTruncateText(course.name, 20)}
+                                </div>
+                            </td>
+                            <td className='px-6 py-3'>
+                                <div className='w-44'>
+                                    <Select>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={tt('card')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>{tt('card')}</SelectLabel>
+                                                {course.supported_cards.map(course => (
+                                                    <SelectItem key={course.name} value={course.name}>{course.name}</SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </td>
                             <td className="px-6 py-3">
@@ -89,6 +108,9 @@ const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
                     )) :
                     skeleton.map(item => (
                         <tr key={item} className='border bg-card'>
+                            <td className='py-3.5 px-6'>
+                                <Skeleton className='rounded-3xl w-40 h-5'></Skeleton>
+                            </td>
                             <td className='py-3.5 px-6'>
                                 <Skeleton className='rounded-3xl w-40 h-5'></Skeleton>
                             </td>

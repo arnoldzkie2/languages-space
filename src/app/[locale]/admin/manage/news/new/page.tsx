@@ -3,11 +3,10 @@
 import SideNav from '@/components/super-admin/SideNav';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useQuill } from 'react-quilljs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {  faXmark } from '@fortawesome/free-solid-svg-icons';
 import Departments from '@/components/super-admin/management/Departments';
 import { useTranslations } from 'next-intl';
 import useGlobalStore from '@/lib/state/globalStore';
@@ -16,7 +15,6 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import SubmitButton from '@/components/global/SubmitButton';
-import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 
 interface FormData {
     title: string
@@ -127,7 +125,7 @@ const CreateNews = () => {
 
             <SideNav />
 
-            <div className={`flex flex-col w-full h-full ${isSideNavOpen ? 'pl-40' : 'pl-16'}`}>
+            <div className={`flex flex-col w-full h-full ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
                 <div className='flex px-8 border-b h-20 w-full items-center'>
 

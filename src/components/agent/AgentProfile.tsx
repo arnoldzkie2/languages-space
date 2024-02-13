@@ -2,14 +2,10 @@
 'use client'
 import React from 'react'
 import Link from 'next/link';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useSession } from 'next-auth/react';
 import useGlobalStore from '@/lib/state/globalStore';
 
 const AgentProfile = () => {
-
-    const session = useSession()
 
     const navLinks = [
         {
@@ -21,6 +17,11 @@ const AgentProfile = () => {
             page: 'balance',
             link: '/agent/profile/balance',
             translate: 'profile.balance'
+        },
+        {
+            page: 'invites',
+            link: '/agent/profile/invites',
+            translate: 'profile.invites'
         },
     ]
 

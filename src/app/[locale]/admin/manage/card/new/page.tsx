@@ -17,7 +17,7 @@ import useGlobalStore from '@/lib/state/globalStore'
 import { clientCardValue } from '@/lib/state/super-admin/clientCardStore'
 import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { Courses, Supplier } from '@/lib/types/super-admin/supplierTypes'
+import { Courses, SupplierProps } from '@/lib/types/super-admin/supplierTypes'
 import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -126,7 +126,7 @@ const Page = () => {
 
     }
 
-    const selectAllSupplier = (suppliers: Supplier[]) => {
+    const selectAllSupplier = (suppliers: SupplierProps[]) => {
 
 
         if (supportedSuppliers.length === supplier.length) {

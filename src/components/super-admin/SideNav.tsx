@@ -83,7 +83,6 @@ const SideNav: React.FC = () => {
         if (status === 'authenticated' && session.user.type === ADMIN) {
             setAdmin(session.user)
             if (!adminDepartments) {
-                setPage('dashboard')
                 router.push('/admin')
                 getAdminDepartments()
             }

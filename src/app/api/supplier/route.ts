@@ -131,13 +131,26 @@ export const GET = async (req: Request) => {
                     name: true,
                     origin: true,
                     organization: true,
-                    note: true
+                    note: true,
+                    balance: {
+                        include: {
+                            earnings: true,
+                            deductions: true
+                        }
+                    },
                 },
                 orderBy: { created_at: 'desc' }
             })
             if (!suppliers) return badRequestRes()
 
-            return okayRes(suppliers)
+            const filterSupplier = suppliers.map(supplier => ({
+                ...supplier,
+                balance: undefined,
+                deductions: supplier.balance[0].deductions.length > 0 ? true : false,
+                earnings: supplier.balance[0].earnings.length > 0 ? true : false
+            }))
+
+            return okayRes(filterSupplier)
         }
 
         const allSupplier = await prisma.supplier.findMany({
@@ -148,13 +161,26 @@ export const GET = async (req: Request) => {
                 phone_number: true,
                 origin: true,
                 organization: true,
-                note: true
+                note: true,
+                balance: {
+                    include: {
+                        earnings: true,
+                        deductions: true
+                    }
+                }
             },
             orderBy: { created_at: 'desc' }
         })
         if (!allSupplier) badRequestRes()
 
-        return okayRes(allSupplier)
+        const filterSupplier = allSupplier.map(supplier => ({
+            ...supplier,
+            balance: undefined,
+            deductions: supplier.balance[0].deductions.length > 0 ? true : false,
+            earnings: supplier.balance[0].earnings.length > 0 ? true : false
+        }))
+
+        return okayRes(filterSupplier)
 
     } catch (error) {
         console.log(error);

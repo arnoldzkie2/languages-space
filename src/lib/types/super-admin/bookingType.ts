@@ -1,7 +1,8 @@
+import { Supplier } from "@prisma/client"
 import { Client } from "./clientType"
 import { Department } from "./globalType"
 import { SupplierSchedule } from "./scheduleType"
-import { Courses, Supplier, SupplierMeetingInfo } from "./supplierTypes"
+import { Courses, SupplierMeetingInfo } from "./supplierTypes"
 
 interface Booking {
     id: string

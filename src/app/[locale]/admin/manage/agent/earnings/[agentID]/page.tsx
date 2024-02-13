@@ -14,7 +14,7 @@ interface Props {
     }
 }
 
-const AgentDeductionPage = ({ params }: Props) => {
+const AgentEarningsPage = ({ params }: Props) => {
 
     const { agentID } = params
     const { agentEarnings, getAgentEarnings, totalEarnings, setTotalEarnings, selectedEarnings } = useAgentEarningsStore()
@@ -76,9 +76,6 @@ const AgentDeductionPage = ({ params }: Props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [agentEarnings.length, filteredDeductions.length, selectedEarnings.length])
 
-    useEffect(() => {
-
-    }, [])
 
     return (
         <div className='h-screen'>
@@ -98,4 +95,4 @@ const AgentDeductionPage = ({ params }: Props) => {
 
 }
 
-export default AgentDeductionPage
+export default AgentEarningsPage

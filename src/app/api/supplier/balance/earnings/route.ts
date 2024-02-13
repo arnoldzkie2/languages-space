@@ -108,3 +108,33 @@ export const POST = async (req: NextRequest) => {
         prisma.$disconnect()
     }
 }
+
+export const DELETE = async (req: NextRequest) => {
+    try {
+
+        const session = await getAuth()
+        if (!session) return unauthorizedRes()
+        //only allow admin to proceed
+
+        //get all earningsID in searchParams
+        const { searchParams } = new URL(req.url)
+        const earningsIds = searchParams.getAll("earningsID")
+
+        if (earningsIds.length > 0) {
+            const deleteDeductions = await prisma.supplierEarnings.deleteMany({
+                where: { id: { in: earningsIds } }
+            })
+            if (deleteDeductions.count === 0) return notFoundRes("Earnings")
+
+            return okayRes()
+        }
+
+        return notFoundRes("Earnings")
+
+    } catch (error) {
+        console.log(error);
+        return serverErrorRes(error)
+    } finally {
+        prisma.$disconnect()
+    }
+}

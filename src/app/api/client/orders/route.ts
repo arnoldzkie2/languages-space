@@ -53,11 +53,14 @@ export const GET = async (req: NextRequest) => {
                                 username: true
                             }
                         }
+                    },
+                    orderBy: {
+                        created_at: 'desc'
                     }
                 }
-            }
+            },
         })
-        if(!client) return notFoundRes(CLIENT)
+        if (!client) return notFoundRes(CLIENT)
 
         return okayRes(client.orders)
 

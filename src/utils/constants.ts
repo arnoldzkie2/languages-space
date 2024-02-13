@@ -10,8 +10,11 @@ const SUPERADMINID = 'superAdminID'
 const AGENT = 'agent'
 const AGENTID = 'agentID'
 
+const BOOKING = 'booking'
+const ORDER = 'order'
 const TRANSACTION = 'transaction'
 const OPERATOR = 'operator'
+const REVENUE = 'revenue'
 
 //departments 
 const DEPARTMENT = 'department'
@@ -34,9 +37,12 @@ const CREATE = 'create'
 
 export {
     VIEW,
+    BOOKING,
+    ORDER,
     UPDATE,
     CREATE,
     AVAILABLE,
+    REVENUE,
     FINGERPOWER,
     VERBALACE,
     OPERATOR,

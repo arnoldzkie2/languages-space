@@ -3,9 +3,8 @@ import SubmitButton from '@/components/global/SubmitButton'
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import useGlobalStore from '@/lib/state/globalStore'
-import useAdminOrderStore from '@/lib/state/super-admin/orderStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { Supplier } from '@/lib/types/super-admin/supplierTypes'
+import { SupplierProps } from '@/lib/types/super-admin/supplierTypes'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -14,7 +13,7 @@ import React, { useState } from 'react'
 import { toast } from 'sonner'
 
 interface Props {
-    supplier: Supplier
+    supplier: SupplierProps
 }
 
 const DeleteSingleSupplierAlert = ({ supplier }: Props) => {

@@ -17,9 +17,7 @@ import DeleteSelectedClientAlert from './DeleteSelectedClientAlert';
 import ViewClientAlert from './ViewClientAlert';
 
 interface Props {
-
     filteredTable: ClientProps[]
-
 }
 
 const ClientTable: React.FC<Props> = ({ filteredTable }) => {
@@ -106,6 +104,7 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                         <th scope="col" className="px-6 py-3">{tt('phone')}</th>
                         <th scope="col" className="px-6 py-3">{tt('organization')}</th>
                         <th scope="col" className="px-6 py-3">{tt('origin')}</th>
+                        <th scope="col" className="px-6 py-3">{tt('invited')}</th>
                         <th scope="col" className="px-6 py-3">{tt('note')}</th>
                         <th scope="col" className="px-6 py-3">{tt('date')}</th>
                         <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
@@ -122,37 +121,43 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                     />
                                 </td>
                                 <td className="px-6 py-3">
-                                    <label htmlFor={client.id} className='cursor-pointer h-5 w-36'>{client.name}</label>
+                                    {client.name && <label htmlFor={client.id} className='cursor-pointer h-5 w-24'
+                                        onClick={() => openTruncateTextModal(client.name || '')}>{returnTruncateText(client.name, 10)}</label>}
                                 </td>
                                 <td className="px-6 py-3">
                                     <label
-                                        className='cursor-pointer h-5 w-28'
+                                        className='cursor-pointer h-5 w-24'
                                         onClick={() => openTruncateTextModal(client.username)}
-                                    >{returnTruncateText(client.username, 20)}</label>
+                                    >{returnTruncateText(client.username, 10)}</label>
                                 </td>
                                 <td className="px-6 py-3">
-                                    {client.phone_number && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(client.phone_number || '')}>
-                                        {returnTruncateText(client.phone_number, 18)}
+                                    {client.phone_number && <div className='h-5 w-24 cursor-pointer' onClick={() => openTruncateTextModal(client.phone_number || '')}>
+                                        {returnTruncateText(client.phone_number, 10)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    {client.organization && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(client.organization || '')}>
-                                        {returnTruncateText(client.organization, 15)}
+                                    {client.organization && <div className='h-5 w-24 cursor-pointer' onClick={() => openTruncateTextModal(client.organization || '')}>
+                                        {returnTruncateText(client.organization, 10)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    {client.origin && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(client.origin || '')}>
-                                        {returnTruncateText(client.origin, 15)}
+                                    {client.origin && <div className='h-5 w-24 cursor-pointer' onClick={() => openTruncateTextModal(client.origin || '')}>
+                                        {returnTruncateText(client.origin, 10)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    {client.note && <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(client.note || '')}>
-                                        {returnTruncateText(client.note, 15)}
+                                    {client.agent?.username && <div className='h-5 w-24 cursor-pointer' onClick={() => openTruncateTextModal(client.agent?.username || '')}>
+                                        {returnTruncateText(client.agent.username, 10)}
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    <div className='h-5 w-44'>
-                                        {new Date(client.created_at).toLocaleString()}
+                                    {client.note && <div className='h-5 w-24 cursor-pointer' onClick={() => openTruncateTextModal(client.note || '')}>
+                                        {returnTruncateText(client.note, 10)}
+                                    </div>}
+                                </td>
+                                <td className="px-6 py-3">
+                                    <div className='h-5 w-27 cursor-pointer' onClick={() => openTruncateTextModal(new Date(client.created_at).toISOString())}>
+                                        {returnTruncateText(new Date(client.created_at).toLocaleString(), 10)}
                                     </div>
                                 </td>
                                 <td className='py-3 relative px-6'>
@@ -174,25 +179,28 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                     <Skeleton className='rounded-md w-5 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
-                                    <Skeleton className='rounded-3xl w-36 h-5'></Skeleton>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
-                                    <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
-                                    <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
-                                    <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
-                                    <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
-                                    <Skeleton className='rounded-3xl w-28 h-5'></Skeleton>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
-                                    <Skeleton className='rounded-3xl w-44 h-5'></Skeleton>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
+                                </td>
+                                <td className='py-3.5 px-6'>
+                                    <Skeleton className='rounded-3xl w-24 h-5'></Skeleton>
                                 </td>
                                 <td className='py-3.5 px-6'>
                                     <Skeleton className='rounded-3xl w-10 h-5'></Skeleton>
@@ -204,7 +212,7 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                 <TruncateTextModal />
             </table >
             <DeleteSelectedClientAlert />
-        </div>
+        </div >
     );
 };
 
