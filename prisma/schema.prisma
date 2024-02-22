@@ -11,28 +11,29 @@ datasource db {
 // client area
 
 model Client {
-  id              String           @id @default(uuid())
-  profile_url     String?          @db.Text
-  profile_key     String?
-  name            String?
-  username        String           @unique
-  phone_number    String?
-  email           String?
-  gender          String?
-  organization    String?
-  password        String
-  address         String?
-  origin          String?
-  note            String?          @db.Text
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  departments     Department[]
-  orders          Order[]
-  cards           ClientCard[]
-  bookings        Booking[]
-  agent           Agent?           @relation(fields: [agentID], references: [id], onDelete: Cascade)
-  agentID         String?
-  booking_request BookingRequest[]
+  id                String                    @id @default(uuid())
+  profile_url       String?                   @db.Text
+  profile_key       String?
+  name              String?
+  username          String                    @unique
+  phone_number      String?
+  email             String?
+  gender            String?
+  organization      String?
+  password          String
+  address           String?
+  origin            String?
+  note              String?                   @db.Text
+  created_at        DateTime                  @default(now())
+  updated_at        DateTime                  @updatedAt
+  departments       Department[]
+  orders            Order[]
+  cards             ClientCard[]
+  bookings          Booking[]
+  agent             Agent?                    @relation(fields: [agentID], references: [id], onDelete: Cascade)
+  agentID           String?
+  booking_request   BookingRequest[]
+  supplier_comments SupplierBookingComments[]
 
   @@index([agentID])
 }
@@ -58,26 +59,26 @@ model ClientCard {
 }
 
 model ClientCardList {
-  id                   String               @id @default(uuid())
-  name                 String
-  sold                 Int
-  price                Decimal
-  balance              Int
-  validity             Int
-  available            Boolean
-  invoice              Boolean
-  repeat_purchases     Boolean
-  online_renews        Boolean
-  productID            String
-  productPriceID       String
-  prepaid              Boolean              @default(true)
-  created_at           DateTime             @default(now())
-  updated_at           DateTime             @updatedAt
-  supported_courses    Courses[]
-  supported_suppliers  SupplierPrice[]
-  active               ClientCard[]
-  departments           Department           @relation(fields: [departmentID], references: [id], onDelete: Cascade)
-  departmentID         String
+  id                  String          @id @default(uuid())
+  name                String
+  sold                Int
+  price               Decimal
+  balance             Int
+  validity            Int
+  available           Boolean
+  invoice             Boolean
+  repeat_purchases    Boolean
+  online_renews       Boolean
+  productID           String
+  productPriceID      String
+  prepaid             Boolean         @default(true)
+  created_at          DateTime        @default(now())
+  updated_at          DateTime        @updatedAt
+  supported_courses   Courses[]
+  supported_suppliers SupplierPrice[]
+  active              ClientCard[]
+  departments         Department      @relation(fields: [departmentID], references: [id], onDelete: Cascade)
+  departmentID        String
 
   @@index([departmentID])
 }
@@ -85,11 +86,11 @@ model ClientCardList {
 //supplier area
 
 model Supplier {
-  id                String                @id @default(uuid())
+  id                String                    @id @default(uuid())
   profile_key       String?
   profile_url       String?
   name              String
-  username          String                @unique
+  username          String                    @unique
   organization      String?
   phone_number      String?
   password          String
@@ -98,12 +99,12 @@ model Supplier {
   gender            String?
   tags              Json?
   origin            String?
-  note              String?               @db.Text
+  note              String?                   @db.Text
   employment_status String?
   entry             DateTime?
   departure         DateTime?
-  created_at        DateTime              @default(now())
-  updated_at        DateTime              @updatedAt
+  created_at        DateTime                  @default(now())
+  updated_at        DateTime                  @updatedAt
   meeting_info      SupplierMeetingInfo[]
   schedule          SupplierSchedule[]
   supplier_price    SupplierPrice[]
@@ -111,6 +112,7 @@ model Supplier {
   departments       Department[]
   balance           SupplierBalance[]
   booking_request   BookingRequest[]
+  supplier_comment  SupplierBookingComments[]
 }
 
 model SupplierBalance {
@@ -229,11 +231,11 @@ model Courses {
 // booking area
 
 model Booking {
-  id                String           @id @default(uuid())
+  id                String                    @id @default(uuid())
   name              String
   operator          String
   status            String
-  note              String?          @db.Text
+  note              String?                   @db.Text
   supplier_rate     Decimal
   card_balance_cost Int
   supplierID        String
@@ -245,16 +247,17 @@ model Booking {
   client_quantity   Decimal
   supplier_quantity Decimal
   meeting_info      Json
-  created_at        DateTime         @default(now())
-  updated_at        DateTime         @updatedAt
-  course            Courses          @relation(fields: [courseID], references: [id], onDelete: Cascade)
-  schedule          SupplierSchedule @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
-  supplier          Supplier         @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  client            Client           @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  department        Department       @relation(fields: [departmentID], references: [id])
+  created_at        DateTime                  @default(now())
+  updated_at        DateTime                  @updatedAt
+  course            Courses                   @relation(fields: [courseID], references: [id], onDelete: Cascade)
+  schedule          SupplierSchedule          @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
+  supplier          Supplier                  @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  client            Client                    @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  department        Department                @relation(fields: [departmentID], references: [id])
   courseID          String
   departmentID      String
   scheduleID        String
+  supplier_comment  SupplierBookingComments[]
 
   @@index([supplierID])
   @@index([clientID])
@@ -316,6 +319,33 @@ model Reminders {
   updated_at        DateTime    @updatedAt
 
   @@index([departmentID])
+}
+
+model SupplierBookingComments {
+  id           String   @id @default(uuid())
+  satisfaction Int
+  client_level String
+  book_used    String
+  message      String   @db.Text
+  clientID     String
+  supplierID   String
+  bookingID    String
+  client       Client   @relation(fields: [clientID], references: [id], onDelete: Cascade)
+  supplier     Supplier @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  booking      Booking  @relation(fields: [bookingID], references: [id], onDelete: Cascade)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@index([clientID])
+  @@index([supplierID])
+  @@index([bookingID])
+}
+
+model CommentTemplates {
+  id         String   @id @default(uuid())
+  message    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 // agent area
@@ -420,7 +450,7 @@ model Order {
   updated_at     DateTime   @updatedAt
   client         Client     @relation(fields: [clientID], references: [id], onDelete: Cascade)
   clientID       String
-  departments     Department @relation(fields: [departmentID], references: [id], onDelete: Cascade)
+  departments    Department @relation(fields: [departmentID], references: [id], onDelete: Cascade)
   departmentID   String
 
   @@index([clientID])
@@ -498,8 +528,8 @@ model AdminPermission {
   create_supplier_earnings Boolean @default(false)
   delete_supplier_earnings Boolean @default(false)
   view_supplier_earnings   Boolean @default(false)
-  //suppier deductions
 
+  //suppier deductions
   create_supplier_deductions Boolean @default(false)
   delete_supplier_deductions Boolean @default(false)
   view_supplier_deductions   Boolean @default(false)
@@ -567,6 +597,8 @@ model AdminPermission {
   download_table  Boolean @default(false)
   handle_settings Boolean @default(false)
   view_statistics Boolean @default(false)
+  view_comments   Boolean @default(false)
+  delete_comments Boolean @default(false)
 
   department_permission  DepartmentPermission @relation(fields: [departmentPermissionID], references: [id], onDelete: Cascade)
   departmentPermissionID String

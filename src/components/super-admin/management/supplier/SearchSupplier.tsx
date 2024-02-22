@@ -1,11 +1,11 @@
 'use client'
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
-import SupplierPayslip from '../../SendPayslipButton';
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore';
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SendPayslipButton from '../../SendPayslipButton';
 
 interface Props {
 
@@ -27,7 +27,6 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const tt = useTranslations('global')
 
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
-    const sendSupplierPayslip = useAdminSupplierStore(s => s.sendSupplierPayslips)
 
     return (
         <div className='pt-4 mt-4 border-t'>
@@ -77,7 +76,7 @@ const SearchSupplier: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.note}
                     />
 
-                    {isAdminAllowed('send_supplier_payslip') && <SupplierPayslip sendPayslip={sendSupplierPayslip} />}
+                    {isAdminAllowed('send_supplier_payslip') && <SendPayslipButton />}
                 </div>
             </div>
         </div>

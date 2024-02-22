@@ -31,8 +31,8 @@ export const Payslip = (
         position
     }: ContactProps) => {
 
-    const totalDeductions = deductions.length > 0 ? deductions.reduce((total: number, deduction: any) => total + deduction.amount, 0) : 0
-    const totalEarnings = earnings.length > 0 ? earnings.reduce((total: number, earning: any) => total + earning.amount, 0) : 0
+    const totalDeductions = deductions.length > 0 ? deductions.reduce((total: number, deduction: any) => total + Number(deduction.amount), 0) : 0
+    const totalEarnings = earnings.length > 0 ? earnings.reduce((total: number, earning: any) => total + Number(earning.amount), 0) : 0
 
     const returnCurrency = (currency: string) => {
         switch (currency) {
@@ -57,7 +57,7 @@ export const Payslip = (
                 <Body className="grid place-items-center bg-center bg-no-repeat bg-cover bg-slate-100 font-sans py-10">
                     <Heading className='text-slate-700'>
                         <Text className='font-normal text-center'>
-                            I hope this message finds you well. Attached is your payslip for the month of MONTH 2024. <br />
+                            I hope this message finds you well. Attached is your payslip for the month of {date} <br />
                             Please review the payslip to ensure that all details are accurate.<br />
                             If you have any questions or notice any discrepancies, please don't hesitate to reach out to XXX <br />
                             Thank you for your dedication and hard work. We appreciate your contributions to VerbalAce.<br />
@@ -104,9 +104,9 @@ export const Payslip = (
                                                     {earnings.map((obj: any) => (
                                                         <div key={obj.id} className='text-slate-900 text-sm'>
                                                             {column.header === 'EARNINGS' ? obj.name :
-                                                                column.header === 'RATE' ? obj.rate :
+                                                                column.header === 'RATE' ? Number(obj.rate) :
                                                                     column.header === 'QUANTITY' ? obj.quantity :
-                                                                        column.header === 'AMOUNT' ? obj.amount : null}
+                                                                        column.header === 'AMOUNT' ? Number(obj.amount) : null}
                                                         </div>
                                                     ))}
                                                 </Text>
@@ -134,9 +134,9 @@ export const Payslip = (
                                                     {deductions.map((obj: any) => (
                                                         <div key={obj.id} className='text-slate-900 text-sm'>
                                                             {column.header === 'DEDUCTIONS' ? obj.name :
-                                                                column.header === 'RATE' ? obj.rate :
+                                                                column.header === 'RATE' ? Number(obj.rate) :
                                                                     column.header === 'QUANTITY' ? obj.quantity :
-                                                                        column.header === 'AMOUNT' ? obj.amount : null}
+                                                                        column.header === 'AMOUNT' ? Number(obj.amount) : null}
                                                         </div>
                                                     ))}
                                                 </Text>

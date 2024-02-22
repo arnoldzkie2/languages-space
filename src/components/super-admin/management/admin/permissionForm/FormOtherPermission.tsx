@@ -35,6 +35,16 @@ const FormOtherPermission: React.FC<{
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.receive_cancel_request_email}
         permissionKey='receive_cancel_request_email' />
+      <PermissionSwitch
+        label={t('admin.permissions.view_comments')}
+        onCheckedChange={handleCheckboxChange}
+        checked={permissionData.view_comments}
+        permissionKey='view_comments' />
+      <PermissionSwitch
+        label={t('admin.permissions.delete_comments')}
+        onCheckedChange={handleCheckboxChange}
+        checked={permissionData.delete_comments}
+        permissionKey='delete_comments' />
     </div>
   );
 };

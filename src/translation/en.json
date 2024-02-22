@@ -308,7 +308,9 @@
                 "delete_department": "Delete Department",
                 "download_table": "Download Table",
                 "handle_settings": "Handle Settings",
-                "view_statistics": "View Statistics"
+                "view_statistics": "View Statistics",
+                "view_comments": "View Comments",
+                "delete_comments": "Delete Comments"
             }
         },
         "booking": {

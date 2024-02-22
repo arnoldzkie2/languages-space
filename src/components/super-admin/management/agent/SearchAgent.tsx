@@ -24,7 +24,6 @@ const SearchAgent: React.FC<Props> = ({ handleSearch, searchQuery }) => {
     const t = useTranslations('super-admin')
     const tt = useTranslations('global')
 
-    const sendAgentPayslip = useAdminAgentStore(s => s.sendAgentPayslip)
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
     return (
         <div className='pt-4 mt-4 border-t w-full'>
@@ -69,7 +68,7 @@ const SearchAgent: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                         value={searchQuery.note}
                     />
 
-                    {isAdminAllowed('send_agent_payslip') && <SendPayslipButton sendPayslip={sendAgentPayslip} />}
+                    {isAdminAllowed('send_agent_payslip') && <SendPayslipButton />}
 
                 </div>
             </div>

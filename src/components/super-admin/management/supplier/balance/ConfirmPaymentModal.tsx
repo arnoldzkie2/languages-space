@@ -28,7 +28,7 @@ const ConfirmPaymentModal = () => {
                 </CardHeader>
                 <CardContent>
                     <form
-                        className='w-full flex flex-col gap-4 relative rounded-md shadow'
+                        className='w-full flex flex-col gap-4 relative rounded-md'
                         onSubmit={confirmPaymentRequest}>
                         <div className='flex flex-col gap-1 w-full'>
                             <Label htmlFor="name" className='font-medium'>{tt('name')}</Label>

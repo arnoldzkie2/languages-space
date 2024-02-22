@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
 import { SupplierSchedule } from '@/lib/types/super-admin/scheduleType'
 import useDepartmentStore from './departmentStore'
+import { toast } from 'sonner'
 const totalSupplierValue = {
     total: '',
     searched: '',
@@ -205,7 +206,7 @@ const useAdminSupplierStore = create<SupplierPropsStore>((set, get) => ({
     },
     sendSupplierPayslips: async (e: React.FormEvent) => {
 
-        const { setIsLoading, setOkMsg, setErr } = useGlobalStore.getState()
+        const { setIsLoading, setErr } = useGlobalStore.getState()
 
         try {
             e.preventDefault()
@@ -213,7 +214,7 @@ const useAdminSupplierStore = create<SupplierPropsStore>((set, get) => ({
             const { data } = await axios.post("/api/email/payslip/supplier");
             if (data.ok) {
                 setIsLoading(false);
-                setOkMsg("Success");
+                toast.success("Success! payslip has been sent to all suppliers.", { position: 'bottom-center' })
             }
         } catch (error: any) {
             setIsLoading(false);

@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { SUPPLIER } from "@/utils/constants";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -10,7 +11,7 @@ export const GET = async (req: NextRequest) => {
     try {
 
         const session = await getAuth()
-        if (!session || session.user.type !== 'supplier') return unauthorizedRes()
+        if (!session || session.user.type !== SUPPLIER) return unauthorizedRes()
 
         if (bookingID) {
 
@@ -64,7 +65,7 @@ export const GET = async (req: NextRequest) => {
                         card_name: true,
                         status: true,
                         note: true,
-                        created_at: true
+                        created_at: true,
                     },
                     orderBy: { created_at: 'desc' }
                 }

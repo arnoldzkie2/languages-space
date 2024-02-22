@@ -97,8 +97,8 @@ const useAdminAgentStore = create<Props>((set, get) => ({
             setIsLoading(true);
             const { data } = await axios.post("/api/email/payslip/agent");
             if (data.ok) {
-                setIsLoading(false);
-                toast("Success! payslips sent.");
+                setIsLoading(false)
+                toast.success("Success! payslip has been sent to all agents.", { position: 'bottom-center' })
             }
 
         } catch (error: any) {

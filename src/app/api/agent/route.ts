@@ -11,6 +11,10 @@ export const GET = async (req: NextRequest) => {
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
+
+        //userID session.user.id
+
+
         const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
         //only admin are allowed to proceed

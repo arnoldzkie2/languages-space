@@ -173,12 +173,12 @@ const ReturnCashoutButton = (props: { balance: AgentBalance, isCashoutAvailable:
         // eslint-disable-next-line react-hooks/rules-of-hooks
     }, [props.balance])
 
-    if (!result) return (
-        <Button variant={'secondary'}
-            onClick={() => toast(returnWaitMessage(props.balance.payment_schedule))}>
-            {tt('cashout')}
-        </Button>
-    )
+    // if (!result) return (
+    //     <Button variant={'secondary'}
+    //         onClick={() => toast(returnWaitMessage(props.balance.payment_schedule))}>
+    //         {tt('cashout')}
+    //     </Button>
+    // )
 
     return <Button onClick={props.toggleCashout}>{tt('cashout')}</Button>
 }

@@ -16,6 +16,9 @@ import Err from '../global/Err'
 import { Skeleton } from '../ui/skeleton'
 import { Button } from '../ui/button'
 import { CONFIRMED } from '@/utils/constants'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 
 const SupplierBooking: React.FC = () => {
 
@@ -97,7 +100,7 @@ const SupplierBooking: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className='p-3'>
-                                        <ReturnCancelButton booking={booking} />
+                                        <Operations booking={booking} />
                                     </td>
                                 </tr>
                             )) :
@@ -140,6 +143,26 @@ const SupplierBooking: React.FC = () => {
             <TablePagination data={bookings || []} />
             <RequestCancelBookingModal requestCancelBooking={requestCancelBooking} />
         </div>
+    )
+}
+
+const Operations = ({ booking }: { booking: Booking }) => {
+
+    const [open, setOpen] = useState(false)
+
+    const tt = useTranslations("super-admin")
+    return (
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+            <DropdownMenuTrigger asChild>
+                <FontAwesomeIcon icon={faEllipsis} width={18} height={18} className='cursor-pointer text-lg' />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>{tt("global.operation")}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {/* <ReturnCancelButton booking={booking} /> */}
+
+            </DropdownMenuContent>
+        </DropdownMenu>
     )
 }
 

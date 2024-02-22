@@ -15,7 +15,7 @@ export const POST = async (req: NextRequest) => {
 
         const currentDate = new Date()
         //retrieve lastmonth and current year
-        const lastMonth = currentDate.getUTCMonth();
+        const lastMonth = currentDate.getUTCMonth() + 1;
         const currentYear = currentDate.getUTCFullYear();
 
         //this will get the first day of last mont and last day of last month
@@ -56,8 +56,8 @@ export const POST = async (req: NextRequest) => {
                     where: {
                         //get all supplier earnings last month
                         created_at: {
-                            gte: startDate.toISOString(),
-                            lt: endDate.toISOString(),
+                            gte: startDate,
+                            lt: endDate,
                         },
                     },
                     select: {

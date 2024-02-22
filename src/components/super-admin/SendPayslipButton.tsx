@@ -5,13 +5,20 @@ import React from 'react'
 import { useTranslations } from 'use-intl'
 import { Button } from '../ui/button'
 import { toast } from 'sonner'
+import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
+import useAdminAgentStore from '@/lib/state/super-admin/agentStore'
 
-interface Props {
-    sendPayslip: (e: React.FormEvent) => Promise<void>
-}
+const SendPayslipButton = () => {
 
+    const sendSupplierPayslip = useAdminSupplierStore(s => s.sendSupplierPayslips)
+    const sendAgentPayslip = useAdminAgentStore(s => s.sendAgentPayslip)
 
-const SendPayslipButton = ({ sendPayslip }: Props) => {
+    const sendPayslip = async (e: React.FormEvent) => {
+        await Promise.all([
+            sendSupplierPayslip(e),
+            sendAgentPayslip(e)
+        ])
+    }
 
     const tt = useTranslations("global")
 
@@ -21,7 +28,8 @@ const SendPayslipButton = ({ sendPayslip }: Props) => {
     // Conditionally render the SubmitButton only if it's the first day of the month
     const renderSubmitButton = (day: number) => {
         //if today is not the first day of the month return this button
-        if (day !== 1) return <NotFirstDayOfTheMonthButton msg={tt('send-payslip')} title={tt('payslip-notfirstday')} />
+        // if (day !== 1) return <NotFirstDayOfTheMonthButton msg={tt('send-payslip')} title={tt('payslip-notfirstday')} />
+
         //else return this button
         return <SubmitButton msg={tt('send-payslip')} />
     }
