@@ -2,21 +2,27 @@
 'use client'
 import useClientBookingStore from '@/lib/state/client/clientBookingStore'
 import useClientStore from '@/lib/state/client/clientStore'
-import { Booking } from '@/lib/types/super-admin/bookingType'
+import { BookingProps } from '@/lib/types/super-admin/bookingType'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useState } from 'react'
 import TablePagination from './TablePagination'
 import Err from '../global/Err'
-import Success from '../global/Success'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
 import useGlobalStore from '@/lib/state/globalStore'
 import SubmitButton from '../global/SubmitButton'
 import { Skeleton } from '../ui/skeleton'
 import { Button } from '../ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
+import CreateClientCommentAlert from './CreateClientCommentAlert'
+import { CANCELED, COMPLETED } from '@/utils/constants'
+import UpdateClientCommentAlert from './UpdateClientCommentsAlert'
+import ViewSupplierCommentAlert from '../supplier/ViewSupplierBookingComment'
 
 const ClientBookings: React.FC = () => {
 
-    const [currentBookings, setCurrentBookings] = useState<Booking[] | null>(null)
+    const [currentBookings, setCurrentBookings] = useState<BookingProps[] | null>(null)
 
     const { bookings, getBookings } = useClientBookingStore()
     const { client, setPage } = useClientStore()
@@ -31,28 +37,25 @@ const ClientBookings: React.FC = () => {
         setCurrentBookings(getCurrentData(bookings))
     }, [currentPage, bookings])
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
-    const ttt = useTranslations('super-admin')
-
+    const t = useTranslations()
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='flex w-full pb-1 mb-1 border-b items-center gap-5'>
-                <h1 className='text-foreground text-lg font-bold'>{t('profile.my-bookings')}</h1>
+                <h1 className='text-foreground text-lg font-bold'>{t('profile.bookings')}</h1>
                 <Err />
             </div>
             <div className='overflow-x-auto'>
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="px-3 py-3">{tt('schedule')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('supplier')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('card')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('status')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('note')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('date')}</th>
-                            <th scope="col" className="px-3 py-3">{ttt('global.operation')}</th>
+                            <th scope="col" className="px-3 py-3">{t('side_nav.schedule')}</th>
+                            <th scope="col" className="px-3 py-3">{t('user.supplier')}</th>
+                            <th scope="col" className="px-3 py-3">{t('side_nav.card')}</th>
+                            <th scope="col" className="px-3 py-3">{t('status.h1')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.note')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.date.h1')}</th>
+                            <th scope="col" className="px-3 py-3">{t('operation.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,17 +69,17 @@ const ClientBookings: React.FC = () => {
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs md:text-sm w-32'>
-                                            {booking.supplier.name}
+                                            {returnTruncateText(booking.supplier.name, 10)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs md:text-sm w-24'>
-                                            {booking.card_name}
+                                            {returnTruncateText(booking.card_name, 10)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs md:text-sm w-28'>
-                                            {booking.status}
+                                            {returnTruncateText(booking.status, 10)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
@@ -98,7 +101,7 @@ const ClientBookings: React.FC = () => {
                             )) : currentBookings && currentBookings.length < 1 ?
                                 <tr className='border bg-card'>
                                     <td className='p-3'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr>
                                 :
@@ -112,7 +115,9 @@ const ClientBookings: React.FC = () => {
     )
 }
 
-const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
+const ReturnCancelButton = ({ booking }: { booking: BookingProps }) => {
+
+    const [open, setOpen] = useState(false)
 
     const { openRequestCancelBookingaModal, cancelBooking } = useClientBookingStore()
     const scheduleDate = booking.schedule.date;
@@ -121,24 +126,44 @@ const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
     const bookingDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
     const threeHoursAhead = new Date(today.getTime() + 3 * 60 * 60 * 1000);
 
-    const tt = useTranslations('global');
+    const t = useTranslations();
 
-    if (booking.status === 'canceled') return null
+    const cancelBookingElement = (
+        <form onSubmit={(e) => cancelBooking(e, booking.id)} className='w-full'>
+            <SubmitButton style='w-full' msg={t('operation.cancel')} variant={'destructive'} />
+        </form >
+    )
 
-    if (bookingDateTime >= threeHoursAhead) return (
-        <form onSubmit={(e) => cancelBooking(e, booking.id)}>
-            <SubmitButton msg={tt('cancel')} variant={'destructive'} />
-        </form>
-    );
-
-    return (
+    const requestCancelBookingElement = (
         <Button
             variant={'destructive'}
             onClick={() => openRequestCancelBookingaModal(booking.id)}
-            title='Send request admin to cancel this booking'>{tt("cancel")}</Button>
-    );
+            className='w-full'
+            title='Send request admin to cancel this booking'>{t("operation.cancel")}</Button>
+    )
 
-};
+    if (booking.status === CANCELED) return null
+
+    const cancelButton = bookingDateTime >= threeHoursAhead ? cancelBookingElement : requestCancelBookingElement
+
+    return (
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger>
+                <FontAwesomeIcon className='hover:text-foreground text-lg' icon={faEllipsis} width={18} height={18} />
+            </PopoverTrigger>
+            <PopoverContent>
+                <div className='flex items-center flex-col gap-5 w-full'>
+                    {cancelButton}
+                    {booking.status === COMPLETED && <h1 className='border-b w-full pb-2'>{t("booking.comments.h1")}</h1>}
+                    {booking.status === COMPLETED && <div className='flex items-center gap-3 w-full'>
+                        {booking.client_comment ? <UpdateClientCommentAlert booking={booking} /> : <CreateClientCommentAlert booking={booking} />}
+                        <ViewSupplierCommentAlert booking={booking} />
+                    </div>}
+                </div>
+            </PopoverContent>
+        </Popover>
+    )
+}
 
 const SkeletonTable = () => {
 

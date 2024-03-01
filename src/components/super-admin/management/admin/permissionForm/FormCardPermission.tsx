@@ -8,38 +8,38 @@ const FormCardsPermission: React.FC<{
   permissionData: AdminPermission;
 }> = (props) => {
   const { permissionData, handleCheckboxChange } = props;
-  const t = useTranslations('super-admin');
+  const t = useTranslations();
 
   return (
     <div className='flex flex-col gap-1 w-full'>
-      <div className='font-bold text-lg text-foreground'>{t('client-card.h1')}</div>
+      <div className='font-bold text-lg text-foreground'>{t('card.manage')}</div>
       <PermissionSwitch
-        label={t('admin.permissions.view_cards')}
+        label={t('admin.permissions.list.view_cards')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.view_cards}
         permissionKey='view_cards' />
       <PermissionSwitch
-        label={t('admin.permissions.create_cards')}
+        label={t('admin.permissions.list.create_cards')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.create_cards}
         permissionKey='create_cards' />
       <PermissionSwitch
-        label={t('admin.permissions.update_cards')}
+        label={t('admin.permissions.list.update_cards')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.update_cards}
         permissionKey='update_cards' />
       <PermissionSwitch
-        label={t('admin.permissions.delete_cards')}
+        label={t('admin.permissions.list.delete_cards')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.delete_cards}
         permissionKey='delete_cards' />
       <PermissionSwitch
-        label={t('admin.permissions.bind_cards')}
+        label={t('admin.permissions.list.bind_cards')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.bind_cards}
         permissionKey='bind_cards' />
       <PermissionSwitch
-        label={t('admin.permissions.renew_cards')}
+        label={t('admin.permissions.list.renew_cards')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.renew_cards}
         permissionKey='renew_cards' />

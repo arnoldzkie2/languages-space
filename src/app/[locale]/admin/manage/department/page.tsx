@@ -1,7 +1,7 @@
 'use client';
 import SideNav from '@/components/super-admin/SideNav';
 import Pagination from '@/components/super-admin/management/Pagination';
-import DeleteDepartmentWarningModal from '@/components/super-admin/management/department/DeleteDepartmentWarningModal';
+import DeleteDepartmentWarningModal from '@/components/super-admin/management/department/DeleteDepartment';
 import DepartmentHeader from '@/components/super-admin/management/department/DepartmentHeader';
 import DepartmentTable from '@/components/super-admin/management/department/DepartmentTable';
 import NewDepartmentModal from '@/components/super-admin/management/department/NewDepartmentModal';
@@ -41,8 +41,7 @@ const Page = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [departments, filterDepartments.length]);
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations('')
 
     return (
         <div className='flex h-screen'>
@@ -60,7 +59,7 @@ const Page = () => {
                             <div>
                                 <div className='flex flex-col gap-3'>
                                     <Input type="text"
-                                        placeholder={tt('name')}
+                                        placeholder={t('info.name')}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         value={searchQuery}
                                     />
@@ -75,8 +74,6 @@ const Page = () => {
 
             <NewDepartmentModal />
             <UpdateDepartmentModal />
-            <DeleteDepartmentWarningModal />
-
         </div>
     );
 };

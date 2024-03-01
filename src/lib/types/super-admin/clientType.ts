@@ -1,4 +1,4 @@
-import { ClientCard } from "./clientCardType"
+import { ClientCard } from "@prisma/client"
 
 interface Client {
     id: string

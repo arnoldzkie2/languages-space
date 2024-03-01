@@ -59,8 +59,8 @@ const Page = ({ searchParams }: Props) => {
             <h1 className='pb-10 text-4xl'>LANGUAGES-SPACE</h1>
             <Tabs defaultValue="signin" value={authPage} onValueChange={(page) => setAuthPage(page)} className="w-[400px]">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="signin">{t('signin')}</TabsTrigger>
-                    <TabsTrigger value="signup">{t('signup')}</TabsTrigger>
+                    <TabsTrigger value="signin">{t('login.h1')}</TabsTrigger>
+                    <TabsTrigger value="signup">{t('signup.h1')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="signin">
                     <LoginForm />

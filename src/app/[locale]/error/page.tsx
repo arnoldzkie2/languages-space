@@ -10,7 +10,7 @@ import React from 'react'
 
 const Page = () => {
 
-    const t = useTranslations('auth')
+    const t = useTranslations()
     return (
         <div className='h-screen w-screen flex items-center justify-center'>
             <Card className='bg-card px-20 py-10 shadow flex flex-col gap-5'>
@@ -19,13 +19,13 @@ const Page = () => {
                         <Alert variant="destructive">
                             <AlertTitle className='flex items-center gap-4'>
                                 <ExclamationTriangleIcon className="h-4 w-4" />
-                                <div>{t('error')}</div>
+                                <div>{t('global.error')}</div>
                             </AlertTitle>
                         </Alert>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className='w-full flex justify-center'>
-                    <Button variant={'link'} onClick={() => signOut({ redirect: true, callbackUrl: '/auth' })}>{t('signin')}</Button>
+                    <Button variant={'link'} onClick={() => signOut({ redirect: true, callbackUrl: '/auth' })}>{t('auth.login.h1')}</Button>
                 </CardContent>
             </Card>
         </div>

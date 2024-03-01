@@ -7,15 +7,16 @@ import useGlobalStore from '@/lib/state/globalStore'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
 import useAgentBalanceStore from '@/lib/state/agent/agentBalanceStore'
 import { Skeleton } from '../ui/skeleton'
+import TruncateTextModal from '../global/TruncateTextModal'
 
 const AgentBalanceTransactions = () => {
 
     const [currentTransactions, setCurrentTransactions] = useState<AgentBalanceTransactions[] | null>(null)
 
-    const { skeleton } = useGlobalStore()
+    const { skeleton, returnTruncateText, openTruncateTextModal } = useGlobalStore()
     const { transactions, getTransactions } = useAgentBalanceStore()
     const { currentPage, getCurrentData } = useGlobalPaginationStore()
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     useEffect(() => {
         if (!transactions) getTransactions()
@@ -29,16 +30,16 @@ const AgentBalanceTransactions = () => {
 
     return (
         <div className='flex flex-col gap-3 w-full order-1 md:order-2'>
-            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{tt('transactions')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{t('balance.transactions.h1')}</h1>
             <div className='overflow-x-auto'>
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="px-3 py-3">{tt('amount')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('status')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('payment')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('paid-by')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('date')}</th>
+                            <th scope="col" className="px-3 py-3">{t('balance.amount')}</th>
+                            <th scope="col" className="px-3 py-3">{t('status.h1')}</th>
+                            <th scope="col" className="px-3 py-3">{t('balance.payment.address')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.paid_by')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.date.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,14 +57,14 @@ const AgentBalanceTransactions = () => {
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-24'>
-                                            {transac.payment_address}
+                                        <div className='h-5 text-xs md:text-sm w-32'>
+                                            {returnTruncateText(transac.payment_address, 15)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-36'>
-                                            {transac.paid_by}
-                                        </div>
+                                        {transac.paid_by && <div className='h-5 text-xs md:text-sm w-28 cursor-pointer' onClick={() => openTruncateTextModal(transac.paid_by || '')}>
+                                            {returnTruncateText(transac.paid_by, 15)}
+                                        </div>}
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs w-44 md:text-sm'>
@@ -75,7 +76,7 @@ const AgentBalanceTransactions = () => {
                             currentTransactions && currentTransactions.length < 1 ?
                                 <tr>
                                     <td className='w-full px-3 py-2'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr>
                                 :
@@ -100,6 +101,7 @@ const AgentBalanceTransactions = () => {
                                 ))
                         }
                     </tbody >
+                    <TruncateTextModal />
                 </table >
             </div>
             <TablePagination data={transactions || []} />

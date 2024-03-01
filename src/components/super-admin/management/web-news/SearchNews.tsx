@@ -17,8 +17,7 @@ interface SearchNewsProps {
 
 const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) => {
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className=''>
@@ -29,7 +28,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={t('news.title')}
+                        placeholder={t('info.title')}
                         name='title'
                         onChange={handleSearch}
                         value={searchQuery.title}
@@ -50,7 +49,7 @@ const SearchNews: React.FC<SearchNewsProps> = ({ handleSearch, searchQuery }) =>
                     />
 
                     <Input type="text"
-                        placeholder={tt('date')}
+                        placeholder={t('info.date.h1')}
                         name='date'
                         onChange={handleSearch}
                         value={searchQuery.created_at}

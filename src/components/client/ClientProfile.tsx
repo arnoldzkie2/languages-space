@@ -20,28 +20,28 @@ const ClientProfile: React.FC<Props> = () => {
     {
       page: 'cards',
       link: '/client/profile/cards',
-      translate: 'profile.my-cards'
+      translate: 'profile.cards'
     },
     {
       page: 'bookings',
       link: '/client/profile/bookings',
-      translate: 'profile.my-bookings'
+      translate: 'profile.bookings'
     },
     {
       page: 'booking-request',
       link: '/client/profile/booking-requests',
-      translate: 'profile.booking-requests'
+      translate: 'booking.request.h1'
     },
     {
       page: 'orders',
       link: '/client/profile/orders',
-      translate: 'profile.my-orders'
+      translate: 'profile.orders'
     },
   ]
 
   const page = useClientStore(state => state.page)
 
-  const t = useTranslations('client')
+  const t = useTranslations()
 
   return (
     <div className='flex flex-col gap-3 w-full lg:w-1/4 order-2 md:order-1 text-muted-foreground'>

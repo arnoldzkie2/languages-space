@@ -28,8 +28,7 @@ const AgentInvites: React.FC = () => {
         if (!invites && agent?.id) getInvites()
     }, [agent?.id])
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     useEffect(() => {
         setCurrentInvites(getCurrentData(invites))
@@ -38,8 +37,7 @@ const AgentInvites: React.FC = () => {
     return (
         <div className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='w-full border-b pb-1 mb-1 flex items-center gap-5'>
-                <h1 className='text-foreground text-lg font-bold'>{t('profile.my-invites')}</h1>
-                <a href="/main.png" download={'test.png'}>Test</a>
+                <h1 className='text-foreground text-lg font-bold'>{t('profile.invites')}</h1>
                 <Success />
                 <Err />
             </div>
@@ -47,10 +45,10 @@ const AgentInvites: React.FC = () => {
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="p-3">{tt('username')}</th>
-                            <th scope="col" className="p-3">{tt('name')}</th>
-                            <th scope="col" className="p-3">{tt('gender')}</th>
-                            <th scope="col" className="p-3">{tt('date')}</th>
+                            <th scope="col" className="p-3">{t('info.username')}</th>
+                            <th scope="col" className="p-3">{t('info.name')}</th>
+                            <th scope="col" className="p-3">{t('info.gender.h1')}</th>
+                            <th scope="col" className="p-3">{t('info.date.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,7 +82,7 @@ const AgentInvites: React.FC = () => {
                             currentInvites && currentInvites.length < 1 ?
                                 <tr className='border bg-card'>
                                     <td className='w-full px-3 py-2'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (

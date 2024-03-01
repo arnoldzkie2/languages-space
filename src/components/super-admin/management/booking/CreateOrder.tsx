@@ -19,37 +19,37 @@ const CreateOrder = () => {
     const newestDate = selectedBookings[selectedBookings.length - 1].schedule.date;
     const totalPrice: number = selectedBookings.reduce((sum, booking) => sum + Number(booking.price), 0);
 
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button variant={'link'}>Create Order</Button>
+                <Button variant={'link'}>{t('order.create')}</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to create this order?</AlertDialogTitle>
+                    <AlertDialogTitle>{t("order.create_confirm")}</AlertDialogTitle>
                     <AlertDialogDescription>
                         <Err />
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className='flex flex-col gap-3'>
                     <div className='flex flex-col gap-1'>
-                        <Label>{tt('name')}</Label>
+                        <Label>{t('info.name')}</Label>
                         <Input value={`${selectedBookings[0].client.username}, ${selectedBookings[0].name} from ${oldestDate} to ${newestDate}`} readOnly />
                     </div>
                     <div className='flex flex-col gap-1'>
-                        <Label>{tt('card')}</Label>
+                        <Label>{t('side_nav.card')}</Label>
                         <Input value={selectedBookings[0].card_name} readOnly />
                     </div>
                     <div className='flex flex-col gap-1'>
-                        <Label>{tt('price')}</Label>
+                        <Label>{t('card.price')}</Label>
                         <Input value={totalPrice} readOnly />
                     </div>
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                     <form onSubmit={(e) => createBookingOrder(e, setOpen)}>
-                        <SubmitButton msg={tt('confirm')} />
+                        <SubmitButton msg={t('operation.confirm')} />
                     </form>
                 </div>
             </AlertDialogContent>

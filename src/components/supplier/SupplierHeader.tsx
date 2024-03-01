@@ -33,7 +33,7 @@ const SupplierHeader = () => {
         <Skeleton className='h-5 w-28 rounded-3xl'></Skeleton>
     )
 
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <header className={`z-10 px-5 sm:px-10 md:px-16 lg:px-24 xl:px-36 2xl:px-44 h-16 fixed w-screen flex items-center top-0 left-0 justify-between backdrop-blur border-b`}>
@@ -44,7 +44,7 @@ const SupplierHeader = () => {
             <ul className={`w-full lg:flex lg:items-center text-muted-foreground lg:gap-5 ${isOpen ? 'gap-3 shadow-2xl flex flex-col fixed top-0 left-0 w-screen bg-card px-5 sm:px-10 md:px-16 md:pt-[8.7px] pb-5 pt-[8.2px]' : 'hidden'}`}>
                 <Link href={'/client'} className='lg:hidden text-primary font-black text-xl mt-3 tracking-tight'>LANGUAGES-SPACE</Link>
                 <div className='lg:ml-auto flex flex-col gap-3 lg:gap-4 lg:items-center lg:flex-row'>
-                    <Link className='active:text-primary w-28 lg:hover:text-primary lg:text-center' href={'/supplier/schedule'}>{tt('schedule')}</Link>
+                    <Link className='active:text-primary w-28 lg:hover:text-primary lg:text-center' href={'/supplier/schedule'}>{t('side_nav.schedule')}</Link>
                 </div>
                 <div className={`mt-2 lg:mt-0 flex items-center gap-5 lg:ml-auto hover:text`}>
                     <Link href={'/supplier/profile'} className='flex items-center gap-2 hover:text-foreground px-3 py-1 border hover:bg-muted rounded-md'>
@@ -57,7 +57,7 @@ const SupplierHeader = () => {
                         redirect: true,
                         callbackUrl: '/auth'
                     })} className='active:text-primary lg:hover:text-primary flex items-center justify-center gap-2'>
-                        <FontAwesomeIcon icon={faArrowRightToBracket} width={16} height={16} />{tt('logout')}</button>
+                        <FontAwesomeIcon icon={faArrowRightToBracket} width={16} height={16} />{t('auth.logout')}</button>
                 </div>
             </ul>
         </header>

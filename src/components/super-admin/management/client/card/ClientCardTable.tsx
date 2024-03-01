@@ -5,36 +5,37 @@ import { faEllipsis, faRotateRight, faSpinner, faXmark } from '@fortawesome/free
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
-import { ClientCard } from '@/lib/types/super-admin/clientCardType';
 import useAdminClientCardStore from '@/lib/state/super-admin/clientCardStore';
 import useGlobalStore from '@/lib/state/globalStore';
 import { Skeleton } from '@/components/ui/skeleton';
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 import ViewCardAlert from '../../card/ViewCardAlert';
+import { ClientCardProps } from '@/lib/types/super-admin/clientCardType';
+import DeleteClientCardAlert from './DeleteClientCardAlert';
 
 interface Props {
 
-    filteredTable: ClientCard[]
+    filteredTable: ClientCardProps[]
     clientID: string
 }
 
 const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID }) => {
 
     const { operation, selectedID, skeleton, openOperation, closeOperation, isLoading } = useGlobalStore()
-    const { openViewClientCard, openDeleteClientCardModal, renewClientCard } = useAdminClientCardStore()
+    const { renewClientCard } = useAdminClientCardStore()
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
+
     return (
         <table className="text-sm text-left shadow-md w-full">
             <thead className="text-xs uppercase bg-card border">
                 <tr>
-                    <th scope="col" className="px-6 py-3">{tt('name')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('price')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('balance')}</th>
-                    <th scope="col" className="px-6 py-3">{t('client-card.validity')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('date')}</th>
-                    <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                    <th scope="col" className="px-6 py-3">{t('info.name')}</th>
+                    <th scope="col" className="px-6 py-3">{t('card.price')}</th>
+                    <th scope="col" className="px-6 py-3">{t('balance.h1')}</th>
+                    <th scope="col" className="px-6 py-3">{t('card.validity')}</th>
+                    <th scope="col" className="px-6 py-3">{t('info.date.h1')}</th>
+                    <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,7 +49,7 @@ const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID }) => {
                             </td>
                             <td className="px-6 py-3">
                                 <div className='h-5 w-28'>
-                                    {card.price}
+                                    {Number(card.price)}
                                 </div>
                             </td>
                             <td className="px-6 py-3">
@@ -69,12 +70,12 @@ const ClientCardTable: React.FC<Props> = ({ filteredTable, clientID }) => {
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(card.id)} />
                                 <ul className={`${operation && selectedID === card.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
-                                    {isAdminAllowed('renew_cards') && <button disabled={isLoading} onClick={(e) => renewClientCard({ e, clientCardID: card.id, clientID })} className={`flex mb-1 justify-between items-center cursor-pointer hover:text-foreground`}>{tt('renew')} {isLoading ?
+                                    {isAdminAllowed('renew_cards') && <button disabled={isLoading} onClick={(e) => renewClientCard({ e, clientCardID: card.id, clientID })} className={`flex mb-1 justify-between items-center cursor-pointer hover:text-foreground`}>{t('operation.renew')} {isLoading ?
                                         <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : <FontAwesomeIcon icon={faRotateRight} width={16} height={16} />}</button>}
                                     <ViewCardAlert cardID={card.cardID} />
-                                    {isAdminAllowed('update_client_cards') && <Link href={`/admin/manage/client/card/${clientID}/update/${card.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
-                                    {isAdminAllowed('delete_client_cards') && <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground' onClick={() => openDeleteClientCardModal(card)}>{tt('delete')} <FontAwesomeIcon icon={faTrashCan} /></li>}
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                    {isAdminAllowed('update_client_cards') && <Link href={`/admin/manage/client/card/${clientID}/update/${card.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                    <DeleteClientCardAlert card={card} clientID={clientID} />
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>

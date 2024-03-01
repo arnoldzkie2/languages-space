@@ -15,14 +15,13 @@ const RenderMostDataLastMonth = ({ data, mostDataSkeleton }: Props) => {
 
     const { clientMostBookings, supplierMostBookings, mostCardSold, agentMostInvites } = data.mostData.lastMonth
 
-    const tt = useTranslations("global")
-    const t = useTranslations("super-admin")
+    const t = useTranslations()
     return (
         <div className='w-1/4 h-full'>
             <Card>
                 <CardHeader>
-                    <CardTitle>{t("dashboard.last.month")}</CardTitle>
-                    <CardDescription>{t('dashboard.last.h2')}</CardDescription>
+                    <CardTitle>{t("statistics.month.last")}</CardTitle>
+                    <CardDescription>{t('statistics.most_data.last')}</CardDescription>
                 </CardHeader>
                 <CardContent className='flex flex-col gap-4'>
 
@@ -37,7 +36,7 @@ const RenderMostDataLastMonth = ({ data, mostDataSkeleton }: Props) => {
                                 <Label>{clientMostBookings.username}</Label>
                                 <div className='flex items-center justify-between w-full'>
                                     <small className='text-muted-foreground'>{clientMostBookings.email || 'noemail@nodata'}</small>
-                                    <small>{tt('total')}: {clientMostBookings.total_bookings}</small>
+                                    <small>{t('pagination.total')}: {clientMostBookings.total_bookings}</small>
                                 </div>
                             </div>
                         </div> : mostDataSkeleton}
@@ -55,7 +54,7 @@ const RenderMostDataLastMonth = ({ data, mostDataSkeleton }: Props) => {
                                 <Label>{supplierMostBookings.username}</Label>
                                 <div className='flex items-center justify-between w-full'>
                                     <small className='text-muted-foreground'>{supplierMostBookings.email || 'noemail@nodata'}</small>
-                                    <small>{tt('total')}: {supplierMostBookings.total_bookings}</small>
+                                    <small>{t('pagination.total')}: {supplierMostBookings.total_bookings}</small>
                                 </div>
                             </div>
                         </div> : mostDataSkeleton}
@@ -72,7 +71,7 @@ const RenderMostDataLastMonth = ({ data, mostDataSkeleton }: Props) => {
                                 <Label>{agentMostInvites.username}</Label>
                                 <div className='flex items-center justify-between w-full'>
                                     <small className='text-muted-foreground'>{agentMostInvites.email || 'noemail@nodata'}</small>
-                                    <small>{tt('total')}: {agentMostInvites.total_invites}</small>
+                                    <small>{t('pagination.total')}: {agentMostInvites.total_invites}</small>
                                 </div>
                             </div>
                         </div> : mostDataSkeleton}
@@ -89,16 +88,16 @@ const RenderMostDataLastMonth = ({ data, mostDataSkeleton }: Props) => {
                                 <Label>{mostCardSold.name}</Label>
                                 <div className='flex items-center justify-between w-full'>
                                     <div className='flex items-center space-x-2 h-5 text-sm'>
-                                        <small className='text-muted-foreground'>{tt('price')}: CN¥{mostCardSold.price}</small>
+                                        <small className='text-muted-foreground'>{t('card.price')}: CN¥{mostCardSold.price}</small>
                                         <Separator orientation='vertical' />
-                                        <small className='text-muted-foreground'>{tt('balance')}: {mostCardSold.balance}</small>
+                                        <small className='text-muted-foreground'>{t('balance.h1')}: {mostCardSold.balance}</small>
                                         <Separator orientation='vertical' />
-                                        <small className='text-muted-foreground'>{tt('validity')}: {mostCardSold.validity}</small>
+                                        <small className='text-muted-foreground'>{t('card.validity')}: {mostCardSold.validity}</small>
                                     </div>
-                                    <small>{t('client-card.sold')}: {mostCardSold.sold}</small>
+                                    <small>{t('card.sold')}: {mostCardSold.sold}</small>
                                 </div>
                             </div>
-                        </div> : mostCardSold}
+                        </div> : mostDataSkeleton}
                     </div>
                 </CardContent>
             </Card>

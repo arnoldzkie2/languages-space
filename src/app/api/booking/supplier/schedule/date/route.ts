@@ -1,3 +1,4 @@
+import { checkBookingAndUpdateStatus } from "@/lib/api/updateBookingStatus";
 import prisma from "@/lib/db";
 import { getSearchParams, notFoundRes, okayRes, serverErrorRes } from "@/utils/apiResponse";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,8 +12,10 @@ export const GET = async (req: NextRequest) => {
 
         if (supplierID && date) {
 
+            await checkBookingAndUpdateStatus()
+
             const today = new Date()
-            const formattedCurrentTime = `${today.getHours().toString().padStart(2, '0')}:${today.getUTCMinutes().toString().padStart(2, '0')}`;  // Format the time as "HH:mm"
+            const formattedCurrentTime = `${today.getHours().toString().padStart(2, '0')}:${today.getUTCMinutes().toString().padStart(2, '0')}`; 
 
             const schedule = await prisma.supplierSchedule.findMany({
                 where: {

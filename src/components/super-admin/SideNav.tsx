@@ -27,17 +27,17 @@ interface LinkItem {
 }
 
 const links: LinkItem[] = [
-    { key: 'agent', permission: 'view_agent', icon: faUserSecret, path: '/admin/manage/agent', label: 'side-nav.agent' },
-    { key: 'client', permission: 'view_client', icon: faUser, path: '/admin/manage/client', label: 'side-nav.client' },
-    { key: 'supplier', permission: 'view_supplier', icon: faUsers, path: '/admin/manage/supplier', label: 'side-nav.supplier' },
-    { key: 'booking', permission: 'view_booking', icon: faBook, path: '/admin/manage/booking', label: 'side-nav.booking' },
-    { key: 'card', permission: 'view_cards', icon: faCreditCard, path: '/admin/manage/card', label: 'side-nav.card' },
-    { key: 'schedule', permission: 'view_supplier_schedule', icon: faCalendarDays, path: '/admin/manage/schedule', label: 'side-nav.schedule' },
-    { key: 'course', permission: 'view_courses', icon: faPersonChalkboard, path: '/admin/manage/course', label: 'side-nav.course' },
-    { key: 'news', permission: 'view_news', icon: faDisplay, path: '/admin/manage/news', label: 'side-nav.news' },
-    { key: 'orders', permission: 'view_orders', icon: faNewspaper, path: '/admin/manage/orders', label: 'side-nav.orders' },
-    { key: 'statistics', permission: 'view_statistics', icon: faChartLine, path: '/admin/manage/statistics', label: 'side-nav.statistics' },
-    { key: 'settings', permission: 'handle_settings', icon: faGear, path: '/admin/manage/settings', label: 'side-nav.settings' },
+    { key: 'agent', permission: 'view_agent', icon: faUserSecret, path: '/admin/manage/agent', label: 'side_nav.agent' },
+    { key: 'client', permission: 'view_client', icon: faUser, path: '/admin/manage/client', label: 'side_nav.client' },
+    { key: 'supplier', permission: 'view_supplier', icon: faUsers, path: '/admin/manage/supplier', label: 'side_nav.supplier' },
+    { key: 'booking', permission: 'view_booking', icon: faBook, path: '/admin/manage/booking', label: 'side_nav.booking' },
+    { key: 'card', permission: 'view_cards', icon: faCreditCard, path: '/admin/manage/card', label: 'side_nav.card' },
+    { key: 'schedule', permission: 'view_supplier_schedule', icon: faCalendarDays, path: '/admin/manage/schedule', label: 'side_nav.schedule' },
+    { key: 'course', permission: 'view_courses', icon: faPersonChalkboard, path: '/admin/manage/course', label: 'side_nav.course' },
+    { key: 'news', permission: 'view_news', icon: faDisplay, path: '/admin/manage/news', label: 'side_nav.news' },
+    { key: 'orders', permission: 'view_orders', icon: faNewspaper, path: '/admin/manage/orders', label: 'side_nav.orders' },
+    { key: 'statistics', permission: 'view_statistics', icon: faChartLine, path: '/admin/manage/statistics', label: 'side_nav.statistics' },
+    { key: 'settings', permission: 'handle_settings', icon: faGear, path: '/admin/manage/settings', label: 'side_nav.settings' },
 ];
 
 const SideNav: React.FC = () => {
@@ -57,7 +57,7 @@ const SideNav: React.FC = () => {
         if (!hasPermission) return null
 
         return (
-            <Link onClick={() => setPage(link.key)} href={link.path} className={`flex text-sm border-b ${page === link.key ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'} pb-2 items-center outline-none w-full`} key={link.key}>
+            <Link onClick={() => setPage(link.key)} href={link.path} className={`flex border-b ${page === link.key ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'} pb-2 items-center outline-none w-full`} key={link.key}>
                 {isSideNavOpen && <span className='mr-auto'>{t(link.label)}</span>}
                 <FontAwesomeIcon width={16} height={16} icon={link.icon} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[16px] h-[16px]'}`} />
             </Link>
@@ -66,8 +66,7 @@ const SideNav: React.FC = () => {
 
     const { toggleSideNav, isSideNavOpen, locales, page, setPage } = useGlobalStore()
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
     const [searchQuery, setSearchQuery] = useState('')
 
     const filteredSideNav = links.filter(obj => obj.key.toUpperCase().includes(searchQuery.toUpperCase()))
@@ -98,30 +97,30 @@ const SideNav: React.FC = () => {
             <nav className={`border-r ${isSideNavOpen ? 'w-44 p-5' : 'w-16 py-6'} fixed h-screen flex flex-col`}>
 
                 <div className='w-full flex items-center justify-center gap-5 relative'>
-                    {isSideNavOpen && <Input placeholder={tt('search')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />}
+                    {isSideNavOpen && <Input placeholder={t('operation.search')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />}
                     <FontAwesomeIcon icon={isSideNavOpen ? faArrowLeft : faArrowRight} width={16} height={16}
-                        title={t('side-nav.menu')}
+                        title={t('side_nav.menu')}
                         className={`${isSideNavOpen ? 'absolute right-0 bg-primary rounded-r-md p-2.5 text-white' : 'w-full pb-6 hover:text-primary border-b'} cursor-pointer text-muted-foreground`}
                         onClick={toggleSideNav} />
                 </div>
-                <ul className='flex flex-col items-center gap-5 pt-4 h-full'>
+                <ul className='flex flex-col items-center text-sm gap-5 pt-4 max-h-full overflow-y-auto'>
                     {session?.user.type === ADMIN && <AdminDepartmentSelect />}
                     <Link onClick={() => setPage('dashboard')} href={'/admin'}
-                        className={`flex text-sm border-b ${page === 'dashboard' ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'}
+                        className={`flex border-b ${page === 'dashboard' ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'}
                          pb-2 items-center outline-none w-full`}>
-                        {isSideNavOpen && <span className='mr-auto'>{t('side-nav.dashboard')}</span>}
+                        {isSideNavOpen && <span className='mr-auto'>{t('side_nav.dashboard')}</span>}
                         <FontAwesomeIcon width={16} height={16} icon={faHouse} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[16px] h-[16px]'}`} />
                     </Link>
                     {session?.user.type === SUPERADMIN && <Link onClick={() => setPage('department')} href={'/admin/manage/department'}
-                        className={`flex text-sm border-b ${page === 'department' ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'}
+                        className={`flex border-b ${page === 'department' ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'}
                         pb-2 items-center outline-none w-full`}>
-                        {isSideNavOpen && <span className='mr-auto'>{t('side-nav.department')}</span>}
+                        {isSideNavOpen && <span className='mr-auto'>{t('side_nav.department')}</span>}
                         <FontAwesomeIcon width={16} height={16} icon={faBuilding} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[16px] h-[16px]'}`} />
                     </Link>}
                     {session?.user.type === SUPERADMIN && <Link onClick={() => setPage('admin')} href={'/admin/manage/admin'}
-                        className={`flex text-sm border-b ${page === 'admin' ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'}
+                        className={`flex border-b ${page === 'admin' ? 'text-primary border-primary' : 'text-muted-foreground hover:text-primary hover:border-primary'}
                                   pb-2 items-center outline-none w-full`}>
-                        {isSideNavOpen && <span className='mr-auto'>{t('side-nav.admin')}</span>}
+                        {isSideNavOpen && <span className='mr-auto'>{t('side_nav.admin')}</span>}
                         <FontAwesomeIcon width={16} height={16} icon={faUserShield} className={`${!isSideNavOpen && 'ml-auto mr-auto w-[16px] h-[16px]'}`} />
                     </Link>}
                     {filteredSideNav.map(renderLink)}
@@ -143,8 +142,8 @@ const SideNav: React.FC = () => {
                         </DropdownMenu>
                         <ThemeToggle />
                     </div>
+                    <Logout />
                 </ul>
-                <Logout />
             </nav >
             {
                 status !== 'authenticated' && <div className='h-screen w-screen grid fixed top-0 left-0 place-content-center backdrop-blur bg-opacity-30 z-50'>
@@ -188,7 +187,7 @@ const AdminDepartmentSelect = () => {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>{t('side-nav.department')}</SelectLabel>
+                            <SelectLabel>{t('side_nav.department')}</SelectLabel>
                             {adminDepartments && adminDepartments.length > 1 ? adminDepartments.map(dept => (
                                 <SelectItem key={dept.department.id} value={dept.department.id}>{dept.department.name}</SelectItem>
                             )) : null}

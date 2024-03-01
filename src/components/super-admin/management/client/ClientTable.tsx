@@ -85,8 +85,7 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
 
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='flex flex-col w-full'>
@@ -99,15 +98,15 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                 checked={isRowChecked}
                             />
                         </th>
-                        <th scope="col" className="px-6 py-3">{tt('name')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('username')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('phone')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('organization')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('origin')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('invited')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('note')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('date')}</th>
-                        <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.name')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.username')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.phone')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.organization')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.origin')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.invited')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.note')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.date.h1')}</th>
+                        <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -164,11 +163,11 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                     <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(client.id)} />
                                     <ul className={`${operation && selectedID === client.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-28 shadow-lg border flex flex-col text-muted-foreground`}>
                                         <ViewClientAlert clientID={client.id} />
-                                        {isAdminAllowed('view_orders') && client.orders && <Link href={`/admin/manage/client/orders/${client.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{t('side-nav.orders')} <FontAwesomeIcon icon={faNewspaper} /></Link>}
-                                        {isAdminAllowed('view_client_cards') && client.cards && <Link href={`/admin/manage/client/card/${client.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{t('client.card.client')} <FontAwesomeIcon icon={faCreditCard} /></Link>}
-                                        {isAdminAllowed('update_client') && <Link href={`/admin/manage/client/update/${client.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                        {isAdminAllowed('view_orders') && client.orders && <Link href={`/admin/manage/client/orders/${client.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{t('side_nav.orders')} <FontAwesomeIcon icon={faNewspaper} /></Link>}
+                                        {isAdminAllowed('view_client_cards') && client.cards && <Link href={`/admin/manage/client/card/${client.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{t('card.s')} <FontAwesomeIcon icon={faCreditCard} /></Link>}
+                                        {isAdminAllowed('update_client') && <Link href={`/admin/manage/client/update/${client.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
                                         {isAdminAllowed('delete_client') && <DeleteSingleClientAlert client={client} />}
-                                        <li className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                        <li className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>
                                 </td>
                             </tr>

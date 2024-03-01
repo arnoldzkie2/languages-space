@@ -27,19 +27,19 @@ const Departments = () => {
         }
     }, [session])
 
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     if (session.data?.user.type === ADMIN) return null
 
     return (
         <Select onValueChange={deptID => deptID === 'all' ? setDepartmentID('') : setDepartmentID(deptID)} value={departmentID}>
             <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={t('global.department.select-department')} />
+                <SelectValue placeholder={t('department.select')} />
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>
-                    <SelectLabel>{t('global.department.select')}</SelectLabel>
-                    <SelectItem value="all">{t('global.department.all')}</SelectItem>
+                    <SelectLabel>{t('department.s')}</SelectLabel>
+                    <SelectItem value="all">{t('department.all')}</SelectItem>
                     {departments && departments.length > 0 ? departments.map(dept => (
                         <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
                     ))

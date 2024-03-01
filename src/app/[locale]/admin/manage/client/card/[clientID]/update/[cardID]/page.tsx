@@ -47,8 +47,7 @@ const Page = ({ params }: Props) => {
         setFormData(prevData => ({ ...prevData, [name]: value }))
     }
 
-    const tt = useTranslations('global')
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     const updateCard = async (e: any) => {
         e.preventDefault()
@@ -104,7 +103,7 @@ const Page = ({ params }: Props) => {
                 <div className='w-full px-8'>
                     <Card className='w-1/4'>
                         <CardHeader>
-                            <CardTitle>{t('client-card.update')}</CardTitle>
+                            <CardTitle>{t('card.update')}</CardTitle>
                             <CardDescription><Err /><Success /></CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -112,15 +111,15 @@ const Page = ({ params }: Props) => {
                                 <div className='w-full flex gap-10'>
                                     <div className='w-full flex flex-col gap-4'>
                                         <div className='w-full flex flex-col gap-2'>
-                                            <Label htmlFor="name" className='font-medium px-2'>{tt('name')}</Label>
+                                            <Label htmlFor="name" className='font-medium px-2'>{t('info.name')}</Label>
                                             <Input required value={formData.name} onChange={handleChange} name='name' type="text" id='name' />
                                         </div>
                                         <div className='w-full flex flex-col gap-2'>
-                                            <label htmlFor="balance" className='font-medium px-2'>{tt('balance')}</label>
+                                            <label htmlFor="balance" className='font-medium px-2'>{t('balance.h1')}</label>
                                             <Input value={formData.balance} onChange={handleChange} name='balance' type="number" id='balance' />
                                         </div>
                                         <div className="w-full flex flex-col gap-1.5">
-                                            <Label>{t('client-card.validity')}</Label>
+                                            <Label>{t('card.validity')}</Label>
                                             <Popover>
                                                 <PopoverTrigger asChild>
                                                     <Button
@@ -133,7 +132,7 @@ const Page = ({ params }: Props) => {
                                                         <FontAwesomeIcon icon={faCalendar} width={16} height={16} />
                                                         {formData.validity && isValid(new Date(formData.validity))
                                                             ? format(new Date(formData.validity), "PPP")
-                                                            : <span>{t('client-card.validity')}</span>
+                                                            : <span>{t('info.date.select.h1')}</span>
                                                         }
                                                     </Button>
                                                 </PopoverTrigger>
@@ -165,8 +164,8 @@ const Page = ({ params }: Props) => {
                                         className='w-full'
                                         type='button'
                                         variant={'ghost'}
-                                        onClick={() => router.push(`/admin/manage/client/card/${params.clientID}`)}>{tt('cancel')}</Button>
-                                    <SubmitButton msg={tt('update')} style='w-full' />
+                                        onClick={() => router.push(`/admin/manage/client/card/${params.clientID}`)}>{t('operation.cancel')}</Button>
+                                    <SubmitButton msg={t('operation.update')} style='w-full' />
                                 </div>
                             </form>
                         </CardContent>

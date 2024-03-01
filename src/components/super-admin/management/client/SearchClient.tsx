@@ -32,10 +32,7 @@ interface Props {
 
 const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQuery }) => {
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
-
-    const { clientWithCards, selectedClients } = useAdminClientStore()
+    const t = useTranslations()
 
     return (
         <div className='pt-4 mt-4 border-t w-full'>
@@ -46,43 +43,43 @@ const SearchClient: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQue
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('username')}
+                        placeholder={t('info.username')}
                         name='username'
                         onChange={handleSearch}
                         value={searchQuery.username}
                     />
 
                     <Input type="text"
-                        placeholder={tt('phone')}
+                        placeholder={t('info.phone')}
                         name='phone_number'
                         onChange={handleSearch}
                         value={searchQuery.phone_number}
                     />
 
                     <Input type="text"
-                        placeholder={tt('organization')}
+                        placeholder={t('info.organization')}
                         name='organization'
                         onChange={handleSearch}
                         value={searchQuery.organization}
                     />
 
                     <Input type="text"
-                        placeholder={tt('origin')}
+                        placeholder={t('info.origin')}
                         name='origin'
                         onChange={handleSearch}
                         value={searchQuery.origin}
                     />
 
                     <Input type="text"
-                        placeholder={tt('note')}
+                        placeholder={t('info.note')}
                         name='note'
                         onChange={handleSearch}
                         value={searchQuery.note}
                     />
 
                     <div className='flex items-center gap-3 px-3'>
-                        <Label htmlFor="cards" className='cursor-pointer'>{t('client.with-cards')}</Label>
-                        <Checkbox checked={searchQuery.cards} onCheckedChange={() => setSearchQuery(prev => ({ ...prev, cards: !prev.cards }))} />
+                        <Label htmlFor="cards" className='cursor-pointer'>{t('card.with')}</Label>
+                        <Checkbox id='cards' checked={searchQuery.cards} onCheckedChange={() => setSearchQuery(prev => ({ ...prev, cards: !prev.cards }))} />
                     </div>
                 </div>
             </div>

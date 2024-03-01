@@ -1,4 +1,3 @@
-import { DashboardDataProps } from '@/app/api/overview/route'
 import { OverviewCards } from '@/app/api/overview/statistics/route'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,7 +11,7 @@ interface Props {
 
 const OverviewStatisticsCard = ({ data }: Props) => {
 
-    const t = useTranslations("super-admin")
+    const t = useTranslations("")
 
     const returnPercentageColor = (percentage: number) => {
         if (percentage > 0) {
@@ -29,11 +28,11 @@ const OverviewStatisticsCard = ({ data }: Props) => {
         const fixedPercentage = percentage.toFixed(2)
 
         if (percentage > 0) {
-            return `+${fixedPercentage}% ${t('dashboard.from_last_week')}`
+            return `+${fixedPercentage}% ${t('statistics.week.from_last')}`
         } else if (percentage === 0) {
-            return `${t('dashboard.no_changes')} ${t('dashboard.from_last_week')}`
+            return `${t('statistics.no_changes')} ${t('statistics.week.from_last')}`
         } else {
-            return `-${fixedPercentage}% ${t('dashboard.from_last_week')}`
+            return `-${fixedPercentage}% ${t('statistics.week.from_last')}`
         }
 
     }
@@ -43,11 +42,11 @@ const OverviewStatisticsCard = ({ data }: Props) => {
         const fixedPercentage = percentage.toFixed(2)
 
         if (percentage > 0) {
-            return `+${fixedPercentage}% ${t('dashboard.from_last_month')}`
+            return `+${fixedPercentage}% ${t('statistics.month.from_last')}`
         } else if (percentage === 0) {
-            return `${t('dashboard.no_changes')} ${t('dashboard.from_last_month')}`
+            return `${t('statistics.no_changes')} ${t('statistics.month.from_last')}`
         } else {
-            return `-${fixedPercentage}% ${t('dashboard.from_last_month')}`
+            return `-${fixedPercentage}% ${t('statistics.month.from_last')}`
         }
     }
 
@@ -56,11 +55,11 @@ const OverviewStatisticsCard = ({ data }: Props) => {
         const fixedPercentage = percentage.toFixed(2)
 
         if (percentage > 0) {
-            return `+${fixedPercentage}% ${t('dashboard.from_last_year')}`
+            return `+${fixedPercentage}% ${t('statistics.year.from_last')}`
         } else if (percentage === 0) {
-            return `${t('dashboard.no_changes')} ${t('dashboard.from_last_year')}`
+            return `${t('statistics.no_changes')} ${t('statistics.year.from_last')}`
         } else {
-            return `-${fixedPercentage}% ${t('dashboard.from_last_year')}`
+            return `-${fixedPercentage}% ${t('statistics.year.from_last')}`
         }
     }
 
@@ -94,7 +93,7 @@ const OverviewStatisticsCard = ({ data }: Props) => {
                 <Card>
                     <CardHeader>
                         <div className='flex items-center w-full justify-between'>
-                            <div className='font-normal'>{t(`statistics.this.year`)}</div>
+                            <div className='font-normal'>{t(`statistics.year.this`)}</div>
                             <div className='text-muted-foreground'>
                                 <FontAwesomeIcon icon={data.icon} width={16} height={16} />
                             </div>
@@ -116,7 +115,7 @@ const OverviewStatisticsCard = ({ data }: Props) => {
                 <Card>
                     <CardHeader>
                         <div className='flex items-center w-full justify-between'>
-                            <div className='font-normal'>{t(`statistics.this.month`)}</div>
+                            <div className='font-normal'>{t(`statistics.month.this`)}</div>
                             <div className='text-muted-foreground'>
                                 <FontAwesomeIcon icon={data.icon} width={16} height={16} />
                             </div>
@@ -138,7 +137,7 @@ const OverviewStatisticsCard = ({ data }: Props) => {
                 <Card>
                     <CardHeader>
                         <div className='flex items-center w-full justify-between'>
-                            <div className='font-normal'>{t(`statistics.this.week`)}</div>
+                            <div className='font-normal'>{t(`statistics.week.this`)}</div>
                             <div className='text-muted-foreground'>
                                 <FontAwesomeIcon icon={data.icon} width={16} height={16} />
                             </div>

@@ -151,8 +151,7 @@ const UpdateNews: React.FC<Props> = ({ params }) => {
         setFormData(prevData => ({ ...prevData, department: departmentID }))
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='h-screen overflow-y-hidden'>
@@ -168,7 +167,7 @@ const UpdateNews: React.FC<Props> = ({ params }) => {
                         <div className='w-1/4'>
                             <Departments />
                         </div>
-                        <Input className='w-full' type="text" placeholder={t('news.title')} value={formData.title} onChange={(e) => setFormData(prevData => ({
+                        <Input className='w-full' type="text" placeholder={t('info.title')} value={formData.title} onChange={(e) => setFormData(prevData => ({
                             ...prevData,
                             title: e.target.value
                         }))} />
@@ -178,7 +177,7 @@ const UpdateNews: React.FC<Props> = ({ params }) => {
                             author: e.target.value
                         }))} />
 
-                        <Input className='w-1/4' type="text" placeholder={t('news.add-keyword')} onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
+                        <Input className='w-1/4' type="text" placeholder={t('info.keywords.add')} onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
                     </div>
 
                 </div>
@@ -190,7 +189,7 @@ const UpdateNews: React.FC<Props> = ({ params }) => {
                 <div className='bottom-0 w-full px-8 flex items-center h-20 py-3 justify-between gap-10 border-t'>
 
                     <div className='flex items-center w-full'>
-                        {keywords.length > 0 && <div className='font-medium p-2 uppercase'>{t('news.keywords')}:</div>}
+                        {keywords.length > 0 && <div className='font-medium p-2 uppercase'>{t('info.keywords.h1')}:</div>}
                         <div className='flex items-center gap-5 overflow-x-auto flex-wrap px-2 py-1  max-h-16'>
                             {keywords.length > 0 && keywords.map((item, i) => {
                                 return (
@@ -205,7 +204,7 @@ const UpdateNews: React.FC<Props> = ({ params }) => {
                     </div>
 
                     <div className='flex items-center gap-9 w-1/4 justify-end'>
-                        <Button variant={'ghost'} onClick={() => router.push('/admin/manage/news')}>{tt('cancel')}</Button>
+                        <Button variant={'ghost'} onClick={() => router.push('/admin/manage/news')}>{t('operation.cancel')}</Button>
                         <SubmitButton msg={t('news.update')} onClick={updateNews} />
                     </div>
                 </div>

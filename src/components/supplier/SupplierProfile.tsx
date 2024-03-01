@@ -16,29 +16,29 @@ const SupplierProfile = () => {
         {
             page: 'balance',
             link: '/supplier/profile/balance',
-            translate: 'profile.balance'
+            translate: 'balance.my_balance'
         },
         {
             page: 'bookings',
             link: '/supplier/profile/bookings',
-            translate: 'profile.my-bookings'
+            translate: 'profile.bookings'
         },
         {
             page: 'booking-request',
             link: '/supplier/profile/booking-requests',
-            translate: 'profile.booking-requests'
+            translate: 'booking.request.h1'
         },
         {
             page: 'meeting',
             link: '/supplier/profile/meeting',
-            translate: 'profile.my-meeting'
+            translate: 'profile.meeting'
         }
     ]
 
     const page = useSupplierStore(state => state.page)
     const setPage = useSupplierStore(state => state.setPage)
 
-    const t = useTranslations('client')
+    const t = useTranslations()
 
     return (
         <div className='flex flex-col gap-3 w-full lg:w-1/4 order-2 md:order-1 text-muted-foreground'>

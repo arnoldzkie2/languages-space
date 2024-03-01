@@ -1,4 +1,4 @@
-import { Booking, BookingRequest } from '@/lib/types/super-admin/bookingType'
+import { BookingProps, BookingRequest } from '@/lib/types/super-admin/bookingType'
 import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
@@ -49,27 +49,27 @@ interface BookingFormData {
 
 export type { BookingFormData }
 
-interface BookingProps {
+interface BookingStoreProps {
     bookingFormData: BookingFormData
     setBookingFormData: (data: BookingFormData) => void
-    bookings: Booking[]
-    selectedBookings: Booking[]
-    selectedReminders: Booking[]
-    reminders: Booking[]
+    bookings: BookingProps[]
+    selectedBookings: BookingProps[]
+    selectedReminders: BookingProps[]
+    reminders: BookingProps[]
     getReminders: () => Promise<void>
     getBookings: () => Promise<void>
     totalBooking: TotalProps
     totalReminders: TotalProps
-    bookingData: Booking | null
-    remindersData: Booking | null
+    bookingData: BookingProps | null
+    remindersData: BookingProps | null
     deleteBooking: boolean
     deleteReminders: boolean
     setTotalBooking: (total: TotalProps) => void
     setTotalReminders: (total: TotalProps) => void
-    setSelectedReminders: (bookings: Booking[]) => void
-    setSelectedBookings: (bookings: Booking[]) => void
-    openDeleteBookingWarningMOdal: (booking: Booking) => void
-    openDeleteRemindersWarningMOdal: (booking: Booking) => void
+    setSelectedReminders: (bookings: BookingProps[]) => void
+    setSelectedBookings: (bookings: BookingProps[]) => void
+    openDeleteBookingWarningMOdal: (booking: BookingProps) => void
+    openDeleteRemindersWarningMOdal: (booking: BookingProps) => void
     closeDeleteBookingWarningModal: () => void
     closeDeleteRemindersWarningModal: () => void
     bookingRequests: BookingRequest[]
@@ -93,7 +93,7 @@ interface BookingProps {
     markBookingAsCompleted: (e: React.FormEvent, setOpen: React.Dispatch<React.SetStateAction<boolean>>) => Promise<void>
 }
 
-const useAdminBookingStore = create<BookingProps>((set, get) => ({
+const useAdminBookingStore = create<BookingStoreProps>((set, get) => ({
     bookingFormData: bookingFormDataValue,
     setBookingFormData: (data: BookingFormData) => set({ bookingFormData: data }),
     bookings: [],
@@ -130,13 +130,13 @@ const useAdminBookingStore = create<BookingProps>((set, get) => ({
     deleteBooking: false,
     deleteReminders: false,
     confirmBooking: false,
-    openDeleteBookingWarningMOdal: (booking: Booking) => set({ deleteBooking: true, bookingData: booking }),
-    openDeleteRemindersWarningMOdal: (booking: Booking) => set({ deleteReminders: true, remindersData: booking }),
+    openDeleteBookingWarningMOdal: (booking) => set({ deleteBooking: true, bookingData: booking }),
+    openDeleteRemindersWarningMOdal: (booking) => set({ deleteReminders: true, remindersData: booking }),
     closeDeleteBookingWarningModal: () => set({ deleteBooking: false, bookingData: null }),
     closeDeleteRemindersWarningModal: () => set({ deleteReminders: false, remindersData: null }),
     selectedBookings: [],
-    setSelectedReminders: (bookings: Booking[]) => set({ selectedReminders: bookings }),
-    setSelectedBookings: (bookings: Booking[]) => set({ selectedBookings: bookings }),
+    setSelectedReminders: (bookings) => set({ selectedReminders: bookings }),
+    setSelectedBookings: (bookings) => set({ selectedBookings: bookings }),
     totalBooking: totalBookingValue,
     setTotalBooking: (total: TotalProps) => set({ totalBooking: total }),
     setTotalReminders: (total: TotalProps) => set({ totalReminders: total }),
@@ -155,12 +155,12 @@ const useAdminBookingStore = create<BookingProps>((set, get) => ({
         }
     },
     selectedBookingRequests: [],
-    setSelectedBookingRequests: (bookingRequsts: BookingRequest[]) => set({ selectedBookingRequests: bookingRequsts }),
+    setSelectedBookingRequests: (bookingRequsts) => set({ selectedBookingRequests: bookingRequsts }),
     deleteBookingRequestModal: false,
     bookingRequestData: null,
-    openDeleteBookingReqeustWarningMOdal: (data: BookingRequest) => set({ deleteBookingRequestModal: true, bookingRequestData: data }),
+    openDeleteBookingReqeustWarningMOdal: (data) => set({ deleteBookingRequestModal: true, bookingRequestData: data }),
     closeDeleteBookingRequestWarningModal: () => set({ deleteBookingRequestModal: false, bookingRequestData: null }),
-    cancelBooking: async (e: React.MouseEvent, bookingID: string) => {
+    cancelBooking: async (e, bookingID) => {
 
         const { setIsLoading, setErr } = useGlobalStore.getState()
         const getBookings = get().getBookings

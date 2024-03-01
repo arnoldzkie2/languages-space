@@ -16,7 +16,7 @@ const SupplierBalanceTransactions = () => {
     const { skeleton } = useGlobalStore()
     const { transactions, getTransactions } = useSupplierBalanceStore()
     const { currentPage, getCurrentData } = useGlobalPaginationStore()
-    const tt = useTranslations('global')
+    const t = useTranslations()
     const { returnTruncateText, copy, openTruncateTextModal } = useGlobalStore()
 
     useEffect(() => {
@@ -32,17 +32,17 @@ const SupplierBalanceTransactions = () => {
 
     return (
         <div className='flex flex-col gap-3 w-full order-1 md:order-2'>
-            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{tt('transactions')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{t('balance.transactions.h1')}</h1>
             <div className='overflow-x-auto'>
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="px-3 py-3">ID</th>
-                            <th scope="col" className="px-3 py-3">{tt('amount')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('status')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('payment')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('paid-by')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('date')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.id')}</th>
+                            <th scope="col" className="px-3 py-3">{t('balance.amount')}</th>
+                            <th scope="col" className="px-3 py-3">{t('status.h1')}</th>
+                            <th scope="col" className="px-3 py-3">{t('balance.payment.address')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.paid_by')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.date.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,7 +50,7 @@ const SupplierBalanceTransactions = () => {
                             currentTransactions.map(transac => (
                                 <tr className="bg-card border hover:bg-muted" key={transac.id}>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-20 cursor-pointer' onClick={() => copy(transac.id)} title={tt('copy')}>
+                                        <div className='h-5 text-xs md:text-sm w-20 cursor-pointer' onClick={() => copy(transac.id)} title={t('balance.copy')}>
                                             {returnTruncateText(transac.id, 8)}
                                         </div>
                                     </td>
@@ -66,7 +66,7 @@ const SupplierBalanceTransactions = () => {
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs md:text-sm w-28 cursor-pointer'
-                                            title={tt("view")}
+                                            title={t("balance.view")}
                                             onClick={() => openTruncateTextModal(transac.payment_address)}>
                                             {returnTruncateText(transac.payment_address, 10)}
                                         </div>
@@ -74,7 +74,7 @@ const SupplierBalanceTransactions = () => {
                                     <td className="px-3 py-3">
                                         {transac.paid_by &&
                                             <div className='h-5 text-xs md:text-sm w-32 cursor-pointer'
-                                                title={tt("view")}
+                                                title={t("balance.view")}
                                                 onClick={() => openTruncateTextModal(transac.paid_by!)}>
                                                 {returnTruncateText(transac.paid_by, 15)}
                                             </div>}
@@ -82,7 +82,7 @@ const SupplierBalanceTransactions = () => {
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs w-36 md:text-sm cursor-pointer'
                                             onClick={() => openTruncateTextModal(new Date(transac.created_at).toLocaleString())}
-                                            title={tt('view')}>
+                                            title={t('balance.view')}>
                                             {returnTruncateText(new Date(transac.created_at).toLocaleString(), 10)}
                                         </div>
                                     </td>
@@ -91,7 +91,7 @@ const SupplierBalanceTransactions = () => {
                             currentTransactions && currentTransactions.length < 1 ?
                                 <tr className='border bg-card'>
                                     <td className='w-full px-3 py-2'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr>
                                 :

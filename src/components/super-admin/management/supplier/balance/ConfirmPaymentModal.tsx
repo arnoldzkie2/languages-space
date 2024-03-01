@@ -23,7 +23,7 @@ const ConfirmPaymentModal = () => {
         <div className='fixed backdrop-blur z-50 top-0 left-0 w-screen h-screen flex items-center justify-center padding'>
             <Card className='w-full sm:w-96'>
                 <CardHeader>
-                    <CardTitle>{t("supplier.payment.confirmed")}</CardTitle>
+                    <CardTitle>{t("balance.payment.confirmed")}</CardTitle>
                     <CardDescription><Err /></CardDescription>
                 </CardHeader>
                 <CardContent>

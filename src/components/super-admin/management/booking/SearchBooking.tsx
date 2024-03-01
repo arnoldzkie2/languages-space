@@ -33,14 +33,13 @@ interface Props {
 
 const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQuery }) => {
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='flex w-full gap-3'>
 
             <Input type="text"
-                placeholder={tt('name')}
+                placeholder={t('info.name')}
                 name='name'
                 className='w-full border text-sm px-3 outline-none py-2'
                 onChange={handleSearch}
@@ -48,7 +47,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQu
             />
 
             <Input type="text"
-                placeholder={tt('client')}
+                placeholder={t('side_nav.client')}
                 name='client'
                 className='w-full border text-sm px-3 outline-none py-2'
                 onChange={handleSearch}
@@ -56,7 +55,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQu
             />
 
             <Input type="text"
-                placeholder={tt('supplier')}
+                placeholder={t('side_nav.supplier')}
                 name='supplier'
                 className='w-full border text-sm px-3 outline-none py-2'
                 onChange={handleSearch}
@@ -64,7 +63,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQu
             />
 
             <Input
-                placeholder={tt('price')}
+                placeholder={t('card.price')}
                 name='price'
                 type='number'
                 className='w-full border text-sm px-3 outline-none py-2'
@@ -73,7 +72,7 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQu
             />
 
             <Input
-                placeholder={tt('note')}
+                placeholder={t('info.note')}
                 name='note'
                 type='text'
                 className='w-full border text-sm px-3 outline-none py-2'
@@ -83,32 +82,32 @@ const SearchBooking: React.FC<Props> = ({ handleSearch, searchQuery, setSearchQu
 
             < Select onValueChange={operator => operator === 'all' ? setSearchQuery(prev => ({ ...prev, operator: '' })) : setSearchQuery(prev => ({ ...prev, operator }))}>
                 <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={tt('select-operator')} />
+                    <SelectValue placeholder={t('info.operator.select')} />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectLabel>{tt('operator')}</SelectLabel>
-                        <SelectItem value="all">{tt("all-operator")}</SelectItem>
-                        <SelectItem value="client">{tt('client')}</SelectItem>
-                        <SelectItem value="supplier">{tt('supplier')}</SelectItem>
-                        <SelectItem value="admin">{tt('admin')}</SelectItem>
+                        <SelectLabel>{t('info.operator.h1')}</SelectLabel>
+                        <SelectItem value="all">{t("info.operator.all")}</SelectItem>
+                        <SelectItem value="client">{t('side_nav.client')}</SelectItem>
+                        <SelectItem value="supplier">{t('side_nav.supplier')}</SelectItem>
+                        <SelectItem value="admin">{t('side_nav.admin')}</SelectItem>
                     </SelectGroup>
                 </SelectContent>
             </Select>
 
             < Select onValueChange={status => status === 'all' ? setSearchQuery(prev => ({ ...prev, status: '' })) : setSearchQuery(prev => ({ ...prev, status }))}>
                 <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={tt('select-status')} />
+                    <SelectValue placeholder={t('status.select')} />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectLabel>{tt('status')}</SelectLabel>
-                        <SelectItem value="all">{tt("all-status")}</SelectItem>
-                        <SelectItem value="pending">{tt('pending')}</SelectItem>
-                        <SelectItem value="confirmed">{tt('confirmed')}</SelectItem>
-                        <SelectItem value="completed">{tt('completed')}</SelectItem>
-                        <SelectItem value="canceled">{tt('canceled')}</SelectItem>
-                        <SelectItem value="cancel-request">{tt('cancel-request')}</SelectItem>
+                        <SelectLabel>{t('status.h1')}</SelectLabel>
+                        <SelectItem value="all">{t("status.all")}</SelectItem>
+                        <SelectItem value="pending">{t('status.pending')}</SelectItem>
+                        <SelectItem value="confirmed">{t('status.confirmed')}</SelectItem>
+                        <SelectItem value="completed">{t('status.completed')}</SelectItem>
+                        <SelectItem value="canceled">{t('status.canceled')}</SelectItem>
+                        <SelectItem value="cancel-request">{t('status.cancel-request')}</SelectItem>
                     </SelectGroup>
                 </SelectContent>
             </Select>

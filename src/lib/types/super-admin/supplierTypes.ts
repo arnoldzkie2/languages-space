@@ -1,5 +1,5 @@
 import { Department, Supplier, SupplierDeductions, SupplierEarnings } from "@prisma/client"
-import { ClientCard, ClientCardList } from "./clientCardType"
+import { ClientCardProps, ClientCardList } from "./clientCardType"
 import { SupplierSchedule } from "./scheduleType"
 
 interface TotalSupplier {
@@ -46,7 +46,6 @@ interface SupplierFormDataProps {
     id?: string
     profile_url: string
     profile_key: string
-    payment_schedule: string
     salary: string
     name: string
     email: string
@@ -81,7 +80,7 @@ interface SupplierMeetingInfo {
 interface Courses {
     id: string
     name: string
-    supported_cards: ClientCard[]
+    supported_cards: ClientCardProps[]
     created_at: string
     updated_at: string
 }
@@ -92,21 +91,19 @@ interface TotalCourse {
     searched: string
 }
 
-interface SupplierPrice {
+interface AvailableSupplier {
     id: string
+    price: number
     supplier: {
-        tags: string[]
         id: string
+        tags: string[]
         name: string
         profile_url: string
-        schedule: SupplierSchedule[]
+        schedule: number
+        total_bookings: number
+        ratings: number
     }
-    card: ClientCardList
-    price: number
-    clientCardID: string
-    supplierID: string
-    cardID: string
 }
 
-export type { SupplierFormDataProps, SupplierPrice, Courses, SupplierProps, TotalSupplier, SupplierMeetingInfo, TotalCourse }
+export type { SupplierFormDataProps, AvailableSupplier, Courses, SupplierProps, TotalSupplier, SupplierMeetingInfo, TotalCourse }
 

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faXmark, faSpinner, faS } from '@fortawesome/free-solid-svg-icons'
+import { faXmark, faSpinner, faS, faCalendar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { FormEvent, useEffect, useState } from 'react'
 import Departments from '../Departments'
@@ -13,23 +13,36 @@ import Err from '@/components/global/Err'
 import useGlobalStore from '@/lib/state/globalStore'
 import { ADMIN, CONFIRMED } from '@/utils/constants'
 import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
+import { Label } from '@/components/ui/label'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/utils'
+import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Calendar } from '@/components/ui/calendar'
+import { format, isValid } from 'date-fns'
+import { Input } from '@/components/ui/input'
+import SubmitButton from '@/components/global/SubmitButton'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from 'sonner'
 
 const ScheduleBookingModal = () => {
 
-    const [searchClient, setSearchClient] = useState('')
     const { closeBindSchedule, getSchedule, currentDate, deleteSupplierSchedule } = useAdminScheduleStore()
     const { isLoading, setIsLoading, setErr } = useGlobalStore()
     const { clientWithCards, getClientsWithCards, clientCards, getClientCards } = useAdminClientStore()
     const { supplierMeetingInfo, getCardCourses, getSupplierMeetingInfo, cardCourses, clearCardCourses } = useAdminSupplierStore()
-    const { bookingFormData, setBookingFormData } = useAdminBookingStore()
+    const { bookingFormData, setBookingFormData, createBooking } = useAdminBookingStore()
     const departmentID = useDepartmentStore(s => s.departmentID)
-    const filterClient = clientWithCards.filter(client => client.username.toUpperCase().includes(searchClient.toUpperCase())).slice(0, 30)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = e.target
         setBookingFormData({ ...bookingFormData, [name]: value })
     }
 
+    const [openClient, setOpenClient] = useState(false)
+    const [openCard, setOpenCard] = useState(false)
     const bookSchedule = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault()
@@ -62,6 +75,7 @@ const ScheduleBookingModal = () => {
                 setIsLoading(false)
                 closeBindSchedule()
                 getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)
+                toast("Success! booking created.")
             }
 
         } catch (error: any) {
@@ -97,118 +111,243 @@ const ScheduleBookingModal = () => {
         }
     }, [bookingFormData.clientID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='fixed top-0 left-0 w-screen z-50 flex h-screen'>
 
-            <div className='w-full h-full bg-black bg-opacity-40 cursor-pointer' title={tt('close')} onClick={closeBindSchedule}>
+            <div className='w-full h-full backdrop-blur cursor-pointer' title={t('operation.close')} onClick={closeBindSchedule}>
 
             </div>
-            <div className='bg-white p-10 shadow-lg flex gap-10 overflow-y-auto w-full h-full relative'>
+            <div className='bg-card shadow-lg flex gap-10 overflow-y-auto w-1/3 h-full relative'>
                 <FontAwesomeIcon onClick={() => closeBindSchedule()} icon={faXmark} width={16} height={16} className='absolute text-xl top-6 right-6 cursor-pointer' />
-                <form className='flex flex-col gap-4 w-1/2' onSubmit={bookSchedule}>
-                    <Err />
-                    <Departments />
-                    <div className='flex flex-col w-full gap-2'>
-                        <div className='flex items-center gap-5 justify-between relative w-full'>
-                            <label htmlFor="searchClient" className='px-2'>{tt('client')}</label>
-                            <small id='searchClient' className='absolute bg-blue-600 right-3 top-3 px-2 rounded-md shadow text-white cursor-default' title={`Result: ${filterClient.length} Client`} >{searchClient && filterClient.length}</small>
-                            <input value={searchClient} onChange={(e: any) => setSearchClient(e.target.value)} type="text" className='border w-3/4 outline-none py-1.5 px-3' placeholder={t('client.search')} />
-                        </div>
-                        <select className='py-1.5 mb-2 border outline-none px-2' name='clientID' value={bookingFormData.clientID} onChange={handleChange}>
-                            <option value="" disabled>{t('client.select')}</option>
-                            {clientWithCards.length > 0 && filterClient.length > 0 ? filterClient.map(client => (
-                                <option value={client.id} key={client.id}>
-                                    {client.username}
-                                </option>
-                            )) : searchClient && clientWithCards.length < 1 ? <option value="" disabled>{t('client.404')}</option> : <option disabled>{tt('loading')}</option>}
-                        </select>
-                    </div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('booking.create')}</CardTitle>
+                        <CardDescription><Err /></CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form className='flex flex-col gap-4 w-full' onSubmit={bookSchedule}>
+                            <Departments />
+                            <div className='flex w-full flex-col gap-1.5'>
+                                <Label>{t('side_nav.client')}</Label>
+                                <Popover open={openClient} onOpenChange={setOpenClient}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={openClient}
+                                            className={cn(
+                                                "w-full justify-between",
+                                                !bookingFormData.clientID && "text-muted-foreground"
+                                            )}
+                                        >
+                                            {bookingFormData.clientID
+                                                ? clientWithCards.find((client) => client.id === bookingFormData.clientID)?.username
+                                                : t('client.select.h1')}
+                                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0">
+                                        <Command>
+                                            <CommandInput
+                                                placeholder={t('client.search')}
+                                                className="h-9"
+                                            />
+                                            <CommandEmpty>{t('client.404')}</CommandEmpty>
+                                            <CommandGroup>
+                                                {clientWithCards.length > 0 ? clientWithCards.map(client => (
+                                                    <CommandItem
+                                                        key={client.id}
+                                                        className={`${bookingFormData.clientID === client.id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                                        value={client.username}
+                                                        onSelect={() => {
+                                                            setBookingFormData({ ...bookingFormData, clientID: client.id })
+                                                            setOpenClient(false)
+                                                        }}
+                                                    >
+                                                        {client.username}
+                                                        <CheckIcon
+                                                            className={cn(
+                                                                "ml-auto h-4 w-4",
+                                                                bookingFormData.clientID === client.id ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                    </CommandItem>
+                                                )) : <CommandItem>{t('client.404')}</CommandItem>}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
 
-                    <div className='flex flex-col gap-2 w-full'>
-                        <label htmlFor="clientCardID" className='px-2'>{tt('card')}</label>
-                        <select className='py-1.5 mb-2 border outline-none px-2' value={bookingFormData.clientCardID} onChange={handleChange} name='clientCardID'>
-                            <option value="" disabled>{t('client-card.select')}</option>
-                            {clientCards.length > 0 ? clientCards.map(card => (
-                                <option value={card.id} key={card.id}>
-                                    {card.name} ({card.balance})
-                                </option>
-                            )) : <option disabled>{t('client.select-first')}</option>}
-                        </select>
-                    </div>
+                            <div className='flex w-full flex-col gap-1.5'>
+                                <Label>{t('card.h1')}</Label>
+                                <Popover open={openCard} onOpenChange={setOpenCard}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={openCard}
+                                            className={cn(
+                                                "w-full justify-between",
+                                                !bookingFormData.clientCardID && "text-muted-foreground"
+                                            )}
+                                        >
+                                            {bookingFormData.clientCardID
+                                                ? clientCards.find((card) => card.id === bookingFormData.clientCardID)?.name
+                                                : t('card.select.h1')}
+                                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0">
+                                        <Command>
+                                            <CommandInput
+                                                placeholder={t('card.search')}
+                                                className="h-9"
+                                            />
+                                            <CommandEmpty>{t('card.404')}</CommandEmpty>
+                                            <CommandGroup>
+                                                {clientCards.length > 0 ? clientCards.map(card => (
+                                                    <CommandItem
+                                                        key={card.id}
+                                                        className={`${bookingFormData.clientCardID === card.id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                                        value={card.name}
+                                                        onSelect={() => {
+                                                            setBookingFormData({ ...bookingFormData, clientCardID: card.id })
+                                                            setOpenCard(false)
+                                                        }}
+                                                    >
+                                                        {card.name}
+                                                        <CheckIcon
+                                                            className={cn(
+                                                                "ml-auto h-4 w-4",
+                                                                bookingFormData.clientCardID === card.id ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                    </CommandItem>
+                                                )) : <CommandItem>{t('client.select.first')}</CommandItem>}
+                                            </CommandGroup>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
 
-                    <select name="courseID" className='px-2 py-1.5 outline-none' id="courseID" value={bookingFormData.courseID} onChange={handleChange}>
-                        <option value="" disabled>{t('courses.select')}</option>
-                        {cardCourses && cardCourses.length > 0 ? cardCourses.map(course => (
-                            <option value={course.id} key={course.id}>{course.name}</option>
-                        )) : cardCourses && cardCourses.length < 1 && bookingFormData.clientCardID ?
-                            <option className='' disabled>This card has 0 supported courses</option> :
-                            <option disabled>{t('client-card.select-first')}</option>}
-                    </select>
+                            <div className="w-full items-center gap-1.5">
+                                <Label>{t('side_nav.course')}</Label>
+                                <Select onValueChange={(courseID) => setBookingFormData({ ...bookingFormData, courseID })} value={bookingFormData.courseID}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t('course.select')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>{cardCourses && cardCourses.length > 0 ? t('side_nav.course') : t('card.select.first')}</SelectLabel>
+                                            {cardCourses && cardCourses.length > 0 ? cardCourses.map(card => (
+                                                <SelectItem value={card.id} key={card.id}>{card.name}</SelectItem>
+                                            )) : null}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                    <div className='flex flex-col gap-2 w-full'>
+                            <div className="w-full items-center gap-1.5">
+                                <Label htmlFor="meetingInfoID">{t('meeting.h1')}</Label>
+                                <Select onValueChange={(meetingInfoID) => setBookingFormData({ ...bookingFormData, meetingInfoID })} value={bookingFormData.meetingInfoID}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={t('meeting.select.h1')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>{bookingFormData.meetingInfoID && supplierMeetingInfo && supplierMeetingInfo.length === 0 ? t('supplier.no_meeting') : !bookingFormData.supplierID ? t('supplier.select.first') : t('meeting.h1')}</SelectLabel>
+                                            {bookingFormData.supplierID && supplierMeetingInfo && supplierMeetingInfo.length > 0 ? supplierMeetingInfo.map(meeting => (
+                                                <SelectItem value={meeting.id} key={meeting.id}>{meeting.service} ({meeting.meeting_code})</SelectItem>
+                                            )) : null}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                        <label htmlFor='meetingInfoID' className='font-medium px-1'>{tt('meeting')}</label>
-                        <select name="meetingInfoID" className='px-2 py-1.5 outline-none' id="meetingInfoID" value={bookingFormData.meetingInfoID} onChange={handleChange}>
-                            <option value="" disabled>{t('supplier.select-meeting')}</option>
-                            {supplierMeetingInfo && supplierMeetingInfo.length > 0 ? supplierMeetingInfo.map(meeting => (
-                                <option value={meeting.id} key={meeting.id}>{meeting.service} ({meeting.meeting_code})</option>
-                            )) : supplierMeetingInfo && supplierMeetingInfo.length < 1 && bookingFormData.clientCardID ?
-                                <option className='' disabled>This card has 0 supported courses</option> :
-                                <option disabled>{t('supplier.select-first')}</option>}
-                        </select>
-                    </div>
+                            <div className="w-full flex flex-col gap-1.5">
+                                <Label>{t('info.settlement')}</Label>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full justify-start text-left gap-3 font-normal",
+                                                !bookingFormData.settlement && "text-muted-foreground"
+                                            )}
+                                        >
+                                            <FontAwesomeIcon icon={faCalendar} width={16} height={16} />
+                                            {bookingFormData.settlement && isValid(new Date(bookingFormData.settlement))
+                                                ? format(new Date(bookingFormData.settlement), "PPP")
+                                                : <span>{t('operation.select')}</span>
+                                            }
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={new Date(new Date(bookingFormData.settlement).setHours(0, 0, 0, 0))}
+                                            onSelect={(date) => {
+                                                const adjustedDate = new Date(date!);
+                                                adjustedDate.setHours(0, 0, 0, 0);
 
-                    <div className='flex flex-col gap-2 w-full'>
+                                                // Check if the adjusted date is valid
+                                                if (!isNaN(adjustedDate.getTime())) {
+                                                    const formattedDate = `${adjustedDate.getFullYear()}-${(adjustedDate.getMonth() + 1).toString().padStart(2, '0')}-${adjustedDate.getDate().toString().padStart(2, '0')}`;
+                                                    setBookingFormData({
+                                                        ...bookingFormData,
+                                                        settlement: formattedDate,
+                                                    });
+                                                } else {
+                                                    // If the date is not valid, set settlement to an empty string
+                                                    setBookingFormData({
+                                                        ...bookingFormData,
+                                                        settlement: '',
+                                                    });
+                                                }
+                                            }}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
 
-                        <label htmlFor="settlement" className='font-medium px-2 text-gray-700'>{tt('settlement')}</label>
-                        <input className='py-1.5 px-3 border rounded-md outline-none'
-                            type="date" id='settlement' name='settlement'
-                            value={bookingFormData.settlement}
-                            onChange={handleChange}
-                        />
-                    </div>
+                            <div className='w-full border-b pb-1 text-center'>{t("info.quantity")}</div>
+                            <div className='flex w-full items-center gap-5'>
 
-                    <div className='flex flex-col gap-2 w-full'>
-                        <label htmlFor="client_quantity" className='font-medium px-2 text-gray-700'>{tt('client')}</label>
-                        <input className='py-1.5 px-3 border rounded-md outline-none'
-                            type="text" id='client_quantity' name='client_quantity'
-                            value={bookingFormData.client_quantity}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className='flex flex-col gap-2 w-full'>
-                        <label htmlFor="supplier_quantity" className='font-medium px-2 text-gray-700'>{tt('supplier')}</label>
-                        <input className='py-1.5 px-3 border rounded-md outline-none'
-                            type="text" id='supplier_quantity' name='supplier_quantity'
-                            value={bookingFormData.supplier_quantity}
-                            onChange={handleChange}
-                        />
-                    </div>
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <Label htmlFor="client_quantity">{t("side_nav.client")}</Label>
+                                    <Input type="number" id="client_quantity" name='client_quantity'
+                                        value={bookingFormData.client_quantity}
+                                        onChange={handleChange} />
+                                </div>
 
-                    <div className='flex flex-col gap-2 w-full'>
-                        <label htmlFor="note" className='font-medium px-2 text-gray-700'>{tt('note')}</label>
-                        <input className='py-1.5 px-3 border rounded-md outline-none'
-                            type="text" id='note' name='note'
-                            value={bookingFormData.note}
-                            onChange={handleChange}
-                        />
-                    </div>
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <Label htmlFor="supplier_quantity">{t("side_nav.supplier")}</Label>
+                                    <Input type="number" id="supplier_quantity" name='supplier_quantity'
+                                        value={bookingFormData.supplier_quantity}
+                                        onChange={handleChange} />
+                                </div>
 
-                    <div className='flex items-center w-full gap-10'>
-                        <button type='button'
-                            onClick={(e: React.MouseEvent) => deleteSupplierSchedule(e, bookingFormData.scheduleID)}
-                            disabled={isLoading}
-                            className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
-                            {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('schedule.delete')}</button>
+                            </div>
 
-                        <button disabled={isLoading}
-                            className={`${isLoading ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
-                            {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('booking.confirm')}</button>
-                    </div>
-                </form>
+                            <div className='flex flex-col gap-2 w-full'>
+                                <Label htmlFor='note'>{t("info.note")}</Label>
+                                <Input value={bookingFormData.note} onChange={handleChange} name='note' id='note' placeholder={t("global.optional")} />
+                            </div>
+
+                            <div className='flex items-center w-full gap-10'>
+                                <Button variant={'destructive'}
+                                    className='w-full'
+                                    onClick={(e) => deleteSupplierSchedule(e, bookingFormData.scheduleID)}
+                                    type='button'>{t("operation.delete")}</Button>
+                                <SubmitButton msg={t("operation.confirm")} style='w-full' />
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </div>)
 }

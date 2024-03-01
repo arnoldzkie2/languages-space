@@ -26,6 +26,7 @@ export const GET = async (req: Request) => {
                             select: {
                                 supported_suppliers: {
                                     select: {
+                                        id: true,
                                         price: true,
                                         supplier: {
                                             select: {
@@ -53,6 +54,14 @@ export const GET = async (req: Request) => {
                                                             ]
                                                         }
                                                     }
+                                                },
+                                                bookings: {
+                                                    where: {
+                                                        status: 'completed'
+                                                    },
+                                                    include: {
+                                                        client_comment: true
+                                                    }
                                                 }
                                             },
                                         }
@@ -61,25 +70,37 @@ export const GET = async (req: Request) => {
                             }
                         }
                     },
-                });
-
-
+                })
                 if (!clientCard) return notFoundRes('Card');
 
-                const supportedSuppliers = clientCard.card.supported_suppliers;
+                const supportedSuppliers = clientCard.card.supported_suppliers
 
                 //filter the supplier
                 const filterSupplier = supportedSuppliers
                     .filter((supplier) => supplier.supplier.meeting_info && supplier.supplier.meeting_info.length > 0)
-                    .map((supplier) => ({
-                        // Copy all properties from the original supplier except the 'schedule' property
-                        ...supplier,
-                        supplier: {
-                            ...supplier.supplier,
-                            meeting_info: undefined,
-                            schedule: [supplier.supplier.schedule.length]
-                        },
-                    }));
+                    .map((supplier) => {
+
+                        const totalRatings = supplier.supplier.bookings.reduce((total, booking) => {
+                            return total + (booking.client_comment.length > 0 ? booking.client_comment[0].rate : 0)
+                        }, 0)
+
+                        const averageRating = totalRatings / supplier.supplier.bookings.length || 0
+
+                        //get all the supplier booking comments in supplier.bookings.client_comments it's an array which contain 1 client comment rate,message
+
+                        return {
+                            // Copy all properties from the original supplier except the 'schedule' property
+                            ...supplier,
+                            supplier: {
+                                ...supplier.supplier,
+                                meeting_info: undefined,
+                                bookings: undefined,
+                                schedule: supplier.supplier.schedule.length,
+                                ratings: averageRating.toFixed(2),
+                                total_bookings: supplier.supplier.bookings.length
+                            },
+                        }
+                    })
 
 
                 return okayRes(filterSupplier);
@@ -88,7 +109,7 @@ export const GET = async (req: Request) => {
             return notFoundRes('Card')
         }
 
-        return notFoundRes('Client')
+        return notFoundRes('Card')
 
     } catch (error) {
         console.log(error);

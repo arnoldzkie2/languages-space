@@ -13,15 +13,15 @@ const MarkBookingAsCompleted = () => {
 
     if (selectedBookings.length < 1) setOpen(false)
 
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button>Mark as Completed</Button>
+                <Button>{t('booking.completed.button')}</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to mark this booking as completed?</AlertDialogTitle>
+                    <AlertDialogTitle>{t('booking.completed.confirm')}</AlertDialogTitle>
                     <AlertDialogDescription>
                         <Err />
                     </AlertDialogDescription>
@@ -30,17 +30,17 @@ const MarkBookingAsCompleted = () => {
                     {selectedBookings.length > 0 ?
                         selectedBookings.map(booking => (
                             <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={booking.id}>
-                                <div>BOOKING ID: <span className='font-normal text-muted-foreground'>{booking.id}</span></div>
-                                <div>{tt('name')}: <span className='font-normal text-muted-foreground'>{booking.name}</span></div>
+                                <div>{t("info.id")}: <span className='font-normal text-muted-foreground'>{booking.id}</span></div>
+                                <div>{t('info.name')}: <span className='font-normal text-muted-foreground'>{booking.name}</span></div>
                             </div>
                         ))
                         : null
                     }
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                     <form onSubmit={(e) => markBookingAsCompleted(e, setOpen)}>
-                        <SubmitButton msg={tt('confirm')} />
+                        <SubmitButton msg={t('operation.confirm')} />
                     </form>
                 </div>
             </AlertDialogContent>

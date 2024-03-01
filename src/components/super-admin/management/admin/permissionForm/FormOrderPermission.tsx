@@ -8,29 +8,29 @@ const FormOrdersPermission: React.FC<{
   permissionData: AdminPermission;
 }> = (props) => {
   const { permissionData, handleCheckboxChange } = props;
-  const t = useTranslations('super-admin');
+  const t = useTranslations();
 
   return (
     <div className='flex flex-col gap-1 w-full'>
-      <div className='font-bold text-lg text-foreground'>{t('order.h1')}</div>
+      <div className='font-bold text-lg text-foreground'>{t('order.manage')}</div>
 
       <PermissionSwitch
-        label={t('admin.permissions.view_orders')}
+        label={t('admin.permissions.list.view_orders')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.view_orders}
         permissionKey='view_orders' />
       <PermissionSwitch
-        label={t('admin.permissions.create_orders')}
+        label={t('admin.permissions.list.create_orders')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.create_orders}
         permissionKey='create_orders' />
       <PermissionSwitch
-        label={t('admin.permissions.update_orders')}
+        label={t('admin.permissions.list.update_orders')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.update_orders}
         permissionKey='update_orders' />
       <PermissionSwitch
-        label={t('admin.permissions.delete_orders')}
+        label={t('admin.permissions.list.delete_orders')}
         onCheckedChange={handleCheckboxChange}
         checked={permissionData.delete_orders}
         permissionKey='delete_orders' />

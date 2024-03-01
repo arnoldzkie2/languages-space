@@ -1,10 +1,10 @@
 'use client'
 import Err from '@/components/global/Err'
 import SubmitButton from '@/components/global/SubmitButton'
-import Success from '@/components/global/Success'
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
 import FormAgentPermission from '@/components/super-admin/management/admin/permissionForm/FormAgentPermission'
+import FormBookingCommentsPermission from '@/components/super-admin/management/admin/permissionForm/FormBookingCommentsPermission'
 import FormBookingPermission from '@/components/super-admin/management/admin/permissionForm/FormBookingPermission'
 import FormCardsPermission from '@/components/super-admin/management/admin/permissionForm/FormCardPermission'
 import FormClientPermission from '@/components/super-admin/management/admin/permissionForm/FormClientPermission'
@@ -72,7 +72,7 @@ const Page = ({ params }: Props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     const handleCheckboxChange = (isChecked: boolean, name: string) => {
         setPermissionData({ ...permissionData!, [name]: isChecked })
@@ -90,7 +90,7 @@ const Page = ({ params }: Props) => {
             <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
                 <nav className={`border-b h-16 flex items-center px-8 justify-between`}>
-                    <h1 className='font-black text-xl uppercase'>{t('admin.permissions.h1')}</h1>
+                    <h1 className='font-black text-xl uppercase'>{t('admin.permissions.manage')}</h1>
                     <ul className='flex items-center h-full ml-auto gap-5 text-muted-foreground'>
                         {status !== 'loading' ?
                             <Link href={'/admin/manage/admin/new'} className='flex items-center hover:text-primary justify-center w-40 cursor-pointer gap-1'>
@@ -98,7 +98,7 @@ const Page = ({ params }: Props) => {
                             </Link> : skeleton}
                         {status !== 'loading' ?
                             <Link href={'/admin/manage/admin'} className='flex items-center hover:text-primary justify-center w-40 cursor-pointer gap-1'>
-                                <div>{t('admin.h1')}</div>
+                                <div>{t('admin.manage')}</div>
                             </Link> : skeleton}
                     </ul>
                 </nav>
@@ -107,7 +107,7 @@ const Page = ({ params }: Props) => {
 
                     <Card className='w-2/5'>
                         <CardHeader>
-                            <CardTitle>{t('admin.permissions.h1')}</CardTitle>
+                            <CardTitle>{t('admin.permissions.manage')}</CardTitle>
                             <CardDescription><Err /></CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -118,7 +118,7 @@ const Page = ({ params }: Props) => {
                                         {!departmentID && <div className='px-3 pt-3 text-foreground'>{t('department.select')}</div>}
                                         <CreatePermissionButton
                                             adminID={adminID}
-                                            msg={t('admin.create-permission')}
+                                            msg={t('admin.permissions.create')}
                                             showCreatePermissionButton={showCreatePermissionButton}
                                             createPermission={createPermission}
                                         />
@@ -164,7 +164,7 @@ const CreatePermissionButton = (props: CreatePermissionButtonProps) => {
 const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props) => {
     const { permissionData, updatePermission, adminID, isLoading, deleteAgentPermission, handleCheckboxChange } = props;
 
-    const tt = useTranslations('global')
+    const t = useTranslations()
     // Check if permissionData is null
     if (!permissionData) return null;
 
@@ -213,6 +213,10 @@ const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props
                         <FormWebNewsPermission
                             handleCheckboxChange={handleCheckboxChange}
                             permissionData={permissionData} />
+                        <FormRemindersPermission
+                            handleCheckboxChange={handleCheckboxChange}
+                            permissionData={permissionData}
+                        />
                         <FormOtherPermission
                             handleCheckboxChange={handleCheckboxChange}
                             permissionData={permissionData}
@@ -231,9 +235,7 @@ const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props
                             handleCheckboxChange={handleCheckboxChange}
                             permissionData={permissionData}
                         />
-
-
-                        <FormRemindersPermission
+                        <FormBookingCommentsPermission
                             handleCheckboxChange={handleCheckboxChange}
                             permissionData={permissionData}
                         />
@@ -248,9 +250,9 @@ const ReturnPermissionFormData: React.FC<ReturnPermissionFormDataProps> = (props
                         className='w-1/4'
                         type='button'>
                         {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16}
-                            className='animate-spin' /> : tt('delete')}
+                            className='animate-spin' /> : t('operation.delete')}
                     </Button>
-                    <SubmitButton style='w-1/4' msg={tt('update')} />
+                    <SubmitButton style='w-1/4' msg={t('operation.update')} />
                 </div>
             </div>
 

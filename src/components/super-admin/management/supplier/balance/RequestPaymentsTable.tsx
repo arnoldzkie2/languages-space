@@ -20,8 +20,7 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
 
     const openConfirmPaymentModal = useSupplierBalanceStore(s => s.openConfirmPaymentModal)
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
 
@@ -29,13 +28,13 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
         <table className="text-sm text-left text-muted-foreground shadow-md w-full">
             <thead className="text-xs uppercase bg-card border">
                 <tr>
-                    <th scope="col" className="px-6 py-3">{tt('name')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('amount')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('status')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('payment')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('paid-by')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('date')}</th>
-                    <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                    <th scope="col" className="px-6 py-3">{t('info.name')}</th>
+                    <th scope="col" className="px-6 py-3">{t('balance.amount')}</th>
+                    <th scope="col" className="px-6 py-3">{t('status.h1')}</th>
+                    <th scope="col" className="px-6 py-3">{t('balance.payment.address')}</th>
+                    <th scope="col" className="px-6 py-3">{t('info.paid_by')}</th>
+                    <th scope="col" className="px-6 py-3">{t('info.date.h1')}</th>
+                    <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,9 +77,9 @@ const RequestPaymentsTable = ({ filteredTable }: Props) => {
                                     onClick={() => openConfirmPaymentModal(obj)}
                                     disabled={isLoading}
                                     className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>
-                                    {tt('paid')} <FontAwesomeIcon icon={faCheck} width={16} height={16} />
+                                    {t('info.paid')} <FontAwesomeIcon icon={faCheck} width={16} height={16} />
                                 </button>}
-                                <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                             </ul>
                         </td>
                     </tr>

@@ -67,8 +67,7 @@ const CreateScheduleSheet = () => {
         setSelectedDates({ dates: [], times: [] })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    const t = useTranslations('super-admin')
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -92,7 +91,7 @@ const CreateScheduleSheet = () => {
                                     >
                                         {bookingFormData.supplierID
                                             ? supplierWithMeeting.find((supplier) => supplier.id === bookingFormData.supplierID)?.name
-                                            : t('supplier.select')}
+                                            : t('supplier.select.h1')}
                                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
@@ -164,12 +163,12 @@ const CreateScheduleSheet = () => {
                 </div>
                 <SheetFooter className='w-full flex items-center gap-5'>
                     <SheetClose asChild>
-                        <Button variant={'ghost'} className='w-full' onClick={() => setOpen(false)}>{tt('close')}</Button>
+                        <Button variant={'ghost'} className='w-full' onClick={() => setOpen(false)}>{t('operation.close')}</Button>
                     </SheetClose>
                     <form onSubmit={(e) => {
                         createSchedule(e, bookingFormData.supplierID, setOpen)
                     }} className='w-full'>
-                        <SubmitButton msg={tt('create')} style='w-full' />
+                        <SubmitButton msg={t('operation.create')} style='w-full' />
                     </form>
                 </SheetFooter>
             </SheetContent>

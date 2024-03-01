@@ -144,8 +144,7 @@ const Page = ({ params }: Props) => {
 
   }, [formData.profile_key])
 
-  const t = useTranslations('super-admin')
-  const tt = useTranslations('global')
+  const t = useTranslations()
 
   return (
     <>
@@ -184,8 +183,8 @@ const Page = ({ params }: Props) => {
                 </div>
 
                 <div className='flex items-center gap-10 mt-10 w-1/2 self-end'>
-                  <Button type='button' onClick={() => router.push('/admin/manage/agent')} variant={'ghost'} className='w-full'>{tt('cancel')}</Button>
-                  <SubmitButton msg={tt('update')} style='w-full' />
+                  <Button type='button' onClick={() => router.push('/admin/manage/agent')} variant={'ghost'} className='w-full'>{t('operation.cancel')}</Button>
+                  <SubmitButton msg={t('operation.update')} style='w-full' />
                 </div>
               </form>
             </CardContent>
@@ -203,44 +202,43 @@ const SupplierFormFirstRow = (props: {
 }) => {
 
   const { formData, handleChange } = props
-  const t = useTranslations('super-admin')
-  const tt = useTranslations('global')
+  const t = useTranslations('')
 
   return (
     <div className='w-full flex flex-col gap-4'>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="name">{tt("name")}</Label>
-        <Input type="text" id="name" name='name' placeholder={tt("name")} value={formData.name} onChange={handleChange} />
+        <Label htmlFor="name">{t("info.name")}</Label>
+        <Input type="text" id="name" name='name' placeholder={t("info.name")} value={formData.name} onChange={handleChange} />
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="username">{tt("username")}</Label>
-        <Input type="text" id="username" name='username' placeholder={tt("username")} value={formData.username} onChange={handleChange} />
+        <Label htmlFor="username">{t("info.username")}</Label>
+        <Input type="text" id="username" name='username' placeholder={t("info.username")} value={formData.username} onChange={handleChange} />
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="email">{tt("email")}</Label>
-        <Input type="email" id="email" name='email' placeholder={tt("email")} value={formData.email} onChange={handleChange} />
+        <Label htmlFor="email">{t("info.email.h1")}</Label>
+        <Input type="email" id="email" name='email' placeholder={t("info.email.address")} value={formData.email} onChange={handleChange} />
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="password">{tt("password")}</Label>
-        <Input type="text" id="password" name='password' placeholder={tt("password")} value={formData.password} onChange={handleChange} />
+        <Label htmlFor="password">{t("info.password")}</Label>
+        <Input type="text" id="password" name='password' placeholder={t("info.password")} value={formData.password} onChange={handleChange} />
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="phone_number">{tt("phone")}</Label>
-        <Input type="number" id="phone_number" name='phone_number' placeholder={tt("phone")} value={formData.phone_number} onChange={handleChange} />
+        <Label htmlFor="phone_number">{t("info.phone")}</Label>
+        <Input type="number" id="phone_number" name='phone_number' placeholder={t("info.phone")} value={formData.phone_number} onChange={handleChange} />
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="organization">{tt("organization")}</Label>
-        <Input type="text" id="organization" name='organization' placeholder={tt("organization")} value={formData.organization} onChange={handleChange} />
+        <Label htmlFor="organization">{t("info.organization")}</Label>
+        <Input type="text" id="organization" name='organization' placeholder={t("info.organization")} value={formData.organization} onChange={handleChange} />
       </div>
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="note">{tt("note")}</Label>
-        <Input type="text" id="note" name='note' placeholder={tt("note")} value={formData.note} onChange={handleChange} />
+        <Label htmlFor="note">{t("info.note")}</Label>
+        <Input type="text" id="note" name='note' placeholder={t("info.note")} value={formData.note} onChange={handleChange} />
       </div>
 
     </div>
@@ -258,21 +256,21 @@ const SupplierFormSecondRow = (props: {
   const { handleChange, formData, departments, setFormData, handleCheckboxChange } = props
   const admin = useAdminPageStore(s => s.admin)
 
-  const tt = useTranslations('global')
+  const t = useTranslations()
   return (
     <div className='w-full flex flex-col gap-4'>
       <div className="w-full items-center gap-1.5">
-        <Label>{tt('gender')}</Label>
+        <Label>{t('info.gender.h1')}</Label>
         <Select onValueChange={(gender) => setFormData(prev => ({ ...prev, gender }))} value={formData.gender}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder={tt('select-gender')} />
+            <SelectValue placeholder={t('info.gender.select')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>{tt('gender')}</SelectLabel>
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="others">Others</SelectItem>
+              <SelectLabel>{t('info.gender.select')}</SelectLabel>
+              <SelectItem value="male">{t("info.gender.male")}</SelectItem>
+              <SelectItem value="female">{t('info.gender.female')}</SelectItem>
+              <SelectItem value="others">{t('info.gender.others')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -281,14 +279,14 @@ const SupplierFormSecondRow = (props: {
       <div className='flex w-full items-center gap-2'>
 
         <div className="w-full items-center gap-1.5">
-          <Label>{tt('currency')}</Label>
+          <Label>{t('balance.currency')}</Label>
           <Select onValueChange={(currency) => setFormData(prev => ({ ...prev, currency }))} value={formData.currency}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={tt('select')} />
+              <SelectValue placeholder={t('operation.select')} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>{tt('currency')}</SelectLabel>
+                <SelectLabel>{t('balance.currency')}</SelectLabel>
                 <SelectItem value="USD">USD ($)</SelectItem>
                 <SelectItem value="PHP">PHP (₱)</SelectItem>
                 <SelectItem value="RMB">RMB (¥)</SelectItem>
@@ -302,18 +300,18 @@ const SupplierFormSecondRow = (props: {
 
       <div className='w-full flex flex-col gap-2'>
 
-        <Label>{tt('commission-rate')}</Label>
+        <Label>{t('balance.commission.h1')}</Label>
         <div className='flex items-center gap-5 w-full relative'>
           <div className="w-1/2 items-center gap-1.5">
             <Select onValueChange={(commission_type) => setFormData(prev => ({ ...prev, commission_type }))} value={formData.commission_type}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={tt('select')} />
+                <SelectValue placeholder={t('info.select')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>{tt('type')}</SelectLabel>
-                  <SelectItem value="fixed">{tt('fixed')}</SelectItem>
-                  <SelectItem value="percentage">{tt('percentage')}</SelectItem>
+                  <SelectLabel>{t('balance.commission.type')}</SelectLabel>
+                  <SelectItem value="fixed">{t('balance.commission.fixed')}</SelectItem>
+                  <SelectItem value="percentage">{t('balance.commission.percentage')}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -325,22 +323,22 @@ const SupplierFormSecondRow = (props: {
 
       </div>
       <div className='w-full flex flex-col gap-2'>
-        <Label htmlFor="payment_info">{tt('payment-address')}</Label>
+        <Label htmlFor="payment_info">{t('balance.payment_address')}</Label>
         <Input value={formData.payment_address} onChange={handleChange} name='payment_address' type="text" id='payment_address' />
       </div>
 
       <div className='w-full flex flex-col gap-2'>
-        <Label htmlFor="address">{tt('address')} {tt('optional')}</Label>
+        <Label htmlFor="address">{t('info.address')} {t('global.optional')}</Label>
         <Input value={formData.address} onChange={handleChange} name='address' type="text" id='address' />
       </div>
 
       <div className='w-full flex flex-col gap-2'>
-        <Label htmlFor="origin">{tt('origin')} {tt('optional')}</Label>
+        <Label htmlFor="origin">{t('info.origin')} {t('global.optional')}</Label>
         <Input value={formData.origin} onChange={handleChange} name='origin' type="text" id='origin' />
       </div>
 
       {!admin && <div className='w-full flex flex-col gap-2'>
-        <Label className='block font-medium'>{tt('departments')}</Label>
+        <Label className='block font-medium'>{t('department.s')}</Label>
         {departments && departments.map((dept) => (
           <div key={dept.id} className="flex items-center">
             <Checkbox
@@ -361,7 +359,7 @@ const SupplierFormSecondRow = (props: {
         <Image width={110} height={110} src={formData.profile_url || '/profile/profile.svg'} alt='Supplier Profile' className='border rounded-full' />
 
         <div className='flex flex-col gap-3 items-start'>
-          <span className='block'>{tt('profile')}</span>
+          <span className='block'>{t('profile.info')}</span>
           <UploadButton
             appearance={{
               button: 'bg-primary text-muted'

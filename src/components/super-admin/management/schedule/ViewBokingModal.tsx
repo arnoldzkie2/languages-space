@@ -6,18 +6,26 @@ import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import useAdminScheduleStore from '@/lib/state/super-admin/scheduleStore'
 import axios from 'axios'
-import { Booking } from '@/lib/types/super-admin/bookingType'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
 import useGlobalStore from '@/lib/state/globalStore'
 import { toast } from 'sonner'
+import { BookingProps } from '@/lib/types/super-admin/bookingType'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Err from '@/components/global/Err'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 const ViewBokingModal = () => {
 
     const { closeViewBooking, getSchedule, currentDate, bookingID } = useAdminScheduleStore()
-    const { isLoading, setIsLoading } = useGlobalStore()
+    const { isLoading, setIsLoading, copy } = useGlobalStore()
     const { bookingFormData } = useAdminBookingStore()
 
-    const [bookingData, setBookingData] = useState<Booking | null>(null)
+    const [bookingData, setBookingData] = useState<BookingProps | null>(null)
+
+    const [meetingInfo, setMeetingInfo] = useState<any | null>(null)
 
     const cancelBooking = async (e: React.MouseEvent) => {
 
@@ -53,7 +61,10 @@ const ViewBokingModal = () => {
                 params: { bookingID }
             })
 
-            if (data.ok) setBookingData(data.data)
+            if (data.ok) {
+                setMeetingInfo(data.data.meeting_info)
+                setBookingData(data.data)
+            }
 
         } catch (error) {
             console.log(error);
@@ -94,43 +105,84 @@ const ViewBokingModal = () => {
         if (bookingID) retrieveBooking()
     }, [bookingID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
+
+    if (!bookingData) return null
 
     return (
-        <div className='fixed top-0 left-0 w-screen z-20 h-screen flex bg-opacity-50 bg-gray-600'>
-            <div className='w-full h-full cursor-pointer' title='Close' onClick={closeViewBooking}></div>
-            <div className='bg-white p-10 shadow-lg flex items-start gap-10 overflow-y-auto w-full h-full relative'>
+        <div className='fixed top-0 left-0 w-screen z-20 h-screen flex items-center justify-center bg-opacity-50 backdrop-blur'>
+            <div className='overflow-y-auto relative'>
                 <FontAwesomeIcon onClick={closeViewBooking} icon={faXmark} width={16} height={16} className='absolute text-xl top-6 right-6 cursor-pointer' />
-                <div className='flex w-1/2 flex-col gap-3.5 p-5 border'>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('schedule')}:</span>{bookingData?.schedule.date} ({bookingData?.schedule.time})</div>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('client')}:</span>{bookingData?.client.name}</div>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('card')}:</span>{bookingData?.card_name}</div>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('meeting')}:</span>{bookingData?.meeting_info?.service} <span title='Click to Copy' className='cursor-pointer hover:text-blue-600' onClick={() => {
-                        const meetingCode = bookingData?.meeting_info?.meeting_code
-                        if (meetingCode) {
-                            navigator.clipboard.writeText(meetingCode)
-                            alert(`Copied ${meetingCode}`)
-                        }
-                    }} >{bookingData?.meeting_info?.meeting_code}</span></div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('booking.view')}</CardTitle>
+                        <CardDescription><Err /></CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className='flex w-full flex-col gap-3.5'>
+                            <div className='flex flex-col gap-2'>
+                                <Label>{t('side_nav.schedule')}</Label>
+                                <Input readOnly value={`${bookingData.schedule.date} at ${bookingData.schedule.time}`} />
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <Label>{t('side_nav.client')}</Label>
+                                <Input readOnly value={bookingData.client.username} />
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <Label>{t('side_nav.card')}</Label>
+                                <Input readOnly value={bookingData.card_name} />
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <Label>{t('meeting.h1')}</Label>
+                                <Input className='cursor-pointer' title='Click to copy'
+                                    readOnly value={`${meetingInfo.service} - ${meetingInfo.meeting_code}`}
+                                    onClick={() => copy(meetingInfo.meeting_code)} />
+                            </div>
+                            <div className='w-full border-b pb-1 text-center'>{t("info.quantity")}</div>
+                            <div className='flex w-full items-center gap-5'>
 
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('quantity')}:</span>{bookingData?.quantity}</div>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('price')}:</span>{bookingData?.price}</div>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('note')}:</span>{bookingData?.note}</div>
-                    <div className='flex items-center gap-2'><span className='font-medium'>{tt('status')}:</span>{bookingData?.status}</div>
-                    <div className='flex items-center w-full gap-5'>
-                        <button onClick={closeViewBooking} className='py-2 rounded-md border w-full hover:bg-slate-50'>{tt('close')}</button>
-                        <div className='flex flex-col w-full gap-5'>
-                            <button onClick={(e) => cancelBooking(e)} disabled={isLoading}
-                                className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
-                                {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : tt('cancel')}</button>
-                            <button onClick={(e) => deleteSchedule(e, bookingData?.scheduleID!)} disabled={isLoading}
-                                className={`${isLoading ? 'bg-red-500' : 'bg-red-600 hover:bg-red-500'} w-full flex items-center justify-center py-2 rounded-md text-white`}>
-                                {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : t('schedule.delete')}</button>
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <Label htmlFor="client_quantity">{t("side_nav.client")}</Label>
+                                    <Input type="number" id="client_quantity" name='client_quantity'
+                                        value={Number(bookingData.client_quantity)}
+                                        readOnly />
+                                </div>
+
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <Label htmlFor="supplier_quantity">{t("side_nav.supplier")}</Label>
+                                    <Input type="number" id="supplier_quantity" name='supplier_quantity'
+                                        value={Number(bookingData.supplier_quantity)}
+                                        readOnly />
+                                </div>
+
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <Label>{t('card.price')}</Label>
+                                <Input readOnly value={Number(bookingData.price)} />
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <Label>{t('info.note')}</Label>
+                                <Textarea readOnly value={bookingData.note || ''} />
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <Label>{t('status.h1')}</Label>
+                                <Input readOnly value={bookingData.status} />
+                            </div>
+                            <div className='flex w-full gap-5'>
+                                <Button variant={'ghost'} onClick={closeViewBooking} className='w-full'>{t('operation.close')}</Button>
+                                <Button
+                                    variant={'destructive'}
+                                    onClick={cancelBooking}
+                                >{t("operation.cancel")}</Button>
+                                <Button
+                                    variant={'destructive'}
+                                    onClick={(e) => deleteSchedule(e, bookingData.scheduleID)}
+                                >{t("schedule.delete")}</Button>
+                            </div>
                         </div>
+                    </CardContent>
+                </Card>
 
-                    </div>
-                </div>
             </div>
         </div>
     )

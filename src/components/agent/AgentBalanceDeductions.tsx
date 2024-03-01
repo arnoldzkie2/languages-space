@@ -7,15 +7,16 @@ import useGlobalStore from '@/lib/state/globalStore'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
 import useAgentBalanceStore from '@/lib/state/agent/agentBalanceStore'
 import { Skeleton } from '../ui/skeleton'
+import TruncateTextModal from '../global/TruncateTextModal'
 
 const AgentBalanceDeductions = () => {
 
     const [currentDeductions, setCurrentDeductions] = useState<SupplierDeductions[] | null>(null)
 
-    const { skeleton } = useGlobalStore()
+    const { skeleton, returnTruncateText, openTruncateTextModal } = useGlobalStore()
     const { deductions, getDeductions } = useAgentBalanceStore()
     const { currentPage, getCurrentData } = useGlobalPaginationStore()
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     useEffect(() => {
         if (!deductions) getDeductions()
@@ -29,16 +30,16 @@ const AgentBalanceDeductions = () => {
 
     return (
         <div className='flex flex-col gap-3 w-full order-1 md:order-2'>
-            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{tt('deductions')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{t('balance.deductions.h1')}</h1>
             <div className='overflow-x-auto'>
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="px-3 py-3">{tt('name')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('amount')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('rate')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('quantity')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('date')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.name')}</th>
+                            <th scope="col" className="px-3 py-3">{t('balance.amount')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.rate')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.quantity')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.date.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,8 +47,8 @@ const AgentBalanceDeductions = () => {
                             currentDeductions.map(obj => (
                                 <tr className="bg-card border hover:bg-muted hover:text-foreground" key={obj.id}>
                                     <td className='px-3 py-3'>
-                                        <div className='h-5 text-xs md:text-sm w-36'>
-                                            {obj.name}
+                                        <div className='h-5 text-xs md:text-sm w-36 cursor-pointer' onClick={() => openTruncateTextModal(obj.name)}>
+                                            {returnTruncateText(obj.name, 15)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
@@ -76,7 +77,7 @@ const AgentBalanceDeductions = () => {
                             currentDeductions && currentDeductions.length < 1 ?
                                 <tr>
                                     <td className='w-full px-3 py-2'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (
@@ -100,6 +101,7 @@ const AgentBalanceDeductions = () => {
                                 ))
                         }
                     </tbody >
+                    <TruncateTextModal />
                 </table >
             </div>
             <TablePagination data={deductions || []} />

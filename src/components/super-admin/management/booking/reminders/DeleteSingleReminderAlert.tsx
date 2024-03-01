@@ -4,7 +4,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHea
 import { Button } from '@/components/ui/button'
 import useGlobalStore from '@/lib/state/globalStore'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
-import { Booking } from '@/lib/types/super-admin/bookingType'
+import { BookingProps } from '@/lib/types/super-admin/bookingType'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -13,7 +13,7 @@ import React, { useState } from 'react'
 import { toast } from 'sonner'
 
 interface Props {
-    reminder: Booking
+    reminder: BookingProps
 }
 
 const DeleteSingleRemindersAlert = ({ reminder }: Props) => {
@@ -31,7 +31,7 @@ const DeleteSingleRemindersAlert = ({ reminder }: Props) => {
             if (data.ok) {
                 getReminders()
                 setIsLoading(false)
-                toast("Success! reminder deleted.")
+                toast.success("Success! reminder deleted.")
                 setOpen(false)
             }
 
@@ -45,33 +45,32 @@ const DeleteSingleRemindersAlert = ({ reminder }: Props) => {
         }
     }
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <li className='flex hover:text-foreground justify-between items-center cursor-pointer'>
-                    {tt('delete')}
+                    {t('operation.delete')}
                     <FontAwesomeIcon icon={faTrashCan} width={16} height={16} />
                 </li>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{t("booking.delete")}</AlertDialogTitle>
+                    <AlertDialogTitle>{t("booking.reminders.delete")}</AlertDialogTitle>
                     <AlertDialogDescription>
                         <Err />
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className='flex flex-col gap-3'>
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border'>
-                        <div>ID: <span className='font-normal text-muted-foreground'>{reminder.id}</span></div>
-                        <div>{tt('name')}: <span className='font-normal text-muted-foreground'>{reminder.name}</span></div>
+                        <div>{t("info.id")}: <span className='font-normal text-muted-foreground'>{reminder.id}</span></div>
+                        <div>{t('info.name')}: <span className='font-normal text-muted-foreground'>{reminder.name}</span></div>
                     </div>
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                     <form onSubmit={deleteSingleReminder}>
-                        <SubmitButton variant={'destructive'} msg={tt('confirm')} />
+                        <SubmitButton variant={'destructive'} msg={t('operation.confirm')} />
                     </form>
                 </div>
             </AlertDialogContent>

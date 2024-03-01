@@ -1,9 +1,8 @@
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import { create } from 'zustand'
 import axios from 'axios'
-import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import useDepartmentStore from './departmentStore'
-import { Client } from '@prisma/client'
+import { Client, ClientCard } from '@prisma/client'
 
 const newClientFormValue = {
     name: '',

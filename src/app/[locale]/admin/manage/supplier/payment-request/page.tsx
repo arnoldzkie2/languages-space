@@ -2,6 +2,7 @@
 import SideNav from '@/components/super-admin/SideNav'
 import Departments from '@/components/super-admin/management/Departments'
 import Pagination from '@/components/super-admin/management/Pagination'
+import RequestPaymentsHeader from '@/components/super-admin/management/supplier/balance/RequestPaymentsHeader'
 import RequestPaymentsTable from '@/components/super-admin/management/supplier/balance/RequestPaymentsTable'
 import SearchRequestPayments from '@/components/super-admin/management/supplier/balance/SearchRequestPayments'
 import { Link } from '@/lib/navigation'
@@ -86,20 +87,7 @@ const Page = () => {
         <div className='h-screen'>
             <SideNav />
             <div className={`flex flex-col gap-8 w-full h-full ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
-                <nav className={`border-b h-20 flex items-center px-8 justify-between`}>
-                    <h1 className='font-black text-xl uppercase'>{t('supplier.payment.h1')}</h1>
-                    <ul className='flex items-center h-full ml-auto gap-4 text-muted-foreground'>
-                        {isAdminAllowed('create_supplier_earnings') && <Link href='/admin/manage/supplier/earnings' className='flex items-center justify-center w-40 hover:text-primary cursor-pointer gap-1'>
-                            <div>{tt('earnings')}</div>
-                        </Link>}
-                        {isAdminAllowed('create_supplier_deductions') && <Link href='/admin/manage/supplier/deductions' className='flex items-center justify-center w-40 hover:text-primary cursor-pointer gap-1'>
-                            <div>{tt('deductions')}</div>
-                        </Link>}
-                        <Link href='/admin/manage/supplier' className='flex items-center justify-center w-40 hover:text-primary cursor-pointer gap-1'>
-                            <div>{t('supplier.h1')}</div>
-                        </Link>
-                    </ul>
-                </nav>
+                <RequestPaymentsHeader />
                 <div className='flex w-full items-start h-full gap-8 px-8'>
                     <div className='border py-3 px-6 flex flex-col shadow bg-card w-1/6'>
                         <Departments />

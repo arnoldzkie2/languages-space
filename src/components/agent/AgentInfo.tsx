@@ -65,8 +65,7 @@ const AgentInfo = () => {
         }
     }
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     const skeleton = (
         <div className='flex flex-col gap-1.5 w-full'>
@@ -87,7 +86,7 @@ const AgentInfo = () => {
                 <div className='flex items-center justify-around gap-5'>
                     <Image src={agent.profile_url || '/profile/profile.svg'} alt='Profile' width={120} height={120} className='border min-w-[120px] min-h-[120px] object-cover bg-cover rounded-full' />
                     <div className='flex flex-col gap-3 items-start'>
-                        <span className='block font-medium'>{tt('profile')}</span>
+                        <span className='block font-medium'>{t('profile.image')}</span>
                         <UploadButton
                             endpoint="profileUploader"
                             onClientUploadComplete={async (res) => {
@@ -130,44 +129,44 @@ const AgentInfo = () => {
             }
 
             {agent ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="name">{tt('name')}</Label>
-                <Input className='text-foreground' placeholder={tt('name')} type="text" id='name' name='name' value={agent.name || ''} onChange={handleChange} />
+                <Label htmlFor="name">{t('info.name')}</Label>
+                <Input className='text-foreground' placeholder={t('info.name')} type="text" id='name' name='name' value={agent.name || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {agent ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="email">{tt('email')}</Label>
-                <Input className='text-foreground' placeholder={tt('email')} type="text" id='email' name='email' value={agent.email || ''} onChange={handleChange} />
+                <Label htmlFor="email">{t('info.email.h1')}</Label>
+                <Input className='text-foreground' placeholder={t('info.email.address')} type="text" id='email' name='email' value={agent.email || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {agent ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="phone_number">{tt('phone')}</Label>
-                <Input className='text-foreground' placeholder={tt('phone')} type="number" id='phone_number' name='phone_number' value={agent.phone_number || ''} onChange={handleChange} />
+                <Label htmlFor="phone_number">{t('info.phone')}</Label>
+                <Input className='text-foreground' placeholder={t('info.phone')} type="number" id='phone_number' name='phone_number' value={agent.phone_number || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {agent ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="address">{tt('address')}</Label>
-                <Input className='text-foreground' placeholder={tt('address')} type="text" id='address' name='address' value={agent.address || ''} onChange={handleChange} />
+                <Label htmlFor="address">{t('info.address')}</Label>
+                <Input className='text-foreground' placeholder={t('info.address')} type="text" id='address' name='address' value={agent.address || ''} onChange={handleChange} />
             </div> : skeleton}
 
 
             {agent ? <div className="w-full items-center gap-1.5">
-                <Label>{tt('gender')}</Label>
+                <Label>{t('info.gender.h1')}</Label>
                 <Select onValueChange={(gender) => setAgent({ ...agent, gender })} value={agent.gender || ''}>
                     <SelectTrigger className="w-full">
-                        <SelectValue placeholder={tt('select-gender')} />
+                        <SelectValue placeholder={t('info.gender.select')} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>{tt('gender')}</SelectLabel>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="others">Others</SelectItem>
+                            <SelectLabel>{t('info.gender.h1')}</SelectLabel>
+                            <SelectItem value="male">{t('info.gender.male')}</SelectItem>
+                            <SelectItem value="female">{t("info.gender.female")}</SelectItem>
+                            <SelectItem value="others">{t("info.gender.others")}</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
             </div> : skeleton}
 
-            <SubmitButton msg={tt('update')} />
+            <SubmitButton msg={t('operation.update')} />
         </form>
     )
 }

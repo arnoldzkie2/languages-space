@@ -56,19 +56,18 @@ const ViewCardAlert = ({ cardID }: Props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open])
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <li className='flex hover:text-foreground justify-between items-center cursor-pointer'>
-                    {tt('view')}
+                    {t('operation.view')}
                     <FontAwesomeIcon icon={faEye} width={16} height={16} />
                 </li>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{t("client-card.view")}</AlertDialogTitle>
+                    <AlertDialogTitle>{t("card.view")}</AlertDialogTitle>
                     <AlertDialogDescription>
                         <Err />
                     </AlertDialogDescription>
@@ -77,79 +76,69 @@ const ViewCardAlert = ({ cardID }: Props) => {
                     {data ? <div className='font-bold text-sm flex flex-col gap-4 p-3 text-muted-foreground'>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='name'>{tt('name')}</Label>
+                            <Label htmlFor='name'>{t('info.name')}</Label>
                             <Input readOnly value={data.name || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='sold'>{t('client-card.sold')}</Label>
+                            <Label htmlFor='sold'>{t('card.sold')}</Label>
                             <Input readOnly value={data.sold || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='price'>{tt("price")}</Label>
+                            <Label htmlFor='price'>{t("card.price")}</Label>
                             <Input readOnly value={Number(data.price) || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='price'>{tt('price')}</Label>
-                            <Input readOnly value={Number(data.price)} />
-                        </div>
-
-                        <div className='flex flex-col gap-1'>
-                            <Label htmlFor='balance'>{tt('balance')}</Label>
+                            <Label htmlFor='balance'>{t('balance.h1')}</Label>
                             <Input readOnly value={data.balance || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='validity'>{t('client-card.validity')}</Label>
+                            <Label htmlFor='validity'>{t('card.validity')}</Label>
                             <Input readOnly value={data.validity || ''} />
-                        </div>
-
-                        <div className='flex flex-col gap-1'>
-                            <Label htmlFor='sold'>{t('client-card.sold')}</Label>
-                            <Input readOnly value={data.sold || ''} />
                         </div>
 
                         <div className="flex items-center gap-10">
                             <div className="flex flex-col gap-2">
                                 <div className='flex items-center gap-2'>
                                     <Switch checked={data.repeat_purchases} />
-                                    <Label htmlFor='repeat_purchases'>{t('client-card.repeat_purchases')}</Label>
+                                    <Label htmlFor='repeat_purchases'>{t('card.repeat_purchases')}</Label>
                                 </div>
                                 <div className='flex items-center gap-2'>
                                     <Switch checked={data.online_renews} />
-                                    <Label htmlFor='online_renews'>{t('client-card.online_renews')}</Label>
+                                    <Label htmlFor='online_renews'>{t('card.online_renew')}</Label>
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
 
                                 <div className='flex items-center gap-2'>
                                     <Switch checked={data.prepaid} />
-                                    <Label htmlFor='prepaid'>{t('client-card.prepaid')}</Label>
+                                    <Label htmlFor='prepaid'>{t('card.prepaid')}</Label>
                                 </div>
 
                                 <div className='flex items-center gap-2'>
                                     <Switch checked={data.available} />
-                                    <Label htmlFor='available'>{t('client-card.available')}</Label>
+                                    <Label htmlFor='available'>{t('card.available')}</Label>
                                 </div>
                             </div>
                         </div>
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='date'>{tt('date')}</Label>
+                            <Label htmlFor='date'>{t('info.date.h1')}</Label>
                             <Input readOnly value={new Date(data.created_at).toLocaleString() || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='departments'>{tt('departments')}</Label>
+                            <Label htmlFor='departments'>{t('side_nav.department')}</Label>
                             <Input readOnly value={data.departments.name || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='courses'>{t('client-card.courses')}</Label>
+                            <Label htmlFor='courses'>{t('card.supported.courses')}</Label>
                             <Select>
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder={tt('courses')} />
+                                    <SelectValue placeholder={t('course.s')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
@@ -162,10 +151,10 @@ const ViewCardAlert = ({ cardID }: Props) => {
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='supplier'>{t('client-card.suppliers')}</Label>
+                            <Label htmlFor='supplier'>{t('card.supported.suppliers')}</Label>
                             <Select value=''>
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder={tt('supplier')} />
+                                    <SelectValue placeholder={t('supplier.s')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
@@ -180,7 +169,7 @@ const ViewCardAlert = ({ cardID }: Props) => {
                     </div> : <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' />}
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                 </div>
             </AlertDialogContent>
         </AlertDialog >

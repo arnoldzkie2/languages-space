@@ -11,11 +11,11 @@ const NewsHeader: React.FC = ({ }) => {
     const { news, selectedNews } = useAdminNewsStore()
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
 
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     return (
         <nav className={`border-b h-20 flex items-center px-8 justify-between`}>
-            <h1 className='font-bold text-xl uppercase'>{t('news.h1')}</h1>
+            <h1 className='font-bold text-xl uppercase'>{t('news.manage')}</h1>
             <ul className='flex items-center h-full ml-auto gap-5'>
                 {isAdminAllowed('create_news') && <Link href='/admin/manage/news/new' className='flex items-center w-32 text-muted-foreground hover:text-primary cursor-pointer'>
                     <div>{t('news.create')}</div>

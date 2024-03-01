@@ -1,3 +1,4 @@
+import prisma from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 
 //404 response

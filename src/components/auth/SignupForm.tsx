@@ -17,55 +17,55 @@ interface SignupProps {
 
 const SignupForm = ({ department, agent }: SignupProps) => {
 
-    const t = useTranslations('auth')
+    const t = useTranslations()
     const { signupForm, handleSignupForm, signupUser } = useAuthStore()
     const [isText, setIsText] = useState(false)
     return (
         <form onSubmit={(e) => signupUser(e, { department, agent })}>
             <Card>
                 <CardHeader>
-                    <CardTitle>{t('signup')}</CardTitle>
+                    <CardTitle>{t('auth.signup.h1')}</CardTitle>
                     <CardDescription>
-                        {t('signup-description')}
+                        {t('auth.signup.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                     <Success />
                     <Err />
                     <div className="space-y-1">
-                        <Label htmlFor="username">{t('username')}</Label>
+                        <Label htmlFor="username">{t('info.username')}</Label>
                         <Input
                             id="username"
                             value={signupForm.username}
                             onChange={handleSignupForm}
                             name="username"
-                            placeholder={t('username')} />
+                            placeholder={t('info.username')} />
                     </div>
                     <div className="relative w-full">
-                        <Label htmlFor="password">{t('password')}</Label>
+                        <Label htmlFor="password">{t('info.password')}</Label>
                         <Input
                             type={isText ? 'text' : 'password'}
                             id="password"
                             value={signupForm.password}
                             onChange={handleSignupForm}
                             name="password"
-                            placeholder={t('password')} />
+                            placeholder={t('info.password')} />
                         {signupForm.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-[35px] right-3 text-muted-foreground' />}
                     </div>
                     <div className="relative w-full">
-                        <Label htmlFor="confirm_password">{t('confirm_password')}</Label>
+                        <Label htmlFor="confirm_password">{t('auth.confirm_password')}</Label>
                         <Input
                             type={isText ? 'text' : 'password'}
                             id="confirm_password"
                             value={signupForm.confirm_password}
                             onChange={handleSignupForm}
                             name="confirm_password"
-                            placeholder={t('confirm_password')} />
+                            placeholder={t('auth.confirm_password')} />
                         {signupForm.password && <FontAwesomeIcon icon={isText ? faEyeSlash : faEye} onClick={() => setIsText(prevState => !prevState)} className='cursor-pointer absolute top-[35px] right-3 text-muted-foreground' />}
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <SubmitButton msg={t('signup')} style="w-full" />
+                    <SubmitButton msg={t('auth.signup.h1')} style="w-full" />
                 </CardFooter>
             </Card>
         </form>

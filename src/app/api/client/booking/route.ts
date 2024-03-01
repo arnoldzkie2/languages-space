@@ -1,6 +1,7 @@
+import { checkBookingAndUpdateStatus } from "@/lib/api/updateBookingStatus";
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
-import { badRequestRes, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
+import { notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { CLIENT } from "@/utils/constants";
 import { NextRequest } from "next/server";
 
@@ -10,9 +11,12 @@ export const GET = async (req: NextRequest) => {
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
-
+        //only allow client
         if (session.user.type !== CLIENT) return unauthorizedRes()
 
+        await checkBookingAndUpdateStatus()
+
+        //retrieve client bookings
         const client = await prisma.client.findUnique({
             where: { id: session.user.id },
             select: {
@@ -27,12 +31,22 @@ export const GET = async (req: NextRequest) => {
                         },
                         supplier: {
                             select: {
-                                name: true
+                                name: true,
+                                profile_url: true,
+                                gender: true,
+                            }
+                        },
+                        client: {
+                            select: {
+                                username: true,
+                                profile_url: true
                             }
                         },
                         card_name: true,
                         status: true,
                         note: true,
+                        client_comment: true,
+                        supplier_comment: true,
                         created_at: true
                     },
                     orderBy: { created_at: 'desc' }
@@ -41,7 +55,15 @@ export const GET = async (req: NextRequest) => {
         })
         if (!client) return notFoundRes('Client')
 
-        return okayRes(client.bookings)
+        //modify the booking
+
+        const modifyBookings = client.bookings.map(booking => ({
+            ...booking,
+            client_comment: booking.client_comment.length > 0 ? true : false,
+            supplier_comment: booking.supplier_comment.length > 0 ? true : false
+        }))
+
+        return okayRes(modifyBookings)
 
     } catch (error) {
         console.log(error);

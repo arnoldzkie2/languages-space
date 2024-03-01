@@ -117,8 +117,7 @@ const CreateNews = () => {
         setKeyWords((prevTags) => prevTags.filter((_, i) => i !== index));
     };
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='h-screen'>
@@ -134,7 +133,7 @@ const CreateNews = () => {
                         <div className='w-1/4'>
                             <Departments />
                         </div>
-                        <Input placeholder={t('news.title')} value={formData.title} onChange={(e: any) => setFormData(prevData => ({
+                        <Input placeholder={t('info.title')} value={formData.title} onChange={(e: any) => setFormData(prevData => ({
                             ...prevData,
                             title: e.target.value
                         }))} />
@@ -144,7 +143,7 @@ const CreateNews = () => {
                             author: e.target.value
                         }))} />
 
-                        <Input className='w-1/4' placeholder={t('news.add-keyword')} onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
+                        <Input className='w-1/4' placeholder={t('info.keywords.add')} onKeyDown={addKeyword} title='Press "Enter" to add keyword' />
                     </div>
 
                 </div>
@@ -156,7 +155,7 @@ const CreateNews = () => {
                 <div className='bottom-0 w-full px-8 flex items-center h-20 py-3 justify-between gap-10 border-t'>
 
                     <div className='flex items-center w-full'>
-                        <div className='font-medium p-2 uppercase'>{t('news.keywords')}:</div>
+                        <div className='font-medium p-2 uppercase'>{t('info.keywords.h1')}:</div>
                         <div className='flex items-center gap-5 overflow-x-auto flex-wrap px-2 py-1  max-h-16'>
                             {keywords.length > 0 && keywords.map((item, i) => {
                                 return (
@@ -171,7 +170,7 @@ const CreateNews = () => {
                     </div>
 
                     <div className='flex items-center gap-9 w-1/4 justify-end'>
-                        <Button variant={'ghost'} onClick={() => router.push('/admin/manage/news')}>{tt('cancel')}</Button>
+                        <Button variant={'ghost'} onClick={() => router.push('/admin/manage/news')}>{t('operation.cancel')}</Button>
                         <SubmitButton msg={t('news.create')} onClick={createNews} />
                     </div>
                 </div>

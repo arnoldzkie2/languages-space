@@ -12,7 +12,7 @@ const DepartmentHeader: React.FC = ({ }) => {
 
     const session = useSession()
 
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     const skeleton = (
         <Skeleton className='w-40 h-5 rounded-3xl'></Skeleton>
@@ -20,7 +20,7 @@ const DepartmentHeader: React.FC = ({ }) => {
 
     return (
         <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between`}>
-            <h1 className='font-black text-xl uppercase'>{t('department.h1')}</h1>
+            <h1 className='font-black text-xl uppercase'>{t('department.manage')}</h1>
             <ul className='flex items-center h-full ml-auto gap-5'>
                 {session.status !== 'loading' ?
                     <div onClick={openNewDepartment} className='flex items-center text-muted-foreground hover:text-primary justify-center w-40 cursor-pointer'>

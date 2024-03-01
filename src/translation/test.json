@@ -1,0 +1,475 @@
+{
+    "client": {
+        "s": "Clients",
+        "manage": "Manage Client",
+        "create": "Create Client",
+        "update": "Update Client",
+        "view": "View Client",
+        "delete": "Are you sure you want to delete this client?",
+        "search": "Search Client",
+        "select": {
+            "h1": "Select Client",
+            "first": "Select Client First"
+        },
+        "no_data": "No Clients",
+        "404": "Client Not Found",
+        "page": {
+            "header": {
+                "buy_card": "Buy Cards",
+                "book_now": "Book Now"
+            }
+        }
+    },
+    "profile": {
+        "account": "Account",
+        "profile": "My Profile",
+        "settings": "Settings",
+        "account_info": "Account Info",
+        "info": "Profile Info",
+        "navigate": "Navigate to",
+        "invites": "My Invites",
+        "transactions": "Transactions",
+        "booking": "My Bookings",
+        "support": "Contact Support",
+        "orders": "My Orders",
+        "meeting": "My Meeting"
+    },
+    "card": {
+        "h1": "Card",
+        "s": "Cards",
+        "select": {
+            "h1": "Select Card",
+            "first": "Select Card First"
+        },
+        "manage": "Manage Card",
+        "loading": "Loading Cards...",
+        "no_cards": "You don't have cards",
+        "buy": "Buy Now",
+        "delete": "Delete Card",
+        "update": "Update Card",
+        "bind": "Bind Card",
+        "renew": "Renew Card",
+        "404": "Card Not Found",
+        "no_data": "No Cards"
+    },
+    "booking": {
+        "s": "Bookings",
+        "manage": "Manage Booking",
+        "delete": "Are you sure you want to delete this booking?",
+        "search": "Search Booking",
+        "cancel": "Are you sure you want to cancel this booking?",
+        "create": "Create Booking",
+        "select_card": "Select card to book",
+        "request_cancel": "Request admin to cancel this booking.",
+        "fillup": "Fill up booking info",
+        "update": "Update Booking",
+        "confirm": "Confirm Booking",
+        "reminders": {
+            "h1": "Reminders",
+            "manage": "Manage Booking Reminders",
+            "delete": "Are you sure you want to delete this reminder?",
+            "create": "Create Reminders",
+            "confirm": {
+                "h1": "Book Now",
+                "sure": "Are you sure you want to book this reminder?"
+            },
+            "update": "Update Reminders"
+        },
+        "request": {
+            "h1": "Booking Request",
+            "h2": "Request Booking",
+            "manage": "Manage Booking Request",
+            "create": "Create Booking Request",
+            "cancel": "Are you sure you want to cancel this booking request?",
+            "delete": "Are you sure you want to delete this booking request?"
+        },
+        "comments": {
+            "template": "Comments Template",
+            "create": "Create Template",
+            "update": "Update Template",
+            "search": "Search Template",
+            "delete": "Are you sure you want to delete this template?"
+        }
+    },
+    "agent": {
+        "s": "Agents",
+        "manage": "Manage Agent",
+        "search": "Search Agent",
+        "delete": "Are you sure you want to delete this agent?",
+        "create": "Create Agent",
+        "update": "Update Agent",
+        "earnings": "Agent Earnings",
+        "deductions": "Agent Deductions",
+        "404": "Agent Not Found",
+        "no_data": "No Agents",
+        "page": {
+            "header": {
+                "invite": "Invite"
+            }
+        }
+    },
+    "supplier": {
+        "s": "Suppliers",
+        "create": "Create Supplier",
+        "view": "View Supplier",
+        "delete": "Are you sure you want to delete this supplier?",
+        "manage": "Manage Supplier",
+        "select": {
+            "h1": "Select Supplier",
+            "first": "Select Supplier First"
+        },
+        "404": "Supplier not found",
+        "search": "Search Supplier",
+        "tags": "Supplier Tags",
+        "earnings": "Supplier Earnings",
+        "deductions": "Supplier Deductions",
+        "no_data": "No Suppliers",
+        "supported": "Supported Suppliers"
+    },
+    "balance": {
+        "h1": "Balance",
+        "my_balance": "My Balance",
+        "amount": "Amount",
+        "total": "Total Balance",
+        "cashout": {
+            "h1": "Cashout",
+            "request": "Request Cashout"
+        }
+    },
+    "schedule": {
+        "h1": "Schedule",
+        "s": "Schedules",
+        "manage": "Manage Schedule",
+        "create": "Create Schedule",
+        "no_schedule": "No Schedule",
+        "select": "Select Schedule",
+        "delete": "Delete Schedule"
+    },
+    "side-nav": {
+        "menu": "Menu",
+        "department": "Department",
+        "dashboard": "Dashboard",
+        "client": "Client",
+        "schedule": "Schedule",
+        "agent": "Agent",
+        "card": "Card",
+        "course": "Course",
+        "supplier": "Supplier",
+        "admin": "Admin",
+        "orders": "Orders",
+        "booking": "Booking",
+        "news": "News",
+        "settings": "Settings",
+        "statistics": "Statistics",
+        "logout": "Logout"
+    },
+    "auth": {
+        "login": {
+            "h1": "Sign In",
+            "description": "Enter your username and password below to sign in and continue your session."
+        },
+        "signup": {
+            "h1": "Sign Up",
+            "description": "Start your learning journey today. Sign up to explore a variety of subjects and connect with passionate educators."
+        },
+        "welcome_back": "Welcome Back!",
+        "fillup": "Fill up the form",
+        "username": "Username",
+        "password": "Password",
+        "email": {
+            "h1": "Email",
+            "address": "Email Address"
+        },
+        "signin": "Sign In",
+        "full_name": "Full name",
+        "confirm_password": "Confirm Password",
+        "not_signup": "Don't have account yet? ",
+        "already_signup": "Already signed up?"
+    },
+    "info": {
+        "name": "Name",
+        "age": "Age",
+        "tags": "Tags",
+        "gender": "Gender",
+        "description": "Description",
+        "employment": "Employment Status",
+        "settlement": "Settlement Period",
+        "validity": "Validity",
+        "time": {
+            "h1": "Time",
+            "select": "Select Time"
+        },
+        "date": {
+            "h1": "Date",
+            "select": {
+                "h1": "Select Date",
+                "first": "Select Date First"
+            }
+        },
+        "address": "Address",
+        "quantity": "Quantity",
+        "phone": "Phone Number",
+        "keywords": {
+            "h1": "Keywords",
+            "add": "Add Keywords",
+            "delete": "Delete Keywords"
+        },
+        "organization": "Organization",
+        "profile": {
+            "h1": "Profile",
+            "image": "Profile Image"
+        },
+        "title": "Title",
+        "message": "Message",
+        "origin": "Origin",
+        "note": "Note",
+        "salary": "Salary",
+        "invoice": "Invoice Number",
+        "express": "Express Number",
+        "available": "Available",
+        "online_renew": "Online Renew",
+        "price": "Price",
+        "repeat_purchases": "Repeat Purchases",
+        "sold": "Sold"
+    },
+    "global": {
+        "max": "Max"
+    },
+    "user": {
+        "h1": "User",
+        "all": "All User",
+        "supplier": "Supplier",
+        "client": "Client",
+        "agent": "Agent",
+        "admin": "Admin"
+    },
+    "status": {
+        "h1": "Status",
+        "all": "All Status",
+        "select": "Select Status",
+        "completed": "Completed",
+        "pending": "Pending",
+        "in-process": "In Process",
+        "canceled": "Canceled",
+        "cancel-request": "Cancel Request",
+        "confirmed": "Confirmed",
+        "invoiced": "Invoiced"
+    },
+    "operation": {
+        "h1": "Operation",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "view": "View",
+        "confirm": "Confirm",
+        "create": "Create",
+        "close": "Close",
+        "delete-all": "Delete All",
+        "renew": "Renew",
+        "update": "Update",
+        "download": "Download"
+    },
+    "dashboard": {
+        "h1": "Dashboard",
+        "overview": "Overview",
+        "most_data": {
+            "client": "Client Most Bookings",
+            "supplier": "Supplier Most Bookings",
+            "agent": "Agent Most Invites",
+            "card": "Most Card Purchases"
+        },
+        "new_clients": "New Clients"
+    },
+    "statistics": {
+        "no_changes": "No changes",
+        "most_data": {
+            "last": "This is the most data last month",
+            "now": "This is the most data this month"
+        },
+        "total": {
+            "clients": "Total Clients",
+            "supplier": "Total Suppliers",
+            "agent": "Total Agents",
+            "booking": "Total Bookings",
+            "revenue": "Total Revenue"
+        },
+        "new": {
+            "client": "New Clients",
+            "booking": "New Bookings",
+            "supplier": "New Suppliers",
+            "agent": "New Agents",
+            "order": "New Orders"
+        },
+        "week": {
+            "h1": "Week",
+            "this": "This Week",
+            "last": "Last Week",
+            "from_last": "From Last Week"
+        },
+        "month": {
+            "h1": "Month",
+            "this": "This Month",
+            "last": "Last Month",
+            "from_last": "From Last Month"
+        },
+        "year": {
+            "h1": "Year",
+            "this": "This Year",
+            "last": "Last Year",
+            "from_last": "From Last Year"
+        }
+    },
+    "courses": {
+        "manage": "Manage Courses",
+        "search": "Search Course",
+        "update": "Update Course",
+        "create": "Create Course",
+        "delete": "Are you sure you want to delete this course?",
+        "select": "Select Course",
+        "name": "Course Name",
+        "supported": "Supported Courses"
+    },
+    "department": {
+        "s": "Departments",
+        "manage": "Manage Department",
+        "search": "Search Department",
+        "create": "Create Department",
+        "update": "Update Department",
+        "delete": "Are you sure you want to delete this department?",
+        "select": "Select Department"
+    },
+    "news": {
+        "manage": "Manage News",
+        "update": "Update News",
+        "create": "Create News",
+        "delete": "Are you sure you want to delete this news?",
+        "search": "Search News"
+    },
+    "order": {
+        "s": "Orders",
+        "manage": "Manage Orders",
+        "create": "Create Order",
+        "view": "View Order",
+        "update": "Update Order",
+        "delete": "Are you sure you want to delete this order?",
+        "search": "Search Order"
+    },
+    "pagination": {
+        "page": {
+            "h1": "Page",
+            "go_to": "Go to page"
+        },
+        "prev": {
+            "h1": "Prev",
+            "page": "Prev Page"
+        },
+        "next": {
+            "h1": "Next",
+            "page": "Next Page"
+        },
+        "result": "Result",
+        "selected": "Selected",
+        "total": "Total"
+    },
+    "theme": {
+        "toggle": "Toggle Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+    },
+    "admin": {
+        "manage": "Manage Admin",
+        "create": "Create Admin",
+        "update": "Update Admin",
+        "view": "View Admin",
+        "delete": "Are you sure you want to delete this admin?",
+        "search": "Search Admin",
+        "permissions": {
+            "manage": "Manage Admin Permissions",
+            "list": {
+                "create": "Create Permissions",
+                "view_client": "View Client",
+                "create_client": "Create Client",
+                "update_client": "Update Client",
+                "delete_client": "Delete Client",
+                "view_client_cards": "View Client Cards",
+                "update_client_cards": "Update Client Cards",
+                "delete_client_cards": "Delete Client Cards",
+                "view_cards": "View Cards",
+                "create_cards": "Create Cards",
+                "update_cards": "Update Cards",
+                "delete_cards": "Delete Cards",
+                "bind_cards": "Bind Cards",
+                "renew_cards": "Renew Cards",
+                "view_supplier": "View Supplier",
+                "create_supplier": "Create Supplier",
+                "update_supplier": "Update Supplier",
+                "delete_supplier": "Delete Supplier",
+                "view_supplier_earnings": "View Supplier Earnings",
+                "delete_supplier_earnings": "Delete Supplier Earnings",
+                "view_supplier_deductions": "View Supplier Deductions",
+                "delete_supplier_deductions": "Delete Supplier Deductions",
+                "create_supplier_earnings": "Create Supplier Earnings",
+                "create_supplier_deductions": "Create Supplier Deductions",
+                "view_supplier_payment_request": "View Supplier Payment Request",
+                "update_supplier_payment_request": "Update Supplier Payment Request",
+                "send_supplier_payslip": "Send Supplier Payslip",
+                "view_supplier_schedule": "View Supplier Schedule",
+                "create_supplier_schedule": "Create Supplier Schedule",
+                "delete_supplier_schedule": "Delete Supplier Schedule",
+                "receive_cancel_request_email": "Receive Email",
+                "view_courses": "View Courses",
+                "create_courses": "Create Courses",
+                "update_courses": "Update Courses",
+                "delete_courses": "Delete Courses",
+                "view_orders": "View Orders",
+                "create_orders": "Create Orders",
+                "update_orders": "Update Orders",
+                "delete_orders": "Delete Orders",
+                "view_agent": "View Agent",
+                "create_agent": "Create Agent",
+                "update_agent": "Update Agent",
+                "delete_agent": "Delete Agent",
+                "send_agent_payslip": "Send Agent Payslip",
+                "create_agent_earnings": "Create Agent Earnings",
+                "create_agent_deductions": "Create Agent Deductions",
+                "view_agent_earnings": "View Agent Earnings",
+                "delete_agent_earnings": "Delete Agent Earnings",
+                "view_agent_deductions": "View Agent Deductions",
+                "delete_agent_deductions": "Delete Agent Deductions",
+                "view_agent_payment_request": "View Agent Payment Request",
+                "update_agent_payment_request": "Update Agent Payment Request",
+                "view_admin": "View Admin",
+                "create_admin": "Create Admin",
+                "update_admin": "Update Admin",
+                "delete_admin": "Delete Admin",
+                "view_news": "View News",
+                "create_news": "Create News",
+                "update_news": "Update News",
+                "delete_news": "Delete News",
+                "view_booking": "View Booking",
+                "create_booking": "Create Booking",
+                "update_booking": "Update Booking",
+                "delete_booking": "Delete Booking",
+                "cancel_booking": "Cancel Booking",
+                "view_booking_request": "View Booking Request",
+                "create_booking_request": "Create Booking Request",
+                "cancel_booking_request": "Cancel Booking Request",
+                "delete_booking_request": "Delete Booking Request",
+                "view_reminders": "View Reminders",
+                "create_reminders": "Create Reminders",
+                "update_reminders": "Update Reminders",
+                "delete_reminders": "Delete Reminders",
+                "confirm_reminders": "Confirm Reminders",
+                "view_department": "View Department",
+                "create_department": "Create Department",
+                "update_department": "Update Department",
+                "delete_department": "Delete Department",
+                "download_table": "Download Table",
+                "handle_settings": "Handle Settings",
+                "view_statistics": "View Statistics",
+                "view_comments": "View Comments",
+                "delete_comments": "Delete Comments"
+            }
+        }
+    }
+}

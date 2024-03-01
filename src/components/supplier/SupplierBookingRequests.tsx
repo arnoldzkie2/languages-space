@@ -30,9 +30,7 @@ const SupplierBookingRequest: React.FC = () => {
         if (!bookingRequests && supplier?.id) getBookingRequests()
     }, [supplier?.id])
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
-    const ttt = useTranslations('super-admin')
+    const t = useTranslations()
 
     useEffect(() => {
         setCurrentBookings(getCurrentData(bookingRequests))
@@ -41,7 +39,7 @@ const SupplierBookingRequest: React.FC = () => {
     return (
         <div className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='w-full border-b pb-1 mb-1 flex items-center gap-5'>
-                <h1 className='text-foreground text-lg font-bold'>{t('profile.booking-requests')}</h1>
+                <h1 className='text-foreground text-lg font-bold'>{t('booking.request.h1')}</h1>
                 <Success />
                 <Err />
             </div>
@@ -49,12 +47,12 @@ const SupplierBookingRequest: React.FC = () => {
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="p-3">{tt('schedule')}</th>
-                            <th scope="col" className="p-3">{tt('client')}</th>
-                            <th scope="col" className="p-3">{tt('status')}</th>
-                            <th scope="col" className="p-3">{tt('note')}</th>
-                            <th scope="col" className="p-3">{tt('date')}</th>
-                            <th scope="col" className="p-3">{ttt('global.operation')}</th>
+                            <th scope="col" className="p-3">{t('side_nav.schedule')}</th>
+                            <th scope="col" className="p-3">{t('user.client')}</th>
+                            <th scope="col" className="p-3">{t('status.h1')}</th>
+                            <th scope="col" className="p-3">{t('info.note')}</th>
+                            <th scope="col" className="p-3">{t('info.date.h1')}</th>
+                            <th scope="col" className="p-3">{t('operation.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,9 +92,9 @@ const SupplierBookingRequest: React.FC = () => {
                                                 <Button
                                                     variant={'secondary'}
                                                     className='border text-muted-foreground'
-                                                    onClick={(e) => cancelBookingRequest(e, bookingRequest.id)}>{tt('cancel')}</Button>
+                                                    onClick={(e) => cancelBookingRequest(e, bookingRequest.id)}>{t('operation.cancel')}</Button>
                                                 <Button
-                                                    onClick={(e) => confirmBookingRequest(e, bookingRequest.id)}>{tt("confirm")}</Button>
+                                                    onClick={(e) => confirmBookingRequest(e, bookingRequest.id)}>{t("operation.confirm")}</Button>
                                             </div>
                                         }
                                     </td>
@@ -105,7 +103,7 @@ const SupplierBookingRequest: React.FC = () => {
                             currentBookings && currentBookings.length < 1 ?
                                 <tr className='bg-card border'>
                                     <td className='w-full px-3 py-2'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (

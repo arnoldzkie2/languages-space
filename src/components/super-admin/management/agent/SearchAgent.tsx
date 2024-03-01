@@ -1,4 +1,3 @@
-import useAdminAgentStore from '@/lib/state/super-admin/agentStore';
 import { useTranslations } from 'next-intl';
 import React, { ChangeEvent } from 'react';
 import SendPayslipButton from '../../SendPayslipButton';
@@ -21,8 +20,7 @@ interface Props {
 
 const SearchAgent: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
     return (
@@ -34,35 +32,35 @@ const SearchAgent: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('username')}
+                        placeholder={t('info.username')}
                         name='username'
                         onChange={handleSearch}
                         value={searchQuery.username}
                     />
 
                     <Input type="text"
-                        placeholder={tt('phone')}
+                        placeholder={t('info.phone')}
                         name='phone_number'
                         onChange={handleSearch}
                         value={searchQuery.phone_number}
                     />
 
                     <Input type="text"
-                        placeholder={tt('organization')}
+                        placeholder={t('info.organization')}
                         name='organization'
                         onChange={handleSearch}
                         value={searchQuery.organization}
                     />
 
                     <Input type="text"
-                        placeholder={tt('origin')}
+                        placeholder={t('info.origin')}
                         name='origin'
                         onChange={handleSearch}
                         value={searchQuery.origin}
                     />
 
                     <Input type="text"
-                        placeholder={tt('note')}
+                        placeholder={t('info.note')}
                         name='note'
                         onChange={handleSearch}
                         value={searchQuery.note}

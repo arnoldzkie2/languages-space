@@ -3,9 +3,8 @@ import SubmitButton from '@/components/global/SubmitButton'
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import useGlobalStore from '@/lib/state/globalStore'
-import useAdminStore from '@/lib/state/super-admin/adminStore'
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore'
-import { Booking } from '@/lib/types/super-admin/bookingType'
+import { BookingProps } from '@/lib/types/super-admin/bookingType'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
@@ -14,7 +13,7 @@ import React, { useState } from 'react'
 import { toast } from 'sonner'
 
 interface Props {
-    booking: Booking
+    booking: BookingProps
 }
 
 const DeleteSingleBookingAlert = ({ booking }: Props) => {
@@ -46,13 +45,12 @@ const DeleteSingleBookingAlert = ({ booking }: Props) => {
         }
     }
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <li className='flex hover:text-foreground justify-between items-center cursor-pointer'>
-                    {tt('delete')}
+                    {t('operation.delete')}
                     <FontAwesomeIcon icon={faTrashCan} width={16} height={16} />
                 </li>
             </AlertDialogTrigger>
@@ -65,14 +63,14 @@ const DeleteSingleBookingAlert = ({ booking }: Props) => {
                 </AlertDialogHeader>
                 <div className='flex flex-col gap-3'>
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border'>
-                        <div>ID: <span className='font-normal text-muted-foreground'>{booking.id}</span></div>
-                        <div>{tt('name')}: <span className='font-normal text-muted-foreground'>{booking.name}</span></div>
+                        <div>{t('info.id')}: <span className='font-normal text-muted-foreground'>{booking.id}</span></div>
+                        <div>{t('info.name')}: <span className='font-normal text-muted-foreground'>{booking.name}</span></div>
                     </div>
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                     <form onSubmit={deleteSingleAdmin}>
-                        <SubmitButton variant={'destructive'} msg={tt('confirm')} />
+                        <SubmitButton variant={'destructive'} msg={t('operation.confirm')} />
                     </form>
                 </div>
             </AlertDialogContent>

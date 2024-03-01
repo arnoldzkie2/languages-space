@@ -42,8 +42,7 @@ const DeleteSelectedOrdersAlert = () => {
         }
     }
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
 
     if (selectedOrder.length < 1) return null
 
@@ -51,7 +50,7 @@ const DeleteSelectedOrdersAlert = () => {
         <div className='p-3 border bg-card'>
             <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogTrigger asChild>
-                    <Button variant={'destructive'}>{tt("delete-all")}</Button>
+                    <Button variant={'destructive'}>{t("operation.delete_all")}</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -63,15 +62,15 @@ const DeleteSelectedOrdersAlert = () => {
                     <div className='flex flex-col gap-3 overflow-y-auto max-h-[500px]'>
                         {selectedOrder.map(order => (
                             <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={order.id}>
-                                <div>ID: <span className='font-normal text-muted-foreground'>{order.id}</span></div>
-                                <div>{tt('name')}: <span className='font-normal text-muted-foreground'>{order.name}</span></div>
+                                <div>{t("info.id")}: <span className='font-normal text-muted-foreground'>{order.id}</span></div>
+                                <div>{t('info.name')}: <span className='font-normal text-muted-foreground'>{order.name}</span></div>
                             </div>
                         ))}
                     </div>
                     <div className='flex items-center w-full justify-end gap-5'>
-                        <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                        <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                         <form onSubmit={deleteSelectedOrders}>
-                            <SubmitButton variant={'destructive'} msg={tt('confirm')} />
+                            <SubmitButton variant={'destructive'} msg={t('operation.confirm')} />
                         </form>
                     </div>
                 </AlertDialogContent>

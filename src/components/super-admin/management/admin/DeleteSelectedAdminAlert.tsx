@@ -42,8 +42,7 @@ const DeleteSelectedAdminAlert = () => {
         }
     }
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
 
     if (selectedAdmins.length < 1) return null
 
@@ -51,7 +50,7 @@ const DeleteSelectedAdminAlert = () => {
         <div className='p-3 border bg-card'>
             <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogTrigger asChild>
-                    <Button variant={'destructive'}>{tt("delete-all")}</Button>
+                    <Button variant={'destructive'}>{t("operation.delete_all")}</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -64,15 +63,15 @@ const DeleteSelectedAdminAlert = () => {
                         {selectedAdmins.length > 0 ? selectedAdmins.map(admin => (
                             <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={admin.id}>
                                 <div>ID: <span className='font-normal text-muted-foreground'>{admin.id}</span></div>
-                                <div>{tt('name')}: <span className='font-normal text-muted-foreground'>{admin.name}</span></div>
+                                <div>{t('info.name')}: <span className='font-normal text-muted-foreground'>{admin.name}</span></div>
                             </div>
                         ))
                             : null}
                     </div>
                     <div className='flex items-center w-full justify-end gap-5'>
-                        <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                        <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                         <form onSubmit={deleteSelectedAdmins}>
-                            <SubmitButton variant={'destructive'} msg={tt('confirm')} />
+                            <SubmitButton variant={'destructive'} msg={t('operation.confirm')} />
                         </form>
                     </div>
                 </AlertDialogContent>

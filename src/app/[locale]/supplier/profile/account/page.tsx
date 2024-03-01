@@ -87,8 +87,7 @@ const Page = () => {
     setPage('account')
   }, [])
 
-  const t = useTranslations('client')
-  const tt = useTranslations('global')
+  const t = useTranslations()
 
   return (
     <>
@@ -97,14 +96,14 @@ const Page = () => {
         <SupplierProfile />
         <Card className='order-1 md:order-2 w-full lg:w-/2 xl:w-1/4'>
           <CardHeader>
-            <CardTitle className='text-2xl'>{t('profile.account-info')}</CardTitle>
+            <CardTitle className='text-2xl'>{t('profile.account')}</CardTitle>
             <CardDescription><Err /><Success /></CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={updateSupplier} className='flex flex-col gap-6 w-full text-muted-foreground'>
               <Err />
               <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="locale">{tt('select-language')}</Label>
+                <Label htmlFor="locale">{t('global.select_language')}</Label>
                 <select id='locale' className={`py-2 w-full px-1 text-sm border bg-card cursor-pointer border-b focus:outline-none focus:ring-0 outline-none`} value={locale} onChange={handleTranslation}>
                   {locales.map(loc => (
                     <option value={loc.loc} key={loc.loc} className='flex items-center justify-between'>
@@ -114,16 +113,16 @@ const Page = () => {
                 </select>
               </div>
               {supplier?.id ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="username">{tt('username')}</Label>
+                <Label htmlFor="username">{t('info.username')}</Label>
                 <Input type="text" id='name' name='username' value={supplier.username} onChange={handleChange} />
               </div> : skeleton}
 
               {supplier?.id ? <div className='flex flex-col w-full gap-1 relative'>
-                <Label htmlFor="password">{tt('password')}</Label>
+                <Label htmlFor="password">{t('info.password')}</Label>
                 <Input type={eye ? 'text' : 'password'} id='password' name='password' value={supplier.password} onChange={handleChange} />
                 <FontAwesomeIcon icon={eye ? faEyeSlash : faEye} width={16} height={16} className='absolute right-3 bottom-2 cursor-pointer hover:text-foreground' onClick={toggleEye} />
               </div> : skeleton}
-              <SubmitButton msg={tt('update')} />
+              <SubmitButton msg={t('operation.update')} />
             </form>
           </CardContent>
         </Card>

@@ -92,8 +92,7 @@ const Page = () => {
         getClientsWithCards()
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='h-screen'>
@@ -103,14 +102,14 @@ const Page = () => {
                     <h1 className='font-black text-xl uppercase'>{t('booking.request.create')}</h1>
                     <ul className='flex items-center h-full ml-auto gap-5'>
                         <Link href={'/admin/manage/booking/request'} className='flex items-center text-muted-foreground justify-center hover:text-primary cursor-pointer gap-1'>
-                            <div>{t('booking.request.h1')}</div>
+                            <div>{t('booking.request.manage')}</div>
                         </Link>
                     </ul>
                 </nav>
                 <div className='w-full px-8'>
                     <Card className='w-1/3 h-full'>
                         <CardHeader>
-                            <CardTitle>{t('booking.request.create')}</CardTitle>
+                            <CardTitle>{t('booking.request.manage')}</CardTitle>
                             <CardDescription></CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -121,19 +120,19 @@ const Page = () => {
                                         <Departments />
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="name">{tt("name")}</Label>
-                                            <Input type="text" id="name" name='name' placeholder={tt("name")} value={bookingFormData.name} onChange={handleChange} />
+                                            <Label htmlFor="name">{t("info.name")}</Label>
+                                            <Input type="text" id="name" name='name' placeholder={t("info.name")} value={bookingFormData.name} onChange={handleChange} />
                                         </div>
 
                                         <div className="w-full items-center gap-1.5">
-                                            <Label htmlFor="supplierID">{tt('supplier')}</Label>
+                                            <Label htmlFor="supplierID">{t('user.supplier')}</Label>
                                             <Select onValueChange={(supplierID) => setBookingFormData({ ...bookingFormData, supplierID })} value={bookingFormData.supplierID}>
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder={t('supplier.select')} />
+                                                    <SelectValue placeholder={t('supplier.select.h1')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>{departmentID && supplierWithMeeting.length === 0 ? t('supplier.nodata') : tt('supplier')}</SelectLabel>
+                                                        <SelectLabel>{departmentID && supplierWithMeeting.length === 0 ? t('supplier.no_data') : t('user.supplier')}</SelectLabel>
                                                         {supplierWithMeeting.length > 0 ? supplierWithMeeting.map(sup => (
                                                             <SelectItem value={sup.id} key={sup.id}>{sup.name}</SelectItem>
                                                         )) : null}
@@ -141,7 +140,7 @@ const Page = () => {
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                        <Label>{tt("schedule")}</Label>
+                                        <Label>{t("schedule.h1")}</Label>
                                         <div className='flex w-full items-center gap-5'>
                                             <Popover>
                                                 <PopoverTrigger asChild>
@@ -155,7 +154,7 @@ const Page = () => {
                                                         <FontAwesomeIcon icon={faCalendar} width={16} height={16} />
                                                         {selectedDate && isValid(new Date(selectedDate))
                                                             ? format(new Date(selectedDate), "PPP")
-                                                            : <span>{tt('date')}</span>
+                                                            : <span>{t('info.date.h1')}</span>
                                                         }
                                                     </Button>
                                                 </PopoverTrigger>
@@ -182,14 +181,14 @@ const Page = () => {
                                             <Input type='time' value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} />
                                         </div>
                                         <div className="w-full items-center gap-1.5">
-                                            <Label htmlFor="meetingInfoID">{tt('meeting')}</Label>
+                                            <Label htmlFor="meetingInfoID">{t('meeting.h1')}</Label>
                                             <Select onValueChange={(meetingInfoID) => setBookingFormData({ ...bookingFormData, meetingInfoID })} value={bookingFormData.meetingInfoID}>
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder={t('supplier.select-meeting')} />
+                                                    <SelectValue placeholder={t('meeting.select.h1')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>{bookingFormData.meetingInfoID && supplierMeetingInfo && supplierMeetingInfo.length === 0 ? t('supplier.no-meeting') : !bookingFormData.supplierID ? t('supplier.select-first') : tt('supplier')}</SelectLabel>
+                                                        <SelectLabel>{bookingFormData.meetingInfoID && supplierMeetingInfo && supplierMeetingInfo.length === 0 ? t('supplier.no_meeting') : !bookingFormData.supplierID ? t('supplier.select.first') : t('user.supplier')}</SelectLabel>
                                                         {bookingFormData.supplierID && supplierMeetingInfo && supplierMeetingInfo.length > 0 ? supplierMeetingInfo.map(meeting => (
                                                             <SelectItem value={meeting.id} key={meeting.id}>{meeting.service} ({meeting.meeting_code})</SelectItem>
                                                         )) : null}
@@ -198,25 +197,25 @@ const Page = () => {
                                             </Select>
                                         </div>
 
-                                        <Button type='button' onClick={() => router.push('/admin/manage/booking/request')} className='mt-10' variant={'ghost'}>{t('global.cancel')}</Button>
+                                        <Button type='button' onClick={() => router.push('/admin/manage/booking/request')} className='mt-10' variant={'ghost'}>{t('operation.cancel')}</Button>
 
                                     </div>
                                     <div className='flex flex-col w-full gap-4'>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="note">{tt("note")}</Label>
-                                            <Input type="text" id="note" name='note' placeholder={tt("note")} value={bookingFormData.note} onChange={handleChange} />
+                                            <Label htmlFor="note">{t("info.note")}</Label>
+                                            <Input type="text" id="note" name='note' placeholder={t("info.note")} value={bookingFormData.note} onChange={handleChange} />
                                         </div>
 
                                         <div className="w-full items-center gap-1.5">
-                                            <Label>{tt('client')}</Label>
+                                            <Label>{t('user.client')}</Label>
                                             <Select onValueChange={(clientID) => setBookingFormData({ ...bookingFormData, clientID })} value={bookingFormData.clientID}>
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder={t('client.select')} />
+                                                    <SelectValue placeholder={t('client.select.h1')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>{departmentID && clientWithCards.length === 0 ? t('client.nodata') : tt('client')}</SelectLabel>
+                                                        <SelectLabel>{departmentID && clientWithCards.length === 0 ? t('client.no_ddata') : t('user.client')}</SelectLabel>
                                                         {clientWithCards.length > 0 ? clientWithCards.map(client => (
                                                             <SelectItem value={client.id} key={client.id}>{client.username}</SelectItem>
                                                         )) : null}
@@ -226,14 +225,14 @@ const Page = () => {
                                         </div>
 
                                         <div className="w-full items-center gap-1.5">
-                                            <Label>{tt('clientcard')}</Label>
+                                            <Label>{t('card.h1')}</Label>
                                             <Select onValueChange={(clientCardID) => setBookingFormData({ ...bookingFormData, clientCardID })} value={bookingFormData.clientCardID}>
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder={t('booking.clientcard-select')} />
+                                                    <SelectValue placeholder={t('card.select.h1')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>{clientCards.length === 0 ? t('client.select-first') : tt('clientcard')}</SelectLabel>
+                                                        <SelectLabel>{clientCards.length === 0 ? t('client.select.first') : t('card.h1')}</SelectLabel>
                                                         {clientCards.length > 0 ? clientCards.map(card => (
                                                             <SelectItem value={card.id} key={card.id}>{card.name}</SelectItem>
                                                         )) : null}
@@ -243,14 +242,14 @@ const Page = () => {
                                         </div>
 
                                         <div className="w-full items-center gap-1.5">
-                                            <Label>{tt('course')}</Label>
+                                            <Label>{t('side_nav.course')}</Label>
                                             <Select onValueChange={(courseID) => setBookingFormData({ ...bookingFormData, courseID })} value={bookingFormData.courseID}>
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder={t('booking.select-course')} />
+                                                    <SelectValue placeholder={t('course.select')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>{cardCourses && cardCourses.length > 0 ? tt('course') : t('client-card.select-first')}</SelectLabel>
+                                                        <SelectLabel>{cardCourses && cardCourses.length > 0 ? t('side_nav.course') : t('card.select.first')}</SelectLabel>
                                                         {cardCourses && cardCourses.length > 0 ? cardCourses.map(card => (
                                                             <SelectItem value={card.id} key={card.id}>{card.name}</SelectItem>
                                                         )) : null}
@@ -259,18 +258,18 @@ const Page = () => {
                                             </Select>
                                         </div>
 
-                                        <div className='w-full border-b pb-1 text-center'>{tt("quantity")}</div>
+                                        <div className='w-full border-b pb-1 text-center'>{t("info.quantity")}</div>
                                         <div className='flex w-full items-center gap-5'>
 
                                             <div className="grid w-full max-w-sm items-center gap-1.5">
-                                                <Label htmlFor="client_quantity">{tt("client")}</Label>
+                                                <Label htmlFor="client_quantity">{t("user.client")}</Label>
                                                 <Input type="number" id="client_quantity" name='client_quantity'
                                                     value={bookingFormData.client_quantity}
                                                     onChange={handleChange} />
                                             </div>
 
                                             <div className="grid w-full max-w-sm items-center gap-1.5">
-                                                <Label htmlFor="supplier_quantity">{tt("supplier")}</Label>
+                                                <Label htmlFor="supplier_quantity">{t("user.supplier")}</Label>
                                                 <Input type="number" id="supplier_quantity" name='supplier_quantity'
                                                     value={bookingFormData.supplier_quantity}
                                                     onChange={handleChange} />
@@ -278,7 +277,7 @@ const Page = () => {
 
                                         </div>
 
-                                        <SubmitButton msg={tt('create')} style='mt-auto' />
+                                        <SubmitButton msg={t('operation.create')} style='mt-auto' />
                                     </div>
 
                                 </div>

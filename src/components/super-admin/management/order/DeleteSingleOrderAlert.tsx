@@ -45,13 +45,12 @@ const DeleteOrderAlert = ({ order }: Props) => {
         }
     }
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <li className='flex hover:text-foreground justify-between items-center cursor-pointer'>
-                    {tt('delete')}
+                    {t('operation.delete')}
                     <FontAwesomeIcon icon={faTrashCan} width={16} height={16} />
                 </li>
             </AlertDialogTrigger>
@@ -64,14 +63,14 @@ const DeleteOrderAlert = ({ order }: Props) => {
                 </AlertDialogHeader>
                 <div className='flex flex-col gap-3'>
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border' key={order.id}>
-                        <div>ID: <span className='font-normal text-muted-foreground'>{order.id}</span></div>
-                        <div>{tt('name')}: <span className='font-normal text-muted-foreground'>{order.name}</span></div>
+                        <div>{t('info.id')}: <span className='font-normal text-muted-foreground'>{order.id}</span></div>
+                        <div>{t('info.name')}: <span className='font-normal text-muted-foreground'>{order.name}</span></div>
                     </div>
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                     <form onSubmit={deleteSingleOrder}>
-                        <SubmitButton variant={'destructive'} msg={tt('confirm')} />
+                        <SubmitButton variant={'destructive'} msg={t('operation.confirm')} />
                     </form>
                 </div>
             </AlertDialogContent>

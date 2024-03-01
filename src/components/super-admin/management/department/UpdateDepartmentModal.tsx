@@ -47,8 +47,7 @@ const UpdateDepartmentModal = () => {
     }, [departmentData?.id])
 
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     if (!updateDepartment) return null
 
@@ -66,11 +65,11 @@ const UpdateDepartmentModal = () => {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder='Department Name'
+                            placeholder={t('info.name')}
                         />
                         <div className='flex w-full gap-5 items-center'>
-                            <Button type='button' variant={'ghost'} className='w-full' onClick={closeUpdateDepartment}>{tt('close')}</Button>
-                            <SubmitButton msg={tt('update')} style='w-full' />
+                            <Button type='button' variant={'ghost'} className='w-full' onClick={closeUpdateDepartment}>{t('operation.close')}</Button>
+                            <SubmitButton msg={t('operation.update')} style='w-full' />
                         </div>
                     </form>
                 </CardContent>

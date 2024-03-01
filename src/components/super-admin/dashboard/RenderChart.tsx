@@ -39,12 +39,12 @@ const RenderChart: React.FC<Props> = ({ currentChart, capitalizeFirstLetter }) =
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentChart])
 
-    const tt = useTranslations('global')
+    const t = useTranslations()
     return (
         <div className='w-1/2'>
             <Card>
                 <CardHeader>
-                    <CardTitle>{capitalizeFirstLetter(currentChart)} {tt("this_week")}</CardTitle>
+                    <CardTitle>{capitalizeFirstLetter(currentChart)} {t("statistics.week.this")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ResponsiveContainer width={'100%'} height={380}>

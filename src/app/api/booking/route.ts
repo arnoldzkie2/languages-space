@@ -6,10 +6,12 @@ import { ADMIN, AVAILABLE, CANCELED, CLIENT, DEPARTMENT, FINGERPOWER, RESERVED, 
 import axios from "axios";
 import { checkIsAdmin } from "@/utils/checkUser";
 import { calculateCommissionPriceQuantitySettlementAndStatus } from "@/utils/getBookingPrice";
+import { checkBookingAndUpdateStatus } from "@/lib/api/updateBookingStatus";
 
 export const GET = async (req: NextRequest) => {
 
     try {
+
 
         const bookingID = getSearchParams(req, 'bookingID')
         const departmentID = getSearchParams(req, 'departmentID')
@@ -17,9 +19,12 @@ export const GET = async (req: NextRequest) => {
 
         const session = await getAuth()
         if (!session) return unauthorizedRes()
+
         //only admin and super-admin are allowed to proceed
         const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
+
+        await checkBookingAndUpdateStatus()
 
         if (clientID) {
             //get all client bookings
@@ -93,17 +98,29 @@ export const GET = async (req: NextRequest) => {
                 where: { id: departmentID }, select: {
                     bookings: {
                         orderBy: { created_at: 'desc' },
-                        include: {
+                        select: {
+                            id: true,
+                            name: true,
+                            status: true,
+                            client_quantity: true,
+                            supplier_quantity: true,
+                            note: true,
+                            card_name: true,
+                            price: true,
+                            created_at: true,
+                            operator: true,
                             supplier: {
                                 select: {
                                     name: true
                                 }
-                            }, schedule: {
+                            },
+                            schedule: {
                                 select: {
                                     date: true,
                                     time: true
                                 }
-                            }, client: {
+                            },
+                            client: {
                                 select: {
                                     username: true
                                 }
@@ -112,31 +129,52 @@ export const GET = async (req: NextRequest) => {
                                 select: {
                                     name: true
                                 }
-                            }
+                            },
+                            supplier_comment: true,
+                            client_comment: true
                         }
                     }
                 }
             })
             if (!department) return notFoundRes('Department')
 
+            const modifyBooking = department.bookings.map(booking => ({
+                ...booking,
+                supplier_comment: booking.supplier_comment.length > 0 ? true : false,
+                client_comment: booking.client_comment.length > 0 ? true : false
+
+            }))
+
             //return all bookings in department with a 200 response
-            return okayRes(department.bookings)
+            return okayRes(modifyBooking)
         }
 
         //get all bookings
         const bookings = await prisma.booking.findMany({
             orderBy: { created_at: 'desc' },
-            include: {
+            select: {
+                id: true,
+                name: true,
+                status: true,
+                client_quantity: true,
+                supplier_quantity: true,
+                note: true,
+                card_name: true,
+                price: true,
+                created_at: true,
+                operator: true,
                 supplier: {
                     select: {
                         name: true
                     }
-                }, schedule: {
+                },
+                schedule: {
                     select: {
                         date: true,
                         time: true
                     }
-                }, client: {
+                },
+                client: {
                     select: {
                         username: true
                     }
@@ -145,13 +183,22 @@ export const GET = async (req: NextRequest) => {
                     select: {
                         name: true
                     }
-                }
+                },
+                supplier_comment: true,
+                client_comment: true
             }
         })
         if (!bookings) return badRequestRes()
 
+        const modifyBooking = bookings.map(booking => ({
+            ...booking,
+            supplier_comment: booking.supplier_comment.length > 0 ? true : false,
+            client_comment: booking.client_comment.length > 0 ? true : false
+
+        }))
+
         //return all bookings with a 200 response
-        return okayRes(bookings)
+        return okayRes(modifyBooking)
 
     } catch (error) {
         console.log(error);

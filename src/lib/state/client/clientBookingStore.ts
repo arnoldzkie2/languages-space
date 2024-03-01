@@ -1,4 +1,4 @@
-import { Booking, BookingRequest } from '@/lib/types/super-admin/bookingType'
+import { BookingProps, BookingRequest } from '@/lib/types/super-admin/bookingType'
 import axios from 'axios'
 import { create } from 'zustand'
 import useAdminBookingStore from '../super-admin/bookingStore'
@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 import { CONFIRMED } from '@/utils/constants'
 
 interface ClientBookingStore {
-    bookings: Booking[] | null
+    bookings: BookingProps[] | null
     getBookings: () => Promise<void>
     bookingModal: boolean
     requestCancelForm: {

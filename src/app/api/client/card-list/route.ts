@@ -313,7 +313,7 @@ export const PATCH = async (req: NextRequest) => {
 
 export const DELETE = async (req: NextRequest) => {
 
-    const clientCardID = getSearchParams(req, 'clientCardID')
+    const cardID = getSearchParams(req, 'cardID')
     try {
 
         const session = await getAuth()
@@ -322,11 +322,11 @@ export const DELETE = async (req: NextRequest) => {
         const isAdmin = checkIsAdmin(session.user.type)
         if (!isAdmin) return unauthorizedRes()
 
-        if (clientCardID) {
+        if (cardID) {
 
-            const card = await prisma.clientCardList.findUnique({ where: { id: clientCardID }, include: { active: true } })
+            const card = await prisma.clientCardList.findUnique({ where: { id: cardID }, include: { active: true } })
             if (!card) return notFoundRes('Card')
-            if (card.active.length > 0) return badRequestRes("You can't delete a card that has client")
+            // if (card.active.length > 0) return badRequestRes("You can't delete a card that has client")
 
             // deactivate the product 
             const deactivateProduct = await stripe.products.update(card.productID, {
@@ -340,7 +340,7 @@ export const DELETE = async (req: NextRequest) => {
             if (!deleteProductPrice) return badRequestRes()
 
             //delete the card
-            const deleteCard = await prisma.clientCardList.delete({ where: { id: clientCardID } })
+            const deleteCard = await prisma.clientCardList.delete({ where: { id: cardID } })
             if (!deleteCard) return badRequestRes()
 
             //return 200 response

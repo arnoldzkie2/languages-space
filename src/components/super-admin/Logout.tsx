@@ -8,14 +8,14 @@ import React from 'react';
 
 const Logout: React.FC = () => {
 
-    const t = useTranslations('global')
+    const t = useTranslations()
 
     const isSideNavOpen = useGlobalStore(s => s.isSideNavOpen)
 
     return (
-        <li className={`flex items-center justify-center gap-5 text-muted-foreground hover:text-primary cursor-pointer mt-auto`}
+        <li className={`flex items-center justify-between w-full gap-5 text-muted-foreground hover:text-primary cursor-pointer text-sm`}
             onClick={() => signOut({ redirect: true, callbackUrl: '/auth' })}>
-            {isSideNavOpen && <span>{t('logout')}</span>}
+            {isSideNavOpen && <span>{t('auth.logout')}</span>}
             <FontAwesomeIcon width={20} height={20} icon={faArrowRightToBracket} className={`flex justify-center ${!isSideNavOpen && 'w-full text-xl'}`} />
         </li>
     );

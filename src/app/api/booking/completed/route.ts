@@ -18,10 +18,7 @@ export const POST = async (req: NextRequest) => {
 
         const bookings = await prisma.booking.findMany({
             where: {
-                id: { in: bookingIds },
-                department: {
-                    name: FINGERPOWER
-                }
+                id: { in: bookingIds }
             },
             include: { supplier: { include: { balance: true } }, department: true }
         })
@@ -31,8 +28,8 @@ export const POST = async (req: NextRequest) => {
         if (hasUncompletedBooking) return badRequestRes("You can only mark a booking completed if the the status is confirmed.")
 
         const currentDate = new Date();
-        const currentMonth = currentDate.getUTCMonth() + 1; // Adjust month to be in the range 1 to 12
-        const currentYear = currentDate.getUTCFullYear();
+        const currentMonth = currentDate.getUTCMonth() + 1
+        const currentYear = currentDate.getUTCFullYear()
         // Construct the start and end dates in ISO format
         const startDate = new Date(Date.UTC(currentYear, currentMonth - 1, 1, 0, 0, 0));
         const endDate = new Date(Date.UTC(currentYear, currentMonth, 1, 0, 0, 0));

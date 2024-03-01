@@ -58,13 +58,12 @@ const UpdateCourseModal = () => {
 
     }, [selectedCourse?.id])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
     return (
         <div className='w-screen h-screen fixed top-0 left-o backdrop-blur bg-opacity-40 z-20 grid place-items-center'>
             <Card>
                 <CardHeader>
-                    <CardTitle>{t("courses.update")}</CardTitle>
+                    <CardTitle>{t("course.update")}</CardTitle>
                     <CardDescription><Err /></CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -73,11 +72,11 @@ const UpdateCourseModal = () => {
                             value={course}
                             required
                             onChange={(e) => setCourse(e.target.value)}
-                            type="text" placeholder={t('courses.course-name')}
+                            type="text" placeholder={t('info.name')}
                         />
                         <div className='flex w-full items-center gap-5'>
-                            <Button type='button' variant={'outline'} className='w-full' onClick={closeSelectedCourse}>{tt('close')}</Button>
-                            <SubmitButton style='w-full' msg={tt("update")} />
+                            <Button type='button' variant={'outline'} className='w-full' onClick={closeSelectedCourse}>{t('operation.close')}</Button>
+                            <SubmitButton style='w-full' msg={t("operation.update")} />
                         </div>
                     </form>
                 </CardContent>

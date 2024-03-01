@@ -69,8 +69,7 @@ const SupplierInfo = () => {
         }
     }
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     const skeleton = (
         <div className='flex flex-col gap-1.5 w-full'>
@@ -113,7 +112,7 @@ const SupplierInfo = () => {
                 <div className='flex items-center justify-around gap-5'>
                     <Image src={supplier.profile_url || '/profile/profile.svg'} alt='Profile' width={120} height={120} className='border min-w-[120px] min-h-[120px] object-cover bg-cover rounded-full' />
                     <div className='flex flex-col gap-3 items-start'>
-                        <span className='block font-medium'>{tt('profile')}</span>
+                        <span className='block font-medium'>{t('profile.image')}</span>
                         <UploadButton
                             endpoint="profileUploader"
                             onClientUploadComplete={async (res) => {
@@ -153,37 +152,37 @@ const SupplierInfo = () => {
                 </div>
             }
             {supplier ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="name">{tt('name')}</Label>
+                <Label htmlFor="name">{t('info.name')}</Label>
                 <Input type="text" id='name' name='name' value={supplier.name || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {supplier ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="email">{tt('email')}</Label>
+                <Label htmlFor="email">{t('info.email.h1')}</Label>
                 <Input type="text" id='email' name='email' value={supplier.email || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {supplier ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="phone_number">{tt('phone')}</Label>
+                <Label htmlFor="phone_number">{t('info.phone')}</Label>
                 <Input type="number" id='phone_number' name='phone_number' value={supplier.phone_number || ''} onChange={handleChange} />
             </div> : skeleton}
 
             {supplier ? <div className='flex flex-col w-full gap-1'>
-                <Label htmlFor="address">{tt('address')}</Label>
+                <Label htmlFor="address">{t('info.address')}</Label>
                 <Input type="text" id='address' name='address' value={supplier.address || ''} onChange={handleChange} />
             </div> : skeleton}
             {supplier ?
                 <div className="w-full items-center gap-1.5">
-                    <Label>{tt('gender')}</Label>
+                    <Label>{t('info.gender.h1')}</Label>
                     <Select onValueChange={(gender) => setSupplier({ ...supplier, gender })} value={supplier.gender || ''}>
                         <SelectTrigger className="w-full">
-                            <SelectValue placeholder={tt('select')} />
+                            <SelectValue placeholder={t('info.gender.select')} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel>{tt('gender')}</SelectLabel>
-                                <SelectItem value="male">Male</SelectItem>
-                                <SelectItem value="female">Female</SelectItem>
-                                <SelectItem value="others">Prefer not to say</SelectItem>
+                                <SelectLabel>{t('info.gender.h1')}</SelectLabel>
+                                <SelectItem value="male">{t('info.gender.male')}</SelectItem>
+                                <SelectItem value="female">{t('info.gender.female')}</SelectItem>
+                                <SelectItem value="others">{t('info.gender.others')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -191,7 +190,7 @@ const SupplierInfo = () => {
                 : skeleton}
 
             {supplier ? <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="tags" className='font-medium' title='Enter to add tags'>{tt('tags')} (optional)</Label>
+                <Label htmlFor="tags" className='font-medium' title='Enter to add tags'>{t('info.tags')} {t("global.optional")}</Label>
                 <Input onKeyDown={handleTagInputChange} name='tags' type="text" className='w-full border outline-none py-1 px-3' id='tags' />
             </div> : skeleton}
 
@@ -216,7 +215,7 @@ const SupplierInfo = () => {
                 <Skeleton className='rounded-sm h-8 w-20'></Skeleton>
             </ul>}
 
-            <SubmitButton msg={tt('update')} />
+            <SubmitButton msg={t('operation.update')} />
         </form>
     )
 }

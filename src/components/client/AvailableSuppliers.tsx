@@ -5,7 +5,7 @@ import useClientCardStore from '@/lib/state/client/clientCardStore'
 import useClientStore from '@/lib/state/client/clientStore'
 import useAdminBookingStore, { bookingFormDataValue } from '@/lib/state/super-admin/bookingStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faPersonChalkboard, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -17,8 +17,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { cn } from '@/utils'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Skeleton } from '../ui/skeleton'
+import { Separator } from '../ui/separator'
 
 const AvailableSuppliers = () => {
 
@@ -56,15 +57,13 @@ const AvailableSuppliers = () => {
         closeBookingRequestModal()
     }, [])
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
-    const ttt = useTranslations('super-admin')
+    const t = useTranslations()
 
     return (
         <div className='padding py-28 flex flex-col items-center'>
             <Card className='w-full flex flex-col sm:shadow 2xl:w-1/2'>
                 <CardHeader>
-                    <CardTitle className='text-2xl'>Make Your Reservation</CardTitle>
+                    <CardTitle className='text-2xl'>{t("client.page.book.h1")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className='flex w-full items-center gap-5 pb-5'>
@@ -82,17 +81,17 @@ const AvailableSuppliers = () => {
                                     >
                                         {bookingFormData.clientCardID
                                             ? cards && cards.find((card) => card.id === bookingFormData.clientCardID)?.name
-                                            : ttt('client-card.select')}
+                                            : t('card.select.h1')}
                                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-full p-0">
                                     <Command>
                                         <CommandInput
-                                            placeholder={ttt('client-card.search')}
+                                            placeholder={t('card.search')}
                                             className="h-9"
                                         />
-                                        <CommandEmpty>{ttt('client-card.404')}</CommandEmpty>
+                                        <CommandEmpty>{t('card.404')}</CommandEmpty>
                                         <CommandGroup>
                                             {cards && cards.length > 0 ? cards.map(card => (
                                                 <CommandItem
@@ -122,43 +121,53 @@ const AvailableSuppliers = () => {
                             <FontAwesomeIcon icon={faSearch} width={16} height={16} className='absolute right-2.5 sm:right-2 top-2.5 sm:top-2.5' />
                             <Input type="text" value={searchQuery}
                                 onChange={(e) => setSearchQery(e.target.value)}
-                                placeholder={ttt('supplier.search')} name='name'
+                                placeholder={t('supplier.search')} name='name'
                                 className='w-full'
                             />
                         </div>
                     </div>
                     <div className='w-full flex flex-wrap gap-8 justify-evenly'>
-                        {filterSupplier && filterSupplier.length > 0 && bookingFormData.clientCardID ? filterSupplier.map(supplierPrice => (
-                            <div className='shadow rounded-md relative border w-full max-h-96 min-h-[384px] sm:w-80 overflow-y-auto bg-card items-center flex flex-col pb-3 p-5 gap-2' key={supplierPrice.supplier.id}>
-                                <div className='flex w-full flex-col items-center gap-2'>
-                                    <Image width={90} height={90} className='w-[90px] min-w-[90px] min-h-[90px] border max-w-[90px] max-h-[90px] object-cover h-[90px] rounded-full' src={supplierPrice.supplier.profile_url || '/profile/profile.svg'} alt='Supplier Profile' />
-                                    <h1 className='h-7 px-5 text-xl text-center w-full font-black uppercase'>{supplierPrice.supplier.name}</h1>
+                        {filterSupplier && filterSupplier.length > 0 && bookingFormData.clientCardID ? filterSupplier.map(available => (
+                            <div className='shadow rounded-md relative border w-full max-h-96 min-h-[384px] sm:w-80 overflow-y-auto bg-card items-center flex flex-col pb-3 p-5 gap-2' key={available.supplier.id}>
+                                <div className='flex w-full items-center gap-5'>
+                                    <Image width={80} height={80} className='w-[80ox] min-w-[80ox] min-h-[80ox] border max-w-[80ox] max-h-[80ox] object-cover h-[80ox] rounded-full' src={available.supplier.profile_url || '/profile/profile.svg'} alt='Supplier Profile' />
+                                    <div className='flex flex-col gap-2'>
+                                        <h1 className='text-lg font-black'>{available.supplier.name}</h1>
+                                        <Separator />
+                                        <div className='flex items-center gap-2 h-4'>
+                                            <FontAwesomeIcon icon={faHeart} width={16} height={16} className='text-red-500 cursor-pointer' title={t("booking.rating")} />
+                                            <div className='font-bold'>{available.supplier.ratings}</div>
+                                            <Separator orientation='vertical' />
+                                            <FontAwesomeIcon icon={faPersonChalkboard} width={16} height={16} className='cursor-pointer' title={t("booking.total")} />
+                                            <div className='font-bold'>{available.supplier.total_bookings}</div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <ul className='flex w-full flex-wrap gap-3 border-t pt-3'>
-                                    {supplierPrice.supplier.tags.length > 0 && supplierPrice.supplier.tags.map((tag) => (
+                                    {available.supplier.tags.length > 0 && available.supplier.tags.map((tag) => (
                                         <li key={tag} className='bg-secondary text-muted-foreground px-2 py-0.5 text-sm'>{tag}</li>
                                     ))}
                                 </ul>
                                 <div className='w-full flex flex-col gap-3 justify-between'>
-                                    <div className='flex items-center gap-2 w-full mt-5'>{tt('price')}: <span className='text-primary font-bold'>{supplierPrice.price}</span></div>
+                                    <div className='flex items-center gap-2 w-full mt-5'>{t('card.price')}: <span className='text-primary font-bold'>{available.price}</span></div>
                                     <div className='w-full flex items-center gap-5'>
                                         <Button
                                             variant={'secondary'}
                                             onClick={() => {
-                                                setBookingFormData({ ...bookingFormData, supplierID: supplierPrice.supplier.id })
+                                                setBookingFormData({ ...bookingFormData, supplierID: available.supplier.id })
                                                 openBookingRequestModal()
                                             }}
-                                        >{t('booking.request')}</Button>
-                                        {supplierPrice.supplier.schedule.length > 0 && <Button onClick={() => {
-                                            setBookingFormData({ ...bookingFormData, supplierID: supplierPrice.supplier.id })
+                                        >{t('booking.request.h2')}</Button>
+                                        {available.supplier.schedule > 0 && <Button onClick={() => {
+                                            setBookingFormData({ ...bookingFormData, supplierID: available.supplier.id })
                                             openBookingModal()
-                                        }}>{t('header.book-now')}</Button>}
+                                        }}>{t('client.page.header.book_now')}</Button>}
                                     </div>
                                 </div>
                             </div>
                         ))
-                            : !bookingFormData.clientCardID ? <div className='py-20'>{t('booking.select-card')}</div> : bookingFormData.clientCardID && availableSupplier && !availableSupplier.length
-                                ? <div className='py-20'>{t('booking.no-supplier')}</div>
+                            : !bookingFormData.clientCardID ? <div className='py-20'>{t('card.select.first')}</div> : bookingFormData.clientCardID && availableSupplier && !availableSupplier.length
+                                ? <div className='py-20'>{t('supplier.no_data')}</div>
                                 : skeleton.map(item => (
                                     <div className='shadow rounded-md relative border w-full max-h-96 min-h-[384px] sm:w-80 overflow-y-auto bg-card items-center flex flex-col pb-3 p-5 gap-2' key={item}>
                                         <div className='flex w-full flex-col items-center gap-2'>
@@ -187,7 +196,7 @@ const AvailableSuppliers = () => {
             </Card>
             {filterSupplier && filterSupplier.length > maxVisibleItems && (
                 <Button onClick={() => setMaxVisibleItems((prevState) => prevState + 6)}>
-                    {tt('show-more')}
+                    {t('operation.show_more')}
                 </Button>)}
         </div >
     )

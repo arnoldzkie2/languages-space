@@ -2,7 +2,7 @@ import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { badRequestRes, createdRes, getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
 import { checkIsAdmin } from "@/utils/checkUser";
-import { ADMIN, CLIENT, DEPARTMENT, PENDING, SUPERADMIN, SUPPLIER } from "@/utils/constants";
+import { ADMIN, CLIENT, DEPARTMENT, FINGERPOWER, PENDING, SUPERADMIN, SUPPLIER } from "@/utils/constants";
 import { calculateCommissionPriceQuantitySettlementAndStatus } from "@/utils/getBookingPrice";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
@@ -216,33 +216,34 @@ export const POST = async (req: NextRequest) => {
         if (!settlementDate) return notFoundRes("Settlement Date")
 
         //create a booking request and update client card balance
-        const [createBookingRequest, updateClientCardBalance] = await Promise.all([
-            prisma.bookingRequest.create({
-                data: {
-                    note, date, time,
-                    clientCardID,
-                    meetingInfoID,
-                    card_name: card.name,
-                    settlement,
-                    client_quantity: bookingQuantity.client,
-                    supplier_quantity: bookingQuantity.supplier,
-                    name,
-                    courseID, status: PENDING, operator,
-                    card_balance_cost: Number(supplierPrice.price),
-                    client: { connect: { id: client.id } },
-                    supplier: { connect: { id: supplier.id } },
-                    department: { connect: { id: card.card.departmentID } }
-                }
-            }),
-            prisma.clientCard.update({
+        const createBookingRequest = await prisma.bookingRequest.create({
+            data: {
+                note, date, time,
+                clientCardID,
+                meetingInfoID,
+                card_name: card.name,
+                settlement,
+                client_quantity: bookingQuantity.client,
+                supplier_quantity: bookingQuantity.supplier,
+                name,
+                courseID, status: PENDING, operator,
+                card_balance_cost: Number(supplierPrice.price),
+                client: { connect: { id: client.id } },
+                supplier: { connect: { id: supplier.id } },
+                department: { connect: { id: card.card.departmentID } }
+            }
+        })
+        if (!createBookingRequest) return badRequestRes("Failed to create booking request")
+
+        if (department.name.toLocaleLowerCase() !== FINGERPOWER) {
+            const updateClientCardBalance = await prisma.clientCard.update({
                 where: { id: card.id }, data: {
                     balance: card.balance - Number(supplierPrice.price)
                 }
             })
-        ])
-        if (!createBookingRequest) return badRequestRes("Failed to create booking request")
-        if (!updateClientCardBalance) return badRequestRes("Failed to update client card balance")
-        //return 400 response if it fails
+            if (!updateClientCardBalance) return badRequestRes("Failed to update client card balance")
+            //return 400 response if it fails
+        }
 
         //notify the supplier and client
         axios.post(`${process.env.NEXTAUTH_URL}/api/email/booking/request`, {

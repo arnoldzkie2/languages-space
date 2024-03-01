@@ -83,8 +83,7 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
         setSelectedSupplier([])
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='flex w-full flex-col'>
@@ -99,13 +98,13 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
                                 onCheckedChange={selectAllRows}
                             />
                         </th>
-                        <th scope="col" className="px-6 py-3">{tt('username')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('name')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('phone')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('organization')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('origin')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('note')}</th>
-                        <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.username')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.name')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.phone')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.organization')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.origin')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.note')}</th>
+                        <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -153,14 +152,12 @@ const SupplierTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(supplier.id)} />
                                 <ul className={`${operation && selectedID === supplier.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-36 shadow-lg border flex flex-col text-muted-foreground`}>
-                                    {isAdminAllowed('view_agent_deductions') && supplier.deductions && <Link href={`/admin/manage/supplier/deductions/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('deductions')}</Link>}
-
-                                    {isAdminAllowed('view_agent_earnings') && supplier.earnings && <Link href={`/admin/manage/supplier/earnings/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('earnings')}</Link>}
-
+                                    {isAdminAllowed('view_agent_deductions') && supplier.deductions && <Link href={`/admin/manage/supplier/deductions/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('balance.deductions.h1')}</Link>}
+                                    {isAdminAllowed('view_agent_earnings') && supplier.earnings && <Link href={`/admin/manage/supplier/earnings/${supplier.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('balance.earnings.h1')}</Link>}
                                     <ViewSupplierAlert supplierID={supplier.id} />
-                                    {isAdminAllowed('update_supplier') && <Link href={`/admin/manage/supplier/update/${supplier.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                    {isAdminAllowed('update_supplier') && <Link href={`/admin/manage/supplier/update/${supplier.id}`} className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
                                     {isAdminAllowed('delete_supplier') && <DeleteSingleSupplierAlert supplier={supplier} />}
-                                    <li className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                    <li className='hover:text-foreground flex mb-1 justify-between items-center cursor-pointer pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>

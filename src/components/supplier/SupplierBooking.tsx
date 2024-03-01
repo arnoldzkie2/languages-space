@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import TablePagination from '../client/TablePagination'
 import useGlobalStore from '@/lib/state/globalStore'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
-import { Booking } from '@/lib/types/super-admin/bookingType'
+import { BookingProps } from '@/lib/types/super-admin/bookingType'
 import TruncateTextModal from '../global/TruncateTextModal'
 import useClientBookingStore from '@/lib/state/client/clientBookingStore'
 import RequestCancelBookingModal from '../client/RequestCancelBookingModal'
@@ -15,14 +15,19 @@ import Success from '../global/Success'
 import Err from '../global/Err'
 import { Skeleton } from '../ui/skeleton'
 import { Button } from '../ui/button'
-import { CONFIRMED } from '@/utils/constants'
+import { COMPLETED, CONFIRMED } from '@/utils/constants'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import CreateSupplierCommentAlert from './CreateSupplierBookingComment'
+import ViewSupplierCommentAlert from './ViewSupplierBookingComment'
+import ViewClientCommentAlert from '../client/ViewClientCommentAlert'
+import UpdateSupplierCommentAlert from './UpdateSupplierBookingComment'
 
 const SupplierBooking: React.FC = () => {
 
-    const [currentBookings, setCurrentBookings] = useState<Booking[] | null>(null)
+    const [currentBookings, setCurrentBookings] = useState<BookingProps[] | null>(null)
 
     const supplier = useSupplierStore(s => s.supplier)
     const { getBookings, bookings, requestCancelBooking } = useSupplierBookingStore()
@@ -35,9 +40,7 @@ const SupplierBooking: React.FC = () => {
         if (!bookings && supplier?.id) getBookings()
     }, [supplier?.id])
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
-    const ttt = useTranslations('super-admin')
+    const t = useTranslations()
 
     useEffect(() => {
         setCurrentBookings(getCurrentData(bookings))
@@ -46,7 +49,7 @@ const SupplierBooking: React.FC = () => {
     return (
         <div className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='w-full border-b pb-1 mb-1 flex items-center gap-5'>
-                <h1 className='text-foreground text-lg font-bold'>{t('profile.my-bookings')}</h1>
+                <h1 className='text-foreground text-lg font-bold'>{t('profile.bookings')}</h1>
                 <Success />
                 <Err />
             </div>
@@ -54,13 +57,13 @@ const SupplierBooking: React.FC = () => {
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="p-3">{tt('schedule')}</th>
-                            <th scope="col" className="p-3">{tt('client')}</th>
-                            <th scope="col" className="p-3">{tt('card')}</th>
-                            <th scope="col" className="p-3">{tt('status')}</th>
-                            <th scope="col" className="p-3">{tt('note')}</th>
-                            <th scope="col" className="p-3">{tt('date')}</th>
-                            <th scope="col" className="p-3">{ttt('global.operation')}</th>
+                            <th scope="col" className="p-3">{t('side_nav.schedule')}</th>
+                            <th scope="col" className="p-3">{t('user.client')}</th>
+                            <th scope="col" className="p-3">{t('side_nav.card')}</th>
+                            <th scope="col" className="p-3">{t('status.h1')}</th>
+                            <th scope="col" className="p-3">{t('info.note')}</th>
+                            <th scope="col" className="p-3">{t('info.date.h1')}</th>
+                            <th scope="col" className="p-3">{t('operation.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,7 +110,7 @@ const SupplierBooking: React.FC = () => {
                             currentBookings && currentBookings.length < 1 ?
                                 <tr className='border bg-card'>
                                     <td className='w-full px-3 py-2'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (
@@ -146,27 +149,29 @@ const SupplierBooking: React.FC = () => {
     )
 }
 
-const Operations = ({ booking }: { booking: Booking }) => {
+const Operations = ({ booking }: { booking: BookingProps }) => {
 
     const [open, setOpen] = useState(false)
 
-    const tt = useTranslations("super-admin")
+    const t = useTranslations()
     return (
-        <DropdownMenu open={open} onOpenChange={setOpen}>
-            <DropdownMenuTrigger asChild>
-                <FontAwesomeIcon icon={faEllipsis} width={18} height={18} className='cursor-pointer text-lg' />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>{tt("global.operation")}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {/* <ReturnCancelButton booking={booking} /> */}
-
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <FontAwesomeIcon icon={faEllipsis} width={18} height={18} className='cursor-pointer text-lg hover:text-foreground' />
+            </PopoverTrigger>
+            <PopoverContent className="flex flex-col gap-5">
+                <ReturnCancelButton booking={booking} />
+                {booking.status === COMPLETED && <h1 className='border-b pb-2'>{t('booking.comments.h1')}</h1>}
+                {booking.status === COMPLETED && <div className='flex items-center gap-5 w-full'>
+                    {booking.supplier_comment ? <UpdateSupplierCommentAlert booking={booking} /> : <CreateSupplierCommentAlert booking={booking} />}
+                    <ViewClientCommentAlert booking={booking} />
+                </div>}
+            </PopoverContent>
+        </Popover>
     )
 }
 
-const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
+const ReturnCancelButton = ({ booking }: { booking: BookingProps }) => {
 
     const openRequestCancelBookingaModal = useClientBookingStore(s => s.openRequestCancelBookingaModal)
     const scheduleDate = booking.schedule.date;
@@ -175,16 +180,17 @@ const ReturnCancelButton = ({ booking }: { booking: Booking }) => {
     const bookingDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
     const threeHoursAhead = new Date(today.getTime() + 3 * 60 * 60 * 1000);
 
-    const tt = useTranslations('global');
+    const t = useTranslations();
 
     if (booking.status === 'canceled' || booking.status === 'cancel-request') return null
 
     if (bookingDateTime >= threeHoursAhead && booking.status === CONFIRMED) return (
         <Button
+            className='w-full'
             onClick={() => openRequestCancelBookingaModal(booking.id)}
             variant={'destructive'}
         >
-            {tt('cancel')}
+            {t('operation.cancel')}
         </Button>
     );
 

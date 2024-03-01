@@ -1,3 +1,4 @@
+import { checkBookingAndUpdateStatus } from "@/lib/api/updateBookingStatus";
 import prisma from "@/lib/db";
 import { getAuth } from "@/lib/nextAuth";
 import { getSearchParams, notFoundRes, okayRes, serverErrorRes, unauthorizedRes } from "@/utils/apiResponse";
@@ -12,6 +13,8 @@ export const GET = async (req: NextRequest) => {
 
         const session = await getAuth()
         if (!session || session.user.type !== SUPPLIER) return unauthorizedRes()
+
+        await checkBookingAndUpdateStatus()
 
         if (bookingID) {
 
@@ -30,9 +33,10 @@ export const GET = async (req: NextRequest) => {
                     }, client: {
                         select: {
                             username: true,
-                            name: true
+                            name: true,
                         }
                     },
+
                     course: {
                         select: {
                             name: true
@@ -59,10 +63,20 @@ export const GET = async (req: NextRequest) => {
                         },
                         client: {
                             select: {
+                                profile_url: true,
                                 username: true
                             }
                         },
+                        supplier: {
+                            select: {
+                                name: true,
+                                profile_url: true,
+                                gender: true,
+                            }
+                        },
                         card_name: true,
+                        client_comment: true,
+                        supplier_comment: true,
                         status: true,
                         note: true,
                         created_at: true,
@@ -73,7 +87,13 @@ export const GET = async (req: NextRequest) => {
         })
         if (!supplier) return notFoundRes('Supplier')
 
-        return okayRes(supplier.bookings)
+        const modifyBooking = supplier.bookings.map(booking => ({
+            ...booking,
+            client_comment: booking.client_comment.length > 0 ? true : false,
+            supplier_comment: booking.supplier_comment.length > 0 ? true : false
+        }))
+
+        return okayRes(modifyBooking)
 
     } catch (error) {
         console.log(error);

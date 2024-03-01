@@ -10,7 +10,7 @@ interface Props {
 
 const OverviewCards = ({ dashboardData }: Props) => {
 
-    const t = useTranslations("super-admin")
+    const t = useTranslations()
 
     const returnPercentageColor = (percentage: number) => {
         if (percentage > 0) {
@@ -23,22 +23,24 @@ const OverviewCards = ({ dashboardData }: Props) => {
     }
 
     const returnChangesFromLastMonth = (percentage: number) => {
+
+        const fixedPercentage = percentage.toFixed(2)
         if (percentage > 0) {
-            return `+${percentage}% ${t('dashboard.from_last_month')}`
+            return `+${fixedPercentage}% ${t('statistics.month.from_last')}`
         } else if (percentage === 0) {
-            return `${t('dashboard.no_changes')} ${t('dashboard.from_last_month')}`
+            return `${t('statistics.no_changes')} ${t('statistics.month.from_last')}`
         } else {
-            return `-${percentage}% ${t('dashboard.from_last_month')}`
+            return `-${fixedPercentage}% ${t('statistics.month.from_last')}`
         }
     }
 
     const returnCardValue = (value: number, name: string) => {
 
-        if (name === 'total_clients') {
+        if (name === 'client') {
             return value
         }
 
-        if (name === 'total_revenue') {
+        if (name === 'revenue') {
 
             return new Intl.NumberFormat('en-US', {
                 style: 'currency',
@@ -60,7 +62,7 @@ const OverviewCards = ({ dashboardData }: Props) => {
                         <Card>
                             <CardHeader>
                                 <div className='flex items-center w-full justify-between'>
-                                    <div className='font-normal'>{t(`dashboard.${card.name}`)}</div>
+                                    <div className='font-normal'>{t(`statistics.total.${card.name}`)}</div>
                                     <div className='text-muted-foreground'>
                                         <FontAwesomeIcon icon={card.icon} width={16} height={16} />
                                     </div>

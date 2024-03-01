@@ -47,13 +47,12 @@ const ViewOrderAlert = ({ orderID }: Props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open])
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <li className='flex hover:text-foreground justify-between items-center cursor-pointer'>
-                    {tt('view')}
+                    {t('operation.view')}
                     <FontAwesomeIcon icon={faEye} width={16} height={16} />
                 </li>
             </AlertDialogTrigger>
@@ -68,64 +67,63 @@ const ViewOrderAlert = ({ orderID }: Props) => {
                     {data ? <div className='font-bold text-sm flex flex-col gap-4 p-3 text-muted-foreground'>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='name'>{tt('name')}</Label>
+                            <Label htmlFor='name'>{t('info.name')}</Label>
                             <Input readOnly value={data.name || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='client'>{tt('client')}</Label>
-                            <Input readOnly value={data.client.name || ''} />
+                            <Label htmlFor='client'>{t('side_nav.client')}</Label>
+                            <Input readOnly value={data.client.username || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='operator'>{tt("operator")}</Label>
+                            <Label htmlFor='operator'>{t("info.operator")}</Label>
                             <Input readOnly value={data.operator || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='price'>{tt('price')}</Label>
+                            <Label htmlFor='price'>{t('card.price')}</Label>
                             <Input readOnly value={Number(data.price)} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='quantity'>{tt('quantity')}</Label>
+                            <Label htmlFor='quantity'>{t('info.quantity')}</Label>
                             <Input readOnly value={data.quantity || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='status'>{tt('status')}</Label>
+                            <Label htmlFor='status'>{t('status.h1')}</Label>
                             <Input readOnly value={data.status || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='note'>{tt('note')}:</Label>
+                            <Label htmlFor='note'>{t('info.note')}:</Label>
                             <div>{data.note}</div>
-                            {/* <Textarea readOnly value={data.note || ''} /> */}
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='invoice_number'>{tt('invoice')}</Label>
+                            <Label htmlFor='invoice_number'>{t('card.invoice')}</Label>
                             <Input readOnly value={data.invoice_number || ''} />
                         </div>
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='express_number'>{tt('express')}</Label>
+                            <Label htmlFor='express_number'>{t('card.express')}</Label>
                             <Input readOnly value={data.express_number || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='date'>{tt('date')}</Label>
+                            <Label htmlFor='date'>{t('info.date.h1')}</Label>
                             <Input readOnly value={new Date(data.created_at).toLocaleString() || ''} />
                         </div>
 
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='departments'>{tt('departments')}</Label>
+                            <Label htmlFor='departments'>{t('side_nav.department')}</Label>
                             <Input readOnly value={data.departments.name || ''} />
                         </div>
 
                     </div> : <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' />}
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                 </div>
             </AlertDialogContent>
         </AlertDialog >

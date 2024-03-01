@@ -30,20 +30,20 @@ const SupplierMeeting: React.FC = () => {
 
     }, [supplier])
 
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <form className='flex flex-col gap-3 w-full lg:w-1/2 xl:w-1/4 order-1 md:order-2 text-muted-foreground' onSubmit={updateMeeting}>
             <Err />
             <Success />
-            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{tt('meeting')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{t('meeting.h1')}</h1>
             {meetingInfo && meetingInfo.length > 0 ? meetingInfo.map((info, index) => (
                 <div key={index} className='flex flex-col gap-3 w-full p-4 border bg-card'>
                     <Input
                         type="text"
                         required
                         name="service"
-                        placeholder={tt('service')}
+                        placeholder={t('meeting.service')}
                         value={info.service}
                         onChange={(e) => handleMeetinInfoChange(e, index)}
                     />
@@ -51,18 +51,18 @@ const SupplierMeeting: React.FC = () => {
                         type="text"
                         required
                         name="meeting_code"
-                        placeholder={tt('meeting-code')}
+                        placeholder={t('meeting.code')}
                         value={info.meeting_code}
                         onChange={(e) => handleMeetinInfoChange(e, index)}
                     />
-                    <Button variant={'destructive'} onClick={() => removeMeetingInfo(index)} className='w-1/2 self-end'>{tt('remove')}</Button>
+                    <Button variant={'destructive'} onClick={() => removeMeetingInfo(index)} className='w-1/2 self-end'>{t('operation.remove')}</Button>
                 </div>
-            )) : <div>{tt('no-data')}</div>
+            )) : <div>{t('global.no_data')}</div>
             }
             <div className='flex items-center gap-10 py-5'>
-                <Button variant={'secondary'} className='w-full' onClick={addMoreMeetingInfo}>{tt('add-more')}</Button>
+                <Button variant={'secondary'} className='w-full' onClick={addMoreMeetingInfo}>{t('operation.add_more')}</Button>
                 {/* <button type='button' onClick={addMoreMeetingInfo} className='bg-blue-600 hover:bg-blue-500 py-1.5 rounded-md w-1/2 text-white'>{tt('add-more')}</button> */}
-                <SubmitButton msg={tt('update')} style='w-full' />
+                <SubmitButton msg={t('operation.update')} style='w-full' />
             </div>
         </form>
     )

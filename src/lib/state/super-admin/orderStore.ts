@@ -5,7 +5,7 @@ import { create } from 'zustand'
 import useDepartmentStore from './departmentStore'
 
 const ManageOrderSearchValue = {
-    card: '',
+    name: '',
     price: '',
     express_number: '',
     status: '',

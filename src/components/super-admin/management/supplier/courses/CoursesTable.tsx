@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -15,9 +15,7 @@ import TruncateTextModal from '@/components/global/TruncateTextModal';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Props {
-
     filteredTable: Courses[]
-
 }
 
 const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
@@ -49,16 +47,15 @@ const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
         }
     }
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
     return (
         <table className="text-sm text-left shadow-md w-full text-muted-foreground">
             <thead className="text-xs uppercase bg-card border">
                 <tr>
-                    <th scope="col" className="px-6 py-3">{tt('name')}</th>
-                    <th scope="col" className="px-6 py-3">{t('courses.supported-cards')}</th>
-                    <th scope="col" className="px-6 py-3">{tt('date')}</th>
-                    <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                    <th scope="col" className="px-6 py-3">{t('info.name')}</th>
+                    <th scope="col" className="px-6 py-3">{t('course.supported_card')}</th>
+                    <th scope="col" className="px-6 py-3">{t('info.date.h1')}</th>
+                    <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,11 +71,11 @@ const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
                                 <div className='w-44'>
                                     <Select>
                                         <SelectTrigger>
-                                            <SelectValue placeholder={tt('card')} />
+                                            <SelectValue placeholder={t('card.s')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>{tt('card')}</SelectLabel>
+                                                <SelectLabel>{t('card.h1')}</SelectLabel>
                                                 {course.supported_cards.map(course => (
                                                     <SelectItem key={course.name} value={course.name}>{course.name}</SelectItem>
                                                 ))}
@@ -95,13 +92,13 @@ const CoursesTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='py-3 relative px-6'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(course.id)} />
                                 <ul className={`${operation && selectedID === course.id ? 'block' : 'hidden'} absolute bg-card text-muted-foreground p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col`}>
-                                    {isAdminAllowed('update_courses') && <li onClick={() => openSelectedCourse(course)} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></li>}
+                                    {isAdminAllowed('update_courses') && <li onClick={() => openSelectedCourse(course)} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></li>}
                                     {isAdminAllowed('delete_courses') && <button disabled={isLoading} className='flex mb-1 w-full items-center cursor-pointer hover:text-foreground' onClick={(e: React.MouseEvent) => deleteCourse(e, course.id)}>
                                         {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : <div className='flex items-center w-full justify-between'>
-                                            {tt('delete')} <FontAwesomeIcon icon={faTrashCan} />
+                                            {t('operation.delete')} <FontAwesomeIcon icon={faTrashCan} />
                                         </div>}
                                     </button>}
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t border-r-gray-700' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>

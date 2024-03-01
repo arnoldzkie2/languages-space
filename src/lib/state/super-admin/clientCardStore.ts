@@ -1,9 +1,9 @@
-import { ClientCard } from '@/lib/types/super-admin/clientCardType'
 import { TotalProps } from '@/lib/types/super-admin/globalType'
 import axios, { AxiosError } from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
 import { toast } from 'sonner'
+import { ClientCardProps } from '@/lib/types/super-admin/clientCardType'
 
 const totalCards = {
     selected: '',
@@ -26,15 +26,11 @@ const clientCardValue = {
 
 export { clientCardValue }
 
-interface ClientCardProps {
+interface CardStoreProps {
     totalCards: TotalProps
-    clientCards: ClientCard[]
+    clientCards: ClientCardProps[]
     getClientCards: (clientID: string) => Promise<void>
-    clientCardData: ClientCard | null
     viewClientCard: boolean
-    deleteClientCardModal: boolean
-    openDeleteClientCardModal: (card: ClientCard) => void
-
     renewClientCard: ({ e, clientCardID, clientID }: {
         e: React.MouseEvent;
         clientID: string;
@@ -45,14 +41,10 @@ interface ClientCardProps {
         clientCardID: string;
         clientID: string;
     }) => Promise<string | number | undefined>
-
-    closeClientCardModal: () => void
-    closeDeleteClientCardModal: () => void
-    openViewClientCard: (card: ClientCard) => void
     setTotalCards: (total: TotalProps) => void
 }
 
-const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
+const useAdminClientCardStore = create<CardStoreProps>((set, get) => ({
     clientCards: [],
     getClientCards: async (clientID: string) => {
 
@@ -107,7 +99,6 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
             if (data.ok) {
                 setIsLoading(false)
                 get().getClientCards(clientID)
-                get().closeDeleteClientCardModal()
                 toast('Success! The card has been successfully unlinked from client.')
             }
 
@@ -130,15 +121,7 @@ const useAdminClientCardStore = create<ClientCardProps>((set, get) => ({
     viewCard: false,
     viewClientCard: false,
     cardData: null,
-    deleteCardModal: false,
-    deleteClientCardModal: false,
-    clientCardData: null,
-    setTotalCards: (total: TotalProps) => set({ totalCards: total }),
-    closeDeleteClientCardModal: () => set({ deleteClientCardModal: false, clientCardData: null }),
-    openDeleteClientCardModal: (card: ClientCard) => set({ clientCardData: card, deleteClientCardModal: true }),
-    closeClientCardModal: () => set({ clientCardData: null, viewClientCard: false }),
-    openViewClientCard: (card: ClientCard) => set({ clientCardData: card, viewClientCard: true }),
-
+    setTotalCards: (total: TotalProps) => set({ totalCards: total })
 }))
 
 export default useAdminClientCardStore

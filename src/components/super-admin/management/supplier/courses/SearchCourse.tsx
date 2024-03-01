@@ -12,18 +12,17 @@ interface Props {
 
 const SearchCourse: React.FC<Props> = ({ setSearchQuery, searchQuery }) => {
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
     return (
         <div className='pt-4'>
             <Label className='flex justify-between items-center mb-2 font-medium px-2'>
-                {t('courses.search')}
+                {t('course.search')}
             </Label>
             <div>
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('name')}
+                        placeholder={t('info.name')}
                         name='name'
                         onChange={(e) => setSearchQuery(e.target.value)}
                         value={searchQuery}

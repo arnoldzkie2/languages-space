@@ -28,7 +28,7 @@ const Page = () => {
     }
 
     const filteredOrders = orders.filter((order) => {
-        const searchCard = searchQuery.card.toUpperCase();
+        const searchName = searchQuery.name.toUpperCase();
         const searchClient = searchQuery.client_name.toUpperCase();
         const searchQuantity = searchQuery.quantity.toUpperCase();
         const searchPrice = searchQuery.price.toUpperCase();
@@ -39,7 +39,7 @@ const Page = () => {
         const searchExpress = searchQuery.express_number.toUpperCase()
         const searchDate = searchQuery.date.toUpperCase()
         return (
-            (searchCard === '' || order.card_name.toUpperCase().includes(searchCard)) &&
+            (searchName === '' || order.name.toUpperCase().includes(searchName)) &&
             (searchClient === '' || order.client.name.toUpperCase().includes(searchClient)) &&
             (searchQuantity === '' || String(order.quantity).toUpperCase().includes(searchQuantity)) &&
             (searchPrice === '' || String(order.price).toUpperCase().includes(searchPrice)) &&

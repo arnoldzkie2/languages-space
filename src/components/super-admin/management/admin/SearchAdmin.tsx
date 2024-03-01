@@ -19,8 +19,7 @@ interface Props {
 
 const SearchAdmin: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='pt-4 mt-4 border-t w-full'>
@@ -31,35 +30,35 @@ const SearchAdmin: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('name')}
+                        placeholder={t('info.name')}
                         name='name'
                         onChange={handleSearch}
                         value={searchQuery.name}
                     />
 
                     <Input type="text"
-                        placeholder={tt('phone')}
+                        placeholder={t('info.phone')}
                         name='phone_number'
                         onChange={handleSearch}
                         value={searchQuery.phone_number}
                     />
 
                     <Input type="text"
-                        placeholder={tt('organization')}
+                        placeholder={t('info.organization')}
                         name='organization'
                         onChange={handleSearch}
                         value={searchQuery.organization}
                     />
 
                     <Input type="text"
-                        placeholder={tt('origin')}
+                        placeholder={t('info.origin')}
                         name='origin'
                         onChange={handleSearch}
                         value={searchQuery.origin}
                     />
 
                     <Input type="text"
-                        placeholder={tt('note')}
+                        placeholder={t('info.note')}
                         name='note'
                         onChange={handleSearch}
                         value={searchQuery.note}

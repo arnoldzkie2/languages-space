@@ -5,8 +5,6 @@ import Departments from '@/components/super-admin/management/Departments';
 import Pagination from '@/components/super-admin/management/Pagination';
 import CardHeader from '@/components/super-admin/management/card/CardHeader';
 import CardTable from '@/components/super-admin/management/card/CardTable';
-import ClientCardModal from '@/components/super-admin/management/card/ClientCardModal';
-import DeleteCardWarningModal from '@/components/super-admin/management/card/DeleteCardWarningModal';
 import SearchCard from '@/components/super-admin/management/card/SearchCard';
 import useGlobalStore from '@/lib/state/globalStore';
 import useAdminCardStore from '@/lib/state/super-admin/cardStore';
@@ -22,8 +20,8 @@ interface Props {
 const ClientCard: React.FC<Props> = ({ params }) => {
 
     const { currentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
-    const { departmentID, setDepartmentID } = useDepartmentStore()
-    const { cards, getCards, viewCard, deleteCardModal, totalCards, setTotalCards } = useAdminCardStore()
+    const { departmentID } = useDepartmentStore()
+    const { cards, getCards, totalCards, setTotalCards } = useAdminCardStore()
 
     const [searchQuery, setSearchQuery] = useState({
         name: '',
@@ -93,8 +91,6 @@ const ClientCard: React.FC<Props> = ({ params }) => {
 
                 <Pagination totals={totalCards} getTotalPages={getTotalPages} />
 
-                {viewCard && <ClientCardModal />}
-                {deleteCardModal && <DeleteCardWarningModal />}
             </div>
         </div>
     )

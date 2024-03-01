@@ -60,8 +60,6 @@ const Page = () => {
     })
   }
 
-  const t = useTranslations('super-admin')
-
   return (
     <>
       <SupplierHeader />

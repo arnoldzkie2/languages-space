@@ -73,7 +73,7 @@ const useAuthStore = create<AuthProps>((set, get) => ({
             if (result?.error) {
                 setErr('Invalid Credentials.')
             } else {
-                toast('Success redirecting...', {
+                toast.success('Success redirecting...', {
                     position: 'bottom-center'
                 })
             }
@@ -122,7 +122,7 @@ const useAuthStore = create<AuthProps>((set, get) => ({
 
             if (data.ok) {
                 setIsLoading(false)
-                toast('Your account has been created successfully', {
+                toast.success('Your account has been created successfully', {
                     position: 'bottom-center'
                 })
                 setAuthPage('signin')

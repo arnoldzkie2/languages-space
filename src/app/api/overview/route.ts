@@ -134,10 +134,10 @@ export const GET = async (req: NextRequest) => {
 
 
         const dashboardMetrics = [
-            { icon: faYenSign, name: "total_revenue", value: totalRevenue, changePercentage: revenueChangeLastMonthPercentage },
-            { icon: faBook, name: "bookings", value: numberOfNewBookingsThisMonth, changePercentage: numberOfBookingChangesLastmonthPercentage },
-            { icon: faNewspaper, name: "orders", value: totalOrdersThisMonth, changePercentage: ordersChangeLastMonthPercentage },
-            { icon: faUser, name: "total_clients", value: totalClients, changePercentage: clientsChangeLastMonthPercentage },
+            { icon: faYenSign, name: "revenue", value: totalRevenue, changePercentage: revenueChangeLastMonthPercentage },
+            { icon: faBook, name: "booking", value: numberOfNewBookingsThisMonth, changePercentage: numberOfBookingChangesLastmonthPercentage },
+            { icon: faNewspaper, name: "order", value: totalOrdersThisMonth, changePercentage: ordersChangeLastMonthPercentage },
+            { icon: faUser, name: "client", value: totalClients, changePercentage: clientsChangeLastMonthPercentage },
             { icon: faUser, name: 'new_clients', value: numberOfNewClientsThisMonth, changePercentage: numberOfNewClientChangesLastmonthPercentage }
         ];
 

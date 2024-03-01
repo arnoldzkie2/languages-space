@@ -78,18 +78,18 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
 
     }
 
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     return (
         <footer className={`flex px-8 mt-auto min-h-[80px] items-center justify-between border-t text-muted-foreground`}>
             <div className='flex items-center gap-3'>
                 <div className='font-medium'>
-                    {t('pagination.page')} {currentPage} of {getTotalPages()}
+                    {t('pagination.page.h1')} {currentPage} of {getTotalPages()}
                 </div>
                 <Input
                     type='text'
                     className='outline-none border px-3 py-2 w-1/3'
-                    placeholder={t('pagination.goto')}
+                    placeholder={t('pagination.page.go_to')}
                     onChange={(e) => {
                         const value = parseInt(e.target.value);
                         setCurrentPage(isNaN(value) ? 1 : value);
@@ -97,9 +97,9 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
                 />
             </div>
             <div className='flex items-center gap-10'>
-                <div className='flex items-center gap-2'>{t('global.result')} <span className='font-black'>{totals.searched === totals.total ? '' : totals.searched}</span></div>
-                <div className='flex items-center gap-2'>{t('global.selected')} <span className='font-black'>{totals.selected === '0' ? '' : totals.selected}</span></div>
-                <div className='flex items-center gap-2'>{t('global.total')} <span className='font-black'>{totals.total}</span></div>
+                <div className='flex items-center gap-2'>{t('pagination.result')} <span className='font-black'>{totals.searched === totals.total ? '' : totals.searched}</span></div>
+                <div className='flex items-center gap-2'>{t('pagination.selected')} <span className='font-black'>{totals.selected === '0' ? '' : totals.selected}</span></div>
+                <div className='flex items-center gap-2'>{t('pagination.total')} <span className='font-black'>{totals.total}</span></div>
             </div>
             <div className='flex gap-4 items-center'>{renderPageNumbers()}</div>
             <div className='flex items-center gap-5 h-full'>
@@ -107,12 +107,12 @@ const Pagination: React.FC<Props> = ({ totals, getTotalPages }) => {
                     className={`w-32 border h-10 rounded-md`}
                     disabled={currentPage === 1}
                 >
-                    {t('pagination.prev')}
+                    {t('pagination.prev.page')}
                 </Button>
                 <Button onClick={goToNextPage}
                     className={`w-32 border h-10 rounded-md`}
                     disabled={currentPage === getTotalPages()}>
-                    {t('pagination.next')}
+                    {t('pagination.next.page')}
                 </Button>
             </div>
 

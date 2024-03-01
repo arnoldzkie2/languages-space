@@ -43,24 +43,23 @@ const NewCourseModal = () => {
     }
   }
 
-  const t = useTranslations('super-admin')
-  const tt = useTranslations('global')
+  const t = useTranslations()
   return (
-    <form className='w-screen h-screen fixed top-0 left-o bg-black bg-opacity-40 z-20 grid place-items-center' onSubmit={createCourse}>
+    <form className='w-screen h-screen fixed top-0 left-o backdrop-blur  z-20 grid place-items-center' onSubmit={createCourse}>
       <Card className="w-full sm:w-[350px]">
         <CardHeader>
-          <CardTitle>{tt('create')} {tt('course')}</CardTitle>
+          <CardTitle>{t('course.create')}</CardTitle>
           <CardDescription><Err /></CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="course">{tt('course')} {tt("name")}</Label>
-            <Input type="text" required id="course" placeholder={tt("course")} value={course} onChange={(e) => setCourse(e.target.value)} />
+            <Label htmlFor="course">{t("info.name")}</Label>
+            <Input type="text" required id="course" placeholder={t("info.name")} value={course} onChange={(e) => setCourse(e.target.value)} />
           </div>
         </CardContent>
         <CardFooter className="flex items-center gap-5 w-full">
-          <Button variant={'outline'} type='button' className='w-full' onClick={toggleCreateCourse}>{tt('close')}</Button>
-          <SubmitButton msg={tt('create')} variant={'default'} style='w-full' />
+          <Button variant={'outline'} type='button' className='w-full' onClick={toggleCreateCourse}>{t('operation.close')}</Button>
+          <SubmitButton msg={t('operation.create')} variant={'default'} style='w-full' />
         </CardFooter>
       </Card>
     </form>

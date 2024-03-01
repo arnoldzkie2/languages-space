@@ -24,9 +24,8 @@ const BookingRequestTable: React.FC<Props> = ({ filteredTable }) => {
 
     const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading, returnTruncateText, openTruncateTextModal } = useGlobalStore()
 
-    const { openDeleteBookingReqeustWarningMOdal, getBookingRequests, selectedBookingRequests, setSelectedBookingRequests } = useAdminBookingStore()
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const { getBookingRequests, selectedBookingRequests, setSelectedBookingRequests } = useAdminBookingStore()
+    const t = useTranslations()
     const isAdinAllowed = useAdminPageStore(s => s.isAdminAllowed)
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
@@ -121,16 +120,16 @@ const BookingRequestTable: React.FC<Props> = ({ filteredTable }) => {
                                 onCheckedChange={selectAllRows}
                             />
                         </th>
-                        <th scope="col" className="px-2 py-3">{tt('name')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('client')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('supplier')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('card')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('schedule')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('operator')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('status')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('note')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('date')}</th>
-                        <th scope="col" className="px-2 py-3">{t('global.operation')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.name')}</th>
+                        <th scope="col" className="px-2 py-3">{t('user.client')}</th>
+                        <th scope="col" className="px-2 py-3">{t('user.supplier')}</th>
+                        <th scope="col" className="px-2 py-3">{t('card.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('schedule.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.operator.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('status.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.note')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.date.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -196,11 +195,11 @@ const BookingRequestTable: React.FC<Props> = ({ filteredTable }) => {
                                     <ul className={`${operation && selectedID === booking.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
                                         {booking.status !== 'canceled' && booking.status !== 'confirmed' && isAdinAllowed('cancel_booking_request') && <button disabled={isLoading} className='flex mb-1 justify-between items-center cursor-dpointer hover:text-foreground' onClick={(e) => cancelBookingRequest(e, booking.id)}>
                                             {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : <div className='flex items-center w-full justify-between'>
-                                                {tt('cancel')} <FontAwesomeIcon icon={faBan} />
+                                                {t('operation.cancel')} <FontAwesomeIcon icon={faBan} />
                                             </div>}
                                         </button>}
                                         {isAdinAllowed('delete_booking_request') && <DeleteSingleBookingRequestAlert bookingRequest={booking} />}
-                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>
                                 </td>
                             </tr>

@@ -8,17 +8,17 @@ import useGlobalStore from '@/lib/state/globalStore'
 import useGlobalPaginationStore from '@/lib/state/globalPaginationStore'
 import { Order } from '@prisma/client'
 import { Skeleton } from '../ui/skeleton'
+import TruncateTextModal from '../global/TruncateTextModal'
 
 
 const ClientOrders: React.FC = () => {
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     const [currentOrders, setCurrentOrders] = useState<Order[] | null>(null)
 
     const { orders, getClientOrders, client, setPage } = useClientStore()
-    const skeleton = useGlobalStore(s => s.skeleton)
+    const { skeleton, returnTruncateText, openTruncateTextModal } = useGlobalStore()
     const { getCurrentData, currentPage } = useGlobalPaginationStore()
 
     useEffect(() => {
@@ -34,16 +34,16 @@ const ClientOrders: React.FC = () => {
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 xl:w-1/2 order-1 md:order-2'>
-            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{t('profile.my-orders')}</h1>
+            <h1 className='text-foreground border-b mb-1 pb-1 text-lg font-bold'>{t('profile.orders')}</h1>
             <div className='overflow-x-auto'>
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="px-3 py-3">{tt('card')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('quantity')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('price')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('status')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('date')}</th>
+                            <th scope="col" className="px-3 py-3">{t('side_nav.card')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.quantity')}</th>
+                            <th scope="col" className="px-3 py-3">{t('card.price')}</th>
+                            <th scope="col" className="px-3 py-3">{t('status.h1')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.date.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,8 +51,8 @@ const ClientOrders: React.FC = () => {
                             currentOrders.map(order => (
                                 <tr className="bg-card border hover:bg-muted" key={order.id}>
                                     <td className='px-3 py-3'>
-                                        <div className='h-5 text-xs md:text-sm w-36'>
-                                            {order.name}
+                                        <div className='h-5 text-xs md:text-sm w-36 cursor-pointer' onClick={() => openTruncateTextModal(order.name)}>
+                                            {returnTruncateText(order.name, 15)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
@@ -79,7 +79,7 @@ const ClientOrders: React.FC = () => {
                             )) : currentOrders && currentOrders.length < 1 ?
                                 <tr className='border bg-card'>
                                     <td className='p-3'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr> :
                                 skeleton.map(item => (
@@ -102,7 +102,8 @@ const ClientOrders: React.FC = () => {
                                     </tr>
                                 ))
                         }
-                    </tbody >
+                    </tbody>
+                    <TruncateTextModal />
                 </table >
             </div>
             <TablePagination data={orders || []} />

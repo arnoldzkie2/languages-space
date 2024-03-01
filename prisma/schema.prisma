@@ -11,29 +11,29 @@ datasource db {
 // client area
 
 model Client {
-  id                String                    @id @default(uuid())
-  profile_url       String?                   @db.Text
-  profile_key       String?
-  name              String?
-  username          String                    @unique
-  phone_number      String?
-  email             String?
-  gender            String?
-  organization      String?
-  password          String
-  address           String?
-  origin            String?
-  note              String?                   @db.Text
-  created_at        DateTime                  @default(now())
-  updated_at        DateTime                  @updatedAt
-  departments       Department[]
-  orders            Order[]
-  cards             ClientCard[]
-  bookings          Booking[]
-  agent             Agent?                    @relation(fields: [agentID], references: [id], onDelete: Cascade)
-  agentID           String?
-  booking_request   BookingRequest[]
-  supplier_comments SupplierBookingComments[]
+  id               String                  @id @default(uuid())
+  profile_url      String?                 @db.Text
+  profile_key      String?
+  name             String?
+  username         String                  @unique
+  phone_number     String?
+  email            String?
+  gender           String?
+  organization     String?
+  password         String
+  address          String?
+  origin           String?
+  note             String?                 @db.Text
+  created_at       DateTime                @default(now())
+  updated_at       DateTime                @updatedAt
+  departments      Department[]
+  orders           Order[]
+  cards            ClientCard[]
+  bookings         Booking[]
+  agent            Agent?                  @relation(fields: [agentID], references: [id], onDelete: Cascade)
+  agentID          String?
+  booking_comments ClientBookingComments[]
+  booking_request  BookingRequest[]
 
   @@index([agentID])
 }
@@ -112,24 +112,23 @@ model Supplier {
   departments       Department[]
   balance           SupplierBalance[]
   booking_request   BookingRequest[]
-  supplier_comment  SupplierBookingComments[]
+  booking_comments  SupplierBookingComments[]
 }
 
 model SupplierBalance {
-  id               String                        @id @default(uuid())
-  amount           Decimal
-  currency         String
-  payment_schedule String
-  payment_address  String
-  salary           Int?
-  booking_rate     Int
-  supplierID       String
-  created_at       DateTime                      @default(now())
-  updated_at       DateTime                      @updatedAt
-  supplier         Supplier                      @relation(fields: [supplierID], references: [id], onDelete: Cascade)
-  earnings         SupplierEarnings[]
-  deductions       SupplierDeductions[]
-  transactions     SupplierBalanceTransactions[]
+  id              String                        @id @default(uuid())
+  amount          Decimal
+  currency        String
+  payment_address String
+  salary          Int?
+  booking_rate    Int
+  supplierID      String
+  created_at      DateTime                      @default(now())
+  updated_at      DateTime                      @updatedAt
+  supplier        Supplier                      @relation(fields: [supplierID], references: [id], onDelete: Cascade)
+  earnings        SupplierEarnings[]
+  deductions      SupplierDeductions[]
+  transactions    SupplierBalanceTransactions[]
 
   @@index([supplierID])
 }
@@ -253,11 +252,12 @@ model Booking {
   schedule          SupplierSchedule          @relation(fields: [scheduleID], references: [id], onDelete: Cascade)
   supplier          Supplier                  @relation(fields: [supplierID], references: [id], onDelete: Cascade)
   client            Client                    @relation(fields: [clientID], references: [id], onDelete: Cascade)
-  department        Department                @relation(fields: [departmentID], references: [id])
+  department        Department                @relation(fields: [departmentID], references: [id], onDelete: Cascade)
+  supplier_comment  SupplierBookingComments[]
+  client_comment    ClientBookingComments[]
   courseID          String
   departmentID      String
   scheduleID        String
-  supplier_comment  SupplierBookingComments[]
 
   @@index([supplierID])
   @@index([clientID])
@@ -321,29 +321,47 @@ model Reminders {
   @@index([departmentID])
 }
 
+model ClientBookingComments {
+  id         String   @id @default(uuid())
+  rate       Int
+  message    String   @db.Text
+  booking    Booking  @relation(fields: [bookingID], references: [id])
+  client     Client   @relation(fields: [clientID], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  bookingID  String
+  clientID   String
+
+  @@index([bookingID])
+  @@index([clientID])
+}
+
 model SupplierBookingComments {
   id           String   @id @default(uuid())
-  satisfaction Int
+  rate         Int
   client_level String
-  book_used    String
+  book_name    String
+  book_page    String
+  vocabulary   Json
+  sentences    String   @db.Text
   message      String   @db.Text
-  clientID     String
+  homework     String?  @db.Text
   supplierID   String
   bookingID    String
-  client       Client   @relation(fields: [clientID], references: [id], onDelete: Cascade)
   supplier     Supplier @relation(fields: [supplierID], references: [id], onDelete: Cascade)
   booking      Booking  @relation(fields: [bookingID], references: [id], onDelete: Cascade)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  @@index([clientID])
   @@index([supplierID])
   @@index([bookingID])
 }
 
-model CommentTemplates {
+model BookingCommentTemplates {
   id         String   @id @default(uuid())
-  message    String
+  message    String   @db.Text
+  user       String
+  gender     String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
@@ -375,7 +393,6 @@ model AgentBalance {
   id               String                     @id @default(uuid())
   amount           Decimal
   currency         String
-  payment_schedule String                     @default("monthly")
   payment_address  String
   commission_rate  Int
   commission_type  String
@@ -586,6 +603,16 @@ model AdminPermission {
   cancel_booking_request Boolean @default(false)
   delete_booking_request Boolean @default(false)
 
+  //booking comments permissions
+  view_booking_comments   Boolean @default(false)
+  delete_booking_comments Boolean @default(false)
+
+  //booking comments templates
+  view_booking_comments_template   Boolean @default(false)
+  create_booking_comments_template Boolean @default(false)
+  update_booking_comments_template Boolean @default(false)
+  delete_booking_comments_template Boolean @default(false)
+
   //reminders permissions
   view_reminders    Boolean @default(false)
   create_reminders  Boolean @default(false)
@@ -597,8 +624,6 @@ model AdminPermission {
   download_table  Boolean @default(false)
   handle_settings Boolean @default(false)
   view_statistics Boolean @default(false)
-  view_comments   Boolean @default(false)
-  delete_comments Boolean @default(false)
 
   department_permission  DepartmentPermission @relation(fields: [departmentPermissionID], references: [id], onDelete: Cascade)
   departmentPermissionID String

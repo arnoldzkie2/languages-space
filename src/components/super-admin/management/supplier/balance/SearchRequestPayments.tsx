@@ -14,19 +14,18 @@ interface Props {
 }
 
 const SearchRequestPayments = ({ handleSearch, searchQuery }: Props) => {
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='pt-4 mt-4 border-t'>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
-                {t('supplier.payment.search')}
+                {t('balance.payment.search')}
             </div>
             <div>
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('amount')}
+                        placeholder={t('balance.amount')}
                         name='amount'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -34,7 +33,7 @@ const SearchRequestPayments = ({ handleSearch, searchQuery }: Props) => {
                     />
 
                     <Input type="text"
-                        placeholder={tt('payment')}
+                        placeholder={t('balance.payment.address')}
                         name='payment_address'
                         className='w-full border text-sm px-3 outline-none py-2'
                         onChange={handleSearch}
@@ -42,16 +41,16 @@ const SearchRequestPayments = ({ handleSearch, searchQuery }: Props) => {
                     />
 
                     <div className='flex flex-col gap-1'>
-                        <label htmlFor="status">{tt('status')}</label>
+                        <label htmlFor="status">{t('status.h1')}</label>
                         <select
                             name="status" id="status"
                             value={searchQuery.status}
                             onChange={handleSearch}
                             className='px-2 py-2 rounded-md outline-none bg-card border'
                         >
-                            <option value="">{tt("all-status")}</option>
-                            <option value="pending">{tt("pending")}</option>
-                            <option value="completed">{tt('completed')}</option>
+                            <option value="">{t("status.all")}</option>
+                            <option value="pending">{t("status.pending")}</option>
+                            <option value="completed">{t('status.completed')}</option>
                         </select>
                     </div>
 

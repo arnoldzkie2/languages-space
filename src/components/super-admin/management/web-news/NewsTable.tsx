@@ -82,8 +82,7 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
 
     }, [selectedNews, filteredTable]);
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='flex flex-col w-full'>
@@ -97,11 +96,11 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                 checked={isRowChecked}
                                 onCheckedChange={selectAllRows}
                             />                    </th>
-                        <th scope="col" className="py-3 px-6">{t('news.title')}</th>
+                        <th scope="col" className="py-3 px-6">{t('info.title')}</th>
                         <th scope="col" className="py-3 px-6">{t('news.keywords')}</th>
                         <th scope="col" className="py-3 px-6">{t('news.author')}</th>
-                        <th scope="col" className="py-3 px-6">{tt('date')}</th>
-                        <th scope="col" className="py-3 px-6">{t('global.operation')}</th>
+                        <th scope="col" className="py-3 px-6">{t('info.date.h1')}</th>
+                        <th scope="col" className="py-3 px-6">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,10 +135,10 @@ const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
                                 <td className="py-3 px-6 h-5 w-14 relative">
                                     <FontAwesomeIcon icon={faEllipsis} className='cursor-pointer text-2xl' onClick={() => openOperation(news.id)} />
                                     <ul className={`${operation && selectedID === news.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
-                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground' >{tt('view')} <FontAwesomeIcon icon={faEye} /></li>
-                                        {isAdminAllowed('update_news') && <Link href={`/admin/manage/news/update/${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground' >{t('operation.view')} <FontAwesomeIcon icon={faEye} /></li>
+                                        {isAdminAllowed('update_news') && <Link href={`/admin/manage/news/update/${news.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
                                         {isAdminAllowed('delete_news') && <DeleteSingleNewsAlert news={news} />}
-                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>
                                 </td>
                             </tr>

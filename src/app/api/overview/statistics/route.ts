@@ -24,10 +24,6 @@ interface OverviewCards {
     oneWeekChange: number;
 }
 
-interface StatisticsOverview {
-    cards: OverviewCards
-}
-
 export type { OverviewCards }
 
 export const GET = async (req: NextRequest) => {

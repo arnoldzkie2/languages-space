@@ -19,7 +19,6 @@ const totalCoursesValue = {
 
 const supplierFormDataValue = {
     name: '',
-    payment_schedule: '',
     username: '',
     payment_address: '',
     currency: '',

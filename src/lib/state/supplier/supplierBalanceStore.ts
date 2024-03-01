@@ -30,7 +30,6 @@ interface SupplierBalanceStore {
     openConfirmPaymentModal: (transac: SupplierBalanceTransaction) => void
     closeConfirmPaymentModal: () => void
     confirmPaymentRequest: (e: React.FormEvent) => Promise<void>
-    returnWaitMessage: (schedule: string) => string | undefined
     totalTransactions: TotalProps
     setTotalTransactions: (totals: TotalProps) => void
 }
@@ -101,49 +100,37 @@ const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
             alert('Something went wrong')
         }
     },
-    isCashoutAvailable: (schedule: string) => {
-
+    isCashoutAvailable: () => {
         const currentDateTime = new Date();
 
-        if (schedule.toLowerCase() === 'weekly') {
-            //weekly logic only return true if it's saturday 9pm to sunday 6pm
+        // Calculate the difference in days to Saturday (considering Sunday as the first day of the week)
+        const daysUntilSaturday = (6 - currentDateTime.getDay() + 7) % 7;
 
-            // Calculate the difference in days to Saturday (considering Sunday as the first day of the week)
-            const daysUntilSaturday = (6 - currentDateTime.getDay() + 7) % 7;
+        // Set the time for the upcoming Saturday 9:00 PM
+        const cashoutWeeklyStart = new Date(currentDateTime);
+        cashoutWeeklyStart.setDate(currentDateTime.getDate() + daysUntilSaturday);
+        cashoutWeeklyStart.setHours(21, 0, 0, 0);
 
-            // Set the time for the upcoming Saturday 9:00 PM
-            const cashoutStart = new Date(currentDateTime);
-            cashoutStart.setDate(currentDateTime.getDate() + daysUntilSaturday);
-            cashoutStart.setHours(21, 0, 0, 0);
+        // Set the time for the upcoming Sunday 6:00 PM
+        const cashoutWeeklyEnd = new Date(cashoutWeeklyStart);
+        cashoutWeeklyEnd.setDate(cashoutWeeklyEnd.getDate() + 1); // Move to Sunday
+        cashoutWeeklyEnd.setHours(18, 0, 0, 0);
 
-            // Set the time for the upcoming Sunday 6:00 PM
-            const cashoutEnd = new Date(cashoutStart);
-            cashoutEnd.setDate(cashoutEnd.getDate() + 1); // Move to Sunday
-            cashoutEnd.setHours(18, 0, 0, 0);
+        // Set the time for the last day of the current month at 9:00 PM
+        const lastDayOfMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 0);
+        const cashoutMonthlyStart = new Date(lastDayOfMonth);
+        cashoutMonthlyStart.setHours(21, 0, 0, 0);
 
-            // Check if the current date and time fall within the allowed cashout period
-            return currentDateTime >= cashoutStart && currentDateTime <= cashoutEnd;
+        // Set the time for the first day of the next month at 6:00 PM
+        const firstDayOfNextMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1);
+        const cashoutMonthlyEnd = new Date(firstDayOfNextMonth);
+        cashoutMonthlyEnd.setHours(18, 0, 0, 0);
 
-        } else if (schedule.toLocaleLowerCase() === 'monthly') {
+        // Check if the current date and time fall within the allowed cashout periods
+        const isWeeklyCashoutAvailable = currentDateTime >= cashoutWeeklyStart && currentDateTime <= cashoutWeeklyEnd;
+        const isMonthlyCashoutAvailable = currentDateTime >= cashoutMonthlyStart && currentDateTime <= cashoutMonthlyEnd;
 
-            //monthly logic only return true if it's last day of the month at 9pm to first day of the next month 6pm
-
-            // Set the time for the last day of the current month at 9:00 PM
-            const lastDayOfMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 0);
-            const cashoutStart = new Date(lastDayOfMonth);
-            cashoutStart.setHours(21, 0, 0, 0);
-
-            // Set the time for the first day of the next month at 6:00 PM
-            const firstDayOfNextMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1);
-            const cashoutEnd = new Date(firstDayOfNextMonth);
-            cashoutEnd.setHours(18, 0, 0, 0);
-
-            // Check if the current date and time fall within the allowed cashout period
-            return currentDateTime >= cashoutStart && currentDateTime <= cashoutEnd;
-
-        }
-
-        return false; // Cashout is not available for other schedules
+        return isWeeklyCashoutAvailable || isMonthlyCashoutAvailable;
     },
     toggleCashout: () => set((state) => ({ cashout: !state.cashout })),
     payment_address: '',
@@ -201,37 +188,6 @@ const useSupplierBalanceStore = create<SupplierBalanceStore>((set, get) => ({
             }
             alert("Something went wrong")
         }
-    },
-    returnWaitMessage: (schedule: string) => {
-
-        const currentDateTime = new Date()
-
-        const lastDayOfMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 0);
-        const cashoutStart = new Date(lastDayOfMonth);
-        cashoutStart.setHours(21, 0, 0, 0);
-
-        // Set the time for the first day of the next month at 6:00 PM
-        const firstDayOfNextMonth = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1);
-        const cashoutEnd = new Date(firstDayOfNextMonth);
-        cashoutEnd.setHours(18, 0, 0, 0);
-
-        const atDate = cashoutStart.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-        });
-        const toDate = cashoutEnd.toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-        });
-
-        if (schedule === 'weekly') return 'Available again in saturday 9PM to sunday 6PM'
-        if (schedule === 'monthly') return `Available again in ${atDate} to ${toDate}`
     }
 }))
 

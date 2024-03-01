@@ -22,13 +22,13 @@ const DownloadTable: React.FC<Props> = ({ tables, selectedTable, msg }) => {
         saveAs(excelData, 'tables.xlsx');
     };
 
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     if (!isAdminAllowed('download_table')) return null
 
     return (
         <li className="flex items-center hover:text-primary cursor-pointer justify-center w-28 text-muted-foreground" onClick={downloadTable}>
-            <div>{msg || t('global.download')}</div>
+            <div>{msg || t('operation.download')}</div>
         </li>
     );
 };

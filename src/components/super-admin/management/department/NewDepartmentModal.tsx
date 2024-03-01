@@ -42,9 +42,7 @@ const NewDepartmentModal = () => {
     }
   }
 
-  const t = useTranslations('super-admin')
-
-  const tt = useTranslations('global')
+  const t = useTranslations()
   if (!newDepartment) return null
 
   return (
@@ -60,11 +58,11 @@ const NewDepartmentModal = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder='Department Name'
+              placeholder={t('info.name')}
             />
             <div className='flex w-full gap-5 items-center'>
-              <Button type='button' variant={'ghost'} className='w-full' onClick={closeNewDepartment}>{tt('close')}</Button>
-              <SubmitButton msg={tt('create')} style='w-full' />
+              <Button type='button' variant={'ghost'} className='w-full' onClick={closeNewDepartment}>{t('operation.close')}</Button>
+              <SubmitButton msg={t('operation.create')} style='w-full' />
             </div>
           </form>
         </CardContent>

@@ -19,26 +19,25 @@ interface Props {
 
 const SearchCard: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='pt-2 w-full'>
             <Label className='flex justify-between items-center mb-2 font-medium px-2'>
-                {t('client-card.search')}
+                {t('card.search')}
             </Label>
             <div>
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('name')}
+                        placeholder={t('info.name')}
                         name='name'
                         onChange={handleSearch}
                         value={searchQuery.name}
                     />
 
                     <Input
-                        placeholder={tt('price')}
+                        placeholder={t('card.price')}
                         name='price'
                         type='number'
                         onChange={handleSearch}
@@ -46,7 +45,7 @@ const SearchCard: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <Input
-                        placeholder={tt('balance')}
+                        placeholder={t('balance.h1')}
                         name='balance'
                         type='number'
                         onChange={handleSearch}
@@ -54,7 +53,7 @@ const SearchCard: React.FC<Props> = ({ handleSearch, searchQuery }) => {
                     />
 
                     <Input type="text"
-                        placeholder={t('client-card.validity')}
+                        placeholder={t('card.validity')}
                         name='validity'
                         onChange={handleSearch}
                         value={searchQuery.validity}

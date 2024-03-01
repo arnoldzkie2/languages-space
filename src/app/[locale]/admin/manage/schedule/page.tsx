@@ -75,8 +75,7 @@ const Page = ({ }) => {
         if (bookingFormData.supplierID && !newSchedule && currentDate.fromDate && currentDate.toDate) getSchedule(bookingFormData.supplierID, currentDate.fromDate, currentDate.toDate)
     }, [currentDate, bookingFormData.supplierID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations("global")
+    const t = useTranslations()
 
     return (
         <>
@@ -92,7 +91,7 @@ const Page = ({ }) => {
                         <Departments />
 
                         <div className='flex w-full flex-col gap-1.5'>
-                            <Label>{tt('supplier')}</Label>
+                            <Label>{t('side_nav.supplier')}</Label>
                             <Popover open={openSupplier} onOpenChange={setOpenSupplier}>
                                 <PopoverTrigger asChild>
                                     <Button
@@ -106,7 +105,7 @@ const Page = ({ }) => {
                                     >
                                         {bookingFormData.supplierID
                                             ? supplierWithMeeting.find((supplier) => supplier.id === bookingFormData.supplierID)?.name
-                                            : t('supplier.select')}
+                                            : t('supplier.select.h1')}
                                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>

@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 const BookingModal = () => {
 
-    const { bookingID, closeBooking, getSingleBooking, singleBooking, requestCancelBooking } = useSupplierBookingStore()
+    const { bookingID, closeBooking, getSingleBooking, singleBooking } = useSupplierBookingStore()
     const { copy } = useGlobalStore()
 
     useEffect(() => {
@@ -35,11 +35,11 @@ const BookingModal = () => {
                     <CardContent className='flex flex-col gap-2'>
                         <div className='flex items-center gap-2'>
                             <Label htmlFor="client" className='font-bold text-foreground'>{tt('client')}</Label>
-                            <div className='text-sm'>{'->'} {singleBooking?.client.name} ({singleBooking.client.username})</div>
+                            <div className='text-sm'>{'->'} {singleBooking.client.name} ({singleBooking.client.username})</div>
                         </div>
                         <div className='flex items-center gap-2'>
                             <Label htmlFor="meeting" className='font-bold text-foreground'>{tt('meeting')}</Label>
-                            <div className='text-sm'>{'->'} {singleBooking?.meeting_info.service} <strong className='cursor-pointer text-blue-600' title='Copy' onClick={() => copy(singleBooking?.meeting_info.meeting_code || '')}>{singleBooking?.meeting_info.meeting_code}</strong></div>
+                            {/* <div className='text-sm'>{'->'} {singleBooking.meeting_info.service} <strong className='cursor-pointer text-blue-600' title='Copy' onClick={() => copy(singleBooking?.meeting_info.meeting_code || '')}>{singleBooking?.meeting_info.meeting_code}</strong></div> */}
                         </div>
                         <div className='flex items-center gap-2'>
                             <Label htmlFor="schedule" className='font-bold text-foreground'>{tt('schedule')}</Label>

@@ -4,7 +4,6 @@ import SideNav from '@/components/super-admin/SideNav'
 import { UploadButton } from '@/utils/uploadthing'
 import axios from 'axios'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import Err from '@/components/global/Err'
@@ -106,8 +105,7 @@ const Page = () => {
 
     }, [formData.profile_key])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <>
@@ -146,8 +144,8 @@ const Page = () => {
                                 </div>
 
                                 <div className='flex items-center gap-10 w-1/2 self-end'>
-                                    <Button type='button' variant={'ghost'} onClick={() => router.push('/admin/manage/admin')} className='w-full'> {tt('cancel')}</Button>
-                                    <SubmitButton style='w-full' msg={tt('create')} />
+                                    <Button type='button' variant={'ghost'} onClick={() => router.push('/admin/manage/admin')} className='w-full'> {t('operation.cancel')}</Button>
+                                    <SubmitButton style='w-full' msg={t('operation.create')} />
                                 </div>
                             </form>
                         </CardContent>
@@ -169,44 +167,43 @@ const SupplierFormFirstRow = (props: {
 }) => {
 
     const { formData, handleChange } = props
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='w-full flex flex-col gap-4'>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="name">{tt('name')}</Label>
+                <Label htmlFor="name">{t('info.name')}</Label>
                 <Input required value={formData.name} onChange={handleChange} name='name' type="text" id='name' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="username">{tt('username')}</Label>
+                <Label htmlFor="username">{t('info.username')}</Label>
                 <Input required value={formData.username} onChange={handleChange} name='username' type="text" id='username' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="email">{tt('email')} (optional)</Label>
+                <Label htmlFor="email">{t('info.email.address')} {t('global.optional')}</Label>
                 <Input value={formData.email} onChange={handleChange} name='email' type="email" id='email' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="password">{tt('password')}</Label>
+                <Label htmlFor="password">{t('info.password')}</Label>
                 <Input required value={formData.password} onChange={handleChange} name='password' type="text" id='password' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="phone">{tt('phone')} (optional)</Label>
+                <Label htmlFor="phone">{t('info.phone')} {t('global.optional')}</Label>
                 <Input value={formData.phone_number} onChange={handleChange} name='phone_number' type="text" id='phone' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="organization">{tt('organization')} (optional)</Label>
+                <Label htmlFor="organization">{t('info.organization')} {t('global.optional')}</Label>
                 <Input value={formData.organization} onChange={handleChange} name='organization' type="text" id='organization' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="note">{tt('note')} (optional)</Label>
+                <Label htmlFor="note">{t('info.note')} {t('global.optional')}</Label>
                 <Input value={formData.note} onChange={handleChange} name='note' type="text" id='note' />
             </div>
 
@@ -224,39 +221,40 @@ const SupplierFormSecondRow = (props: {
 
     const { handleChange, formData, departments, setFormData, handleCheckboxChange } = props
 
-    const tt = useTranslations('global')
+    const t = useTranslations()
+
     return (
         <div className='w-full flex flex-col gap-4'>
 
             <div className="w-full items-center gap-1.5">
-                <Label>{tt('gender')}</Label>
+                <Label>{t('info.gender.h1')}</Label>
                 <Select onValueChange={(gender) => setFormData(prev => ({ ...prev, gender }))} value={formData.gender}>
                     <SelectTrigger className="w-full">
-                        <SelectValue placeholder={tt('select-gender')} />
+                        <SelectValue placeholder={t('info.gender.select')} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>{tt('gender')}</SelectLabel>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="others">Others</SelectItem>
+                            <SelectLabel>{t('info.gender.select')}</SelectLabel>
+                            <SelectItem value="male">{t('info.gender.male')}</SelectItem>
+                            <SelectItem value="female">{t("info.gender.female")}</SelectItem>
+                            <SelectItem value="others">{t("info.gender.others")}</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="address">{tt('address')} {tt('optional')}</Label>
+                <Label htmlFor="address">{t('info.address')} {t('global.optional')}</Label>
                 <Input value={formData.address} onChange={handleChange} name='address' type="text" id='address' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label htmlFor="origin">{tt('origin')} {tt('optional')}</Label>
+                <Label htmlFor="origin">{t('info.origin')} {t('global.optional')}</Label>
                 <Input value={formData.origin} onChange={handleChange} name='origin' type="text" id='origin' />
             </div>
 
             <div className='w-full flex flex-col gap-2'>
-                <Label>{tt('departments')}</Label>
+                <Label>{t('department.s')}</Label>
                 {departments && departments.map((dept) => (
                     <div key={dept.id} className="flex items-center">
                         <Checkbox
@@ -276,7 +274,7 @@ const SupplierFormSecondRow = (props: {
                 <Image width={110} height={110} src={formData.profile_url || '/profile/profile.svg'} alt='Supplier Profile' className='border rounded-full' />
 
                 <div className='flex flex-col gap-3 items-start'>
-                    <span>{tt('profile')}</span>
+                    <span>{t('profile.info')}</span>
                     <UploadButton
                         appearance={{
                             button: 'bg-primary text-secondary'

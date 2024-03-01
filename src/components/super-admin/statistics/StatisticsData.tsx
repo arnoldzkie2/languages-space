@@ -17,7 +17,6 @@ const StatisticsData = () => {
     const [chartData, setChartData] = useState<StatisticsChartData[]>([])
     const [cardsData, setCardsData] = useState<OverviewCards | null>(null)
 
-
     const [dateFormat, setDateFormat] = useState('week')
     const [currentChart, setCurrentChart] = useState('revenue')
     const [prevCurrentChart, setPrevCurrentChart] = useState('')
@@ -29,7 +28,7 @@ const StatisticsData = () => {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    const t = useTranslations("super-admin")
+    const t = useTranslations()
 
     const getCardsData = async () => {
         try {
@@ -77,7 +76,7 @@ const StatisticsData = () => {
             <StatisticsHeader />
             <div className='flex flex-col w-full px-52 items-center justify-center gap-4'>
                 <div className='w-full flex items-center justify-between'>
-                    <h1 className='text-2xl font-black'>{t('dashboard.h2')}</h1>
+                    <h1 className='text-2xl font-black'>{t('dashboard.overview')}</h1>
                     <div className='flex items-center gap-5'>
                         <Button onClick={()=> toast("This function is not yet ready")}>Download</Button>
                     </div>

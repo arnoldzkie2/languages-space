@@ -21,7 +21,7 @@ const AgentCashoutModal = () => {
     const { balance, getTransactions, toggleCashout, setBalance } = useAgentBalanceStore()
 
     const { setErr, setOkMsg, setIsLoading } = useGlobalStore()
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     const requestCashout = async (e: React.FormEvent) => {
 
@@ -58,31 +58,31 @@ const AgentCashoutModal = () => {
         <div className='fixed top-0 left-0 w-screen h-screen backdrop-blur bg-opacity-30 flex items-center justify-center padding py-20 z-50'>
             <Card>
                 <CardHeader>
-                    <CardTitle>{tt('request-payment')}</CardTitle>
+                    <CardTitle>{t('balance.payment.request')}</CardTitle>
                     <CardDescription><Err /></CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={requestCashout} className='w-full sm:w-96 bg-card rounded-md flex flex-col gap-4'>
                         <div className='flex flex-col gap-4'>
                             <div className='w-full flex flex-col gap-1.5'>
-                                <Label>{tt('amount')}:</Label>
+                                <Label>{t('balance.amount')}:</Label>
                                 <Input value={`${returnCurrency(balance.currency)}${Number(balance.amount)}`} readOnly />
                             </div>
                             <div className='w-full flex flex-col gap-1.5'>
-                                <Label>{tt('payment')}:</Label>
+                                <Label>{t('balance.payment.address')}:</Label>
                                 <Input value={balance.payment_address} readOnly />
                             </div>
                         </div>
                         <div className='flex items-center gap-4'>
-                            <Label>{tt('confirm')}</Label>
+                            <Label>{t('operation.confirm')}</Label>
                             <Checkbox
                                 checked={confirm}
                                 onCheckedChange={() => setConfirm(prev => !prev)}
                             />
                         </div>
                         <div className='flex items-center w-full gap-5'>
-                            <Button variant={'ghost'} className='w-full' type='button' onClick={toggleCashout}>{tt('close')}</Button>
-                            <SubmitButton msg={tt('submit')} style='w-full' />
+                            <Button variant={'ghost'} className='w-full' type='button' onClick={toggleCashout}>{t('operation.close')}</Button>
+                            <SubmitButton msg={t('operation.submit')} style='w-full' />
                         </div>
                     </form>
                 </CardContent>

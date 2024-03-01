@@ -14,7 +14,7 @@ const OrderHeader: React.FC = ({ }) => {
 
     const { orders, selectedOrder } = useAdminOrderStore()
 
-    const t = useTranslations('super-admin')
+    const t = useTranslations()
 
     const skeleton = (
         <Skeleton className='w-28 h-5 rounded-3xl'></Skeleton>
@@ -22,7 +22,7 @@ const OrderHeader: React.FC = ({ }) => {
 
     return (
         <nav className={`border-b px-8 flex items-center min-h-[64px] justify-between`}>
-            <h1 className='font-black text-xl uppercase'>{t('order.h1')}</h1>
+            <h1 className='font-black text-xl uppercase'>{t('order.manage')}</h1>
             <ul className='flex items-center h-full ml-auto gap-5 text-muted-foreground'>
                 {session.status !== 'loading' ?
                     <Link href={'/admin/manage/orders/new'} className='flex items-center hover:text-primary justify-center w-28 cursor-pointer'>

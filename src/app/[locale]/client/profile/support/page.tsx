@@ -24,8 +24,6 @@ const Page = () => {
     })
 
     const { setPage } = useClientStore()
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
 
     const { setErr, setIsLoading } = useGlobalStore()
 
@@ -67,6 +65,8 @@ const Page = () => {
         setPage('support')
     }, [])
 
+    const t = useTranslations()
+
     return (
         <>
             <ClientHeader />
@@ -85,7 +85,7 @@ const Page = () => {
                                     required
                                     type='name'
                                     value={formData.name}
-                                    placeholder={tt('name')}
+                                    placeholder={t('info.name')}
                                     name='name'
                                     onChange={handleChange} />
 
@@ -93,7 +93,7 @@ const Page = () => {
                                     required
                                     type='email'
                                     value={formData.email}
-                                    placeholder={tt('email')}
+                                    placeholder={t('info.email.h1')}
                                     name='email'
                                     onChange={handleChange} />
                             </div>
@@ -102,7 +102,7 @@ const Page = () => {
                                 required
                                 type='number'
                                 value={formData.phone}
-                                placeholder={tt('phone')}
+                                placeholder={t('info.phone')}
                                 name='phone'
                                 onChange={handleChange} />
 
@@ -112,8 +112,8 @@ const Page = () => {
                                 onChange={handleChange}
                                 name='message'
                                 className='h-[250px] resize-none'
-                                placeholder={tt("message")} />
-                            <SubmitButton msg={tt('submit')} />
+                                placeholder={t("info.message")} />
+                            <SubmitButton msg={t('operation.submit')} />
 
                         </form>
                     </CardContent>

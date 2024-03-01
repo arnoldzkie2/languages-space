@@ -87,8 +87,7 @@ const SupplierEarningsTable: React.FC<Props> = ({ filteredTable, supplierID }) =
 
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='flex w-full flex-col'>
@@ -103,12 +102,12 @@ const SupplierEarningsTable: React.FC<Props> = ({ filteredTable, supplierID }) =
                                 onCheckedChange={selectAllRows}
                             />
                         </th>
-                        <th scope="col" className="px-6 py-3">{tt('name')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('amount')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('rate')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('quantity')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('date')}</th>
-                        <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.name')}</th>
+                        <th scope="col" className="px-6 py-3">{t('balance.amount')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.rate')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.quantity')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.date.h1')}</th>
+                        <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,7 +150,7 @@ const SupplierEarningsTable: React.FC<Props> = ({ filteredTable, supplierID }) =
                                         {isAdminAllowed('delete_supplier_earnings') && <DeleteEarningsAlert earnings={earnings}
                                             supplierID={supplierID}
                                         />}
-                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>
                                 </td>
                             </tr>

@@ -7,7 +7,7 @@ import { Button } from '../ui/button'
 const TruncateTextModal = () => {
 
     const { truncateText, closeTruncateTextModal, copy } = useGlobalStore()
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     if (!truncateText) return null
 
@@ -17,7 +17,7 @@ const TruncateTextModal = () => {
                 {truncateText}
                 <Button onClick={() => {
                     copy(truncateText)
-                }}>{tt('copy')}</Button>
+                }}>{t('operation.copy')}</Button>
             </div>
         </div>
     )

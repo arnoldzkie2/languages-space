@@ -1,27 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import { OurFileRouter } from '@/app/api/uploadthing/core'
 import Err from '@/components/global/Err'
 import SubmitButton from '@/components/global/SubmitButton'
 import SideNav from '@/components/super-admin/SideNav'
-import Departments from '@/components/super-admin/management/Departments'
+import CardForm from '@/components/super-admin/management/card/CardForm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Switch } from '@/components/ui/switch'
 import useAdminPageStore from '@/lib/state/admin/adminPageStore'
 import useGlobalStore from '@/lib/state/globalStore'
 import { clientCardValue } from '@/lib/state/super-admin/clientCardStore'
 import useDepartmentStore from '@/lib/state/super-admin/departmentStore'
 import useAdminSupplierStore from '@/lib/state/super-admin/supplierStore'
 import { Courses, SupplierProps } from '@/lib/types/super-admin/supplierTypes'
-import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { signIn, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -29,13 +20,6 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 const Page = () => {
-
-    const session = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn()
-        },
-    })
 
     const router = useRouter()
 
@@ -192,8 +176,7 @@ const Page = () => {
 
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className=''>
@@ -203,13 +186,13 @@ const Page = () => {
             <div className={`flex flex-col h-full pb-8 w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
 
                 <nav className={`border-b h-16 flex items-center px-8 justify-between`}>
-                    <h1 className='font-black text-xl uppercase'>{t('client-card.create')}</h1>
+                    <h1 className='font-black text-xl uppercase'>{t('card.create')}</h1>
                     <ul className='flex items-center h-full ml-auto gap-5 text-muted-foreground'>
                         <Link href={'/admin/manage/card'} className='flex items-center hover:text-primary justify-center w-32 cursor-pointer gap-1'>
-                            <div>{t('client-card.h1')}</div>
+                            <div>{t('card.manage')}</div>
                         </Link>
                         {isAdminAllowed('bind_cards') && <Link href={'/admin/manage/card/bind'} className='flex items-center gap-1 hover:text-primary justify-center w-32 cursor-pointer'>
-                            <div>{t('client.card.bind')}</div>
+                            <div>{t('card.bind')}</div>
                         </Link>}
                     </ul>
                 </nav>
@@ -217,140 +200,35 @@ const Page = () => {
                 <div className='w-full px-8'>
                     <Card className='w-1/3 h-full'>
                         <CardHeader>
-                            <CardTitle>{t('client-card.create')}</CardTitle>
+                            <CardTitle>{t('card.create')}</CardTitle>
                             <CardDescription><Err /></CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form className='w-full flex flex-col gap-10' onSubmit={createCard}>
-                                <div className='w-full flex gap-10'>
-                                    <div className='w-1/2 flex flex-col gap-4'>
-
-                                        <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="name">{tt("name")}</Label>
-                                            <Input type="text" id="name" name='name' placeholder={tt("name")} value={formData.name} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="price">{tt("price")}</Label>
-                                            <Input type="number" id="price" name='price' placeholder={tt("price")} value={formData.price} onChange={handleChange} />
-                                        </div>
-
-                                        <div className="grid w-full max-w-sm items-center gap-1.5 relative">
-                                            <Label htmlFor="balance">{tt("balance")}</Label>
-                                            <Input type="number" id="balance" name='balance' placeholder={tt("balance")} value={formData.balance} onChange={handleChange} />
-                                            <div className='absolute right-3 top-7 bg-card py-1 font-black cursor-pointer text-muted-foreground hover:text-foreground text-xs uppercase' onClick={() => setFormData(prevData => ({ ...prevData, balance: 99999 }))}>{t('client-card.max')}</div>
-                                        </div>
-
-                                        <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="validity">{t("client-card.validity")}</Label>
-                                            <Input type="number" id="validity" name='validity' placeholder={t("client-card.validity")} value={formData.validity} onChange={handleChange} />
-                                        </div>
-
-                                    </div>
-                                    <div className='w-1/2 flex flex-col gap-4'>
-                                        <Departments />
-
-                                        <div className='w-full flex items-center gap-5'>
-                                            <Switch id='prepaid' checked={formData.prepaid} onCheckedChange={(val) => setFormData(prev => ({ ...prev, prepaid: val }))} />
-                                            <Label htmlFor="prepaid" className='font-medium'>{t('client-card.prepaid')}</Label>
-                                        </div>
-
-                                        <div className='w-full flex items-center gap-5'>
-                                            <Switch id='invoice' checked={formData.invoice} onCheckedChange={(val) => setFormData(prev => ({ ...prev, invoice: val }))} />
-                                            <Label htmlFor="invoice" className='font-medium'>{t('client-card.invoice')}</Label>
-                                        </div>
-
-                                        <div className='w-full flex items-center gap-5'>
-                                            <Switch id='available' checked={formData.available} onCheckedChange={(val) => setFormData(prev => ({ ...prev, available: val }))} />
-                                            <Label htmlFor="available" className='font-medium'>{t('client-card.available')}</Label>
-                                        </div>
-
-                                        <div className='w-full flex items-center gap-5'>
-                                            <Switch id='online_renews' checked={formData.online_renews} onCheckedChange={(val) => setFormData(prev => ({ ...prev, online_renews: val }))} />
-                                            <Label htmlFor="online_renews" className='font-medium'>{t('client-card.online_renews')}</Label>
-                                        </div>
-
-                                        <div className='w-full flex items-center gap-5'>
-                                            <Switch id='repeat_purchases' checked={formData.repeat_purchases} onCheckedChange={(val) => setFormData(prev => ({ ...prev, repeat_purchases: val }))} />
-                                            <Label htmlFor="repeat_purchases" className='font-medium'>{t('client-card.repeat_purchases')}</Label>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                                <div className='w-full flex gap-10'>
-                                    <div className='w-full flex flex-col gap-3'>
-                                        <h1 className='font-bold'>{t('client-card.courses')}:</h1>
-                                        <Label htmlFor="courses-all" className='flex cursor-pointer items-center gap-2'>{t('client-card.select-all')}
-                                            <Checkbox id='course-all' checked={supportedCourses.length === courses.length} onCheckedChange={() => selectAllCourses(courses)} />
-                                        </Label>
-                                        <Input value={searchCourse} onChange={(e) => setSearchCourse(e.target.value)} className='outline-none border px-3 py-1.5' placeholder={t('courses.search')} />
-                                        <ul className='w-ful flex flex-col max-h-[500px] overflow-y-auto'>
-                                            {filterCourse.length > 0 ? filterCourse.map(course => (
-                                                <Label htmlFor={course.id} key={course.id} className='flex border cursor-pointer hover:bg-muted gap-3 items-center w-full p-3 rounded-sm'>
-                                                    <Checkbox onCheckedChange={() => toggleCourseSelection(course.id)} checked={supportedCourses.includes(course.id)} id={course.id} />
-                                                    <div>{course.name}</div>
-                                                </Label>
-                                            )) : skeleton.map(skel => (
-                                                <div className='flex border gap-3 items-center w-full p-3 h-16 rounded-sm' key={skel}>
-                                                    <Skeleton className='w-5 h-5 rounded-md'></Skeleton>
-                                                    <Skeleton className='w-full h-5 rounded-3xl'></Skeleton>
-                                                </div>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div className='w-full flex flex-col gap-3'>
-                                        <h1 className='font-bold'>{t('client-card.suppliers')}:</h1>
-                                        <Label htmlFor="suppliers-all" className='flex cursor-pointer items-center gap-2'>{t('client-card.select-all')}
-                                            <Checkbox id='suppliers-all' checked={supportedSuppliers.length === supplier.length} onCheckedChange={() => selectAllSupplier(supplier)} />
-                                        </Label>
-                                        <Input type="text" value={searchSupplier} onChange={(e) => setSearchSupplier(e.target.value)} className='outline-none border px-3 py-1.5' placeholder={t('supplier.search')} />
-                                        <ul className='w-ful flex flex-col max-h-[500px] overflow-y-auto'>
-                                            {filterSupplier.length > 0 ? filterSupplier.map(supplier => (
-                                                <Label htmlFor={supplier.id} key={supplier.id} className='flex border cursor-pointer hover:bg-muted gap-3 items-center w-full px-3 py-1 rounded-sm'>
-                                                    <Checkbox
-                                                        id={supplier.id}
-                                                        onCheckedChange={() => {
-                                                            handleCheckboxChange(supplier.id, 1)
-                                                        }}
-                                                        checked={supportedSuppliers.some(
-                                                            (sup) => sup.supplierID === supplier.id
-                                                        )}
-                                                    />
-                                                    <div className='mr-auto'>{supplier.name}</div>
-                                                    <Input
-                                                        type="number"
-                                                        className='w-14 appearance-none text-center px-2 outline-none border py-0'
-                                                        value={supportedSuppliers.find((supp) => supp.supplierID === supplier.id)?.price || ''}
-                                                        onChange={(e) => {
-                                                            const newPrice = parseFloat(e.target.value);
-                                                            if (!isNaN(newPrice) && newPrice) {
-                                                                const updatedSuppliers = supportedSuppliers.map((supp) => {
-                                                                    if (supp.supplierID === supplier.id) {
-                                                                        return { supplierID: supp.supplierID, price: newPrice };
-                                                                    }
-                                                                    return supp;
-                                                                });
-                                                                setSupportedSuppliers(updatedSuppliers);
-                                                            }
-                                                        }}
-
-                                                    />
-                                                </Label>
-                                            )) : skeleton.map(skel => (
-                                                <div key={skel} className='flex border gap-3 items-center w-full p-3 rounded-sm'>
-                                                    <Skeleton className='w-5 h-5 rounded-md'></Skeleton>
-                                                    <Skeleton className='mr-auto w-2/3 rounded-3xl h-5'></Skeleton>
-                                                    <Skeleton className='w-10 h-5 rounded-md'></Skeleton>
-                                                </div>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
+                                <CardForm
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                    toggleCourseSelection={toggleCourseSelection}
+                                    supportedCourses={supportedCourses}
+                                    supplier={supplier}
+                                    searchCourse={searchCourse}
+                                    searchSupplier={searchSupplier}
+                                    selectAllCourses={selectAllCourses}
+                                    selectAllSupplier={selectAllSupplier}
+                                    handleChange={handleChange}
+                                    handleCheckboxChange={handleCheckboxChange}
+                                    filterCourse={filterCourse}
+                                    filterSupplier={filterSupplier}
+                                    setSearchCourse={setSearchCourse}
+                                    setSupportedSuppliers={setSupportedSuppliers}
+                                    setSearchSupplier={setSearchSupplier}
+                                    skeleton={skeleton}
+                                    supportedSuppliers={supportedSuppliers}
+                                    courses={courses}
+                                />
                                 <div className='flex items-center gap-10 w-full'>
-                                    <Button type='button' onClick={() => router.push('/admin/manage/card')} variant={'ghost'} className='w-full'>{tt('cancel')}</Button>
-                                    <SubmitButton msg={tt('create')} style='w-full' />
+                                    <Button type='button' onClick={() => router.push('/admin/manage/card')} variant={'ghost'} className='w-full'>{t('operation.cancel')}</Button>
+                                    <SubmitButton msg={t('operation.create')} style='w-full' />
                                 </div>
 
                             </form>

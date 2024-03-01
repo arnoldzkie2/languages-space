@@ -46,33 +46,32 @@ const DeleteEarningsAlert = ({ earnings, supplierID }: Props) => {
         }
     }
 
-    const t = useTranslations("super-admin")
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <li className='flex hover:text-foreground justify-between items-center cursor-pointer'>
-                    {tt('delete')}
+                    {t('operation.delete')}
                     <FontAwesomeIcon icon={faTrashCan} width={16} height={16} />
                 </li>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>{t("agent.earning.delete")}</AlertDialogTitle>
+                    <AlertDialogTitle>{t("balance.earnings.delete")}</AlertDialogTitle>
                     <AlertDialogDescription>
                         <Err />
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className='flex flex-col gap-3'>
                     <div className='font-bold text-sm flex flex-col gap-2 p-5 border'>
-                        <div>ID: <span className='font-normal text-muted-foreground'>{earnings.id}</span></div>
-                        <div>{tt('name')}: <span className='font-normal text-muted-foreground'>{earnings.name}</span></div>
+                        <div>{t('info.id')}: <span className='font-normal text-muted-foreground'>{earnings.id}</span></div>
+                        <div>{t('info.name')}: <span className='font-normal text-muted-foreground'>{earnings.name}</span></div>
                     </div>
                 </div>
                 <div className='flex items-center w-full justify-end gap-5'>
-                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{tt('close')}</Button>
+                    <Button onClick={() => setOpen(false)} variant={'ghost'}>{t('operation.close')}</Button>
                     <form onSubmit={deleteEarnings}>
-                        <SubmitButton variant={'destructive'} msg={tt('confirm')} />
+                        <SubmitButton variant={'destructive'} msg={t('operation.confirm')} />
                     </form>
                 </div>
             </AlertDialogContent>

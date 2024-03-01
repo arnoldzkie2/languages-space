@@ -88,8 +88,7 @@ const AdminTable: React.FC<Props> = ({ filteredTable }) => {
 
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='flex flex-col w-full'>
@@ -104,13 +103,13 @@ const AdminTable: React.FC<Props> = ({ filteredTable }) => {
                                 onCheckedChange={selectAllRows}
                             />
                         </th>
-                        <th scope="col" className="px-6 py-3">{tt('name')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('phone')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('organization')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('origin')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('note')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('date')}</th>
-                        <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.name')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.phone')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.organization')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.origin')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.note')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.date.h1')}</th>
+                        <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,10 +155,10 @@ const AdminTable: React.FC<Props> = ({ filteredTable }) => {
                                     <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer text-foreground' onClick={() => openOperation(admin.id)} />
                                     <ul className={`${operation && selectedID === admin.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-32 shadow-lg border flex flex-col text-muted-foreground`}>
                                         <ViewAdminAlert adminID={admin.id} />
-                                        <Link href={`/admin/manage/admin/permissions/${admin.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('permissions')} <FontAwesomeIcon icon={faGear} /></Link>
-                                        <Link href={`/admin/manage/admin/update/${admin.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
+                                        <Link href={`/admin/manage/admin/permissions/${admin.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('admin.permissions.h1')} <FontAwesomeIcon icon={faGear} /></Link>
+                                        <Link href={`/admin/manage/admin/update/${admin.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>
                                         <DeleteSingeAdminAlert admin={admin} />
-                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>
                                 </td>
                             </tr>

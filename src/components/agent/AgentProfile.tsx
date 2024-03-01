@@ -16,7 +16,7 @@ const AgentProfile = () => {
         {
             page: 'balance',
             link: '/agent/profile/balance',
-            translate: 'profile.balance'
+            translate: 'balance.my_balance'
         },
         {
             page: 'invites',
@@ -28,7 +28,7 @@ const AgentProfile = () => {
     const page = useGlobalStore(s => s.page)
     const setPage = useGlobalStore(s => s.setPage)
 
-    const t = useTranslations('client')
+    const t = useTranslations()
 
     return (
         <div className='flex flex-col gap-3 w-full lg:w-1/4 order-2 md:order-1 text-muted-foreground'>

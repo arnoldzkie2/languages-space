@@ -75,8 +75,7 @@ const Page = () => {
         }
     }
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     useEffect(() => {
         getSupplier()
@@ -103,7 +102,7 @@ const Page = () => {
                                 <Departments />
 
                                 <div className='flex w-full flex-col gap-1.5'>
-                                    <Label>{tt('supplier')}</Label>
+                                    <Label>{t('side_nav.supplier')}</Label>
                                     <Popover open={openSupplier} onOpenChange={setOpenSupplier}>
                                         <PopoverTrigger asChild>
                                             <Button
@@ -117,7 +116,7 @@ const Page = () => {
                                             >
                                                 {formData.supplierID
                                                     ? supplier.find((supplier) => supplier.id === formData.supplierID)?.username
-                                                    : t('supplier.select')}
+                                                    : t('supplier.select.h1')}
                                                 <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             </Button>
                                         </PopoverTrigger>
@@ -155,37 +154,37 @@ const Page = () => {
                                 </div>
 
                                 <div className='flex w-full flex-col gap-1'>
-                                    <Label htmlFor="name">{tt('name')}</Label>
+                                    <Label htmlFor="name">{t('info.name')}</Label>
                                     <Input type="text"
                                         value={formData.name}
                                         name='name'
                                         onChange={handleChange}
-                                        placeholder={tt('name')} />
+                                        placeholder={t('info.name')} />
                                 </div>
 
                                 <div className='flex w-full flex-col gap-1'>
-                                    <Label htmlFor="rate">{tt('rate')}</Label>
+                                    <Label htmlFor="rate">{t('info.rate')}</Label>
                                     <Input type="text"
                                         value={formData.rate}
                                         name='rate'
                                         onChange={handleChange}
-                                        placeholder={tt('rate')} />
+                                        placeholder={t('info.rate')} />
                                 </div>
 
                                 <div className='flex w-full flex-col gap-1'>
-                                    <Label htmlFor="quantity">{tt('quantity')}</Label>
+                                    <Label htmlFor="quantity">{t('info.quantity')}</Label>
                                     <Input type="text"
                                         value={formData.quantity}
                                         name='quantity'
                                         onChange={handleChange}
-                                        placeholder={tt('quantity')} />
+                                        placeholder={t('info.quantity')} />
                                 </div>
 
-                                <div>Total: <strong>{formData.quantity * formData.rate}</strong></div>
+                                <div>{t('pagination.total')}: <strong>{formData.quantity * formData.rate}</strong></div>
 
                                 <div className='flex w-full items-center gap-5'>
-                                    <Button onClick={() => router.push('/admin/manage/supplier')} className='w-full' variant={'ghost'} type='button'>{tt('cancel')}</Button>
-                                    <SubmitButton msg={tt("confirm")} style='w-full' />
+                                    <Button onClick={() => router.push('/admin/manage/supplier')} className='w-full' variant={'ghost'} type='button'>{t('operation.cancel')}</Button>
+                                    <SubmitButton msg={t("operation.confirm")} style='w-full' />
                                 </div>
 
                             </form>

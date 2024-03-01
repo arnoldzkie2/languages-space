@@ -17,39 +17,39 @@ interface Props {
 
 const SearchAgentDeduction: React.FC<Props> = ({ handleSearch, searchQuery }) => {
 
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='w-full'>
             <div className='flex justify-between items-center mb-2 font-medium px-2'>
-                {tt('search')}
+                {t('operation.search')}
             </div>
             <div>
                 <div className='flex flex-col gap-3'>
 
                     <Input type="text"
-                        placeholder={tt('name')}
+                        placeholder={t('info.name')}
                         name='name'
                         onChange={handleSearch}
                         value={searchQuery.name}
                     />
 
                     <Input type="text"
-                        placeholder={tt('amount')}
+                        placeholder={t('balance.amount')}
                         name='amount'
                         onChange={handleSearch}
                         value={searchQuery.amount}
                     />
 
                     <Input type="text"
-                        placeholder={tt('rate')}
+                        placeholder={t('info.rate')}
                         name='rate'
                         onChange={handleSearch}
                         value={searchQuery.rate}
                     />
 
                     <Input type="text"
-                        placeholder={tt('quantity')}
+                        placeholder={t('info.quantity')}
                         name='quantity'
                         onChange={handleSearch}
                         value={searchQuery.quantity}

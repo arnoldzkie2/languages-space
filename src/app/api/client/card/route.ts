@@ -103,6 +103,9 @@ export const DELETE = async (req: NextRequest) => {
 
   try {
 
+    const session = await getAuth()
+    if (!session) return unauthorizedRes()
+
     if (clientCardID) {
 
       //retrieve card
@@ -110,7 +113,7 @@ export const DELETE = async (req: NextRequest) => {
       if (!card) return notFoundRes('Card in Client')
 
       const unbindCard = await prisma.clientCard.delete({ where: { id: clientCardID } })
-      if (!unbindCard) return badRequestRes()
+      if (!unbindCard) return badRequestRes("Faild to delete client card")
 
       return okayRes()
 

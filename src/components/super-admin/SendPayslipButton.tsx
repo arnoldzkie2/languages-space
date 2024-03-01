@@ -20,7 +20,7 @@ const SendPayslipButton = () => {
         ])
     }
 
-    const tt = useTranslations("global")
+    const t = useTranslations()
 
     // Get the current day of the month
     const currentDay = new Date().getUTCDate();
@@ -31,7 +31,7 @@ const SendPayslipButton = () => {
         // if (day !== 1) return <NotFirstDayOfTheMonthButton msg={tt('send-payslip')} title={tt('payslip-notfirstday')} />
 
         //else return this button
-        return <SubmitButton msg={tt('send-payslip')} />
+        return <SubmitButton msg={t('global.payslip.send')} />
     }
 
     return (

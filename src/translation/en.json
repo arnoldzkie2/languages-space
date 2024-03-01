@@ -1,234 +1,540 @@
 {
-    "super-admin": {
-        "agent": {
-            "h1": "Manage Agent",
-            "search": "Search Agent",
-            "delete": "Are you sure you want to delete this agent?",
-            "create": "Create Agent",
-            "view": "View Agent",
-            "update": "Update Agent",
-            "earnings": "Agent Earnings",
-            "deduction": {
-                "delete": "Are you sure you want to delete this deductions?"
-            },
-            "earning": {
-                "delete": "Are you sure you want to delete this earnings?"
-            },
-            "deductions": "Agent Deductions"
+    "client": {
+        "s": "Clients",
+        "manage": "Manage Client",
+        "create": "Create Client",
+        "update": "Update Client",
+        "view": "View Client",
+        "delete": "Are you sure you want to delete this client?",
+        "search": "Search Client",
+        "select": {
+            "h1": "Select Client",
+            "first": "Select Client First"
         },
-        "supplier": {
-            "create": "Create Supplier",
-            "view": "View Supplier",
-            "delete": "Are you sure you want to delete this supplier?",
-            "h1": "Manage Supplier",
-            "select": "Select Supplier",
-            "select-first": "Select Supplier First",
-            "select-meeting": "Select Meeting Info",
-            "404": "Supplier not found",
-            "search": "Search Supplier",
-            "tags": "Supplier Tags",
-            "earnings": "Supplier Earnings",
-            "deductions": "Supplier Deductions",
-            "manage-tags": "Manage Tags",
-            "nodata": "No Suppliers",
-            "no-meeting": "Supplier has 0 meeting info",
-            "payment": {
-                "search": "Search Request",
-                "h1": "Payment Requests",
-                "confirmed": "Are you sure this supplier is paid?"
+        "no_data": "No Clients",
+        "404": "Client Not Found",
+        "page": {
+            "header": {
+                "buy_card": "Buy Cards",
+                "book_now": "Book Now"
+            },
+            "main": {
+                "h1": "Learn, Grow, and Connect at Languages Space",
+                "h2": "At Languages Space, we believe in personalized 1v1 learning. Connect with skilled instructors for a unique language-learning experience."
+            },
+            "book": {
+                "h1": "Make Your Reservation"
+            },
+            "card": {
+                "h1": "Grab Your Cards Now!"
+            }
+        }
+    },
+    "profile": {
+        "account": "Account",
+        "profile": "My Profile",
+        "settings": "Settings",
+        "image": "Profile Image",
+        "cards": "My Cards",
+        "account_info": "Account Info",
+        "info": "Profile Info",
+        "navigate": "Navigate to",
+        "invites": "My Invites",
+        "transactions": "Transactions",
+        "bookings": "My Bookings",
+        "support": "Contact Support",
+        "orders": "My Orders",
+        "meeting": "My Meeting"
+    },
+    "card": {
+        "s": "Cards",
+        "h1": "Card",
+        "select": {
+            "h1": "Select Card",
+            "first": "Select Card First"
+        },
+        "supported": {
+            "courses": "Supported Courses",
+            "suppliers": "Supported Suppliers"
+        },
+        "manage": "Manage Card",
+        "view": "View Card",
+        "days": "Days",
+        "create": "Create Card",
+        "search": "Search Card",
+        "loading": "Loading Cards...",
+        "no_cards": "You don't have cards",
+        "buy": "Buy Now",
+        "delete": "Are you sure you want to delete this card?",
+        "repeat_purchases": "Repeat Purchases",
+        "online_renew": "Online Renew",
+        "prepaid": "Prepaid Client",
+        "with": "With Cards",
+        "validity": "Validity",
+        "update": "Update Card",
+        "bind": "Bind Card",
+        "renew": "Renew Card",
+        "404": "Card Not Found",
+        "no_data": "No Cards",
+        "invoice": "Invoice Number",
+        "express": "Express Number",
+        "available": "Available",
+        "price": "Price",
+        "sold": "Sold"
+    },
+    "booking": {
+        "s": "Bookings",
+        "manage": "Manage Booking",
+        "delete": "Are you sure you want to delete this booking?",
+        "search": "Search Booking",
+        "view": "View Booking",
+        "cancel": "Are you sure you want to cancel this booking?",
+        "create": "Create Booking",
+        "select_card": "Select card to book",
+        "total": "Total Class",
+        "rating": "Average Ratings",
+        "request_cancel": "Request admin to cancel this booking.",
+        "fillup": "Fill up booking info",
+        "update": "Update Booking",
+        "completed": {
+            "button": "Mark as Completed",
+            "confirm": "Are you sure you want to mark this booking as completed?"
+        },
+        "confirm": "Confirm Booking",
+        "reminders": {
+            "h1": "Reminders",
+            "manage": "Manage Booking Reminders",
+            "delete": "Are you sure you want to delete this reminder?",
+            "create": "Create Reminders",
+            "confirm": {
+                "h1": "Book Now",
+                "sure": "Are you sure you want to book this reminder?"
+            },
+            "update": "Update Reminders"
+        },
+        "request": {
+            "h1": "Booking Request",
+            "h2": "Request Booking",
+            "manage": "Manage Booking Request",
+            "create": "Create Booking Request",
+            "cancel": "Are you sure you want to cancel this booking request?",
+            "delete": "Are you sure you want to delete this booking request?"
+        },
+        "comments": {
+            "h1": "Comment",
+            "s": "Comments",
+            "create": "Create Comment",
+            "update": "Update Comment",
+            "no_rate": {
+                "supplier": "Supplier did not rate this booking yet",
+                "client": "Client did not rate this booking yet"
+            },
+            "view": "View Comment",
+            "level": {
+                "h1": "Client Level",
+                "pre_beginner": "Pre-Beginner",
+                "beginner": "Beginner",
+                "high_beginner": "High Beginner",
+                "pre_intermediate": "Pre-Intermediate",
+                "intermediate": "Intermediate",
+                "upper_intermediate": "Upper Intermediate",
+                "advanced": "Advanced"
+            },
+            "book": {
+                "h1": "Book Used",
+                "name": "Name",
+                "page": "Page"
+            },
+            "sentences": "Phrases / Sentences",
+            "vocabulary": "Vocabulary",
+            "homework": "Homework",
+            "manage": "Manage Booking Comments",
+            "template": {
+                "h1": "Comment Templates",
+                "manage": "Manage Booking Templates",
+                "create": "Create Template",
+                "update": "Update Template",
+                "search": "Search Template",
+                "delete": "Are you sure you want to delete this template?"
+            }
+        }
+    },
+    "agent": {
+        "s": "Agents",
+        "manage": "Manage Agent",
+        "search": "Search Agent",
+        "view": "View Agent",
+        "delete": "Are you sure you want to delete this agent?",
+        "create": "Create Agent",
+        "update": "Update Agent",
+        "earnings": "Agent Earnings",
+        "select": "Select Agent",
+        "deductions": "Agent Deductions",
+        "404": "Agent Not Found",
+        "no_data": "No Agents",
+        "page": {
+            "header": {
+                "invite": "Invite"
+            }
+        }
+    },
+    "supplier": {
+        "s": "Suppliers",
+        "create": "Create Supplier",
+        "update": "Update Supplier",
+        "view": "View Supplier",
+        "delete": "Are you sure you want to delete this supplier?",
+        "manage": "Manage Supplier",
+        "select": {
+            "h1": "Select Supplier",
+            "first": "Select Supplier First"
+        },
+        "404": "Supplier not found",
+        "search": "Search Supplier",
+        "tags": "Supplier Tags",
+        "no_meeting": "Supplier has no meeting info",
+        "earnings": "Supplier Earnings",
+        "deductions": "Supplier Deductions",
+        "no_data": "No Suppliers",
+        "supported": "Supported Suppliers"
+    },
+    "meeting": {
+        "h1": "Meeting Info",
+        "service": "Meeting Service",
+        "select": {
+            "h1": "Select Meeting Info"
+        },
+        "code": "Meeting Code"
+    },
+    "balance": {
+        "h1": "Balance",
+        "my_balance": "My Balance",
+        "amount": "Amount",
+        "commission": {
+            "h1": "Commission",
+            "fixed": "Fixed",
+            "percentage": "Percentage",
+            "type": "Type",
+            "rate": "Commission Rate"
+        },
+        "currency": "Currency",
+        "payment": {
+            "request": "Payment Request",
+            "search": "Search Payment",
+            "address": "Payment Address",
+            "confirmed": "Are you sure this is paid?"
+        },
+        "deductions": {
+            "h1": "Deductions",
+            "delete": "Are you sure you want to delete this deduction?"
+        },
+        "earnings": {
+            "h1": "Earnings",
+            "delete": "Are you sure you want to delete this earnings?"
+        },
+        "total": "Total Balance",
+        "cashout": {
+            "h1": "Cashout",
+            "request": "Request Cashout"
+        },
+        "transactions": {
+            "h1": "Transactions"
+        }
+    },
+    "schedule": {
+        "h1": "Schedule",
+        "s": "Schedules",
+        "manage": "Manage Schedule",
+        "create": "Create Schedule",
+        "no_schedule": "No Schedule",
+        "select": "Select Schedule",
+        "delete": "Delete Schedule"
+    },
+    "side_nav": {
+        "menu": "Menu",
+        "department": "Department",
+        "dashboard": "Dashboard",
+        "client": "Client",
+        "schedule": "Schedule",
+        "agent": "Agent",
+        "card": "Card",
+        "course": "Course",
+        "supplier": "Supplier",
+        "admin": "Admin",
+        "orders": "Orders",
+        "booking": "Booking",
+        "news": "News",
+        "settings": "Settings",
+        "statistics": "Statistics"
+    },
+    "auth": {
+        "logout": "Logout",
+        "login": {
+            "h1": "Sign In",
+            "description": "Enter your username and password below to sign in and continue your session."
+        },
+        "signup": {
+            "h1": "Sign Up",
+            "description": "Start your learning journey today. Sign up to explore a variety of subjects and connect with passionate educators."
+        },
+        "welcome_back": "Welcome Back!",
+        "fillup": "Fill up the form",
+        "confirm_password": "Confirm Password",
+        "not_signup": "Don't have account yet? ",
+        "already_signup": "Already signed up?"
+    },
+    "info": {
+        "id": "ID",
+        "name": "Name",
+        "age": "Age",
+        "tags": "Tags",
+        "invited": "Invited By",
+        "email": {
+            "h1": "Email",
+            "address": "Email Address"
+        },
+        "username": "Username",
+        "password": "Password",
+        "gender": {
+            "h1": "Gender",
+            "select": "Select Gender",
+            "all": "All Gender",
+            "male": "Male",
+            "female": "Female",
+            "others": "Prefer not to say"
+        },
+        "description": "Description",
+        "employment": {
+            "h1": "Employment Status",
+            "full": "Full-Time",
+            "part": "Part-Time"
+        },
+        "paid": "Paid",
+        "settlement": "Settlement Period",
+        "time": {
+            "h1": "Time",
+            "select": "Select Time"
+        },
+        "date": {
+            "h1": "Date",
+            "buy": "Buy Date",
+            "select": {
+                "h1": "Select Date",
+                "first": "Select Date First"
             }
         },
-        "statistics": {
-            "total": {
-                "client": "Total Clients",
-                "supplier": "Total Suppliers",
-                "agent": "Total Agents",
-                "card": "Total Cards",
-                "booking": "Total Bookings",
-                "order": "Total Orders",
-                "revenue": "Total Revenue"
-            },
-            "this": {
-                "year": "This Year",
-                "month": "This Month",
-                "week": "This Week"
-            }
+        "address": "Address",
+        "quantity": "Quantity",
+        "operator": {
+            "h1": "Operator",
+            "select": "Select Operator",
+            "all": "All Operator"
         },
-        "dashboard": {
-            "h1": "Dashboard",
-            "h2": "Overview",
-            "total_revenue": "Total Revenue",
-            "most_data": {
-                "client": "Client Most Bookings",
-                "supplier": "Supplier Most Bookings",
-                "agent": "Agent Most Invites",
-                "card": "Most Card Purchases"
-            },
-            "last": {
-                "month": "Last Month",
-                "h2": "This is the most data last month"
-            },
-            "this": {
-                "month": "This Month",
-                "h2": "This is the most data this month"
-            },
-            "no_changes": "No changes",
-            "from_last_month": "from last month",
-            "from_last_week": "from last week",
-            "from_last_year": "from last year",
-            "bookings": "Bookings",
-            "total_clients": "Total Clients",
-            "orders": "Orders",
+        "phone": "Phone Number",
+        "paid_by": "Paid By",
+        "keywords": {
+            "h1": "Keywords",
+            "add": "Add Keywords",
+            "delete": "Delete Keywords"
+        },
+        "organization": "Organization",
+        "profile": {
+            "h1": "Profile",
+            "image": "Profile Image"
+        },
+        "title": "Title",
+        "message": "Message",
+        "origin": "Origin",
+        "note": "Note",
+        "rate": "Rate",
+        "salary": "Salary"
+    },
+    "global": {
+        "error": "Something went wrong",
+        "max": "Max",
+        "optional": "(optional)",
+        "select_language": "Select Language",
+        "invites": "Invites",
+        "no_data": "No Data",
+        "payslip": {
+            "h1": "Payslip",
+            "send": "Send Payslip"
+        }
+    },
+    "user": {
+        "h1": "User",
+        "all": "All User",
+        "select": "Select User",
+        "supplier": "Supplier",
+        "client": "Client",
+        "agent": "Agent",
+        "you": "You",
+        "admin": "Admin"
+    },
+    "status": {
+        "h1": "Status",
+        "all": "All Status",
+        "select": "Select Status",
+        "completed": "Completed",
+        "settled": "Settled",
+        "pending": "Pending",
+        "paid": "Paid",
+        "in-process": "In Process",
+        "canceled": "Canceled",
+        "cancel-request": "Cancel Request",
+        "confirmed": "Confirmed",
+        "invoiced": "Invoiced"
+    },
+    "operation": {
+        "h1": "Operation",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "view": "View",
+        "submit": "Submit",
+        "copy": "Copy",
+        "confirm": "Confirm",
+        "show_more": "Show More",
+        "create": "Create",
+        "close": "Close",
+        "remove": "Remove",
+        "select_user": "Select User",
+        "add_more": "Add More",
+        "delete_all": "Delete All",
+        "select": "Select",
+        "select_all": "Select All",
+        "search": "Search",
+        "renew": "Renew",
+        "update": "Update",
+        "download": "Download"
+    },
+    "dashboard": {
+        "h1": "Dashboard",
+        "overview": "Overview",
+        "most_data": {
+            "client": "Client Most Bookings",
+            "supplier": "Supplier Most Bookings",
+            "agent": "Agent Most Invites",
+            "card": "Most Card Purchases"
+        }
+    },
+    "statistics": {
+        "no_changes": "No changes",
+        "most_data": {
+            "last": "This is the most data last month",
+            "now": "This is the most data this month"
+        },
+        "total": {
+            "client": "Total Clients",
+            "supplier": "Total Suppliers",
+            "agent": "Total Agents",
+            "booking": "Total Bookings",
+            "order": "Total Orders",
+            "revenue": "Total Revenue",
             "new_clients": "New Clients"
         },
-        "courses": {
-            "h1": "Manage Courses",
-            "search": "Search Course",
-            "update": "Update Course",
-            "supported-cards": "Supported Cards",
-            "create": "Create Course",
-            "select": "Select Course",
-            "course-name": "Course Name"
+        "new": {
+            "client": "New Clients",
+            "booking": "New Bookings",
+            "supplier": "New Suppliers",
+            "agent": "New Agents",
+            "order": "New Orders"
         },
-        "news": {
-            "h1": "Manage News",
-            "title": "Title",
-            "delete": "Are you sure you want to delete this news?",
-            "update": "Update News",
-            "author": "Author",
-            "keywords": "Keywords",
-            "add-keyword": "Add Keyword",
-            "create": "Create News",
-            "search": "Search News"
+        "week": {
+            "h1": "Week",
+            "this": "This Week",
+            "last": "Last Week",
+            "from_last": "from last week"
         },
-        "client": {
-            "client": "Client",
-            "h1": "Manage Client",
-            "select-first": "Select Client First",
-            "create": "Create Client",
-            "update": "Update Client",
-            "with-cards": "With Cards",
-            "phone": "Phone #",
-            "view": "View Client",
-            "nodata": "No Clients",
-            "delete": "Are you sure you want to delete this client?",
-            "organization": "Organization",
-            "card": {
-                "client": "Cards",
-                "bind": "Bind Card"
-            },
-            "search": "Search Client",
-            "select": "Select Client",
-            "404": "Client Not Found"
+        "month": {
+            "h1": "Month",
+            "this": "This Month",
+            "last": "Last Month",
+            "from_last": "from last month"
         },
-        "client-card": {
-            "manage": "Manage Client Card",
-            "h1": "Manage Card",
-            "create": "Create Card",
-            "select-all": "Select All",
-            "select-first": "Select Card First",
-            "update": "Update Card",
-            "prepaid": "Prepaid",
-            "max": "Max",
-            "balance": "Balance",
-            "validity": "Validity",
-            "sold": "Sold",
-            "view": "View Card",
-            "invoice": "Invoice",
-            "available": "Available",
-            "online_renews": "Online Renews",
-            "repeat_purchases": "Repeat Purchases",
-            "settlement_period": "Settlement Period",
-            "select": "Select Card",
-            "search": "Search Card",
-            "card": "Card",
-            "404": "Card Not Found",
-            "description": "Description",
-            "courses": "Supported Courses",
-            "suppliers": "Supported Suppliers",
-            "client": "Client"
+        "year": {
+            "h1": "Year",
+            "this": "This Year",
+            "last": "Last Year",
+            "from_last": "from last year"
+        }
+    },
+    "course": {
+        "s": "Courses",
+        "manage": "Manage Courses",
+        "search": "Search Course",
+        "update": "Update Course",
+        "create": "Create Course",
+        "delete": "Are you sure you want to delete this course?",
+        "select": "Select Course",
+        "name": "Course Name",
+        "supported_card": "Supported Cards",
+        "supported": "Supported Courses"
+    },
+    "department": {
+        "s": "Departments",
+        "all": "All Department",
+        "manage": "Manage Department",
+        "search": "Search Department",
+        "create": "Create Department",
+        "update": "Update Department",
+        "delete": "Are you sure you want to delete this department?",
+        "select": "Select Department"
+    },
+    "news": {
+        "manage": "Manage News",
+        "update": "Update News",
+        "author": "Author",
+        "keywords": "Keywords",
+        "create": "Create News",
+        "delete": "Are you sure you want to delete this news?",
+        "search": "Search News"
+    },
+    "order": {
+        "s": "Orders",
+        "manage": "Manage Orders",
+        "create": "Create Order",
+        "create_confirm": "Are you sure you want to create this order?",
+        "view": "View Order",
+        "update": "Update Order",
+        "delete": "Are you sure you want to delete this order?",
+        "search": "Search Order"
+    },
+    "pagination": {
+        "page": {
+            "h1": "Page",
+            "go_to": "Go to page"
         },
-        "global": {
-            "department": {
-                "select": "Department",
-                "all": "All Department",
-                "select-department": "Select Department"
-            },
-            "operation": "Operation",
-            "download": "Download",
-            "result": "Result:",
-            "selected": "Selected:",
-            "cancel": "Cancel",
-            "total": "Total:",
-            "delete-confirm": "Yes I'm Sure",
-            "confirm-cancel": "No Cancel"
+        "prev": {
+            "h1": "Prev",
+            "page": "Prev Page"
         },
-        "pagination": {
-            "prev": "Prev Page",
-            "next": "Next Page",
-            "goto": "Go to page",
-            "page": "Page"
+        "next": {
+            "h1": "Next",
+            "page": "Next Page"
         },
-        "side-nav": {
-            "department": "Department",
-            "menu": "Menu",
-            "dashboard": "Dashboard",
-            "client": "Client",
-            "schedule": "Schedule",
-            "agent": "Agent",
-            "card": "Card",
-            "course": "Course",
-            "supplier": "Supplier",
-            "admin": "Admin",
-            "orders": "Orders",
-            "booking": "Booking",
-            "news": "Web News",
-            "settings": "Settings",
-            "statistics": "Statistics",
-            "logout": "Logout"
-        },
-        "schedule": {
-            "h1": "Manage Schedule",
-            "create": "Create Schedule",
-            "date-first": "Select Date First",
-            "select-time": "Select Time",
-            "no-schedule": "No Schedule Set",
-            "select": "Select Schedule",
-            "meeting": "Select Meeting Service",
-            "delete": "Delete Schedule"
-        },
-        "order": {
-            "h1": "Manage Orders",
-            "create": "Create Order",
-            "view": "View Order",
-            "update": "Update Order",
-            "delete": "Are you sure you want to delete this order?",
-            "card": "Card",
-            "client_name": "Client",
-            "quantity": "Quantity",
-            "operator": "Operator",
-            "invoice_number": "Invoice #",
-            "express_number": "Express #",
-            "departments": "Departments",
-            "search": "Search Order"
-        },
-        "department": {
-            "h1": "Manage Department",
-            "create": "Create Department",
-            "select": "Select Department",
-            "search": "Search Department",
-            "update": "Update Department"
-        },
-        "admin": {
-            "h1": "Manage Admin",
-            "create": "Create Admin",
-            "update": "Update Admin",
-            "view": "View Admin",
-            "delete": "Are you sure you want to delete this admin?",
-            "search": "Search Admin",
-            "create-permission": "Create Permission",
-            "permissions": {
-                "h1": "Manage Admin Permissions",
+        "result": "Result",
+        "selected": "Selected",
+        "total": "Total"
+    },
+    "theme": {
+        "toggle": "Toggle Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+    },
+    "admin": {
+        "manage": "Manage Admin",
+        "create": "Create Admin",
+        "update": "Update Admin",
+        "view": "View Admin",
+        "delete": "Are you sure you want to delete this admin?",
+        "search": "Search Admin",
+        "permissions": {
+            "h1": "Permission",
+            "manage": "Manage Admin Permissions",
+            "create": "Create Permissions",
+            "other": "Other Permissions",
+            "list": {
                 "view_client": "View Client",
                 "create_client": "Create Client",
                 "update_client": "Update Client",
@@ -309,224 +615,13 @@
                 "download_table": "Download Table",
                 "handle_settings": "Handle Settings",
                 "view_statistics": "View Statistics",
-                "view_comments": "View Comments",
-                "delete_comments": "Delete Comments"
-            }
-        },
-        "booking": {
-            "h1": "Manage Booking",
-            "card": "Card",
-            "course": "Course",
-            "select-course": "Select Course",
-            "select-schedule": "Select Schedule",
-            "delete": "Are you sure you want to delete this booking?",
-            "clientcard-select": "Select Card",
-            "search": "Search Booking",
-            "cancel": "Are you sure you want to cancel this booking?",
-            "create": "Create Booking",
-            "update": "Update Booking",
-            "confirm": "Confirm Booking",
-            "reminders": {
-                "h1": "Manage Booking Reminders",
-                "h2": "Reminders",
-                "delete": "Are you sure you want to delete this reminder?",
-                "confirmation": "Are you sure you want to book this reminder?",
-                "create": "Create Reminders",
-                "confirm": "Book!",
-                "update": "Update Reminders"
-            },
-            "request": {
-                "h1": "Manage Booking Request",
-                "h2": "Booking Request",
-                "create": "Create Booking Request"
+                "view_booking_comments": "View Comments",
+                "delete_booking_comments": "Delete Comments",
+                "view_booking_comments_template": "View Template",
+                "create_booking_comments_template": "Create Template",
+                "update_booking_comments_template": "Update Template",
+                "delete_booking_comments_template": "Delete Template"
             }
         }
-    },
-    "global": {
-        "cancel": "Cancel",
-        "confirm": "Confirm",
-        "create": "Create",
-        "client": "Client",
-        "supplier": "Supplier",
-        "agent": "Agent",
-        "course": "Course",
-        "admin": "Admin",
-        "delete": "Delete",
-        "employment": "Employment Status",
-        "update": "Update",
-        "courses": "Courses",
-        "no-data": "No Data",
-        "suppliers": "Suppliers",
-        "transactions": "Transactions",
-        "view": "View",
-        "price": "Price",
-        "time": "Time",
-        "payslip-notfirstday": "This button is enabled every first day of the month",
-        "confirmed": "Confirmed",
-        "canceled": "Canceled",
-        "cancel-request": "Cancel Request",
-        "select-settlement": "Select Settlement Period",
-        "invited": "Invited",
-        "paid-by": "Paid By",
-        "meeting-code": "Meeting Code",
-        "this_week": "This Week",
-        "service": "Service",
-        "departments": "Departments",
-        "validity": "Validity",
-        "salary": "Salary",
-        "settlement": "Settlement Period",
-        "request-payment": "Request Payment",
-        "payment": "Payment Info",
-        "copy": "Copy",
-        "logout": "Logout",
-        "currency": "Currency",
-        "payment_schedule": "Payment Schedule",
-        "remove": "Remove",
-        "add-more": "Add More",
-        "status": "Status",
-        "close": "Close",
-        "pending": "Pending",
-        "completed": "Completed",
-        "search": "Search",
-        "commission-rate": "Commission Rate",
-        "type": "Type",
-        "submit": "Submit",
-        "message": "Message",
-        "name": "Name",
-        "balance": "Balance",
-        "booking-rate": "Booking Rate",
-        "commission": "Commission",
-        "username": "Username",
-        "permissions": "Permissions",
-        "meeting": "Meeting Info",
-        "address": "Address",
-        "rate": "Rate",
-        "invites": "Invites",
-        "show-more": "Show More",
-        "booking": "Booking Information",
-        "optional": "(optional)",
-        "payment-address": "Payment Address",
-        "email": "Email Address",
-        "other": "Other Permission",
-        "bind": "Bind",
-        "select": "Select",
-        "quantity": "Quantity",
-        "fixed": "Fixed",
-        "percentage": "Percentage",
-        "select-gender": "Select Gender",
-        "clientcard": "Client Card",
-        "total-balance": "Total Balance",
-        "password": "Password",
-        "confirm-password": "Confirm Password",
-        "back": "Go Back",
-        "phone": "Phone Number",
-        "operator": "Operator",
-        "schedule": "Schedule",
-        "cashout": "Cashout",
-        "amount": "Amount",
-        "language": "language",
-        "send-payslip": "Send Payslip",
-        "select-language": "Select Language",
-        "credentials": "Credentials",
-        "earnings": "Earnings",
-        "deductions": "Deductions",
-        "card": "Card",
-        "loading": "Loading...",
-        "payment-request": "Payment Requests",
-        "date": "Date",
-        "renew": "Renew",
-        "select-status": "Select Status",
-        "all-status": "All Status",
-        "all-operator": "All Operator",
-        "delete-all": "Delete All",
-        "select-operator": "Select Operator",
-        "gender": "Gender",
-        "employment-status": "Employment Status",
-        "organization": "Organization",
-        "profile": "Profile Image",
-        "invoiced": "Invoiced",
-        "title": "Title",
-        "settled": "Settled",
-        "paid": "Paid",
-        "max": "Max",
-        "origin": "Origin",
-        "note": "Note",
-        "invoice": "Invoice Number",
-        "express": "Express Number",
-        "total": "Total",
-        "tags": "Tags"
-    },
-    "auth": {
-        "welcome-back": "Welcome Back!",
-        "fillup": "Fill up the form",
-        "username": "Username",
-        "error": "Something went wrong please try again.",
-        "password": "Password",
-        "signin": "Sign In",
-        "signup": "Sign Up",
-        "name": "Full name",
-        "login-description": "Enter your username and password below to sign in and continue your session.",
-        "signup-description": "Start your learning journey today. Sign up to explore a variety of subjects and connect with passionate educators.",
-        "confirm_password": "Confirm Password",
-        "auth-verify": "Verifying user...",
-        "success": "Success!",
-        "not_signup": "Don't have account yet? ",
-        "already_signup": "Already signed up?"
-    },
-    "client": {
-        "header": {
-            "buy-card": "Buy Cards",
-            "book-now": "Book Now"
-        },
-        "card": {
-            "validity": "Validity",
-            "buy-date": "Buy Date",
-            "days": "Days",
-            "balance": "Balance",
-            "no-card": "You don't have cards",
-            "getting": "Loading cards...",
-            "buy": "Buy Now",
-            "price": "Price"
-        },
-        "profile": {
-            "account": "Account",
-            "transactions": "My Transactions",
-            "profile": "My Profile",
-            "request-cashout": "Request Cashout",
-            "settings": "Settings",
-            "account-info": "Account Info",
-            "info": "Profile Info",
-            "balance": "My Balance",
-            "navigate": "Navigate to",
-            "invites": "Invites",
-            "booking-requests": "Booking Requests",
-            "booking": "Booking",
-            "my-meeting": "My Meeting",
-            "my-invites": "My Invites",
-            "my-cards": "My Cards",
-            "my-bookings": "My Bookings",
-            "support": "Contact Support",
-            "my-orders": "My Orders"
-        },
-        "booking": {
-            "select-card": "Select card to book",
-            "fillup": "Fill up booking info",
-            "no-supplier": "No available supplier for this card",
-            "request": "Request Booking"
-        }
-    },
-    "agent": {
-        "header": {
-            "invite": "Invite"
-        }
-    },
-    "booking": {
-        "request-cancel": "Request admin to cancel this booking."
-    },
-    "theme": {
-        "toggle": "Toggle Theme",
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
     }
 }

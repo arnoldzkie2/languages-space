@@ -72,8 +72,7 @@ const Page = () => {
         }
     }
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div>
@@ -87,14 +86,14 @@ const Page = () => {
 
                     <Card className='w-1/4'>
                         <CardHeader>
-                            <CardTitle>{t('client.card.bind')}</CardTitle>
+                            <CardTitle>{t('card.bind')}</CardTitle>
                             <CardDescription><Err /></CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form className='flex flex-col w-full gap-5' onSubmit={bindCardToUser}>
                                 <Departments />
                                 <div className='flex w-full flex-col gap-1.5'>
-                                    <Label>{tt('client')}</Label>
+                                    <Label>{t('side_nav.client')}</Label>
                                     <Popover open={openClient} onOpenChange={setOpenClient}>
                                         <PopoverTrigger asChild>
                                             <Button
@@ -108,7 +107,7 @@ const Page = () => {
                                             >
                                                 {selectedClientID
                                                     ? clients.find((client) => client.id === selectedClientID)?.username
-                                                    : t('client.select')}
+                                                    : t('client.select.h1')}
                                                 <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             </Button>
                                         </PopoverTrigger>
@@ -145,7 +144,7 @@ const Page = () => {
                                     </Popover>
                                 </div>
                                 <div className='flex w-full flex-col gap-1.5'>
-                                    <Label>{tt('card')}</Label>
+                                    <Label>{t('card.h1')}</Label>
                                     <Popover open={openCard} onOpenChange={setOpenCard}>
                                         <PopoverTrigger asChild>
                                             <Button
@@ -159,17 +158,17 @@ const Page = () => {
                                             >
                                                 {selectedCardID
                                                     ? cards.find((card) => card.id === selectedCardID)?.name
-                                                    : t('client-card.select')}
+                                                    : t('card.select.h1')}
                                                 <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             </Button>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-full p-0">
                                             <Command>
                                                 <CommandInput
-                                                    placeholder={t('client-card.search')}
+                                                    placeholder={t('card.search')}
                                                     className="h-9"
                                                 />
-                                                <CommandEmpty>{t('client-card.404')}</CommandEmpty>
+                                                <CommandEmpty>{t('card.404')}</CommandEmpty>
                                                 <CommandGroup>
                                                     {cards.length > 0 ? cards.map(card => (
                                                         <CommandItem
@@ -189,15 +188,15 @@ const Page = () => {
                                                                 )}
                                                             />
                                                         </CommandItem>
-                                                    )) : <CommandItem>{t('client-card.404')}</CommandItem>}
+                                                    )) : <CommandItem>{t('card.404')}</CommandItem>}
                                                 </CommandGroup>
                                             </Command>
                                         </PopoverContent>
                                     </Popover>
                                 </div>
                                 <div className='mt-4 flex w-full items-center gap-5'>
-                                    <Button type='button' variant={'ghost'} className='w-full' onClick={() => router.push('/admin/manage/card')} >{tt('cancel')}</Button>
-                                    <SubmitButton msg={tt('bind')} style='w-full' />
+                                    <Button type='button' variant={'ghost'} className='w-full' onClick={() => router.push('/admin/manage/card')} >{t('operation.cancel')}</Button>
+                                    <SubmitButton msg={t('card.bind')} style='w-full' />
                                 </div>
                             </form>
                         </CardContent>

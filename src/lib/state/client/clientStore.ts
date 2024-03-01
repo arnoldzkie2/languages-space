@@ -2,14 +2,14 @@ import { create } from 'zustand'
 import axios from 'axios';
 import { Session } from 'next-auth';
 import { Order } from '@/lib/types/super-admin/orderType'
-import { SupplierPrice } from '@/lib/types/super-admin/supplierTypes';
+import { AvailableSupplier } from '@/lib/types/super-admin/supplierTypes';
 import useGlobalStore from '../globalStore';
 import { toast } from 'sonner';
 
 interface Props {
     page: string
     orders: Order[] | null
-    availableSupplier: SupplierPrice[] | null
+    availableSupplier: AvailableSupplier[] | null
     client: Session["user"] | null
     setPage: (page: string) => void
     setClient: (client: Session["user"]) => void

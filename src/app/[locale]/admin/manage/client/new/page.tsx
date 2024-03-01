@@ -35,8 +35,6 @@ const Page = () => {
 
     const router = useRouter()
 
-    const t = useTranslations('super-admin')
-
     const [formData, setFormData] = useState<ClientFormData>(newClientFormValue)
     const { admin, isAdminAllowed } = useAdminPageStore()
     const { isSideNavOpen, setErr, setOkMsg, deleteProfile, prevProfileKey, setPrevProfileKey, setIsLoading } = useGlobalStore()
@@ -112,7 +110,7 @@ const Page = () => {
 
     }, [formData.profile_key])
 
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className=''>
@@ -124,10 +122,9 @@ const Page = () => {
                 <nav className={`border-b h-20 flex items-center px-8 justify-between`}>
                     <h1 className='font-black text-xl uppercase'>{t('client.create')}</h1>
                     <ul className='flex items-center h-full ml-auto gap-5 text-muted-foreground'>
-                        {isAdminAllowed('view_client') &&
-                            <Link href={'/admin/manage/client'} className='flex items-center justify-center w-32 hover:hover:text-primary cursor-pointer gap-1'>
-                                <div>{t('client.h1')}</div>
-                            </Link>}
+                        <Link href={'/admin/manage/client'} className='flex items-center justify-center w-32 hover:hover:text-primary cursor-pointer gap-1'>
+                            <div>{t('client.manage')}</div>
+                        </Link>
                     </ul>
                 </nav>
 
@@ -146,33 +143,33 @@ const Page = () => {
                                     <div className='w-full flex flex-col gap-4'>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="name">{tt("name")}</Label>
-                                            <Input type="text" id="name" name='name' placeholder={tt("name")} value={formData.name} onChange={handleChange} />
+                                            <Label htmlFor="name">{t("info.name")}</Label>
+                                            <Input type="text" id="name" name='name' placeholder={t("info.name")} value={formData.name} onChange={handleChange} />
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="username">{tt("username")}</Label>
-                                            <Input type="text" id="username" name='username' placeholder={tt("username")} value={formData.username} onChange={handleChange} />
+                                            <Label htmlFor="username">{t("info.username")}</Label>
+                                            <Input type="text" id="username" name='username' placeholder={t("info.username")} value={formData.username} onChange={handleChange} />
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="email">{tt("email")}</Label>
-                                            <Input type="email" id="email" name='email' placeholder={tt("email")} value={formData.email} onChange={handleChange} />
+                                            <Label htmlFor="email">{t("info.email.h1")}</Label>
+                                            <Input type="email" id="email" name='email' placeholder={t("info.email.address")} value={formData.email} onChange={handleChange} />
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="password">{tt("password")}</Label>
-                                            <Input type="text" id="password" name='password' placeholder={tt("password")} value={formData.password} onChange={handleChange} />
+                                            <Label htmlFor="password">{t("info.password")}</Label>
+                                            <Input type="text" id="password" name='password' placeholder={t("info.password")} value={formData.password} onChange={handleChange} />
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="phone_number">{tt("phone")}</Label>
-                                            <Input type="number" id="phone_number" name='phone_number' placeholder={tt("phone")} value={formData.phone_number} onChange={handleChange} />
+                                            <Label htmlFor="phone_number">{t("info.phone")}</Label>
+                                            <Input type="number" id="phone_number" name='phone_number' placeholder={t("info.phone")} value={formData.phone_number} onChange={handleChange} />
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="organization">{tt("organization")}</Label>
-                                            <Input type="text" id="organization" name='organization' placeholder={tt("organization")} value={formData.organization} onChange={handleChange} />
+                                            <Label htmlFor="organization">{t("info.organization")}</Label>
+                                            <Input type="text" id="organization" name='organization' placeholder={t("info.organization")} value={formData.organization} onChange={handleChange} />
                                         </div>
 
                                     </div>
@@ -180,39 +177,39 @@ const Page = () => {
                                     <div className='w-full flex flex-col gap-4'>
 
                                         <div className="w-full items-center gap-1.5">
-                                            <Label>{tt('gender')}</Label>
+                                            <Label>{t('info.gender.h1')}</Label>
                                             <Select onValueChange={(gender) => setFormData(prev => ({ ...prev, gender }))} value={formData.gender}>
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder={tt('select-gender')} />
+                                                    <SelectValue placeholder={t('info.gender.select')} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>{tt('gender')}</SelectLabel>
-                                                        <SelectItem value="male">Male</SelectItem>
-                                                        <SelectItem value="female">Female</SelectItem>
-                                                        <SelectItem value="others">Others</SelectItem>
+                                                        <SelectLabel>{t('info.gender.select')}</SelectLabel>
+                                                        <SelectItem value="male">{t('info.gender.male')}</SelectItem>
+                                                        <SelectItem value="female">{t('info.gender.female')}</SelectItem>
+                                                        <SelectItem value="others">{t('info.gender.others')}</SelectItem>
                                                     </SelectGroup>
                                                 </SelectContent>
                                             </Select>
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="address">{tt("address")}</Label>
-                                            <Input type="text" id="address" name='address' placeholder={tt("address")} value={formData.address} onChange={handleChange} />
+                                            <Label htmlFor="address">{t("info.address")}</Label>
+                                            <Input type="text" id="address" name='address' placeholder={t("info.address")} value={formData.address} onChange={handleChange} />
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="origin">{tt("origin")}</Label>
-                                            <Input type="text" id="origin" name='origin' placeholder={tt("origin")} value={formData.origin} onChange={handleChange} />
+                                            <Label htmlFor="origin">{t("info.origin")}</Label>
+                                            <Input type="text" id="origin" name='origin' placeholder={t("info.origin")} value={formData.origin} onChange={handleChange} />
                                         </div>
 
                                         <div className="grid w-full max-w-sm items-center gap-1.5">
-                                            <Label htmlFor="note">{tt("note")}</Label>
-                                            <Input type="text" id="note" name='note' placeholder={tt("note")} value={formData.note} onChange={handleChange} />
+                                            <Label htmlFor="note">{t("info.note")}</Label>
+                                            <Input type="text" id="note" name='note' placeholder={t("info.note")} value={formData.note} onChange={handleChange} />
                                         </div>
 
                                         {!admin && <div className='w-full flex flex-col gap-2'>
-                                            <Label className='block font-medium'>{tt('departments')}</Label>
+                                            <Label className='block font-medium'>{t('department.s')}</Label>
                                             {departments && departments.map((dept) => (
                                                 <div key={dept.id} className="flex items-center">
                                                     <Checkbox
@@ -233,7 +230,7 @@ const Page = () => {
                                             <Image width={90} height={90} src={formData.profile_url || '/profile/profile.svg'} alt='Client Profile' className='rounded-full bg-foreground border' />
 
                                             <div className='flex flex-col gap-3'>
-                                                <label className='block font-medium'>{tt('profile')}</label>
+                                                <label className='block font-medium'>{t('profile.info')}</label>
                                                 <UploadButton
                                                     appearance={
                                                         { button: 'bg-primary text-sm' }
@@ -256,8 +253,8 @@ const Page = () => {
                                     </div>
                                 </div>
                                 <div className='flex items-center gap-10 w-1/2 self-end pt-5'>
-                                    <Button variant={'ghost'} className='w-full' onClick={() => router.push('/admin/manage/client')} type='button'>{tt('cancel')}</Button>
-                                    <SubmitButton msg={tt('create')} style='w-full' />
+                                    <Button variant={'ghost'} className='w-full' onClick={() => router.push('/admin/manage/client')} type='button'>{t('operation.cancel')}</Button>
+                                    <SubmitButton msg={t('operation.create')} style='w-full' />
                                 </div>
                             </form>
                         </CardContent>

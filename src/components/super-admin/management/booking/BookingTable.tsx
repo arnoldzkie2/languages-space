@@ -5,20 +5,24 @@ import { faBan, faEllipsis, faSpinner, faXmark } from '@fortawesome/free-solid-s
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
-import { Booking } from '@/lib/types/super-admin/bookingType';
+import { BookingProps } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import useGlobalStore from '@/lib/state/globalStore';
 import TruncateTextModal from '@/components/global/TruncateTextModal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from "@/components/ui/skeleton"
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
-import { Button } from '@/components/ui/button';
 import BookingOperation from './BookingOperation';
 import DeleteSingleBookingAlert from './DeleteSingleBookingAlert';
+import ViewBookingAlert from './ViewBookingAlert';
+import ViewClientCommentAlert from '@/components/client/ViewClientCommentAlert';
+import { Separator } from '@/components/ui/separator';
+import ViewSupplierCommentAlert from '@/components/supplier/ViewSupplierBookingComment';
+import ViewCommentsAlert from './ViewCommentsAlert';
 
 interface Props {
 
-    filteredTable: Booking[]
+    filteredTable: BookingProps[]
 
 }
 
@@ -26,15 +30,14 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
 
     const { operation, skeleton, selectedID, openOperation, closeOperation, isLoading, setIsLoading, returnTruncateText, openTruncateTextModal } = useGlobalStore()
 
-    const { openDeleteBookingWarningMOdal, selectedBookings, setSelectedBookings, cancelBooking } = useAdminBookingStore()
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const { selectedBookings, setSelectedBookings, cancelBooking } = useAdminBookingStore()
+    const t = useTranslations()
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
 
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
-    const handleSelection = (booking: Booking) => {
+    const handleSelection = (booking: BookingProps) => {
 
         const isSelected = selectedBookings.some((selectedBooking) => selectedBooking.id === booking.id);
 
@@ -53,7 +56,7 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
 
         if (filteredTable.length === 0) return;
 
-        let updatedSelectedBooking: Booking[];
+        let updatedSelectedBooking: BookingProps[];
 
         const isSelected = filteredTable.every((booking) =>
             selectedBookings.some((selectedBooking) => selectedBooking.id === booking.id)
@@ -102,18 +105,18 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                                 onCheckedChange={selectAllRows}
                             />
                         </th>
-                        <th scope="col" className="px-2 py-3">{tt('name')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('client')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('supplier')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('card')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('schedule')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('quantity')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('price')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('operator')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('status')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('note')}</th>
-                        <th scope="col" className="px-2 py-3">{tt('date')}</th>
-                        <th scope="col" className="px-2 py-3">{t('global.operation')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.name')}</th>
+                        <th scope="col" className="px-2 py-3">{t('side_nav.client')}</th>
+                        <th scope="col" className="px-2 py-3">{t('side_nav.supplier')}</th>
+                        <th scope="col" className="px-2 py-3">{t('card.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('schedule.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.quantity')}</th>
+                        <th scope="col" className="px-2 py-3">{t('card.price')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.operator.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('status.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.note')}</th>
+                        <th scope="col" className="px-2 py-3">{t('info.date.h1')}</th>
+                        <th scope="col" className="px-2 py-3">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,34 +131,37 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                                     />
                                 </td>
                                 <td className='px-2 py-3'>
-                                    <div className='h-5 w-28 cursor-pointer'>
+                                    <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(booking.name)}>
                                         {returnTruncateText(booking.name, 10)}
                                     </div>
                                 </td>
                                 <td className='px-2 py-3'>
-                                    <div className='h-5 w-28 cursor-pointer'>
+                                    <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(booking.client.username)}>
                                         {returnTruncateText(booking.client.username, 10)}
                                     </div>
                                 </td>
                                 <td className='px-2 py-3'>
-                                    <div className='h-5 w-28 cursor-pointer'>
+                                    <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(booking.supplier.name)}>
                                         {returnTruncateText(booking.supplier.name, 10)}
                                     </div>
                                 </td>
                                 <td className='px-2 py-3'>
-                                    <div className='h-5 w-28 cursor-pointer'>
+                                    <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(booking.card_name)}>
                                         {returnTruncateText(booking.card_name, 10)}
                                     </div>
                                 </td>
                                 <td className='px-2 py-3'>
-                                    <div className='h-5 w-28 cursor-pointer'>
-                                        {/* {booking.schedule.date} ({booking.schedule.time}) */}
+                                    <div className='h-5 w-28 cursor-pointer' onClick={() => openTruncateTextModal(`${booking.schedule.date} (${booking.schedule.time})`)}>
                                         {returnTruncateText(`${booking.schedule.date} ${booking.schedule.time}`, 10)}
                                     </div>
                                 </td>
                                 <td className="px-2 py-3">
-                                    <div className='h-5 w-12'>
-                                        {returnTruncateText(String(booking.quantity), 10)}
+                                    <div className='h-5 w-20'>
+                                        <select className='bg-card border outline-none p-1 w-full'>
+                                            <option disabled>{t("info.quantity")}</option>
+                                            <option value={Number(booking.client_quantity)}>{t("user.client")}: {Number(booking.client_quantity)}</option>
+                                            <option value={Number(booking.supplier_quantity)}>{t("user.supplier")}: {Number(booking.supplier_quantity)}</option>
+                                        </select>
                                     </div>
                                 </td>
                                 <td className="px-2 py-3">
@@ -187,15 +193,17 @@ const BookingTable: React.FC<Props> = ({ filteredTable }) => {
                                 </td>
                                 <td className='py-3 relative px-2'>
                                     <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(booking.id)} />
-                                    <ul className={`${operation && selectedID === booking.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
-                                        {isAdminAllowed('update_booking') && <Link href={`/admin/manage/booking/update/${booking.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                    <ul className={`${operation && selectedID === booking.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-32 left-0 shadow-lg border flex flex-col text-muted-foreground`}>
+                                        <ViewCommentsAlert booking={booking} />
+                                        <ViewBookingAlert booking={booking} />
+                                        {isAdminAllowed('update_booking') && <Link href={`/admin/manage/booking/update/${booking.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
                                         {booking.status !== 'canceled' && isAdminAllowed('cancel_booking') && <button disabled={isLoading} className='flex mb-1 justify-between items-center cursor-dpointer hover:text-foreground' onClick={(e: any) => cancelBooking(e, booking.id)}>
                                             {isLoading ? <FontAwesomeIcon icon={faSpinner} width={16} height={16} className='animate-spin' /> : <div className='flex items-center w-full justify-between'>
-                                                {tt('cancel')} <FontAwesomeIcon icon={faBan} />
+                                                {t('operation.cancel')} <FontAwesomeIcon icon={faBan} />
                                             </div>}
                                         </button>}
                                         {isAdminAllowed('delete_booking') && <DeleteSingleBookingAlert booking={booking} />}
-                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>
                                 </td>
                             </tr>

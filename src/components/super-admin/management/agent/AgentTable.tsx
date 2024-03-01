@@ -89,8 +89,7 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
 
     }, [departmentID])
 
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     return (
         <div className='flex w-full flex-col'>
@@ -105,13 +104,13 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                                 onCheckedChange={selectAllRows}
                             />
                         </th>
-                        <th scope="col" className="px-6 py-3">{tt('username')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('phone')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('organization')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('origin')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('note')}</th>
-                        <th scope="col" className="px-6 py-3">{tt('date')}</th>
-                        <th scope="col" className="px-6 py-3">{t('global.operation')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.username')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.phone')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.organization')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.origin')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.note')}</th>
+                        <th scope="col" className="px-6 py-3">{t('info.date.h1')}</th>
+                        <th scope="col" className="px-6 py-3">{t('operation.h1')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -157,19 +156,19 @@ const AgentTable: React.FC<Props> = ({ filteredTable }) => {
                                     <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(agent.id)} />
                                     <ul className={`${operation && selectedID === agent.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-32 shadow-lg border flex flex-col text-muted-foreground`}>
 
-                                        {agent.invites && <Link href={`/admin/manage/agent/invites/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('invites')}</Link>}
+                                        {agent.invites && <Link href={`/admin/manage/agent/invites/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('global.invites')}</Link>}
 
-                                        {isAdminAllowed('view_agent_deductions') && agent.deductions && <Link href={`/admin/manage/agent/deductions/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('deductions')}</Link>}
+                                        {isAdminAllowed('view_agent_deductions') && agent.deductions && <Link href={`/admin/manage/agent/deductions/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('balance.deductions.h1')}</Link>}
 
-                                        {isAdminAllowed('view_agent_earnings') && agent.earnings && <Link href={`/admin/manage/agent/earnings/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('earnings')}</Link>}
+                                        {isAdminAllowed('view_agent_earnings') && agent.earnings && <Link href={`/admin/manage/agent/earnings/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('balance.earnings.h1')}</Link>}
 
                                         <ViewAgentAlert agentID={agent.id} />
 
-                                        {isAdminAllowed('update_agent') && <Link href={`/admin/manage/agent/update/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                        {isAdminAllowed('update_agent') && <Link href={`/admin/manage/agent/update/${agent.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
 
                                         {isAdminAllowed('delete_agent') && <DeleteSingleAgentAlert agent={agent} />}
 
-                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                        <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                     </ul>
                                 </td>
                             </tr>

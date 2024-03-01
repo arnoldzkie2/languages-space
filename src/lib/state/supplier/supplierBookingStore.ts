@@ -1,4 +1,4 @@
-import { Booking, BookingRequest } from '@/lib/types/super-admin/bookingType'
+import { BookingProps, BookingRequest } from '@/lib/types/super-admin/bookingType'
 import axios from 'axios'
 import { create } from 'zustand'
 import useGlobalStore from '../globalStore'
@@ -13,8 +13,8 @@ interface SupplerBookingStore {
     closeBooking: () => void
     bookingID: string
     bookingModal: boolean
-    bookings: Booking[] | null
-    singleBooking: Booking | null
+    bookings: BookingProps[] | null
+    singleBooking: BookingProps | null
     getSingleBooking: () => Promise<void>
     cancelBooking: (e: React.MouseEvent) => Promise<void>
     requestCancelBooking: (e: React.FormEvent) => Promise<void>

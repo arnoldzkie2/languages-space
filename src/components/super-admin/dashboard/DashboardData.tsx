@@ -32,7 +32,7 @@ const DashboardData = ({ data, getDashboardData }: Props) => {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    const t = useTranslations("super-admin")
+    const t = useTranslations()
     if (!data) return null
 
     const mostDataSkeleton = (
@@ -57,9 +57,9 @@ const DashboardData = ({ data, getDashboardData }: Props) => {
             <DashboardHeader />
             <div className='flex flex-col w-full px-8 items-center justify-center gap-4'>
                 <div className='w-full flex items-center justify-between'>
-                    <h1 className='text-2xl font-black'>{t('dashboard.h2')}</h1>
+                    <h1 className='text-2xl font-black'>{t('dashboard.overview')}</h1>
                     <div className='flex items-center gap-5'>
-                        <Button onClick={() => toast("This function is not yeat ready.")}>Download</Button>
+                        <Button onClick={() => toast("This function is not yeat ready.")}>{t('operation.download')}</Button>
                     </div>
                 </div>
                 <ul className='flex bg-muted items-center self-start py-1 px-1 rounded-md text-muted-foreground gap-5 text-sm'>

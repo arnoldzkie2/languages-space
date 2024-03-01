@@ -5,17 +5,17 @@ import { faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link'
-import { Booking } from '@/lib/types/super-admin/bookingType';
 import useAdminBookingStore from '@/lib/state/super-admin/bookingStore';
 import useGlobalStore from '@/lib/state/globalStore';
 import { Checkbox } from '@/components/ui/checkbox';
 import useAdminPageStore from '@/lib/state/admin/adminPageStore';
 import { Skeleton } from '@/components/ui/skeleton';
 import DeleteSingleRemindersAlert from './DeleteSingleReminderAlert';
+import { BookingProps } from '@/lib/types/super-admin/bookingType';
 
 interface Props {
 
-    filteredTable: Booking[]
+    filteredTable: BookingProps[]
 
 }
 
@@ -23,14 +23,13 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
 
     const { operation, skeleton, selectedID, openOperation, closeOperation } = useGlobalStore()
 
-    const { openDeleteRemindersWarningMOdal, selectedReminders, setSelectedReminders } = useAdminBookingStore()
+    const { selectedReminders, setSelectedReminders } = useAdminBookingStore()
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)
-    const t = useTranslations('super-admin')
-    const tt = useTranslations('global')
+    const t = useTranslations()
 
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
 
-    const handleSelection = (booking: Booking) => {
+    const handleSelection = (booking: BookingProps) => {
 
         console.log(booking)
 
@@ -48,7 +47,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
     const selectAllRows = () => {
 
         if (filteredTable.length === 0) return;
-        let updatedSelectedBooking: Booking[];
+        let updatedSelectedBooking: BookingProps[];
         const isSelected = filteredTable.every((booking) =>
             selectedReminders.some((selectedBooking) => selectedBooking.id === booking.id)
         );
@@ -93,13 +92,13 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                             onCheckedChange={selectAllRows}
                         />
                     </th>
-                    <th scope="col" className="px-3 py-3">{tt('name')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('price')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('operator')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('status')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('note')}</th>
-                    <th scope="col" className="px-3 py-3">{tt('date')}</th>
-                    <th scope="col" className="px-3 py-3">{t('global.operation')}</th>
+                    <th scope="col" className="px-3 py-3">{t('info.name')}</th>
+                    <th scope="col" className="px-3 py-3">{t('card.price')}</th>
+                    <th scope="col" className="px-3 py-3">{t('info.operator.h1')}</th>
+                    <th scope="col" className="px-3 py-3">{t('status.h1')}</th>
+                    <th scope="col" className="px-3 py-3">{t('info.note')}</th>
+                    <th scope="col" className="px-3 py-3">{t('info.date.h1')}</th>
+                    <th scope="col" className="px-3 py-3">{t('operation.h1')}</th>
                 </tr>
             </thead>
             <tbody>
@@ -120,7 +119,7 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                             </td>
                             <td className="px-3 overflow-x-auto py-3">
                                 <div className='h-5 whitespace-nowrap w-16'>
-                                    {reminders.price}
+                                    {Number(reminders.price)}
                                 </div>
                             </td>
                             <td className="px-3 overflow-x-auto py-3">
@@ -146,9 +145,9 @@ const RemindersTable: React.FC<Props> = ({ filteredTable }) => {
                             <td className='py-3 relative px-3'>
                                 <FontAwesomeIcon icon={faEllipsis} className='h-5 w-10 cursor-pointer' onClick={() => openOperation(reminders.id)} />
                                 <ul className={`${operation && selectedID === reminders.id ? 'block' : 'hidden'} absolute bg-card p-3 gap-1 z-10 w-24 shadow-lg border flex flex-col text-muted-foreground`}>
-                                    {isAdminAllowed('update_reminders') && <Link href={`/admin/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{tt('update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
+                                    {isAdminAllowed('update_reminders') && <Link href={`/admin/manage/booking/reminders/update/${reminders.id}`} className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground'>{t('operation.update')} <FontAwesomeIcon icon={faPenToSquare} /></Link>}
                                     {isAdminAllowed('delete_reminders') && <DeleteSingleRemindersAlert reminder={reminders} />}
-                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{tt('close')} <FontAwesomeIcon icon={faXmark} /></li>
+                                    <li className='flex mb-1 justify-between items-center cursor-pointer hover:text-foreground pt-2 border-t' onClick={() => closeOperation()}>{t('operation.close')} <FontAwesomeIcon icon={faXmark} /></li>
                                 </ul>
                             </td>
                         </tr>

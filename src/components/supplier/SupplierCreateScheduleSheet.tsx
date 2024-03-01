@@ -58,8 +58,7 @@ const SupplierCreateScheduleSheet = () => {
         setSelectedDates({ dates: [], times: [] })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    const t = useTranslations('super-admin')
-    const tt = useTranslations("global")
+    const t = useTranslations()
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -106,12 +105,12 @@ const SupplierCreateScheduleSheet = () => {
                 </div>
                 <SheetFooter className='w-full flex items-center gap-5'>
                     <SheetClose asChild>
-                        <Button variant={'ghost'} className='w-full' onClick={() => setOpen(false)}>{tt('close')}</Button>
+                        <Button variant={'ghost'} className='w-full' onClick={() => setOpen(false)}>{t('operation.close')}</Button>
                     </SheetClose>
                     <form onSubmit={(e) => {
                         createSchedule(e, supplier?.id || '', setOpen)
                     }} className='w-full'>
-                        <SubmitButton msg={tt('create')} style='w-full' />
+                        <SubmitButton msg={t('operation.create')} style='w-full' />
                     </form>
                 </SheetFooter>
             </SheetContent>

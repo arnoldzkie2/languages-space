@@ -49,7 +49,6 @@ const ManageClient: FC = () => {
         }
     });
 
-
     const indexOfLastItem = currentPage * itemsPerPage
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
     const currentClients = filteredClients.slice(indexOfFirstItem, indexOfLastItem)

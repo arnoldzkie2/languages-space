@@ -13,6 +13,7 @@ import useGlobalStore from '@/lib/state/globalStore'
 import { Button } from '../ui/button'
 import { CANCELED, CONFIRMED } from '@/utils/constants'
 import { Skeleton } from '../ui/skeleton'
+import TruncateTextModal from '../global/TruncateTextModal'
 
 const ClientBookingRequest: React.FC = () => {
 
@@ -31,14 +32,12 @@ const ClientBookingRequest: React.FC = () => {
         setCurrentBookings(getCurrentData(bookingRequests))
     }, [currentPage, bookingRequests])
 
-    const t = useTranslations('client')
-    const tt = useTranslations('global')
-    const ttt = useTranslations('super-admin')
+    const t = useTranslations()
 
     return (
         <ul className='flex flex-col gap-3 w-full md:w-2/3 order-1 md:order-2'>
             <div className='flex w-full pb-1 mb-1 border-b items-center gap-5'>
-                <h1 className='text-foreground text-lg font-bold'>{t('profile.booking-requests')}</h1>
+                <h1 className='text-foreground text-lg font-bold'>{t('booking.request.h1')}</h1>
                 <Err />
                 <Success />
             </div>
@@ -46,13 +45,13 @@ const ClientBookingRequest: React.FC = () => {
                 <table className="text-sm text-left text-muted-foreground shadow-md w-full">
                     <thead className="text-xs uppercase bg-card border">
                         <tr>
-                            <th scope="col" className="px-3 py-3">{tt('schedule')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('supplier')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('card')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('status')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('note')}</th>
-                            <th scope="col" className="px-3 py-3">{tt('date')}</th>
-                            <th scope="col" className="px-3 py-3">{ttt('global.operation')}</th>
+                            <th scope="col" className="px-3 py-3">{t('side_nav.schedule')}</th>
+                            <th scope="col" className="px-3 py-3">{t('user.supplier')}</th>
+                            <th scope="col" className="px-3 py-3">{t('side_nav.card')}</th>
+                            <th scope="col" className="px-3 py-3">{t('status.h1')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.note')}</th>
+                            <th scope="col" className="px-3 py-3">{t('info.date.h1')}</th>
+                            <th scope="col" className="px-3 py-3">{t('operation.h1')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,13 +64,13 @@ const ClientBookingRequest: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-32'>
-                                            {bookingRequest.supplier.name}
+                                        <div className='h-5 text-xs md:text-sm w-32 cursor-pointer' onClick={() => openTruncateTextModal(bookingRequest.supplier.name)}>
+                                            {returnTruncateText(bookingRequest.supplier.name, 10)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
-                                        <div className='h-5 text-xs md:text-sm w-24'>
-                                            {bookingRequest.card_name}
+                                        <div className='h-5 text-xs md:text-sm w-24 cursor-pointer' onClick={() => openTruncateTextModal(bookingRequest.card_name)}>
+                                            {returnTruncateText(bookingRequest.card_name, 10)}
                                         </div>
                                     </td>
                                     <td className="px-3 py-3">
@@ -82,9 +81,9 @@ const ClientBookingRequest: React.FC = () => {
                                     <td className="px-3 py-3">
                                         {bookingRequest.note &&
                                             <div className={`h-5 text-xs md:text-sm w-36 cursor-pointer`} onClick={() => openTruncateTextModal(bookingRequest.note || 'No Data')}>
-                                                {returnTruncateText(bookingRequest.note || '', 15)}
+                                                {returnTruncateText(bookingRequest.note || '', 15 )}
                                             </div>
-                                        }
+                                        }   
                                     </td>
                                     <td className="px-3 py-3">
                                         <div className='h-5 text-xs w-44 md:text-sm'>
@@ -92,13 +91,13 @@ const ClientBookingRequest: React.FC = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        {bookingRequest.status !== CONFIRMED && bookingRequest.status !== CANCELED && <Button variant={'destructive'} onClick={(e) => cancelBookingRequest(e, bookingRequest.id)}>{tt('cancel')}</Button>}
+                                        {bookingRequest.status !== CONFIRMED && bookingRequest.status !== CANCELED && <Button variant={'destructive'} onClick={(e) => cancelBookingRequest(e, bookingRequest.id)}>{t('operation.cancel')}</Button>}
                                     </td>
                                 </tr>
                             )) : currentBookings && currentBookings.length < 1 ?
                                 <tr className='border bg-card'>
                                     <td className='p-3'>
-                                        {tt('no-data')}
+                                        {t('global.no_data')}
                                     </td>
                                 </tr>
                                 :

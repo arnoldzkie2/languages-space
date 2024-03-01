@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import SideNav from '@/components/super-admin/SideNav'
-import Departments from '@/components/super-admin/management/Departments'
 import Pagination from '@/components/super-admin/management/Pagination'
 import ClientHeader from '@/components/super-admin/management/client/ClientHeader'
 import ClientOrderTable from '@/components/super-admin/management/client/orders/ClientOrdersTable'
 import OrderHeader from '@/components/super-admin/management/order/OrderHeader'
-import OrderTable from '@/components/super-admin/management/order/OrderTable'
 import SearchOrder from '@/components/super-admin/management/order/SearchOrder'
 import useGlobalStore from '@/lib/state/globalStore'
 import useClientOrderStore from '@/lib/state/super-admin/ClientOrdersStore'
@@ -38,7 +36,7 @@ const Page = ({ params }: Props) => {
     }
 
     const filteredOrders = clientOrders.filter((order) => {
-        const searchCard = searchQuery.card.toUpperCase();
+        const searchName = searchQuery.name.toUpperCase();
         const searchClient = searchQuery.client_name.toUpperCase();
         const searchQuantity = searchQuery.quantity.toUpperCase();
         const searchPrice = searchQuery.price.toUpperCase();
@@ -49,7 +47,7 @@ const Page = ({ params }: Props) => {
         const searchExpress = searchQuery.express_number.toUpperCase()
         const searchDate = searchQuery.date.toUpperCase()
         return (
-            (searchCard === '' || order.card_name.toUpperCase().includes(searchCard)) &&
+            (searchName === '' || order.name.toUpperCase().includes(searchName)) &&
             (searchClient === '' || order.client.name.toUpperCase().includes(searchClient)) &&
             (searchQuantity === '' || String(order.quantity).toUpperCase().includes(searchQuantity)) &&
             (searchPrice === '' || String(order.price).toUpperCase().includes(searchPrice)) &&
@@ -86,7 +84,7 @@ const Page = ({ params }: Props) => {
         <div className='h-screen'>
             <SideNav />
             <div className={`flex flex-col h-full w-full gap-8 ${isSideNavOpen ? 'pl-44' : 'pl-16'}`}>
-                <ClientHeader />
+                <OrderHeader />
                 <div className='px-8'>
                     <div className='border py-4 gap-5 px-8 flex shadow bg-card w-full items-center'>
                         <SearchOrder handleSearch={handleSearch} searchQuery={searchQuery} />
