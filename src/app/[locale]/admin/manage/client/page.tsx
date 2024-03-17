@@ -10,7 +10,7 @@ import SearchClient from '@/components/super-admin/management/client/SearchClien
 import useAdminClientStore, { ManageClientSearchQueryValue } from '@/lib/state/super-admin/clientStore';
 import useGlobalStore from '@/lib/state/globalStore';
 import useDepartmentStore from '@/lib/state/super-admin/departmentStore';
-
+    
 const ManageClient: FC = () => {
 
     const { currentPage, setCurrentPage, isSideNavOpen, itemsPerPage } = useGlobalStore()
