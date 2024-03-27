@@ -390,19 +390,19 @@ model Agent {
 }
 
 model AgentBalance {
-  id               String                     @id @default(uuid())
-  amount           Decimal
-  currency         String
-  payment_address  String
-  commission_rate  Int
-  commission_type  String
-  created_at       DateTime                   @default(now())
-  updated_at       DateTime                   @updatedAt
-  agentID          String
-  agent            Agent                      @relation(fields: [agentID], references: [id], onDelete: Cascade)
-  earnings         AgentEarnings[]
-  deductions       AgentDeductions[]
-  transactions     AgentBalanceTransactions[]
+  id              String                     @id @default(uuid())
+  amount          Decimal
+  currency        String
+  payment_address String
+  commission_rate Int
+  commission_type String
+  created_at      DateTime                   @default(now())
+  updated_at      DateTime                   @updatedAt
+  agentID         String
+  agent           Agent                      @relation(fields: [agentID], references: [id], onDelete: Cascade)
+  earnings        AgentEarnings[]
+  deductions      AgentDeductions[]
+  transactions    AgentBalanceTransactions[]
 
   @@index([agentID])
 }
