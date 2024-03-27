@@ -117,8 +117,10 @@ const useAdminClientStore = create<ClientStoreProps>((set) => ({
     getClients: async () => {
         try {
             const { departmentID } = useDepartmentStore.getState()
+            
+
             const { data } = await axios.get(`/api/client${departmentID && `?departmentID=${departmentID}`}`)
-            if (data.ok) set({ clients: data.data })
+            if (data.ok) set({ clients: data.data.clients })
 
         } catch (error) {
             console.log(error);
