@@ -18,7 +18,6 @@ export const POST = async (req: NextRequest) => {
             // Change directory to the repository's directory
             const repoDirectory = `/var/www/${repositoryName}/${repositoryName}`;
             
-            // Define commands to execute sequentially
             const commands = [
                 `cd ${repoDirectory}`,
                 'git pull',
