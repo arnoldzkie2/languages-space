@@ -20,7 +20,7 @@ const nextConfig = {
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
           // Allow requests only from verbalace.com and fingerpower.com
-          { key: "Access-Control-Allow-Origin", value: "https://verbalace.com, https://fingerpower.com" },
+          { key: "Access-Control-Allow-Origin", value: "https://verbalace.com, https://fingerpower.com, 175.176.84.118, 185.199.53.12" },
           { key: "Access-Control-Allow-Methods", value: "GET,DELETE,PATCH,POST,PUT" },
           { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
         ]
