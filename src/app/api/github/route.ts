@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
             const repoDirectory = `/var/www/${repositoryName}/${repositoryName}`;
             exec(
                 `cd ${repoDirectory} && git pull && npm run build && pm2 restart ${repositoryName}`,
-                (error, stdout, stderr) => {
+                (error, stdout) => {
                     if (error) {
                         console.error(`Error executing commands: ${error}`);
                         return serverErrorRes("Error executing commands");
