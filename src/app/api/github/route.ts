@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
             // Change directory to the repository's directory
             const repoDirectory = `/var/www/${repositoryName}/${repositoryName}`
             exec(
-                `cd ${repoDirectory} && git pull && npm i && npm run build && pm2 restart ${repositoryName}`,
+                `cd ${repoDirectory} && git pull && npm install && npm run build && pm2 restart ${repositoryName}`,
                 (error, stdout) => {
                     if (error) {
                         console.error(`Error executing commands: ${error}`);
