@@ -54,7 +54,7 @@ const Page = () => {
 const HelloWorld = () => {
 
     return (
-        <div className='h-screen w-screen grid place-items-center text-2xl font-black'>Hello World HEHE</div>
+        <div className='h-screen w-screen grid place-items-center text-2xl font-black'>Hello World</div>
     )
 }
 
