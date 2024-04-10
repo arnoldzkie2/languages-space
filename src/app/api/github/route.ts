@@ -13,6 +13,7 @@ export const POST = async (req: NextRequest) => {
         const repositoryName = data.repository.name;
         const branch = data.ref.split("/").pop(); // Extract branch name from ref
 
+        //test
         // Check if the updated repository matches any of the repositories you're interested in
         if (repositories.includes(repositoryName) && branch === 'main') {
             // Change directory to the repository's directory
