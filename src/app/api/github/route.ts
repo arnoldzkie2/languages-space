@@ -17,9 +17,9 @@ export const POST = async (req: NextRequest) => {
         // Check if the updated repository matches any of the repositories you're interested in
         if (repositories.includes(repositoryName) && branch === 'main') {
             // Change directory to the repository's directory
-            const repoDirectory = `/var/www/${repositoryName}/${repositoryName}`;
+            const repoDirectory = `/var/www/${repositoryName}/${repositoryName}`
             exec(
-                `cd ${repoDirectory} && git pull && npm run build && pm2 restart ${repositoryName}`,
+                `cd ${repoDirectory} && git pull && npm i && npm run build && pm2 restart ${repositoryName}`,
                 (error, stdout) => {
                     if (error) {
                         console.error(`Error executing commands: ${error}`);
