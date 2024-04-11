@@ -18,41 +18,22 @@ export const POST = async (req: NextRequest) => {
             // Change directory to the repository's directory
             const repoDirectory = `/var/www/${repositoryName}/${repositoryName}`;
             
-            const commands = [
-                `cd ${repoDirectory}`,
-                'git pull',
-                'npm install',
-                'npm run build',
-                `pm2 restart ${repositoryName}`
-            ];
-
-            // Execute commands one by one
-            for (const command of commands) {
-                await executeCommand(command);
-            }
-
-            // Respond with success if all commands complete without errors
-            return okayRes(repositoryName);
+            // Execute commands using && to chain them together
+            exec(`sudo chown -R root:root ${repoDirectory} && cd ${repoDirectory} && git pull && npm install && npm run build && pm2 restart ${repositoryName}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Error executing commands: ${error}`);
+                    return serverErrorRes(error);
+                } else {
+                    console.log(`Commands executed successfully: ${stdout}`);
+                    return okayRes(repositoryName);
+                }
+            });
         }
 
         return badRequestRes();
+        
     } catch (error) {
         console.error(error);
         return serverErrorRes(error);
     }
-};
-
-// Function to execute a shell command
-const executeCommand = (command: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-        exec(command, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error executing command '${command}': ${error}`);
-                reject(error);
-            } else {
-                console.log(`Command output for '${command}': ${stdout}`);
-                resolve();
-            }
-        });
-    });
 };
