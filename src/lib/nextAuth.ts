@@ -45,7 +45,7 @@ const nextAuthOptions = {
 
             async authorize(credentials) {
 
-                const { data } = await axios.post(`${process.env.NEXTAUTH_URL}/api/auth/login`, credentials)
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/auth/login`, credentials)
 
                 if (!data) return null
 
