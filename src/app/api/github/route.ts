@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
             const repoDirectory = `/var/www/${repositoryName}/${repositoryName}`;
             
             // Execute commands using && to chain them together
-            exec(`sudo chown -R root:root ${repoDirectory} && cd ${repoDirectory} && git pull && npm install && npm run build && pm2 restart ${repositoryName}`, (error, stdout) => {
+            exec(`sudo chown -R root:root ${repoDirectory} && cd ${repoDirectory} && git pull && npm install && npm install && npm run build && pm2 restart ${repositoryName}`, (error, stdout) => {
                 if (error) {
                     console.error(`Error executing commands: ${error}`);
                     return serverErrorRes(error);
