@@ -18,8 +18,8 @@ const badRequestRes = (data?: any) => {
 }
 
 //200 response
-const okayRes = (data?: any) => {
-    if (data) return NextResponse.json({ ok: true, data: data }, { status: 200 })
+const okayRes = (data?: any, secondObject?: any) => {
+    if (data) return NextResponse.json({ ok: true, data: data, ...secondObject }, { status: 200 })
 
     return NextResponse.json({ ok: true }, { status: 200 })
 }

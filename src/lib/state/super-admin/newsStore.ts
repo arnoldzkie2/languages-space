@@ -49,6 +49,7 @@ const useAdminNewsStore = create<NewsProps>((set) => ({
     news: [],
     selectedNews: [],
     deleteNewsWarning: false,
+    newsToPublish: 1,
     newsData: newsValue,
     setTotalNews: (total: TotalNews) => set({ totalNews: total }),
     setNews: (news: News[]) => set({ news: news }),

@@ -394,6 +394,7 @@
         "copy": "Copy",
         "confirm": "Confirm",
         "show_more": "Show More",
+        "save": "Save",
         "create": "Create",
         "close": "Close",
         "remove": "Remove",
@@ -483,6 +484,7 @@
     "news": {
         "manage": "Manage News",
         "update": "Update News",
+        "to_publish": "News to publish",
         "author": "Author",
         "keywords": "Keywords",
         "create": "Create News",
@@ -594,6 +596,7 @@
                 "create_news": "Create News",
                 "update_news": "Update News",
                 "delete_news": "Delete News",
+                "modify_published_news": "Modify Published News",
                 "view_booking": "View Booking",
                 "create_booking": "Create Booking",
                 "update_booking": "Update Booking",

@@ -23,7 +23,7 @@ interface NewsTableProps {
 
 const NewsTable: React.FC<NewsTableProps> = ({ filteredTable }) => {
 
-    const { selectedNews, setSelectedNews, openNewsDeleteWarning } = useAdminNewsStore()
+    const { selectedNews, setSelectedNews } = useAdminNewsStore()
     const { operation, openOperation, closeOperation, selectedID, skeleton, returnTruncateText, openTruncateTextModal } = useGlobalStore()
     const [isRowChecked, setIsRowChecked] = useState<boolean>(false);
     const isAdminAllowed = useAdminPageStore(s => s.isAdminAllowed)

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev ",
     "build": "prisma generate && next build",
-    "start": "next start -p 3000",
+    "start": "next start",
     "email": "email dev --dir src/lib/emails",
     "lint": "next lint"
   },
@@ -82,6 +82,8 @@
     "typescript": "5.0.4",
     "uploadthing": "^6.0.3",
     "vaul": "^0.8.9",
+    "viem": "^2.9.20",
+    "wagmi": "^2.5.20",
     "xlsx": "^0.18.5",
     "zod": "^3.22.4",
     "zustand": "^4.4.1"

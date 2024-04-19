@@ -12,7 +12,7 @@ const FormCoursesPermission: React.FC<{
 
     return (
         <div className='flex flex-col gap-1 w-full'>
-            <div className='font-bold text-lg text-foreground'>{t('courses.manage')}</div>
+            <div className='font-bold text-lg text-foreground'>{t('course.manage')}</div>
 
             <PermissionSwitch
                 label={t('admin.permissions.list.view_courses')}

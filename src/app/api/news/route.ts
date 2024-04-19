@@ -38,6 +38,7 @@ export const GET = async (req: Request) => {
         const { searchParams } = new URL(req.url)
         const newsID = searchParams.get('newsID')
         const departmentID = searchParams.get('departmentID')
+        const published = searchParams.get("published")
 
         if (newsID) {
 
@@ -52,7 +53,34 @@ export const GET = async (req: Request) => {
 
         if (departmentID) {
 
-            const newsDepartment = await prisma.department.findUnique({
+
+            //if published is provided then retrieve all news that is ready to be seen in official websites
+            if (published) {
+
+                const department = await prisma.department.findUnique({
+                    where: { id: departmentID },
+                    select: {
+                        news: {
+                            where: {
+                                published: true
+                            },
+                            select: {
+                                id: true,
+                                title: true,
+                                author: true,
+                                keywords: true,
+                                created_at: true,
+                                updated_at: true
+                            }
+                        }
+                    }
+                })
+                if (!department) return badRequestRes()
+
+                return okayRes(department.news)
+            }
+
+            const department = await prisma.department.findUnique({
                 where: { id: departmentID },
                 select: {
                     news: {
@@ -67,9 +95,9 @@ export const GET = async (req: Request) => {
                     }
                 }
             })
-            if (!newsDepartment) return badRequestRes()
+            if (!department) return badRequestRes()
 
-            return okayRes(newsDepartment.news)
+            return okayRes(department.news)
         }
 
         const allNews = await prisma.news.findMany({

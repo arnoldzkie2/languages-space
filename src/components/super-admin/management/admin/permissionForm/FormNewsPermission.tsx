@@ -30,6 +30,11 @@ const FormWebNewsPermission: React.FC<{
                 checked={permissionData.update_news}
                 permissionKey='update_news' />
             <PermissionSwitch
+                label={t('admin.permissions.list.modify_published_news')}
+                onCheckedChange={handleCheckboxChange}
+                checked={permissionData.modify_published_news}
+                permissionKey='modify_published_news' />
+            <PermissionSwitch
                 label={t('admin.permissions.list.delete_news')}
                 onCheckedChange={handleCheckboxChange}
                 checked={permissionData.delete_news}

@@ -11,6 +11,7 @@ import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
 import useAuthStore from "@/lib/state/auth/authStore";
 import * as XLSX from 'xlsx';
+import axios from "axios";
 
 interface Props {
     searchParams: {
@@ -55,11 +56,12 @@ const Page = ({ searchParams }: Props) => {
         }
     }, [session])
 
+
     // const handleFileUpload = async (event: any) => {
     //     const file = event.target.files[0];
     //     if (file) {
     //         const reader = new FileReader();
-    //         reader.onload = (e: any) => {
+    //         reader.onload = async (e: any) => {
     //             const data = new Uint8Array(e.target.result);
     //             const workbook = XLSX.read(data, { type: 'array' });
 
@@ -81,26 +83,36 @@ const Page = ({ searchParams }: Props) => {
 
     //             const finalData = transformedData.map((obj: any) => ({
     //                 name: obj.name,
+    //                 username: obj.name,
     //                 phone_number: obj.phone_number,
-    //                 gender: obj.gender === '男' ? 'male' : 'female'
-    //             }))
-    //             // Count duplicate phone numbers
-    //             const phoneNumbers = finalData.map(obj => obj.phone_number);
-    //             const phoneCount: any = {};
-    //             let duplicateCount = 0;
+    //                 gender: obj.gender === '男' ? 'male' : 'female',
+    //                 password: obj.phone_number,
+    //                 origin: 'Verbalace'
+    //             }));
 
-    //             phoneNumbers.forEach(phone => {
-    //                 phoneCount[phone] = (phoneCount[phone] || 0) + 1;
-    //                 if (phoneCount[phone] > 1) {
-    //                     duplicateCount++;
-    //                 }
-    //             });
-    //             console.log("Number of duplicate phone numbers:", duplicateCount, finalData);
-    //             // console.log(transformedData)
+    //             // Filter out objects with duplicate name and phone number combinations
+    //             const uniqueFinalData = finalData.filter((obj, index, self) =>
+    //                 index === self.findIndex((t) => (
+    //                     (t.username === obj.username && t.phone_number === obj.phone_number) || t.username === obj.username
+    //                 ))
+    //             );
+
+    //             await Promise.all(uniqueFinalData.map(async (client) => {
+    //                 axios.post('/api/client', {
+    //                     name: client.name,
+    //                     username: client.username,
+    //                     phone_number: client.phone_number,
+    //                     password: client.phone_number,
+    //                     origin: client.origin,
+    //                     departments: ['1e3d4b16-576f-4f9f-9d30-a197a3e5ab1d']
+    //                 })
+    //             }))
     //         };
+
     //         reader.readAsArrayBuffer(file);
     //     }
     // };
+
 
     return (
         <div className='flex flex-col w-screen h-screen justify-center items-center'>

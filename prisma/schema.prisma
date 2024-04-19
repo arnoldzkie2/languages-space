@@ -587,10 +587,11 @@ model AdminPermission {
   view_agent_deductions   Boolean @default(false)
 
   //web news permissions
-  view_news   Boolean @default(false)
-  create_news Boolean @default(false)
-  update_news Boolean @default(false)
-  delete_news Boolean @default(false)
+  view_news             Boolean @default(false)
+  create_news           Boolean @default(false)
+  update_news           Boolean @default(false)
+  delete_news           Boolean @default(false)
+  modify_published_news Boolean @default(false)
 
   //booking permissions
   view_booking           Boolean @default(false)
@@ -663,6 +664,7 @@ model News {
   id            String      @id @default(uuid())
   title         String      @db.Text
   author        String
+  published     Boolean     @default(false)
   keywords      Json?
   content       String      @db.Text
   department_id String?
@@ -671,4 +673,9 @@ model News {
   department    Department? @relation(fields: [department_id], references: [id], onDelete: Cascade)
 
   @@index([department_id])
+}
+
+model Settings {
+  id          String @id @default(uuid())
+  deploy_news Int    @default(1)
 }

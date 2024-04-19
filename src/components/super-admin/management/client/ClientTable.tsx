@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faNewspaper, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { faCreditCard, faEye, faPenToSquare } from '@fortawesome/free-regular-svg-icons';
+import { faCreditCard, faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { useTranslations } from 'next-intl';
 import useAdminClientStore, { ClientProps } from '@/lib/state/super-admin/clientStore';
 import Link from 'next/link'
@@ -155,7 +155,7 @@ const ClientTable: React.FC<Props> = ({ filteredTable }) => {
                                     </div>}
                                 </td>
                                 <td className="px-6 py-3">
-                                    <div className='h-5 w-27 cursor-pointer' onClick={() => openTruncateTextModal(new Date(client.created_at).toISOString())}>
+                                    <div className='h-5 w-27 cursor-pointer' onClick={() => openTruncateTextModal(new Date(client.created_at).toLocaleString())}>
                                         {returnTruncateText(new Date(client.created_at).toLocaleString(), 10)}
                                     </div>
                                 </td>
