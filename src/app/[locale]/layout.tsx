@@ -4,7 +4,6 @@ import SessionProviders from '@/components/SessionProvider'
 import { notFound } from 'next/navigation'
 import 'react-quill/dist/quill.snow.css';
 import { NextIntlClientProvider, useMessages } from 'next-intl'
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from '@/components/global/ThemeProvider';
 import { Toaster } from '@/components/ui/sonner';
@@ -52,7 +51,6 @@ export default function LocaleLayout({ children, params: { locale } }: Props) {
               {children}
               <Toaster />
             </ThemeProvider>
-            <SpeedInsights />
           </SessionProviders>
         </NextIntlClientProvider>
       </body>
