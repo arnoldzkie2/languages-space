@@ -22,7 +22,10 @@ export const GET = async (req: Request) => {
 
         if (departmentID) {
 
-            const allKeywords = await prisma.news.findMany({ where: { department: { id: departmentID } }, select: { keywords: true } })
+            const allKeywords = await prisma.news.findMany({
+                where: { department: { id: departmentID }, published: true },
+                select: { keywords: true }
+            })
 
             const uniqueKeywords = allKeywords
                 .flatMap((item) => item.keywords)
