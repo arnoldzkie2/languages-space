@@ -85,12 +85,12 @@ const SideNav: React.FC = () => {
                 router.push('/admin')
                 getAdminDepartments()
             }
-        } else if (status === 'authenticated' && session.user.type !== SUPERADMIN) {
+        } else if ((status === 'authenticated' && session.user.type !== SUPERADMIN) || (status === 'authenticated' && !session.user.id)) {
             signOut()
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [status])
+    }, [status, session?.user.id])
 
     return (
         <>

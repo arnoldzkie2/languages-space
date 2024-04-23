@@ -4,6 +4,7 @@ import { ADMIN, SUPERADMIN } from "./constants"
 const checkUsername = async (username: string) => {
 
     //check username in all users at once
+
     const [client, supplier, admin, agent, superAdmin] = await Promise.all([
         prisma.client.findUnique({ where: { username } }),
         prisma.supplier.findUnique({ where: { username } }),
