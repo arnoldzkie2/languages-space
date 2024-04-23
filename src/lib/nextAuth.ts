@@ -3,7 +3,7 @@ import { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
-import { checkUsername } from "@/utils/checkUser";
+import { checkUser, checkUsername } from "@/utils/checkUser";
 
 declare module "next-auth" {
     interface Session {
@@ -58,9 +58,9 @@ const nextAuthOptions = {
         async jwt({ token, user }) {
 
             if (token.username as string) {
-                const checkUser = await checkUsername(token.username as string)
-                if (!checkUser) {
-                    //if user does not exist in database then remove the session
+                const user = await checkUser(token.id as string)
+                if (!user || token.password !== user.password) {
+                    //if user does not exist in database or password is changed then remove the session
                     return {}
                 }
             }

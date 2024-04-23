@@ -24,7 +24,7 @@ export const POST = async (req: Request) => {
             prisma.superAdmin.findUnique({
                 where: { username, password }
             }),
-        ]);
+        ])
 
         if (client) return NextResponse.json({ ...client, type: 'client' }, { status: 200 })
         if (supplier) return NextResponse.json({ ...supplier, type: 'supplier' }, { status: 200 })
@@ -39,7 +39,7 @@ export const POST = async (req: Request) => {
         console.log(error);
         return serverErrorRes(error)
     } finally {
-        prisma.$disconnect()
+        await prisma.$disconnect()
     }
 
 }
