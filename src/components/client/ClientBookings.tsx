@@ -23,10 +23,10 @@ import ViewSupplierCommentAlert from '../supplier/ViewSupplierBookingComment'
 const ClientBookings: React.FC = () => {
 
     const [currentBookings, setCurrentBookings] = useState<BookingProps[] | null>(null)
+    const { getCurrentData, currentPage } = useGlobalPaginationStore()
 
     const { bookings, getBookings } = useClientBookingStore()
     const { client, setPage } = useClientStore()
-    const { getCurrentData, currentPage } = useGlobalPaginationStore()
     const { returnTruncateText, openTruncateTextModal } = useGlobalStore()
     useEffect(() => {
         setPage('bookings')

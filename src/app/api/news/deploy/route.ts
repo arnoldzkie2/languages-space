@@ -44,7 +44,9 @@ export const POST = async () => {
 
                     await prisma.news.update({
                         where: { id: news.id },
-                        data: { published: true }
+                        data: {
+                            published: true, created_at: new Date()
+                        }
                     });
 
                 }));
